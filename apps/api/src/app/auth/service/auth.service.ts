@@ -3,34 +3,33 @@ import { UsersService } from "../../users/service/users.service"
 import * as bcrypt from 'bcrypt'
 import { IUser } from "../../users/schema/user.schema"
 import { CreateUserDto } from "../../users/dto/create-user.dto"
-import { ConfigService } from "@nestjs/config"
 import { JwtService } from "@nestjs/jwt"
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService, private jwtService: JwtService, private configService: ConfigService) { }
+  constructor(private readonly usersService: UsersService, private jwtService: JwtService) { }
 
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findOneByEmailWithPassword(email)
     if (!user) {
-      throw new BadRequestException('User not found')
+      throw new BadRequestException('Usuário não encontrado')
     }
 
     const isMatch = bcrypt.compareSync(password, user.password)
     if (!isMatch) {
-      throw new BadRequestException('Password does not match')
+      throw new BadRequestException('Senha não está correta')
     }
 
     const { password: _pass, ...result } = user
     return result
   }
 
-  async login(user: IUser) {
+  async login(user: IUser): Promise<{ accessToken: string }> {
     const payload = { email: user.email, id: user._id }
-    return { access_token: this.jwtService.sign(payload) }
+    return { accessToken: this.jwtService.sign(payload) }
   }
 
-  async register(user: CreateUserDto) {
+  async register(user: CreateUserDto): Promise<{ accessToken: string }> {
     const userByEmail = await this.usersService.findOneByEmail(user.email)
     if (userByEmail) {
       throw new BadRequestException('Email já está sendo utilizado')

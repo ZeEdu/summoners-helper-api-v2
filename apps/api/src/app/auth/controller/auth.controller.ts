@@ -13,14 +13,13 @@ export class AuthController {
 
   @Post('register')
   @Public()
-  async register(@Body() body: CreateUserDto) {
-    const accessToken = await this.authService.register(body)
-    return { accessToken }
+  async register(@Body() body: CreateUserDto): Promise<{ accessToken: string }> {
+    return this.authService.register(body)
   }
 
   @Post('login')
   @UseGuards(LocalGuard)
-  async login(@CurrentUser() user: IUser) {
+  async login(@CurrentUser() user: IUser): Promise<{ accessToken: string }> {
     return this.authService.login(user)
   }
 }

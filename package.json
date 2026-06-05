@@ -15,6 +15,7 @@
     "@angular/language-service": "~21.2.0",
     "@capacitor/cli": "^6.0.0",
     "@eslint/js": "^9.8.0",
+    "@faker-js/faker": "^8.4.1",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.0",
     "@nx/angular": "^22.7.5",
