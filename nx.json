@@ -114,5 +114,6 @@
   },
   "tui": {
     "enabled": false
-  }
+  },
+  "neverConnectToCloud": true
 }
