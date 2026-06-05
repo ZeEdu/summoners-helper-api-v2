@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common"
 import { UsersService } from "../../users/service/users.service"
 import * as bcrypt from 'bcrypt'
-import { User } from "../../users/schema/user.schema"
+import { IUser } from "../../users/schema/user.schema"
 import { CreateUserDto } from "../../users/dto/create-user.dto"
 import { ConfigService } from "@nestjs/config"
 import { JwtService } from "@nestjs/jwt"
@@ -22,12 +22,10 @@ export class AuthService {
     }
 
     const { password: _pass, ...result } = user
-
     return result
   }
 
-  // Trocar para o dto de login (email e senha)
-  async login(user: User) {
+  async login(user: IUser) {
     const payload = { email: user.email, id: user._id }
     return { access_token: this.jwtService.sign(payload) }
   }
