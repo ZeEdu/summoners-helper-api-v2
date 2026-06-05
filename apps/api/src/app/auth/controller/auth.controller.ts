@@ -1,21 +1,30 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { AuthService } from '../service/auth.service';
+import { Public } from '../../decorators/public.decorator';
+
+import { Request } from "express";
+import { UserDocument } from '../../users/schema/user.schema';
+import { LocalGuard } from '../../guards/local.guard';
+
+interface AuthenticatedRequest extends Request {
+  user: UserDocument;
+}
 
 @Controller('auth')
 export class AuthController {
+  constructor(private authService: AuthService) { }
+
   @Post('register')
-  // async register(@Body() body: CreateUserDto) {
-  async register(@Body() body: any) {
-    console.log('Entrou aqui');
-    return { register: true }
-    // return this.authService.register(body)
+  @Public()
+  async register(@Body() body: CreateUserDto) {
+    const accessToken = await this.authService.register(body)
+    return { accessToken }
   }
 
-  // @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Request() req) {
-    return { login: true }
-    // return this.authService.login(req.user)
+  @UseGuards(LocalGuard)
+  async login(@Req() req: AuthenticatedRequest) {
+    return this.authService.login(req.user)
   }
-
-
 }
