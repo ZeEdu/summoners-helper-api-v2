@@ -6,6 +6,7 @@ export interface IUser {
   username: string;
   email: string;
   password: string;
+  refreshToken: string;
 }
 
 export type UserDocument = HydratedDocument<User>
@@ -22,6 +23,9 @@ export class User implements IUser {
 
   @Prop({ required: true, select: false })
   password: string;
+
+  @Prop()
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

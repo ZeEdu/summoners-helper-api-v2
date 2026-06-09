@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Model, QueryOptions } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { PaginationDto } from '../../pagination/pagination.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { IUser, User } from '../schema/user.schema';
-import { Model, QueryOptions } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { PaginationDto } from '../../pagination/pagination.dto';
 
 @Injectable()
 export class UsersService {
@@ -45,4 +46,11 @@ export class UsersService {
     return { count, users }
   }
 
+  async updateRefreshToken(userId: string, refreshToken: string) {
+    await this.userModel.updateOne({ _id: userId }, { refreshToken })
+  }
+
+  async removeRefreshToken(userId: string) {
+    await this.userModel.updateOne({ _id: userId }, { refreshToken: null })
+  }
 }
