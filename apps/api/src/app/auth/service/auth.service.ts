@@ -12,7 +12,7 @@ import { UsersService } from '../../users/service/users.service';
 import { IUser } from '../../users/schema/user.schema';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 
-type IUserWithoutPassword = Omit<IUser, 'password'>
+type IUserWithoutPassword = Omit<IUser, 'password'>;
 
 @Injectable()
 export class AuthService {
@@ -20,9 +20,12 @@ export class AuthService {
     private readonly usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
-  async validateUser(email: string, password: string): Promise<IUserWithoutPassword> {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<IUserWithoutPassword> {
     const user = await this.usersService.findOneByEmailWithPassword(email);
     if (!user) {
       throw new UnauthorizedException('Usuário não encontrado');
