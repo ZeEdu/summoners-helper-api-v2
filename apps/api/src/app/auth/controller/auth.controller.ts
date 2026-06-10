@@ -11,7 +11,7 @@ import { JwtGuard } from '../../guards/jwt.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { isProduction } from '../../utils';
 
-const SEVEN_DAYS = 7 * 24 * 60 * 1_000;
+const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
 @Controller('auth')
 export class AuthController {
@@ -42,7 +42,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('logout')
+  @Post('logout')
   async logout(
     @CurrentUser() user: IUser,
     @Res({ passthrough: true }) response: Response,

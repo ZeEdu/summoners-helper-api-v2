@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -12,8 +13,6 @@ import { UsersService } from '../../users/service/users.service';
 import { IUser } from '../../users/schema/user.schema';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 
-type IUserWithoutPassword = Omit<IUser, 'password'>;
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,18 +21,15 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async validateUser(
-    email: string,
-    password: string,
-  ): Promise<IUserWithoutPassword> {
+  async validateUser(email: string, password: string): Promise<IUser> {
     const user = await this.usersService.findOneByEmailWithPassword(email);
     if (!user) {
-      throw new UnauthorizedException('Usuário não encontrado');
+      throw new UnauthorizedException('Email ou senha incorretos');
     }
 
     const isMatch = await argon2.verify(user.password, password);
     if (!isMatch) {
-      throw new UnauthorizedException('Senha não está correta');
+      throw new UnauthorizedException('Email ou senha incorretos');
     }
 
     const { password: _pass, ...result } = user;
@@ -53,7 +49,7 @@ export class AuthService {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const userByEmail = await this.usersService.findOneByEmail(user.email);
     if (userByEmail) {
-      throw new UnauthorizedException('Email já está sendo utilizado');
+      throw new ConflictException('Email já está sendo utilizado');
     }
 
     const userByUsername = await this.usersService.findOneByUsername(
@@ -98,7 +94,7 @@ export class AuthService {
     }
 
     const tokens = await this.getTokens(user._id.toString(), user.username);
-    await this.updateRefreshToken(user._id.toString(), user.username);
+    await this.updateRefreshToken(user._id.toString(), tokens.refreshToken);
 
     return tokens;
   }
@@ -119,7 +115,11 @@ export class AuthService {
 
     const accessTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
-      expiresIn: '30m',
+      expiresIn: parseInt(
+        this.configService.getOrThrow<string>(
+          'ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC',
+        ),
+      ),
     };
 
     const refreshTokenOptions: JwtSignOptions = {

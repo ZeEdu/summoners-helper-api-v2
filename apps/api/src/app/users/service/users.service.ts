@@ -5,18 +5,23 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PaginationDto } from '../../pagination/pagination.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { IUser, User } from '../schema/user.schema';
+import { IUser, IUserWithPassword, User } from '../schema/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) { }
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   findOneByEmail(email: User['email']): Promise<IUser | null> {
     return this.userModel.findOne({ email }).lean<IUser>();
   }
 
-  findOneByEmailWithPassword(email: User['email']): Promise<IUser | null> {
-    return this.userModel.findOne({ email }).select('+password').lean<IUser>();
+  findOneByEmailWithPassword(
+    email: User['email'],
+  ): Promise<IUserWithPassword | null> {
+    return this.userModel
+      .findOne({ email })
+      .select('+password')
+      .lean<IUserWithPassword>();
   }
 
   findOneByUsername(username: User['username']): Promise<IUser | null> {
@@ -28,29 +33,42 @@ export class UsersService {
   }
 
   async create(user: CreateUserDto): Promise<IUser> {
-    const createdUser = await new this.userModel(user).save()
+    const createdUser = await new this.userModel(user).save();
     return createdUser.toJSON();
   }
 
-  update(userId: string, userInformation: UpdateUserDto, options: QueryOptions<User>) {
-    const { returnDocument = 'after' } = options
-    return this.userModel.findByIdAndUpdate(userId, userInformation, { ...options, returnDocument });
+  update(
+    userId: string,
+    userInformation: UpdateUserDto,
+    options: QueryOptions<User>,
+  ) {
+    const { returnDocument = 'after' } = options;
+    return this.userModel.findByIdAndUpdate(userId, userInformation, {
+      ...options,
+      returnDocument,
+    });
   }
 
-  async getAllUsers(pagination: PaginationDto): Promise<{ count: number, users: IUser[] }> {
-    const { limit = 10, offset = 0 } = pagination
+  async getAllUsers(
+    pagination: PaginationDto,
+  ): Promise<{ count: number; users: IUser[] }> {
+    const { limit = 10, offset = 0 } = pagination;
 
-    const count = await this.userModel.countDocuments()
-    const users = await this.userModel.find().limit(limit).skip(offset).lean<IUser[]>()
+    const count = await this.userModel.countDocuments();
+    const users = await this.userModel
+      .find()
+      .limit(limit)
+      .skip(offset)
+      .lean<IUser[]>();
 
-    return { count, users }
+    return { count, users };
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {
-    await this.userModel.updateOne({ _id: userId }, { refreshToken })
+    await this.userModel.updateOne({ _id: userId }, { refreshToken });
   }
 
   async removeRefreshToken(userId: string) {
-    await this.userModel.updateOne({ _id: userId }, { refreshToken: null })
+    await this.userModel.updateOne({ _id: userId }, { refreshToken: null });
   }
 }

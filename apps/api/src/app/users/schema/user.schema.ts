@@ -1,19 +1,21 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export interface IUser {
-  _id: Types.ObjectId
+  _id: Types.ObjectId;
   username: string;
   email: string;
-  password: string;
-  refreshToken: string;
+  password?: string;
+  refreshToken?: string;
 }
 
-export type UserDocument = HydratedDocument<User>
+export type IUserWithPassword = IUser & { password: string };
+
+export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User implements IUser {
-  _id: Types.ObjectId
+  _id: Types.ObjectId;
 
   @Prop({ required: true, unique: true })
   username: string;
@@ -28,4 +30,4 @@ export class User implements IUser {
   refreshToken: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User)
+export const UserSchema = SchemaFactory.createForClass(User);

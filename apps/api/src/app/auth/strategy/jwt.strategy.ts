@@ -7,7 +7,7 @@ import { IUser } from '../../users/schema/user.schema';
 
 interface JwtPayload {
   email: string;
-  id: string;
+  sub: string;
   iat: number;
   exp: number;
 }

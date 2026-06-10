@@ -347,7 +347,7 @@ describe('AuthController', () => {
           .expect(401)
           .expect(({ body }) => {
             expect(body.error).toBe('Unauthorized');
-            expect(body.message).toBe('Usuário não encontrado');
+            expect(body.message).toBe('Email ou senha incorretos');
           });
       });
       it('with wrong password', async () => {
@@ -374,7 +374,7 @@ describe('AuthController', () => {
           .expect(401)
           .expect(({ body }) => {
             expect(body.error).toBe('Unauthorized');
-            expect(body.message).toBe('Senha não está correta');
+            expect(body.message).toBe('Email ou senha incorretos');
           });
       });
     });
@@ -394,9 +394,10 @@ describe('AuthController', () => {
         .expect(201);
 
       const logoutResponse = await request(app.getHttpServer())
-        .get('/auth/logout')
+        .post('/auth/logout')
+        .send({})
         .set('Authorization', `Bearer ${createUserResponse.body.accessToken}`)
-        .expect(200);
+        .expect(201);
 
       const storedUser = (await userModel
         .findOne({
@@ -410,7 +411,10 @@ describe('AuthController', () => {
         logoutResponse.headers as unknown as Record<string, string[]>,
         'refresh_token',
       );
-      expect(refreshTokenCookie).toBeUndefined();
+      const token = refreshTokenCookie
+        .split(';')[0]
+        .replaceAll('refresh_token=', '');
+      expect(token).toBeFalsy();
     });
   });
 

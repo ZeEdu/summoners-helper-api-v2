@@ -44,7 +44,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
     const user = await this.usersService.findOneByEmail(payload.email);
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Usuário não encontrado');
     }
 
     // Substitui o token hasheado pelo raw que vem no cookie
