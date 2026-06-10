@@ -28,7 +28,7 @@ export class AuthService {
       throw new UnauthorizedException('Usuário não encontrado');
     }
 
-    const isMatch = argon2.verify(user.password, password);
+    const isMatch = await argon2.verify(user.password, password);
     if (!isMatch) {
       throw new UnauthorizedException('Senha não está correta');
     }
