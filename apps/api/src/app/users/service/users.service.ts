@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Model, QueryOptions } from 'mongoose';
+import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { PaginationDto } from '../../pagination/pagination.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { IUser, IUserWithPassword, User } from '../schema/user.schema';
+import {
+  IUser,
+  IUserWithPassword,
+  SENSIBLE_FIELDS,
+  User,
+} from '../schema/user.schema';
+
+export const DEFAULT_LIMIT = 10;
+export const DEFAULT_OFFSET = 0;
 
 @Injectable()
 export class UsersService {
@@ -39,24 +47,30 @@ export class UsersService {
 
   update(
     userId: string,
-    userInformation: UpdateUserDto,
-    options: QueryOptions<User>,
+    updatedUserInformation: UpdateUserDto,
+    options?: QueryOptions<User>,
   ) {
-    const { returnDocument = 'after' } = options;
-    return this.userModel.findByIdAndUpdate(userId, userInformation, {
-      ...options,
-      returnDocument,
-    });
+    const { returnDocument = 'after' } = options || {};
+    return this.userModel
+      .findByIdAndUpdate(userId, updatedUserInformation, {
+        ...options,
+        returnDocument,
+      })
+      .lean<IUser>();
   }
 
   async getAllUsers(
-    pagination: PaginationDto,
+    filter?: QueryFilter<User>,
+    pagination?: PaginationDto,
   ): Promise<{ count: number; users: IUser[] }> {
-    const { limit = 10, offset = 0 } = pagination;
+    const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};
+    filter = filter || {};
+
+    SENSIBLE_FIELDS.forEach((field) => delete filter[field]);
 
     const count = await this.userModel.countDocuments();
     const users = await this.userModel
-      .find()
+      .find(filter)
       .limit(limit)
       .skip(offset)
       .lean<IUser[]>();

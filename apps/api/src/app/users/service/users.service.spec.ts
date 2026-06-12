@@ -1,31 +1,52 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { DEFAULT_LIMIT, DEFAULT_OFFSET, UsersService } from './users.service';
 import { IUser, User } from '../schema/user.schema';
-import { Model, Types } from 'mongoose';
+import { Model, QueryFilter, Types } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { faker } from '@faker-js/faker';
-
-const userModelMock = {
-  findOne: jest.fn(),
-  create: jest.fn(),
-  findById: jest.fn(),
-  findByIdAndUpdate: jest.fn(),
-  countDocuments: jest.fn(),
-  find: jest.fn(),
-  limit: jest.fn(),
-  skip: jest.fn(),
-  lean: jest.fn(),
-};
+import { CreateUserDto } from '../dto/create-user.dto';
 
 describe('UsersService', () => {
   let service: UsersService;
   let model: jest.Mocked<Model<User>>;
 
+  const mockedUserFields = {
+    _id: new Types.ObjectId(),
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+  };
+
+  const jwtSampleToken =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3ODEyNzQ2ODMsImV4cCI6MTc4MTI3ODI4MywianRpIjoiMzFjMDNmMmQtZTI1Zi00YWQyLTlkYWYtMjNkNTFmNzY3ZTRkIiwiaXNzIjoiYXBpLmV4YW1wbGUuY29tIiwic3ViIjoidXNlcl80NDY5IiwiYXVkIjoiaHR0cHM6Ly9leGFtcGxlLmNvbSJ9.IDQ3hnsfhQDPdwgbjLjqHFrFByIbJLSnpANd5dsELCE';
+  const mockSavedDoc = {
+    ...mockedUserFields,
+    toJSON: jest.fn().mockReturnValue({
+      ...mockedUserFields,
+    }),
+  };
+  const mockDetailModel = jest.fn().mockImplementation(() => ({
+    save: jest.fn().mockReturnValue(mockSavedDoc),
+  }));
+
+  Object.assign(mockDetailModel, {
+    findOne: jest.fn(),
+    updateOne: jest.fn(),
+    create: jest.fn(),
+    findById: jest.fn(),
+    findByIdAndUpdate: jest.fn(),
+    countDocuments: jest.fn(),
+    find: jest.fn(),
+    limit: jest.fn(),
+    skip: jest.fn(),
+    lean: jest.fn(),
+  });
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: getModelToken(User.name), useValue: userModelMock },
+        { provide: getModelToken(User.name), useValue: mockDetailModel },
       ],
     }).compile();
 
@@ -39,12 +60,9 @@ describe('UsersService', () => {
 
   describe('findOneByEmail', () => {
     it('should return null if user not found', async () => {
-      model.findOne.mockImplementationOnce(
-        () =>
-          ({
-            lean: jest.fn().mockReturnValue(null),
-          }) as any,
-      );
+      const mockLean = jest.fn().mockReturnValue(null);
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
+      model.findOne.mockImplementationOnce(mockFindOne);
 
       const wrongEmail = faker.internet.email();
       const result = await service.findOneByEmail(wrongEmail);
@@ -60,12 +78,9 @@ describe('UsersService', () => {
         password: faker.internet.password(),
       };
 
-      model.findOne.mockImplementationOnce(
-        () =>
-          ({
-            lean: jest.fn().mockReturnValue(mockedUser),
-          }) as any,
-      );
+      const mockLean = jest.fn().mockReturnValue(mockedUser);
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
+      model.findOne.mockImplementationOnce(mockFindOne);
 
       const result = await service.findOneByEmail(mockedUser.email);
 
@@ -83,15 +98,10 @@ describe('UsersService', () => {
         password: faker.internet.password(),
       };
 
-      model.findOne.mockImplementationOnce(
-        () =>
-          ({
-            select: () =>
-              ({
-                lean: jest.fn().mockReturnValue(mockedUser),
-              }) as any,
-          }) as any,
-      );
+      const mockLean = jest.fn().mockReturnValue(mockedUser);
+      const mockSelect = jest.fn().mockReturnValue({ lean: mockLean });
+      const mockFindOne = jest.fn().mockReturnValue({ select: mockSelect });
+      model.findOne.mockImplementationOnce(mockFindOne);
 
       const result = await service.findOneByEmailWithPassword(mockedUser.email);
 
@@ -103,12 +113,9 @@ describe('UsersService', () => {
 
   describe('findOneByUsername', () => {
     it('should return null if user not found', async () => {
-      model.findOne.mockImplementationOnce(
-        () =>
-          ({
-            lean: jest.fn().mockReturnValue(null),
-          }) as any,
-      );
+      const mockLean = jest.fn().mockReturnValue(null);
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
+      model.findOne.mockImplementationOnce(mockFindOne);
 
       const wrongUsername = faker.internet.userName();
       const result = await service.findOneByUsername(wrongUsername);
@@ -124,12 +131,9 @@ describe('UsersService', () => {
         password: faker.internet.password(),
       };
 
-      model.findOne.mockImplementationOnce(
-        () =>
-          ({
-            lean: jest.fn().mockReturnValue(mockedUser),
-          }) as any,
-      );
+      const mockLean = jest.fn().mockReturnValue(mockedUser);
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
+      model.findOne.mockImplementationOnce(mockFindOne);
 
       const result = await service.findOneByUsername(mockedUser.username);
 
@@ -142,12 +146,9 @@ describe('UsersService', () => {
 
   describe('findOneById', () => {
     it('should return null if user not found', async () => {
-      model.findById.mockImplementationOnce(
-        () =>
-          ({
-            lean: jest.fn().mockReturnValue(null),
-          }) as any,
-      );
+      const mockLean = jest.fn().mockReturnValue(null);
+      const mockFindById = jest.fn().mockReturnValue({ lean: mockLean });
+      model.findById.mockImplementationOnce(mockFindById);
 
       const wrongObjectId = new Types.ObjectId().toString();
       const result = await service.findOneById(wrongObjectId);
@@ -163,18 +164,159 @@ describe('UsersService', () => {
         password: faker.internet.password(),
       };
 
-      model.findById.mockImplementationOnce(
-        () =>
-          ({
-            lean: jest.fn().mockReturnValue(mockedUser),
-          }) as any,
-      );
+      const mockLean = jest.fn().mockReturnValue(mockedUser);
+      const mockFindById = jest.fn().mockReturnValue({ lean: mockLean });
+      model.findById.mockImplementationOnce(mockFindById);
 
       const userId = mockedUser._id.toString();
       const result = await service.findOneById(userId);
 
       expect(result).toEqual(mockedUser);
       expect(model.findById).toHaveBeenCalledWith(userId);
+    });
+  });
+
+  describe('create', () => {
+    it('should create a user', async () => {
+      const mockedUser: CreateUserDto = {
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      };
+
+      const result = await service.create(mockedUser);
+      expect(model).toHaveBeenCalledWith(mockedUser);
+      expect(mockSavedDoc.toJSON).toHaveBeenCalled();
+      expect(result).toEqual(mockedUserFields);
+    });
+  });
+
+  describe('update', () => {
+    it('should update user', async () => {
+      const userId = new Types.ObjectId().toString();
+      const updatedUserInfo: CreateUserDto = {
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      };
+
+      const expectedUpdatedUser = { ...updatedUserInfo, _id: userId };
+
+      const mockLean = jest.fn().mockReturnValue(expectedUpdatedUser);
+      const mockFindByIdAndUpdate = jest
+        .fn()
+        .mockReturnValue({ lean: mockLean });
+      model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate);
+
+      const result = await service.update(userId, updatedUserInfo);
+      expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId,
+        updatedUserInfo,
+        {
+          returnDocument: 'after',
+        },
+      );
+      expect(result).toEqual(expectedUpdatedUser);
+    });
+  });
+
+  describe('getAllUsers', () => {
+    describe('filter', () => {
+      it('should remove sensible fields from query', async () => {
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
+        model.find.mockImplementationOnce(mockFind);
+
+        const filter: QueryFilter<User> = {
+          password: faker.internet.password(),
+          refreshToken: jwtSampleToken,
+        };
+        await service.getAllUsers(filter);
+        expect(model.find).toHaveBeenCalledWith({});
+      });
+      it('should use passed filter', async () => {
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
+        model.find.mockImplementationOnce(mockFind);
+
+        const filter: QueryFilter<User> = {
+          username: faker.internet.userName(),
+        };
+        await service.getAllUsers(filter);
+        expect(model.find).toHaveBeenCalledWith(filter);
+      });
+      it('should use empty object if filter is not defined', async () => {
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
+        model.find.mockImplementationOnce(mockFind);
+
+        await service.getAllUsers();
+        expect(model.find).toHaveBeenCalledWith({});
+      });
+    });
+
+    describe('pagination', () => {
+      it('should use passed pagination', async () => {
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
+        model.find.mockImplementationOnce(mockFind);
+
+        const expectedCountDocuments = 34;
+        model.countDocuments.mockResolvedValue(expectedCountDocuments);
+
+        const pagination = { limit: 20, offset: 20 };
+        const result = await service.getAllUsers({}, pagination);
+
+        expect(model.countDocuments).toHaveBeenCalled();
+        expect(result.count).toEqual(expectedCountDocuments);
+        expect(mockLimit).toHaveBeenCalledWith(pagination.limit);
+        expect(mockSkip).toHaveBeenCalledWith(pagination.offset);
+      });
+
+      describe('should use default values for pagination when used without arguments', () => {
+        it('should use passed pagination', async () => {
+          const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
+          const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
+          const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
+          const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
+          model.find.mockImplementationOnce(mockFind);
+
+          await service.getAllUsers();
+
+          expect(mockLimit).toHaveBeenCalledWith(DEFAULT_LIMIT);
+          expect(mockSkip).toHaveBeenCalledWith(DEFAULT_OFFSET);
+        });
+      });
+    });
+  });
+
+  describe('updateRefreshToken', () => {
+    it('should update only refreshToken', async () => {
+      const userId = new Types.ObjectId().toString();
+      await service.updateRefreshToken(userId, jwtSampleToken);
+      expect(model.updateOne).toHaveBeenCalledWith(
+        { _id: userId },
+        { refreshToken: jwtSampleToken },
+      );
+    });
+  });
+
+  describe('removeRefreshToken', () => {
+    it('should remove only refreshToken', async () => {
+      const userId = new Types.ObjectId().toString();
+      await service.removeRefreshToken(userId);
+      expect(model.updateOne).toHaveBeenCalledWith(
+        { _id: userId },
+        { refreshToken: null },
+      );
     });
   });
 });

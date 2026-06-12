@@ -30,4 +30,6 @@ export class User implements IUser {
   refreshToken: string;
 }
 
+export const SENSIBLE_FIELDS = ['password', 'refreshToken'];
+
 export const UserSchema = SchemaFactory.createForClass(User);
