@@ -56,9 +56,7 @@ export class AuthService {
       user.username,
     );
     if (userByUsername) {
-      throw new UnauthorizedException(
-        'Nome de usuário já está sendo utilizado',
-      );
+      throw new ConflictException('Nome de usuário já está sendo utilizado');
     }
 
     const hashedPassword = await this.hashData(user.password);
