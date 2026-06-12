@@ -93,7 +93,7 @@ export class AuthService {
       throw new ForbiddenException('Acesso negado');
     }
 
-    const tokens = await this.getTokens(user._id.toString(), user.username);
+    const tokens = await this.getTokens(user._id.toString(), user.email);
     await this.updateRefreshToken(user._id.toString(), tokens.refreshToken);
 
     return tokens;
