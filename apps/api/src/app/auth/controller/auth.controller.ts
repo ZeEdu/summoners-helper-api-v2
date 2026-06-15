@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 
 import { CreateUserDto } from '../../users/dto/create-user.dto';
@@ -43,6 +52,7 @@ export class AuthController {
 
   @UseGuards(JwtGuard)
   @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async logout(
     @CurrentUser() user: IUser,
     @Res({ passthrough: true }) response: Response,
