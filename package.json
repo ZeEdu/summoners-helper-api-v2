@@ -52,6 +52,7 @@
     "jest-environment-node": "~30.3.0",
     "jest-preset-angular": "~16.0.0",
     "jest-util": "~30.3.0",
+    "jsonwebtoken": "^9.0.3",
     "mongodb-memory-server": "^11.2.0",
     "nx": "22.7.5",
     "prettier": "^3.8.1",

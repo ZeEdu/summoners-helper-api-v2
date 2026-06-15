@@ -106,8 +106,6 @@ export class AuthService {
     userId: string,
     email: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = { sub: userId, email, jti: randomUUID() };
-
     const accessTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
       expiresIn: parseInt(
@@ -122,9 +120,16 @@ export class AuthService {
       expiresIn: '7d',
     };
 
+    const payload = { sub: userId, email };
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, accessTokenOptions),
-      this.jwtService.signAsync(payload, refreshTokenOptions),
+      this.jwtService.signAsync(
+        { ...payload, jti: randomUUID() },
+        accessTokenOptions,
+      ),
+      this.jwtService.signAsync(
+        { ...payload, jti: randomUUID() },
+        refreshTokenOptions,
+      ),
     ]);
 
     return { accessToken, refreshToken };

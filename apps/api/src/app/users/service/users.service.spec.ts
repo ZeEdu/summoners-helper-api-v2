@@ -5,6 +5,7 @@ import { Model, QueryFilter, Types } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { faker } from '@faker-js/faker';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { TestMockUtils } from '../../test.mock.utils';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -17,8 +18,6 @@ describe('UsersService', () => {
     password: faker.internet.password(),
   };
 
-  const jwtSampleToken =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3ODEyNzQ2ODMsImV4cCI6MTc4MTI3ODI4MywianRpIjoiMzFjMDNmMmQtZTI1Zi00YWQyLTlkYWYtMjNkNTFmNzY3ZTRkIiwiaXNzIjoiYXBpLmV4YW1wbGUuY29tIiwic3ViIjoidXNlcl80NDY5IiwiYXVkIjoiaHR0cHM6Ly9leGFtcGxlLmNvbSJ9.IDQ3hnsfhQDPdwgbjLjqHFrFByIbJLSnpANd5dsELCE';
   const mockSavedDoc = {
     ...mockedUserFields,
     toJSON: jest.fn().mockReturnValue({
@@ -231,7 +230,7 @@ describe('UsersService', () => {
 
         const filter: QueryFilter<User> = {
           password: faker.internet.password(),
-          refreshToken: jwtSampleToken,
+          refreshToken: TestMockUtils.invalidJwt(),
         };
         await service.getAllUsers(filter);
         expect(model.find).toHaveBeenCalledWith({});
@@ -301,10 +300,11 @@ describe('UsersService', () => {
   describe('updateRefreshToken', () => {
     it('should update only refreshToken', async () => {
       const userId = new Types.ObjectId().toString();
-      await service.updateRefreshToken(userId, jwtSampleToken);
+      const mockJwt = TestMockUtils.invalidJwt();
+      await service.updateRefreshToken(userId, mockJwt);
       expect(model.updateOne).toHaveBeenCalledWith(
         { _id: userId },
-        { refreshToken: jwtSampleToken },
+        { refreshToken: mockJwt },
       );
     });
   });

@@ -210,9 +210,11 @@ describe('AuthService', () => {
       expect(refreshTokenMatch).toBe(true);
     });
     it('should throw an error if userId is unknowed', async () => {
-      const mockedJWT = TestMockUtils.jwt();
       await expect(
-        service.refreshToken(new Types.ObjectId().toString(), mockedJWT),
+        service.refreshToken(
+          new Types.ObjectId().toString(),
+          TestMockUtils.invalidJwt(),
+        ),
       ).rejects.toThrow('Acesso negado');
     });
     it('should throw an error if argument token do not match with the stored token', async () => {
@@ -225,9 +227,11 @@ describe('AuthService', () => {
       await service.register(user);
 
       const storedUser = await userModel.findOne({ email: user.email });
-      const mockedJwt = TestMockUtils.jwt();
       await expect(
-        service.refreshToken(storedUser._id.toString(), mockedJwt),
+        service.refreshToken(
+          storedUser._id.toString(),
+          TestMockUtils.invalidJwt(),
+        ),
       ).rejects.toThrow('Acesso negado');
     });
   });
