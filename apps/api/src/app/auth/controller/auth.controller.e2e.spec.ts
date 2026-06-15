@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 import { IUser, User, UserDocument } from '../../users/schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 
-describe('AuthController', () => {
+describe('AuthController e2e', () => {
   let app: INestApplication;
   let userModel: Model<User>;
 
