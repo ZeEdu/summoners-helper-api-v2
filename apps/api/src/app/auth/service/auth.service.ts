@@ -59,7 +59,7 @@ export class AuthService {
       throw new ConflictException('Nome de usuário já está sendo utilizado');
     }
 
-    const hashedPassword = await this.hashData(user.password);
+    const hashedPassword = await argon2.hash(user.password);
     const createdUser = await this.usersService.create({
       ...user,
       password: hashedPassword,
@@ -101,10 +101,6 @@ export class AuthService {
     await this.usersService.removeRefreshToken(userId);
   }
 
-  private async hashData(data: string): Promise<string> {
-    return argon2.hash(data);
-  }
-
   private async getTokens(
     userId: string,
     email: string,
@@ -134,7 +130,7 @@ export class AuthService {
   }
 
   private async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashedRefreshPassword = await this.hashData(refreshToken);
+    const hashedRefreshPassword = await argon2.hash(refreshToken);
     await this.usersService.updateRefreshToken(userId, hashedRefreshPassword);
   }
 }
