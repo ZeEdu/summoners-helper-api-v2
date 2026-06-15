@@ -8,6 +8,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 import * as argon2 from 'argon2';
+import { randomUUID } from 'crypto';
 
 import { UsersService } from '../../users/service/users.service';
 import { IUser } from '../../users/schema/user.schema';
@@ -105,7 +106,7 @@ export class AuthService {
     userId: string,
     email: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = { sub: userId, email };
+    const payload = { sub: userId, email, jti: randomUUID() };
 
     const accessTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
