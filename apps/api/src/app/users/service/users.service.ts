@@ -66,11 +66,13 @@ export class UsersService {
     const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};
     filter = filter || {};
 
-    SENSIBLE_FIELDS.forEach((field) => delete filter[field]);
+    const safeFilter = { ...filter };
+
+    SENSIBLE_FIELDS.forEach((field) => delete safeFilter[field]);
 
     const count = await this.userModel.countDocuments();
     const users = await this.userModel
-      .find(filter)
+      .find(safeFilter)
       .limit(limit)
       .skip(offset)
       .lean<IUser[]>();
