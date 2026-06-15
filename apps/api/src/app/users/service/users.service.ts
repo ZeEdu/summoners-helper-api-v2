@@ -48,12 +48,12 @@ export class UsersService {
   update(
     userId: string,
     updatedUserInformation: UpdateUserDto,
-    options?: QueryOptions<User>,
+    queryOptions?: QueryOptions<User>,
   ) {
-    const { returnDocument = 'after' } = options || {};
+    const { returnDocument = 'after' } = queryOptions || {};
     return this.userModel
       .findByIdAndUpdate(userId, updatedUserInformation, {
-        ...options,
+        ...queryOptions,
         returnDocument,
       })
       .lean<IUser>();
@@ -67,17 +67,16 @@ export class UsersService {
     filter = filter || {};
 
     const safeFilter = { ...filter };
-
     SENSIBLE_FIELDS.forEach((field) => delete safeFilter[field]);
 
-    const count = await this.userModel.countDocuments();
+    const count = await this.userModel.countDocuments(safeFilter);
     const users = await this.userModel
       .find(safeFilter)
       .limit(limit)
       .skip(offset)
       .lean<IUser[]>();
 
-    return { count, users };
+    return { users, count };
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {

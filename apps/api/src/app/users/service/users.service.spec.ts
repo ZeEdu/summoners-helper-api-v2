@@ -221,7 +221,7 @@ describe('UsersService', () => {
 
   describe('getAllUsers', () => {
     describe('filter', () => {
-      it('should remove sensible fields from query', async () => {
+      it('should remove sensible fields from pagination', async () => {
         const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
         const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
         const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
@@ -260,7 +260,7 @@ describe('UsersService', () => {
       });
     });
 
-    describe('pagination', () => {
+    describe('query', () => {
       it('should use passed pagination', async () => {
         const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
         const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });

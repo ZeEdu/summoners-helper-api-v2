@@ -50,12 +50,13 @@ describe('AuthController e2e', () => {
       imports: [AppModule],
     }).compile();
 
+    userModel = module.get<Model<UserDocument>>(getModelToken(User.name));
+    await userModel.deleteMany();
+
     app = module.createNestApplication();
 
     app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe());
-
-    userModel = module.get<Model<UserDocument>>(getModelToken(User.name));
 
     await app.init();
   });
