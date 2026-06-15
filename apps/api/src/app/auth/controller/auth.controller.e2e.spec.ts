@@ -67,7 +67,7 @@ describe('AuthController e2e', () => {
   describe('register', () => {
     it('POST /auth/register → retorna accessToken', async () => {
       const createUserPayload: CreateUserDto = {
-        username: faker.word.verb({ length: { min: 5, max: 16 } }),
+        username: faker.string.alpha(16),
         password: faker.internet.password({ prefix: '1!Ab' }),
         email: faker.internet.email(),
       };
@@ -157,7 +157,7 @@ describe('AuthController e2e', () => {
           const { body } = await request(app.getHttpServer())
             .post('/auth/register')
             .send({
-              username: faker.word.verb({ length: { min: 5, max: 16 } }),
+              username: faker.string.alpha(16),
               email: faker.internet.email(),
             })
             .expect(400);
@@ -180,7 +180,7 @@ describe('AuthController e2e', () => {
             .post('/auth/register')
             .send({
               password: faker.number.int({ min: 10_000, max: 20_000 }),
-              username: faker.word.verb({ length: { min: 5, max: 16 } }),
+              username: faker.string.alpha(16),
               email: faker.internet.email(),
             })
             .expect(400);
@@ -202,7 +202,7 @@ describe('AuthController e2e', () => {
             .post('/auth/register')
             .send({
               password: faker.internet.password({ prefix: '1!Ab', length: 6 }),
-              username: faker.word.verb({ length: { min: 5, max: 16 } }),
+              username: faker.string.alpha(16),
               email: faker.internet.email(),
             })
             .expect(400);
@@ -214,12 +214,12 @@ describe('AuthController e2e', () => {
             expect(expectedErrors).toContain(error);
           });
         });
-        it('with invalid maximum lenght', async () => {
+        it('with invalid maximum length', async () => {
           const { body } = await request(app.getHttpServer())
             .post('/auth/register')
             .send({
               password: faker.internet.password({ prefix: '1!Ab', length: 65 }),
-              username: faker.word.verb({ length: { min: 5, max: 16 } }),
+              username: faker.string.alpha(16),
               email: faker.internet.email(),
             })
             .expect(400);
@@ -236,7 +236,7 @@ describe('AuthController e2e', () => {
             .post('/auth/register')
             .send({
               password: faker.internet.password(),
-              username: faker.word.verb({ length: { min: 5, max: 16 } }),
+              username: faker.string.alpha(16),
               email: faker.internet.email(),
             })
             .expect(400);
@@ -257,7 +257,7 @@ describe('AuthController e2e', () => {
           const { body } = await request(app.getHttpServer())
             .post('/auth/register')
             .send({
-              username: faker.word.verb({ length: { min: 5, max: 16 } }),
+              username: faker.string.alpha(16),
               password: faker.internet.password({ prefix: '1!Ab' }),
             })
             .expect(400);
@@ -274,7 +274,7 @@ describe('AuthController e2e', () => {
         });
         it('with invalid format', async () => {
           const createUserPayload = {
-            username: faker.word.verb({ length: { min: 5, max: 16 } }),
+            username: faker.string.alpha(16),
             password: faker.internet.password({ prefix: '1!Ab' }),
             email: faker.word.verb({ length: 16 }),
           };
@@ -298,7 +298,7 @@ describe('AuthController e2e', () => {
   describe('login', () => {
     it('POST /auth/login → retorna accessToken', async () => {
       const createUserPayload: CreateUserDto = {
-        username: faker.word.verb({ length: { min: 5, max: 16 } }),
+        username: faker.string.alpha(16),
         password: faker.internet.password({ prefix: '1!Ab' }),
         email: faker.internet.email(),
       };
@@ -325,7 +325,7 @@ describe('AuthController e2e', () => {
     describe('with error', () => {
       it('with wrong email', async () => {
         const createUserPayload: CreateUserDto = {
-          username: faker.word.verb({ length: { min: 5, max: 16 } }),
+          username: faker.string.alpha(16),
           password: faker.internet.password({ prefix: '1!Ab' }),
           email: faker.internet.email(),
         };
@@ -352,7 +352,7 @@ describe('AuthController e2e', () => {
       });
       it('with wrong password', async () => {
         const createUserPayload: CreateUserDto = {
-          username: faker.word.verb({ length: { min: 5, max: 16 } }),
+          username: faker.string.alpha(16),
           password: faker.internet.password({ prefix: '1!Ab' }),
           email: faker.internet.email(),
         };
@@ -383,7 +383,7 @@ describe('AuthController e2e', () => {
   describe('logout', () => {
     it('POST /auth/logout → remove o refreshToken do usuário', async () => {
       const createUserPayload: CreateUserDto = {
-        username: faker.word.verb({ length: { min: 5, max: 16 } }),
+        username: faker.string.alpha(16),
         password: faker.internet.password({ prefix: '1!Ab' }),
         email: faker.internet.email(),
       };
@@ -397,7 +397,7 @@ describe('AuthController e2e', () => {
         .post('/auth/logout')
         .send({})
         .set('Authorization', `Bearer ${createUserResponse.body.accessToken}`)
-        .expect(201);
+        .expect(204);
 
       const storedUser = (await userModel
         .findOne({
@@ -421,7 +421,7 @@ describe('AuthController e2e', () => {
   describe('refresh', () => {
     it('POST /auth/refresh-token → deve atualizar o refresh-token', async () => {
       const createUserPayload: CreateUserDto = {
-        username: faker.word.verb({ length: { min: 5, max: 16 } }),
+        username: faker.string.alpha(16),
         password: faker.internet.password({ prefix: '1!Ab' }),
         email: faker.internet.email(),
       };
