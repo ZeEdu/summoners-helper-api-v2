@@ -18,6 +18,7 @@ export class UsersController {
     users: IUser[];
   }> {
     const filter = createUserPaginationFilter(pagination);
-    return this.usersService.getAllUsers(filter, pagination);
+    const { offset, limit } = pagination;
+    return this.usersService.getAllUsers(filter, { offset, limit });
   }
 }
