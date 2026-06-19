@@ -10,6 +10,7 @@ export interface IUser {
 }
 
 export type IUserWithPassword = IUser & { password: string };
+export type IUserWithPuuid = IUser & { puuid: string };
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -28,6 +29,18 @@ export class User implements IUser {
 
   @Prop()
   refreshToken: string;
+
+  @Prop({ select: false })
+  puuid: string;
+
+  @Prop()
+  gameName: string;
+
+  @Prop()
+  tagLine: string;
+
+  // @Prop()
+  // server: string
 }
 
 export const SENSIBLE_FIELDS = ['password', 'refreshToken'];

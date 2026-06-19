@@ -8,19 +8,34 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import {
   IUser,
   IUserWithPassword,
+  IUserWithPuuid,
   SENSIBLE_FIELDS,
   User,
 } from '../schema/user.schema';
+import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
 
 export const DEFAULT_LIMIT = 10;
 export const DEFAULT_OFFSET = 0;
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly riotApiService: RiotApiService,
+  ) {}
 
   findOneByEmail(email: User['email']): Promise<IUser | null> {
     return this.userModel.findOne({ email }).lean<IUser>();
+  }
+
+  findOneByEmailWithPuuid(
+    email: User['email'],
+  ): Promise<IUserWithPuuid | null> {
+    return this.userModel
+      .findOne({ email })
+      .select('+password')
+      .lean<IUserWithPuuid>();
   }
 
   findOneByEmailWithPassword(
@@ -47,9 +62,11 @@ export class UsersService {
 
   update(
     userId: string,
-    updatedUserInformation: UpdateUserDto,
+    updatedUserInformation: Partial<UpdateUserDto>,
     queryOptions?: QueryOptions<User>,
   ) {
+    // TODO Verificar os campos de data antes do update e garantir que eles estaram em UTC
+
     const { returnDocument = 'after' } = queryOptions || {};
     return this.userModel
       .findByIdAndUpdate(userId, updatedUserInformation, {
@@ -85,5 +102,23 @@ export class UsersService {
 
   async removeRefreshToken(userId: string) {
     await this.userModel.updateOne({ _id: userId }, { refreshToken: null });
+  }
+
+  async updateUserWithRiotData(
+    user: IUser,
+    updateProfileDto: UpdateUserProfileDto,
+  ) {
+    const accountData = await this.riotApiService.getAccountByRiotId(
+      updateProfileDto.gameName,
+      updateProfileDto.tagLine,
+    );
+
+    const updateData: UpdateUserDto = {
+      puuid: accountData.puuid,
+      tagLine: accountData.tagLine,
+      gameName: accountData.gameName,
+    };
+
+    return this.update(user._id.toString(), updateData);
   }
 }

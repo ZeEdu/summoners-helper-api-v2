@@ -6,21 +6,23 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { RiotApiModule } from './riot-api/riot-api.module';
 
 @Module({
   imports: [
     MongooseModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => ({ uri: configService.getOrThrow('MONGODB_URI') }),
-      inject: [ConfigService]
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.getOrThrow('MONGODB_URI'),
+      }),
+      inject: [ConfigService],
     }),
     ConfigModule.forRoot({
-      isGlobal: true, envFilePath: [
-        `.env.${process.env.NODE_ENV}`,
-        '.env',
-      ]
+      isGlobal: true,
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
     }),
     AuthModule,
     UsersModule,
+    RiotApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

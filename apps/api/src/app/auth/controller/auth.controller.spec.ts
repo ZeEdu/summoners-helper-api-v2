@@ -22,18 +22,22 @@ describe('AuthController', () => {
     return {
       cookie: jest.fn(),
       clearCookie: jest.fn(),
-    }
-  }
+    };
+  };
 
   const getTypedMockedResponse = () => {
     return {
       cookie: jest.fn(),
       clearCookie: jest.fn(),
-    } as Partial<Response> as Response
-  }
+    } as Partial<Response> as Response;
+  };
 
   beforeAll(async () => {
     mongodb = await MongoMemoryServer.create();
+  });
+
+  afterAll(async () => {
+    await mongodb.stop();
   });
 
   beforeEach(async () => {
@@ -43,7 +47,7 @@ describe('AuthController', () => {
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
         JwtModule.register({
-          secret: 'test-secret',
+          secret: faker.string.alphanumeric(16),
         }),
         ConfigModule.forRoot({ isGlobal: true }),
       ],
@@ -52,10 +56,6 @@ describe('AuthController', () => {
 
     controller = module.get<AuthController>(AuthController);
     userModel = module.get<Model<User>>(getModelToken(User.name));
-  });
-
-  afterAll(async () => {
-    await mongodb.stop();
   });
 
   describe('register', () => {
@@ -100,7 +100,10 @@ describe('AuthController', () => {
 
         // Tenta criar um usuário com o email repetido
         await expect(
-          controller.register(alreadyInUseEmailPayload, getTypedMockedResponse()),
+          controller.register(
+            alreadyInUseEmailPayload,
+            getTypedMockedResponse(),
+          ),
         ).rejects.toThrow('Email já está sendo utilizado');
       });
 
@@ -123,7 +126,10 @@ describe('AuthController', () => {
 
         // Tenta criar um usuário com o email repetido
         await expect(
-          controller.register(alreadyInUseEmailPayload, getTypedMockedResponse()),
+          controller.register(
+            alreadyInUseEmailPayload,
+            getTypedMockedResponse(),
+          ),
         ).rejects.toThrow('Nome de usuário já está sendo utilizado');
       });
 
@@ -158,11 +164,13 @@ describe('AuthController', () => {
 
       await controller.register(createUserPayload, getTypedMockedResponse());
 
-      const createdUser = await userModel.findOne({
-        email: createUserPayload.email,
-      }).lean() as IUser;
+      const createdUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
 
-      expect(createdUser).toBeDefined()
+      expect(createdUser).toBeDefined();
 
       const { accessToken } = await controller.login(
         createdUser,
@@ -185,17 +193,21 @@ describe('AuthController', () => {
 
       await controller.register(createUserPayload, getTypedMockedResponse());
 
-      const createdUser = await userModel.findOne({
-        email: createUserPayload.email,
-      }).lean() as IUser;
+      const createdUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
 
       expect(createdUser.refreshToken).toBeDefined();
 
       await controller.logout(createdUser, getTypedMockedResponse());
 
-      const updatedUser = await userModel.findOne({
-        email: createUserPayload.email,
-      }).lean() as IUser;
+      const updatedUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
 
       // TODO Deve checar se o refreshToken será removido dos cookies
 
@@ -211,32 +223,37 @@ describe('AuthController', () => {
         email: faker.internet.email(),
       };
 
-      const mockedResponse = getMockedResponse()
-      let rawRefreshToken: string
+      const mockedResponse = getMockedResponse();
+      let rawRefreshToken: string;
       jest.spyOn(mockedResponse, 'cookie').mockImplementation((name, value) => {
         if (name === 'refresh_token') {
-          rawRefreshToken = value as string
+          rawRefreshToken = value as string;
         }
-        return mockedResponse
-      })
+        return mockedResponse;
+      });
 
       await controller.register(
         createUserPayload,
         mockedResponse as Partial<Response> as Response,
       );
 
-      const createdUser = await userModel.findOne({
-        email: createUserPayload.email,
-      }).lean() as IUser;
+      const createdUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
       expect(createdUser.refreshToken).toBeDefined();
 
-      expect(rawRefreshToken).toBeDefined()
+      expect(rawRefreshToken).toBeDefined();
 
-      await controller.refreshToken({ _id: createdUser._id, refreshToken: rawRefreshToken } as IUser, getTypedMockedResponse());
+      await controller.refreshToken(
+        { _id: createdUser._id, refreshToken: rawRefreshToken } as IUser,
+        getTypedMockedResponse(),
+      );
 
-      const updatedUser = await userModel.findOne({
+      const updatedUser = (await userModel.findOne({
         email: createUserPayload.email,
-      }) as IUser;
+      })) as IUser;
 
       expect(updatedUser.refreshToken).not.toBe(createdUser.refreshToken);
     });

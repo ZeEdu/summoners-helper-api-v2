@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from '../service/users.service';
-import { User, UserDocument, UserSchema } from '../schema/user.schema';
+import { User, UserSchema } from '../schema/user.schema';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -10,12 +10,19 @@ import {
   UserPaginationDto,
 } from '../user.pagination.dto';
 import { faker } from '@faker-js/faker';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import nock from 'nock';
+import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
 
 let mongodb: MongoMemoryServer;
 
 describe('UsersController', () => {
   let controller: UsersController;
   let usersService: UsersService;
+  let riotApiUtilsService: RiotApiUtilsService;
+  let userModel: Model<User>;
 
   beforeAll(async () => {
     mongodb = await MongoMemoryServer.create();
@@ -23,39 +30,138 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [UsersService, RiotApiService, RiotApiUtilsService],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        JwtModule.register({
+          secret: faker.string.alphanumeric(16),
+        }),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
       controllers: [UsersController],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
     usersService = module.get<UsersService>(UsersService);
+    riotApiUtilsService = module.get<RiotApiUtilsService>(RiotApiUtilsService);
+    userModel = module.get<Model<User>>(getModelToken(User.name));
   });
 
   afterAll(async () => {
     await mongodb.stop();
   });
 
-  it('should be defined', async () => {
-    const pagination: UserPaginationDto = {
-      offset: 3,
-      limit: 15,
-      username: faker.internet.displayName(),
-    };
+  describe('get all', () => {
+    it('should be get users', async () => {
+      const pagination: UserPaginationDto = {
+        offset: 3,
+        limit: 15,
+        username: faker.internet.displayName(),
+      };
 
-    const spy = jest.spyOn(usersService, 'getAllUsers');
+      const spy = jest.spyOn(usersService, 'getAllUsers');
 
-    await controller.getAllUsers(pagination);
+      await controller.getAllUsers(pagination);
 
-    const expectedFilter = createUserPaginationFilter(pagination);
+      const expectedFilter = createUserPaginationFilter(pagination);
 
-    const expectedPagination = {
-      offset: pagination.offset,
-      limit: pagination.limit,
-    };
-    expect(spy).toHaveBeenCalledWith(expectedFilter, expectedPagination);
+      const expectedPagination = {
+        offset: pagination.offset,
+        limit: pagination.limit,
+      };
+      expect(spy).toHaveBeenCalledWith(expectedFilter, expectedPagination);
+    });
+  });
+
+  describe('update-profile', () => {
+    it('should update with riot info', async () => {
+      const user = await new userModel({
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        username: faker.internet.userName(),
+      }).save();
+
+      const tagLine = faker.string.alphanumeric(5);
+      const gameName = faker.internet.userName();
+      const puuid = faker.string.alphanumeric(78);
+
+      const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
+        gameName,
+        tagLine,
+      );
+      const scope = nock(url)
+        .get(() => true)
+        .reply(200, {
+          tagLine,
+          gameName,
+          puuid,
+        });
+
+      await controller.updateProfile(user, { tagLine, gameName });
+
+      const updatedUser = await userModel.findById(user._id).select('+puuid');
+      expect(updatedUser).toBeDefined();
+      expect(updatedUser.tagLine).toBe(tagLine);
+      expect(updatedUser.gameName).toBe(gameName);
+      expect(updatedUser.puuid).toBe(puuid);
+
+      scope.done();
+    });
+
+    describe('with error', () => {
+      describe('with invalid value', () => {
+        it('should throw an error', async () => {
+          const user = await new userModel({
+            email: faker.internet.email(),
+            password: faker.internet.password(),
+            username: faker.internet.userName(),
+          }).save();
+
+          await expect(
+            controller.updateProfile(user, {
+              tagLine: '',
+              gameName: '',
+            }),
+          ).rejects.toThrow('gameName e tagLine são obrigatórios');
+        });
+      });
+
+      describe('with unknown values', () => {
+        it('should not find a riot account', async () => {
+          const user = await new userModel({
+            email: faker.internet.email(),
+            password: faker.internet.password(),
+            username: faker.internet.userName(),
+          }).save();
+
+          const tagLine = faker.string.alphanumeric(5);
+          const gameName = faker.internet.userName();
+
+          const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
+            gameName,
+            tagLine,
+          );
+
+          const scope = nock(url)
+            .get(() => true)
+            .reply(404, {
+              status: {
+                message: `Data not found - No results found for player with riot id ${gameName}#${tagLine}`,
+                status_code: 404,
+              },
+            });
+
+          await expect(
+            controller.updateProfile(user, {
+              tagLine,
+              gameName,
+            }),
+          ).rejects.toThrow('Não foi possível encontrar o jogador');
+
+          scope.done();
+        });
+      });
+    });
   });
 });

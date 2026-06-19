@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from '../../users/service/users.service';
-import { IUser } from '../../users/schema/user.schema';
+import { IUserWithPuuid } from '../../users/schema/user.schema';
 
 interface JwtPayload {
   email: string;
@@ -24,8 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<IUser> {
-    const user = await this.usersService.findOneByEmail(payload.email);
+  async validate(payload: JwtPayload): Promise<IUserWithPuuid> {
+    const user = await this.usersService.findOneByEmailWithPuuid(payload.email);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
