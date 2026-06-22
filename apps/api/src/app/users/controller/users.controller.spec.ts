@@ -15,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import nock from 'nock';
 import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
 
 let mongodb: MongoMemoryServer;
 
@@ -84,6 +85,7 @@ describe('UsersController', () => {
 
       const tagLine = faker.string.alphanumeric(5);
       const gameName = faker.internet.userName();
+      const server = RIOT_SERVERS.BR1;
       const puuid = faker.string.alphanumeric(78);
 
       const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
@@ -98,7 +100,7 @@ describe('UsersController', () => {
           puuid,
         });
 
-      await controller.updateProfile(user, { tagLine, gameName });
+      await controller.updateProfile(user, { tagLine, gameName, server });
 
       const updatedUser = await userModel.findById(user._id).select('+puuid');
       expect(updatedUser).toBeDefined();
@@ -122,6 +124,7 @@ describe('UsersController', () => {
             controller.updateProfile(user, {
               tagLine: '',
               gameName: '',
+              server: RIOT_SERVERS.BR1,
             }),
           ).rejects.toThrow('gameName e tagLine são obrigatórios');
         });
@@ -137,6 +140,7 @@ describe('UsersController', () => {
 
           const tagLine = faker.string.alphanumeric(5);
           const gameName = faker.internet.userName();
+          const server = RIOT_SERVERS.BR1;
 
           const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
             gameName,
@@ -156,6 +160,7 @@ describe('UsersController', () => {
             controller.updateProfile(user, {
               tagLine,
               gameName,
+              server,
             }),
           ).rejects.toThrow('Não foi possível encontrar o jogador');
 

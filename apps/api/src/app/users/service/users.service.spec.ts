@@ -6,10 +6,16 @@ import { getModelToken } from '@nestjs/mongoose';
 import { faker } from '@faker-js/faker';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { TestMockUtils } from '../../test.mock.utils';
+import { RiotApiModule } from '../../riot-api/riot-api.module';
+import { ConfigModule } from '@nestjs/config';
+import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
+import nock from 'nock';
+import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
 
 describe('UsersService', () => {
   let service: UsersService;
   let model: jest.Mocked<Model<User>>;
+  let riotApiUtilsService: RiotApiUtilsService;
 
   const mockedUserFields = {
     _id: new Types.ObjectId(),
@@ -47,14 +53,12 @@ describe('UsersService', () => {
         UsersService,
         { provide: getModelToken(User.name), useValue: mockDetailModel },
       ],
+      imports: [RiotApiModule, ConfigModule.forRoot({ isGlobal: true })],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
     model = module.get<jest.Mocked<Model<User>>>(getModelToken(User.name));
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+    riotApiUtilsService = module.get<RiotApiUtilsService>(RiotApiUtilsService);
   });
 
   describe('findOneByEmail', () => {
@@ -106,6 +110,32 @@ describe('UsersService', () => {
 
       expect(result).toEqual(mockedUser);
       expect(result.password).toBeDefined();
+      expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
+    });
+  });
+
+  describe('findOneByEmailWithPuuid', () => {
+    it('should return a user with a puuid', async () => {
+      const mockedUser: IUser = {
+        _id: new Types.ObjectId(),
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        puuid: faker.string.alphanumeric(78),
+        gameName: faker.internet.userName(),
+        tagLine: faker.string.alphanumeric(5),
+        server: RIOT_SERVERS.BR1,
+      };
+
+      const mockLean = jest.fn().mockReturnValue(mockedUser);
+      const mockSelect = jest.fn().mockReturnValue({ lean: mockLean });
+      const mockFindOne = jest.fn().mockReturnValue({ select: mockSelect });
+      model.findOne.mockImplementationOnce(mockFindOne);
+
+      const result = await service.findOneByEmailWithPuuid(mockedUser.email);
+
+      expect(result).toEqual(mockedUser);
+      expect(result.puuid).toBeDefined();
       expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
     });
   });
@@ -317,6 +347,66 @@ describe('UsersService', () => {
         { _id: userId },
         { refreshToken: null },
       );
+    });
+  });
+
+  describe('updateUserWithRiotData', () => {
+    it('should update user with riot account data', async () => {
+      const tagLine = faker.string.alphanumeric(5);
+      const gameName = faker.internet.userName();
+      const server = RIOT_SERVERS.BR1;
+      const puuid = faker.string.alphanumeric(78);
+
+      const mockedUser: IUser = {
+        _id: new Types.ObjectId(),
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        tagLine,
+        gameName,
+        puuid,
+      };
+
+      const mockLean = jest.fn().mockReturnValue({
+        mockedUser,
+      });
+      const mockFindByIdAndUpdate = jest
+        .fn()
+        .mockReturnValue({ lean: mockLean });
+      model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate);
+
+      const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
+        gameName,
+        tagLine,
+      );
+      const scope = nock(url)
+        .get(() => true)
+        .reply(200, {
+          tagLine,
+          gameName,
+          puuid,
+        });
+
+      await service.updateUserWithRiotData(mockedUser, {
+        tagLine,
+        gameName,
+        server,
+      });
+
+      expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
+        mockedUser._id.toString(),
+        {
+          puuid,
+          tagLine,
+          gameName,
+          server,
+        },
+        {
+          returnDocument: 'after',
+        },
+      );
+
+      scope.done();
     });
   });
 });

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
 
 export interface IUser {
   _id: Types.ObjectId;
@@ -7,6 +8,10 @@ export interface IUser {
   email: string;
   password?: string;
   refreshToken?: string;
+  gameName?: string;
+  tagLine?: string;
+  server?: RIOT_SERVERS;
+  puuid?: string;
 }
 
 export type IUserWithPassword = IUser & { password: string };
@@ -39,8 +44,8 @@ export class User implements IUser {
   @Prop()
   tagLine: string;
 
-  // @Prop()
-  // server: string
+  @Prop()
+  server: RIOT_SERVERS;
 }
 
 export const SENSIBLE_FIELDS = ['password', 'refreshToken'];

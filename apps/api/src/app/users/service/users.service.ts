@@ -34,7 +34,7 @@ export class UsersService {
   ): Promise<IUserWithPuuid | null> {
     return this.userModel
       .findOne({ email })
-      .select('+password')
+      .select('+puuid')
       .lean<IUserWithPuuid>();
   }
 
@@ -65,9 +65,8 @@ export class UsersService {
     updatedUserInformation: Partial<UpdateUserDto>,
     queryOptions?: QueryOptions<User>,
   ) {
-    // TODO Verificar os campos de data antes do update e garantir que eles estaram em UTC
-
     const { returnDocument = 'after' } = queryOptions || {};
+    console.log('Chegou aqui');
     return this.userModel
       .findByIdAndUpdate(userId, updatedUserInformation, {
         ...queryOptions,
@@ -117,6 +116,7 @@ export class UsersService {
       puuid: accountData.puuid,
       tagLine: accountData.tagLine,
       gameName: accountData.gameName,
+      server: updateProfileDto.server,
     };
 
     return this.update(user._id.toString(), updateData);

@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { RiotApiUtilsService } from './riot-api.utils.service';
 import { ConfigModule } from '@nestjs/config';
 import nock from 'nock';
+import { RIOT_SERVERS } from '../utils/riot-api.constants';
 
 describe('RiotApiService', () => {
   let service: RiotApiService;
@@ -10004,24 +10005,20 @@ describe('RiotApiService', () => {
     utilService = module.get<RiotApiUtilsService>(RiotApiUtilsService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-  describe('getChampionsMastery', () => {
+  describe('getRiotAccount', () => {
     describe('success', () => {
-      it('should get champions masteries', async () => {
-        const puuid = faker.string.alphanumeric(78);
-        const url = utilService.buildGetChampionMasteryURL(puuid);
+      it('should get riot account info', async () => {
+        const url = utilService.buildGetAccountByRiotIdURL(gameName, tagLine);
+
         const scope = nock(url)
           .get(() => true)
-          .reply(200, getChampionsMasteriesMockedResponse);
+          .reply(200, getAccountByRiotIdMockedResponse);
 
-        const spy = jest.spyOn(service, 'getChampionsMasteries');
-        const result = await service.getChampionsMasteries(puuid);
+        const spy = jest.spyOn(service, 'getAccountByRiotId');
+        const result = await service.getAccountByRiotId(gameName, tagLine);
 
-        expect(result).toEqual(getChampionsMasteriesMockedResponse);
-        expect(spy).toHaveBeenCalledWith(puuid);
+        expect(result).toEqual(getAccountByRiotIdMockedResponse);
+        expect(spy).toHaveBeenCalledWith(gameName, tagLine);
 
         scope.done();
       });
@@ -10029,8 +10026,7 @@ describe('RiotApiService', () => {
 
     describe('with error', () => {
       it('should get a error when entry is not found', async () => {
-        const puuid = faker.string.alphanumeric(78);
-        const url = utilService.buildGetChampionMasteryURL(puuid);
+        const url = utilService.buildGetAccountByRiotIdURL(gameName, tagLine);
 
         const scope = nock(url)
           .get(() => true)
@@ -10041,9 +10037,65 @@ describe('RiotApiService', () => {
             },
           });
 
-        await expect(service.getChampionsMasteries(puuid)).rejects.toThrow(
-          'Não foi possível encontrar os dados do jogador',
+        await expect(
+          service.getAccountByRiotId(gameName, tagLine),
+        ).rejects.toThrow('Não foi possível encontrar os dados do jogador');
+
+        scope.done();
+      });
+
+      it('should get a error when calling with invalid arguments', async () => {
+        await expect(service.getAccountByRiotId('', '')).rejects.toThrow(
+          'gameName e tagLine são obrigatórios',
         );
+      });
+    });
+  });
+  describe('getChampionsMastery', () => {
+    describe('success', () => {
+      it('should get champions masteries', async () => {
+        const puuid = faker.string.alphanumeric(78);
+        const url = utilService.buildGetChampionMasteryURL(
+          puuid,
+          RIOT_SERVERS.BR1,
+        );
+        const scope = nock(url)
+          .get(() => true)
+          .reply(200, getChampionsMasteriesMockedResponse);
+
+        const spy = jest.spyOn(service, 'getChampionsMasteries');
+        const result = await service.getChampionsMasteries(
+          puuid,
+          RIOT_SERVERS.BR1,
+        );
+
+        expect(result).toEqual(getChampionsMasteriesMockedResponse);
+        expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
+
+        scope.done();
+      });
+    });
+
+    describe('with error', () => {
+      it('should get a error when entry is not found', async () => {
+        const puuid = faker.string.alphanumeric(78);
+        const url = utilService.buildGetChampionMasteryURL(
+          puuid,
+          RIOT_SERVERS.BR1,
+        );
+
+        const scope = nock(url)
+          .get(() => true)
+          .reply(404, {
+            status: {
+              message: `Not found`,
+              status_code: 404,
+            },
+          });
+
+        await expect(
+          service.getChampionsMasteries(puuid, RIOT_SERVERS.BR1),
+        ).rejects.toThrow('Não foi possível encontrar os dados do jogador');
 
         scope.done();
       });
@@ -10055,6 +10107,7 @@ describe('RiotApiService', () => {
       const url = utilService.buildGetChampionMasteryByChampionURL(
         puuid,
         championId,
+        RIOT_SERVERS.BR1,
       );
       const scope = nock(url)
         .get(() => true)
@@ -10064,10 +10117,11 @@ describe('RiotApiService', () => {
       const result = await service.getChampionsMasteriesByChampion(
         puuid,
         championId,
+        RIOT_SERVERS.BR1,
       );
 
       expect(result).toEqual(getChampionsMasteriesByChampionMockedResponse);
-      expect(spy).toHaveBeenCalledWith(puuid, championId);
+      expect(spy).toHaveBeenCalledWith(puuid, championId, RIOT_SERVERS.BR1);
 
       scope.done();
     });
@@ -10077,6 +10131,7 @@ describe('RiotApiService', () => {
         const url = utilService.buildGetChampionMasteryByChampionURL(
           puuid,
           championId,
+          RIOT_SERVERS.BR1,
         );
 
         const scope = nock(url)
@@ -10089,7 +10144,11 @@ describe('RiotApiService', () => {
           });
 
         await expect(
-          service.getChampionsMasteriesByChampion(puuid, championId),
+          service.getChampionsMasteriesByChampion(
+            puuid,
+            championId,
+            RIOT_SERVERS.BR1,
+          ),
         ).rejects.toThrow('Não foi possível encontrar os dados do jogador');
 
         scope.done();
@@ -10100,16 +10159,24 @@ describe('RiotApiService', () => {
     it('should get champion mastery by top usage', async () => {
       const puuid = faker.string.alphanumeric(78);
       const count = faker.number.int({ max: 100 });
-      const url = utilService.buildGetChampionMasteryByTopURL(puuid, count);
+      const url = utilService.buildGetChampionMasteryByTopURL(
+        puuid,
+        count,
+        RIOT_SERVERS.BR1,
+      );
       const scope = nock(url)
         .get(() => true)
         .reply(200, getChampionsMasteriesByTopMockedResponse);
 
       const spy = jest.spyOn(service, 'getChampionsMasteriesByTop');
-      const result = await service.getChampionsMasteriesByTop(puuid, count);
+      const result = await service.getChampionsMasteriesByTop(
+        puuid,
+        count,
+        RIOT_SERVERS.BR1,
+      );
 
       expect(result).toEqual(getChampionsMasteriesByTopMockedResponse);
-      expect(spy).toHaveBeenCalledWith(puuid, count);
+      expect(spy).toHaveBeenCalledWith(puuid, count, RIOT_SERVERS.BR1);
 
       scope.done();
     });
@@ -10118,7 +10185,11 @@ describe('RiotApiService', () => {
       it('should get a error when entry is not found', async () => {
         const puuid = faker.string.alphanumeric(78);
         const count = faker.number.int({ max: 100 });
-        const url = utilService.buildGetChampionMasteryByTopURL(puuid, count);
+        const url = utilService.buildGetChampionMasteryByTopURL(
+          puuid,
+          count,
+          RIOT_SERVERS.BR1,
+        );
         const scope = nock(url)
           .get(() => true)
           .reply(404, {
@@ -10129,7 +10200,7 @@ describe('RiotApiService', () => {
           });
 
         await expect(
-          service.getChampionsMasteriesByTop(puuid, count),
+          service.getChampionsMasteriesByTop(puuid, count, RIOT_SERVERS.BR1),
         ).rejects.toThrow('Não foi possível encontrar os dados do jogador');
 
         scope.done();
@@ -10139,16 +10210,16 @@ describe('RiotApiService', () => {
   describe('getRankedStatus', () => {
     it('should get ranked status', async () => {
       const puuid = faker.string.alphanumeric(78);
-      const url = utilService.buildGetRankedStatsURL(puuid);
+      const url = utilService.buildGetRankedStatsURL(puuid, RIOT_SERVERS.BR1);
       const scope = nock(url)
         .get(() => true)
         .reply(200, getRankedStatusMockedResponse);
 
       const spy = jest.spyOn(service, 'getRankedStatus');
-      const result = await service.getRankedStatus(puuid);
+      const result = await service.getRankedStatus(puuid, RIOT_SERVERS.BR1);
 
       expect(result).toEqual(getRankedStatusMockedResponse);
-      expect(spy).toHaveBeenCalledWith(puuid);
+      expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
 
       scope.done();
     });
@@ -10157,7 +10228,7 @@ describe('RiotApiService', () => {
       it('should get a error when entry is not found', async () => {
         const puuid = faker.string.alphanumeric(78);
 
-        const url = utilService.buildGetRankedStatsURL(puuid);
+        const url = utilService.buildGetRankedStatsURL(puuid, RIOT_SERVERS.BR1);
         const scope = nock(url)
           .get(() => true)
           .reply(404, {
@@ -10167,9 +10238,9 @@ describe('RiotApiService', () => {
             },
           });
 
-        await expect(service.getRankedStatus(puuid)).rejects.toThrow(
-          'Não foi possível encontrar os dados do jogador',
-        );
+        await expect(
+          service.getRankedStatus(puuid, RIOT_SERVERS.BR1),
+        ).rejects.toThrow('Não foi possível encontrar os dados do jogador');
 
         scope.done();
       });

@@ -1,12 +1,12 @@
-import { AppModule } from '../../app.module';
+import { AppModule } from '../app.module';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import cookieParser = require('cookie-parser');
 import request = require('supertest');
 import { Model } from 'mongoose';
-import { IUser, User, UserDocument } from '../../users/schema/user.schema';
+import { IUser, User, UserDocument } from '../users/schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 
 describe('AuthController e2e', () => {

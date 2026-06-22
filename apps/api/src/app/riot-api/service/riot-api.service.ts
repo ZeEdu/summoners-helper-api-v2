@@ -5,6 +5,7 @@ import { IUserWithPuuid } from '../../users/schema/user.schema';
 import { LeagueEntry } from '../interfaces/league-entry.interface';
 import { Match } from '../interfaces/match.interface';
 import { ChampionMastery } from '../interfaces/champion-mastery.interface';
+import { RIOT_SERVERS } from '../utils/riot-api.constants';
 
 @Injectable()
 export class RiotApiService {
@@ -23,7 +24,7 @@ export class RiotApiService {
     );
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Não foi possível encontrar o jogador');
+      throw new Error('Não foi possível encontrar os dados do jogador');
     }
 
     const json = await response.json();
@@ -34,8 +35,14 @@ export class RiotApiService {
     };
   }
 
-  async getChampionsMasteries(puuid: IUserWithPuuid['puuid']) {
-    const url = this.riotApiUtilsService.buildGetChampionMasteryURL(puuid);
+  async getChampionsMasteries(
+    puuid: IUserWithPuuid['puuid'],
+    server: RIOT_SERVERS,
+  ) {
+    const url = this.riotApiUtilsService.buildGetChampionMasteryURL(
+      puuid,
+      server,
+    );
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Não foi possível encontrar os dados do jogador');
@@ -48,10 +55,12 @@ export class RiotApiService {
   async getChampionsMasteriesByChampion(
     puuid: IUserWithPuuid['puuid'],
     championId: number,
+    server: RIOT_SERVERS,
   ) {
     const url = this.riotApiUtilsService.buildGetChampionMasteryByChampionURL(
       puuid,
       championId,
+      server,
     );
     const response = await fetch(url);
     if (!response.ok) {
@@ -65,10 +74,12 @@ export class RiotApiService {
   async getChampionsMasteriesByTop(
     puuid: IUserWithPuuid['puuid'],
     count: number,
+    server: RIOT_SERVERS,
   ) {
     const url = this.riotApiUtilsService.buildGetChampionMasteryByTopURL(
       puuid,
       count,
+      server,
     );
     const response = await fetch(url);
     if (!response.ok) {
@@ -81,8 +92,9 @@ export class RiotApiService {
 
   async getRankedStatus(
     puuid: IUserWithPuuid['puuid'],
+    server: RIOT_SERVERS,
   ): Promise<LeagueEntry[]> {
-    const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid);
+    const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid, server);
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Não foi possível encontrar os dados do jogador');
