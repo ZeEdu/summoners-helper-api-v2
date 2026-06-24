@@ -13,6 +13,7 @@ import {
 } from '../schema/riot-api-error-logger.schema';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MockedRiotApiServiceResponses } from '../../__fixtures__/riot-api.fixtures';
+import { RiotApiModule } from '../riot-api.module';
 
 let mongodb: MongoMemoryServer;
 
@@ -41,7 +42,6 @@ describe('RiotApiService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RiotApiService, RiotApiUtilsService],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([
@@ -49,6 +49,7 @@ describe('RiotApiService', () => {
           { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
         ]),
         ConfigModule.forRoot({ isGlobal: true }),
+        RiotApiModule,
       ],
     }).compile();
 

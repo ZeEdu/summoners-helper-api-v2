@@ -145,13 +145,7 @@ export class RiotApiService implements IRiotApiService {
       headers: JSON.stringify(response.headers),
     };
 
-    if (!isProduction) {
-      await this.riotApiErrorLoggerModel.insertOne(errorLog);
-    } else {
-      this.riotApiErrorLoggerModel.insertOne(errorLog).catch((err) => {
-        console.log('Falhou ao salvar o erro no banco de dados:', err);
-      });
-    }
+    await this.riotApiErrorLoggerModel.insertOne(errorLog);
 
     throw new ServiceUnavailableException(
       'Não foi possível buscar os dados do jogador em um provedor externo',

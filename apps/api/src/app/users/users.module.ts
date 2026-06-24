@@ -9,16 +9,15 @@ import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../riot-api/schema/riot-api-error-logger.schema';
+import { RiotApiModule } from '../riot-api/riot-api.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema },
-      { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
-    ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    RiotApiModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, RiotApiService, RiotApiUtilsService],
+  providers: [UsersService],
   exports: [UsersService],
 })
 export class UsersModule {}

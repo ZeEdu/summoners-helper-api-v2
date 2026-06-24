@@ -1,23 +1,15 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { getModelToken } from '@nestjs/mongoose';
 import cookieParser = require('cookie-parser');
-import {
-  IUser,
-  User,
-  UserDocument,
-  UserSchema,
-} from '../users/schema/user.schema';
+import { IUser, User, UserDocument } from '../users/schema/user.schema';
 import { AppModule } from '../app.module';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
 import request = require('supertest');
 import { RIOT_SERVERS } from './utils/riot-api.constants';
-import {
-  RiotApiErrorLogger,
-  RiotApiErrorLoggerSchema,
-} from './schema/riot-api-error-logger.schema';
+import { RiotApiErrorLogger } from './schema/riot-api-error-logger.schema';
 import nock from 'nock';
 import { RiotApiUtilsService } from './service/riot-api.utils.service';
 
@@ -43,12 +35,7 @@ describe('Riot API errors (e2e)', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        MongooseModule.forFeature([
-          { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
-        ]),
-      ],
+      imports: [AppModule],
     }).compile();
 
     riotApiErrorLoggerModel = module.get<Model<RiotApiErrorLogger>>(

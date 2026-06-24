@@ -1,23 +1,5 @@
 {
   "compilerOptions": {
-    // "composite": false,
-    // "declarationMap": false,
-    // "emitDeclarationOnly": false,
-    // "importHelpers": true,
-    // "isolatedModules": true,
-    // "lib": [
-    //   "es2022"
-    // ],
-    // "module": "nodenext",
-    // "moduleResolution": "nodenext",
-    // "noEmitOnError": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noImplicitOverride": true,
-    // "noImplicitReturns": true,
-    // "noUnusedLocals": true,
-    // "skipLibCheck": true,
-    // "strict": true,
-    // "target": "es2022",
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -27,18 +9,11 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "CommonJS",
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
+    "lib": ["ES2022", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {},
     "strictPropertyInitialization": false
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
