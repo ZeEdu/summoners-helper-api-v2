@@ -44,7 +44,7 @@ export class User implements IUser {
   @Prop()
   tagLine: string;
 
-  @Prop()
+  @Prop({ type: String, enum: RIOT_SERVERS })
   server: RIOT_SERVERS;
 }
 
