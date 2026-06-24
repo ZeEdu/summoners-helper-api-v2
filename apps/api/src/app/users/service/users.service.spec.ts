@@ -6,16 +6,14 @@ import { getModelToken } from '@nestjs/mongoose';
 import { faker } from '@faker-js/faker';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { TestMockUtils } from '../../test.mock.utils';
-import { RiotApiModule } from '../../riot-api/riot-api.module';
-import { ConfigModule } from '@nestjs/config';
 import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
-import nock from 'nock';
-import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import { MockedRiotApiService } from '../../__fixtures__/riot-api.fixtures';
 
 describe('UsersService', () => {
   let service: UsersService;
   let model: jest.Mocked<Model<User>>;
-  let riotApiUtilsService: RiotApiUtilsService;
+  let riotApiService: jest.Mocked<RiotApiService>;
 
   const mockedUserFields = {
     _id: new Types.ObjectId(),
@@ -52,13 +50,13 @@ describe('UsersService', () => {
       providers: [
         UsersService,
         { provide: getModelToken(User.name), useValue: mockDetailModel },
+        { provide: RiotApiService, useValue: MockedRiotApiService },
       ],
-      imports: [RiotApiModule, ConfigModule.forRoot({ isGlobal: true })],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
     model = module.get<jest.Mocked<Model<User>>>(getModelToken(User.name));
-    riotApiUtilsService = module.get<RiotApiUtilsService>(RiotApiUtilsService);
+    riotApiService = module.get<jest.Mocked<RiotApiService>>(RiotApiService);
   });
 
   describe('findOneByEmail', () => {
@@ -375,17 +373,14 @@ describe('UsersService', () => {
         .mockReturnValue({ lean: mockLean });
       model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate);
 
-      const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
-        gameName,
+      const mockedGetAccountByRiotId = jest.fn().mockResolvedValue({
         tagLine,
+        gameName,
+        puuid,
+      });
+      riotApiService.getAccountByRiotId.mockImplementationOnce(
+        mockedGetAccountByRiotId,
       );
-      const scope = nock(url)
-        .get(() => true)
-        .reply(200, {
-          tagLine,
-          gameName,
-          puuid,
-        });
 
       await service.updateUserWithRiotData(mockedUser, {
         tagLine,
@@ -405,8 +400,6 @@ describe('UsersService', () => {
           returnDocument: 'after',
         },
       );
-
-      scope.done();
     });
   });
 });

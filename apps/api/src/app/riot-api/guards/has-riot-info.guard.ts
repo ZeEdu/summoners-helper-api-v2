@@ -11,6 +11,6 @@ export class HasRiotInfoGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const user = request.user as IUserWithPuuid;
 
-    return !!(user.puuid && user.gameName && user.tagLine && user.server);
+    return !!(user?.puuid && user?.gameName && user?.tagLine && user?.server);
   }
 }

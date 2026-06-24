@@ -9,38 +9,22 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
 import request = require('supertest');
 import { RiotApiService } from './service/riot-api.service';
-import { MockRiotApi } from './riot-api.test.utils';
 import { RIOT_SERVERS } from './utils/riot-api.constants';
+import {
+  MockedRiotApiService,
+  MockedRiotApiServiceResponses,
+} from '../__fixtures__/riot-api.fixtures';
 
 describe('Riot API (e2e)', () => {
   let app: INestApplication;
   let userModel: Model<User>;
 
   beforeAll(async () => {
-    const mockedRiotService = {
-      getAccountByRiotId: jest
-        .fn()
-        .mockResolvedValue(MockRiotApi.getAccountByRiotId),
-      getChampionsMasteries: jest
-        .fn()
-        .mockResolvedValue(MockRiotApi.getChampionsMasteries),
-      getChampionsMasteriesByChampion: jest
-        .fn()
-        .mockResolvedValue(MockRiotApi.getChampionsMasteriesByChampion),
-      getChampionsMasteriesByTop: jest
-        .fn()
-        .mockResolvedValue(MockRiotApi.getChampionsMasteriesByTop),
-      getRankedStatus: jest.fn().mockResolvedValue(MockRiotApi.getRankedStatus),
-      getLastFiveMatches: jest
-        .fn()
-        .mockResolvedValue(MockRiotApi.getLastFiveMatches),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider(RiotApiService)
-      .useValue(mockedRiotService)
+      .useValue(MockedRiotApiService)
       .compile();
 
     userModel = module.get<Model<UserDocument>>(getModelToken(User.name));
@@ -57,6 +41,38 @@ describe('Riot API (e2e)', () => {
   afterAll(async () => {
     await app.close();
   });
+
+  const registerValidUser = async (userOverride?: IUser) => {
+    const createUserPayload: CreateUserDto = {
+      username: faker.string.alpha(16),
+      password: faker.internet.password({ prefix: '1!Ab' }),
+      email: faker.internet.email(),
+      ...userOverride,
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send(createUserPayload)
+      .expect(201);
+
+    const updateQuery = {
+      puuid: faker.string.alphanumeric(78),
+      tagLine: faker.string.alphanumeric(5),
+      gameName: faker.internet.userName(),
+      server: RIOT_SERVERS.BR1,
+    };
+
+    const updatedUser = await userModel
+      .findOneAndUpdate({ email: createUserPayload.email }, updateQuery, {
+        returnDocument: 'after',
+      })
+      .select('+puuid server');
+
+    return {
+      user: updatedUser,
+      accessToken: response.body.accessToken,
+    };
+  };
 
   describe('GET /', () => {
     describe('without accessToken', () => {
@@ -90,32 +106,6 @@ describe('Riot API (e2e)', () => {
     });
   });
 
-  const registerValidUser = async (userOverride?: IUser) => {
-    const createUserPayload: CreateUserDto = {
-      username: faker.string.alpha(16),
-      password: faker.internet.password({ prefix: '1!Ab' }),
-      email: faker.internet.email(),
-      ...userOverride,
-    };
-
-    const response = await request(app.getHttpServer())
-      .post('/auth/register')
-      .send(createUserPayload)
-      .expect(201);
-
-    await userModel.updateOne(
-      { email: createUserPayload.email },
-      {
-        puuid: faker.string.alphanumeric(78),
-        tagLine: faker.string.alphanumeric(5),
-        gameName: faker.internet.userName(),
-        server: RIOT_SERVERS.BR1,
-      },
-    );
-
-    return { user: createUserPayload, accessToken: response.body.accessToken };
-  };
-
   describe('GET /champion-masteries', () => {
     it('should get champions masteries', async () => {
       const { accessToken } = await registerValidUser();
@@ -124,10 +114,13 @@ describe('Riot API (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual(MockRiotApi.getChampionsMasteries);
+          expect(body).toEqual(
+            MockedRiotApiServiceResponses.getChampionsMasteries,
+          );
         });
     });
   });
+
   describe('GET /champion-masteries/by-champion', () => {
     it('should get champions masteries by champion', async () => {
       const { accessToken } = await registerValidUser();
@@ -136,10 +129,13 @@ describe('Riot API (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual(MockRiotApi.getChampionsMasteriesByChampion);
+          expect(body).toEqual(
+            MockedRiotApiServiceResponses.getChampionsMasteriesByChampion,
+          );
         });
     });
   });
+
   describe('GET /champion-masteries/top', () => {
     it('should get champions masteries by top', async () => {
       const { accessToken } = await registerValidUser();
@@ -148,10 +144,13 @@ describe('Riot API (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual(MockRiotApi.getChampionsMasteriesByTop);
+          expect(body).toEqual(
+            MockedRiotApiServiceResponses.getChampionsMasteriesByTop,
+          );
         });
     });
   });
+
   describe('GET /current-rank', () => {
     it('should get current user rank', async () => {
       const { accessToken } = await registerValidUser();
@@ -160,10 +159,11 @@ describe('Riot API (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual(MockRiotApi.getRankedStatus);
+          expect(body).toEqual(MockedRiotApiServiceResponses.getRankedStatus);
         });
     });
   });
+
   describe('GET /last-five-matches', () => {
     it('should get last five matches', async () => {
       const { accessToken } = await registerValidUser();
@@ -172,7 +172,9 @@ describe('Riot API (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual(MockRiotApi.getLastFiveMatches);
+          expect(body).toEqual(
+            MockedRiotApiServiceResponses.getLastFiveMatches,
+          );
         });
     });
   });

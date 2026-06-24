@@ -66,7 +66,6 @@ export class UsersService {
     queryOptions?: QueryOptions<User>,
   ) {
     const { returnDocument = 'after' } = queryOptions || {};
-    console.log('Chegou aqui');
     return this.userModel
       .findByIdAndUpdate(userId, updatedUserInformation, {
         ...queryOptions,

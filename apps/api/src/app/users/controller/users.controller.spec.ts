@@ -16,6 +16,10 @@ import { JwtModule } from '@nestjs/jwt';
 import nock from 'nock';
 import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
 import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
+import {
+  RiotApiErrorLogger,
+  RiotApiErrorLoggerSchema,
+} from '../../riot-api/schema/riot-api-error-logger.schema';
 
 let mongodb: MongoMemoryServer;
 
@@ -34,7 +38,10 @@ describe('UsersController', () => {
       providers: [UsersService, RiotApiService, RiotApiUtilsService],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        MongooseModule.forFeature([
+          { name: User.name, schema: UserSchema },
+          { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
+        ]),
         JwtModule.register({
           secret: faker.string.alphanumeric(16),
         }),
@@ -162,7 +169,9 @@ describe('UsersController', () => {
               gameName,
               server,
             }),
-          ).rejects.toThrow('Não foi possível encontrar o jogador');
+          ).rejects.toThrow(
+            'Não foi possível buscar os dados do jogador em um provedor externo',
+          );
 
           scope.done();
         });

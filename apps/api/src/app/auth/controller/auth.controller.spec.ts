@@ -11,6 +11,13 @@ import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { Response } from 'express';
 import { ConfigModule } from '@nestjs/config';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import {
+  RiotApiErrorLogger,
+  RiotApiErrorLoggerSchema,
+} from '../../riot-api/schema/riot-api-error-logger.schema';
+import { RiotApiModule } from '../../riot-api/riot-api.module';
 
 let mongodb: MongoMemoryServer;
 
@@ -44,8 +51,12 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       imports: [
+        RiotApiModule,
         MongooseModule.forRoot(mongodb.getUri()),
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        MongooseModule.forFeature([
+          { name: User.name, schema: UserSchema },
+          { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
+        ]),
         JwtModule.register({
           secret: faker.string.alphanumeric(16),
         }),

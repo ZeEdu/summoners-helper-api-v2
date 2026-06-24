@@ -12,6 +12,9 @@
   ],
   "compilerOptions": {
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@fixtures/": ["./src/app/fixtures/*"]
+    }
   }
 }

@@ -25,7 +25,7 @@ export class RiotApiUtilsService {
   }
 
   buildGetRankedStatsURL(puuid: string, server: RIOT_SERVERS) {
-    const url = `https://${server}.${this.leagueBaseURL}/entries/by-puuid/${puuid}?api_key=RGAPI-b3d4249b-be60-4625-88b2-a7dde23b934d`;
+    const url = `https://${server}.${this.leagueBaseURL}/entries/by-puuid/${puuid}`;
     if (isTest) {
       return url;
     }

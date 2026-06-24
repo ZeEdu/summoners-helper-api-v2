@@ -12,6 +12,12 @@ import * as argon2 from 'argon2';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 
 import { TestMockUtils } from '../../test.mock.utils';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import {
+  RiotApiErrorLogger,
+  RiotApiErrorLoggerSchema,
+} from '../../riot-api/schema/riot-api-error-logger.schema';
 
 let mongodb: MongoMemoryServer;
 
@@ -25,10 +31,18 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, UsersService],
+      providers: [
+        AuthService,
+        UsersService,
+        RiotApiService,
+        RiotApiUtilsService,
+      ],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        MongooseModule.forFeature([
+          { name: User.name, schema: UserSchema },
+          { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
+        ]),
         JwtModule.register({}),
         ConfigModule.forRoot({ isGlobal: true }),
       ],

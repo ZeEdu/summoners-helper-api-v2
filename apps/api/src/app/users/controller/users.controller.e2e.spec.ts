@@ -62,5 +62,10 @@ describe('Users Controller (e2e)', () => {
     await app.close();
   });
 
-  describe('GET /users', () => {});
+  describe('GET /users', () => {
+    it('should be defined', () => {
+      // Apenas um placeholder para testar a rota
+      expect(app).toBeDefined();
+    });
+  });
 });

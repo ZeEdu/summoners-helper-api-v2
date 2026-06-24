@@ -40,7 +40,7 @@ export class RiotApiController {
   }
 
   @Get('current-rank')
-  getCurrentRank(@CurrentUser() user: IUserWithPuuid) {
+  getRankedStatus(@CurrentUser() user: IUserWithPuuid) {
     return this.riotApiService.getRankedStatus(user.puuid, user.server);
   }
 
