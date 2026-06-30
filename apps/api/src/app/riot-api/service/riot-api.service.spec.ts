@@ -12,8 +12,8 @@ import {
   RiotApiErrorLoggerSchema,
 } from '../schema/riot-api-error-logger.schema';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { MockedRiotApiServiceResponses } from '../../__fixtures__/riot-api.fixtures';
 import { RiotApiModule } from '../riot-api.module';
+import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
 
 let mongodb: MongoMemoryServer;
 
@@ -115,7 +115,7 @@ describe('RiotApiService', () => {
         );
         const scope = nock(url)
           .get(() => true)
-          .reply(200, MockedRiotApiServiceResponses.getChampionsMasteries);
+          .reply(200, RiotApiFixtures.mocked.api.getChampionsMasteries);
 
         const spy = jest.spyOn(service, 'getChampionsMasteries');
         const result = await service.getChampionsMasteries(
@@ -124,7 +124,7 @@ describe('RiotApiService', () => {
         );
 
         expect(result).toEqual(
-          MockedRiotApiServiceResponses.getChampionsMasteries,
+          RiotApiFixtures.mocked.service.getChampionsMasteries,
         );
         expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
 
@@ -169,10 +169,7 @@ describe('RiotApiService', () => {
       );
       const scope = nock(url)
         .get(() => true)
-        .reply(
-          200,
-          MockedRiotApiServiceResponses.getChampionsMasteriesByChampion,
-        );
+        .reply(200, RiotApiFixtures.mocked.api.getChampionsMasteriesByChampion);
 
       const spy = jest.spyOn(service, 'getChampionsMasteriesByChampion');
       const result = await service.getChampionsMasteriesByChampion(
@@ -182,7 +179,7 @@ describe('RiotApiService', () => {
       );
 
       expect(result).toEqual(
-        MockedRiotApiServiceResponses.getChampionsMasteriesByChampion,
+        RiotApiFixtures.mocked.service.getChampionsMasteriesByChampion,
       );
       expect(spy).toHaveBeenCalledWith(puuid, championId, RIOT_SERVERS.BR1);
 
@@ -231,7 +228,7 @@ describe('RiotApiService', () => {
       );
       const scope = nock(url)
         .get(() => true)
-        .reply(200, MockedRiotApiServiceResponses.getChampionsMasteriesByTop);
+        .reply(200, RiotApiFixtures.mocked.api.getChampionsMasteriesByTop);
 
       const spy = jest.spyOn(service, 'getChampionsMasteriesByTop');
       const result = await service.getChampionsMasteriesByTop(
@@ -241,7 +238,7 @@ describe('RiotApiService', () => {
       );
 
       expect(result).toEqual(
-        MockedRiotApiServiceResponses.getChampionsMasteriesByTop,
+        RiotApiFixtures.mocked.service.getChampionsMasteriesByTop,
       );
       expect(spy).toHaveBeenCalledWith(puuid, count, RIOT_SERVERS.BR1);
 
@@ -282,12 +279,12 @@ describe('RiotApiService', () => {
       const url = utilService.buildGetRankedStatsURL(puuid, RIOT_SERVERS.BR1);
       const scope = nock(url)
         .get(() => true)
-        .reply(200, MockedRiotApiServiceResponses.getRankedStatus);
+        .reply(200, RiotApiFixtures.mocked.api.getRankedStatus);
 
       const spy = jest.spyOn(service, 'getRankedStatus');
       const result = await service.getRankedStatus(puuid, RIOT_SERVERS.BR1);
 
-      expect(result).toEqual(MockedRiotApiServiceResponses.getRankedStatus);
+      expect(result).toEqual(RiotApiFixtures.mocked.service.getRankedStatus);
       expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
 
       scope.done();
@@ -322,19 +319,32 @@ describe('RiotApiService', () => {
       const puuid = faker.string.alphanumeric(78);
 
       const matchesIds = [faker.string.alphanumeric(12)];
-      const scope = nock(
-        'https://americas.api.riotgames.com/lol/match/v5/matches',
-      )
-        .get(`/by-puuid/${puuid}/ids?start=0&count=5`)
+
+      const mockedMatchDetail = {
+        ...RiotApiFixtures.mocked.api.getLastFiveMatches[0],
+      };
+
+      mockedMatchDetail.info.participants[0] = {
+        ...mockedMatchDetail.info.participants[0],
+        puuid,
+      };
+
+      const basePath =
+        'https://americas.api.riotgames.com/lol/match/v5/matches';
+      const getMatchedIdPath = `/by-puuid/${puuid}/ids?start=0&count=5`;
+      const matchPath = `/${matchesIds[0]}`;
+
+      const scope = nock(basePath)
+        .get(getMatchedIdPath)
         .reply(200, [matchesIds])
-        .get(`/${matchesIds[0]}`)
-        .reply(200, MockedRiotApiServiceResponses.getLastFiveMatches);
+        .get(matchPath)
+        .reply(200, mockedMatchDetail);
 
       const spy = jest.spyOn(service, 'getLastFiveMatches');
       const result = await service.getLastFiveMatches(puuid);
 
       expect(result[0]).toEqual(
-        MockedRiotApiServiceResponses.getLastFiveMatches,
+        RiotApiFixtures.mocked.service.getLastFiveMatches[0],
       );
       expect(spy).toHaveBeenCalledWith(puuid);
 

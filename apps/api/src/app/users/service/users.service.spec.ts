@@ -8,7 +8,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { TestMockUtils } from '../../test.mock.utils';
 import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import { MockedRiotApiService } from '../../__fixtures__/riot-api.fixtures';
+import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -50,7 +50,10 @@ describe('UsersService', () => {
       providers: [
         UsersService,
         { provide: getModelToken(User.name), useValue: mockDetailModel },
-        { provide: RiotApiService, useValue: MockedRiotApiService },
+        {
+          provide: RiotApiService,
+          useValue: RiotApiFixtures.MockedRiotApiService,
+        },
       ],
     }).compile();
 

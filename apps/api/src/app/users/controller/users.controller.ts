@@ -1,4 +1,4 @@
-import { IUser } from '../schema/user.schema';
+import { IUser, IUserWithPuuid } from '../schema/user.schema';
 import { UsersService } from '../service/users.service';
 import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 import {
@@ -8,6 +8,7 @@ import {
 import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
+import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 
 @Controller('users')
 @UseGuards(JwtGuard)
@@ -30,5 +31,17 @@ export class UsersController {
     @Body() updateProfileDto: UpdateUserProfileDto,
   ) {
     await this.usersService.updateUserWithRiotData(user, updateProfileDto);
+  }
+
+  @Get('top-masteries')
+  @UseGuards(HasRiotInfoGuard)
+  async getTopMasteries(@CurrentUser() user: IUserWithPuuid) {
+    return this.usersService.getTopMasteries(user, 5);
+  }
+
+  @Get('last-five-matches')
+  @UseGuards(HasRiotInfoGuard)
+  async getLastFiveMatches(@CurrentUser() user: IUserWithPuuid) {
+    return this.usersService.getLastFiveMatches(user);
   }
 }

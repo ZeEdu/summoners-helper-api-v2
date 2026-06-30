@@ -8,6 +8,7 @@ import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from './schema/riot-api-error-logger.schema';
+import { DataDragonModule } from '../ddragon/data-dragon.module';
 
 @Module({
   controllers: [RiotApiController],
@@ -16,6 +17,7 @@ import {
     MongooseModule.forFeature([
       { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
     ]),
+    DataDragonModule,
   ],
   exports: [RiotApiService, RiotApiUtilsService],
 })

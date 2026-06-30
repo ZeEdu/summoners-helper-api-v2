@@ -10,13 +10,14 @@ import { HasRiotInfoGuard } from '../guards/has-riot-info.guard';
 @UseGuards(JwtGuard, HasRiotInfoGuard)
 export class RiotApiController {
   constructor(private readonly riotApiService: RiotApiService) {}
+
   @Get('champion-masteries')
-  async getChampionsMasteries(@CurrentUser() user: IUserWithPuuid) {
+  getChampionsMasteries(@CurrentUser() user: IUserWithPuuid) {
     return this.riotApiService.getChampionsMasteries(user.puuid, user.server);
   }
 
   @Get('champion-masteries/by-champion')
-  async getChampionsMasteriesByChampion(
+  getChampionsMasteriesByChampion(
     @CurrentUser() user: IUserWithPuuid,
     @Query('championId') championId: number,
   ) {
@@ -28,7 +29,7 @@ export class RiotApiController {
   }
 
   @Get('champion-masteries/top')
-  async getChampionsMasteriesByTop(
+  getChampionsMasteriesByTop(
     @CurrentUser() user: IUserWithPuuid,
     @Query('count') count: number,
   ) {

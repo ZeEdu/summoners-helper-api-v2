@@ -240,7 +240,7 @@ interface MatchChallenges {
   wardTakedownsBefore20M: number;
 }
 
-interface MatchParticipant {
+export interface MatchParticipant {
   /** Yellow crossed swords */
   allInPings: number;
   /** Green flag */

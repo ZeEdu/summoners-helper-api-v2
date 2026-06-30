@@ -1,0 +1,13 @@
+const QUEUE_TYPES_LABELS = {
+  RANKED_SOLO_5x5: 'Ranqueada Solo 5x5',
+  RANKED_FLEX_SR: 'Ranqueada Solo Flex',
+  CHERRY: 'Arena',
+};
+
+const QUEUE_TYPES = {
+  RANKED_SOLO_5x5: 'RANKED_SOLO_5x5',
+  RANKED_FLEX_SR: 'RANKED_FLEX_SR',
+  CHERRY: 'CHERRY',
+};
+
+export const QUEUE_CONSTANTS = { QUEUE_TYPES, QUEUE_TYPES_LABELS };

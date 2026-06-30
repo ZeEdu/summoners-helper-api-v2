@@ -20,6 +20,8 @@ import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
+import { DataDragonModule } from '../../ddragon/data-dragon.module';
+import { RiotApiModule } from '../../riot-api/riot-api.module';
 
 let mongodb: MongoMemoryServer;
 
@@ -35,7 +37,7 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService, RiotApiService, RiotApiUtilsService],
+      providers: [UsersService],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([
@@ -46,6 +48,8 @@ describe('UsersController', () => {
           secret: faker.string.alphanumeric(16),
         }),
         ConfigModule.forRoot({ isGlobal: true }),
+        DataDragonModule,
+        RiotApiModule,
       ],
       controllers: [UsersController],
     }).compile();

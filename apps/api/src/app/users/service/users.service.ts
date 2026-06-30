@@ -120,4 +120,27 @@ export class UsersService {
 
     return this.update(user._id.toString(), updateData);
   }
+
+  async getTopMasteries(user: IUserWithPuuid, count: number) {
+    return this.riotApiService.getChampionsMasteriesByTop(
+      user.puuid,
+      count,
+      user.server,
+    );
+  }
+
+  async getLastFiveMatches(user: IUser & { puuid: string }) {
+    const matches = await this.riotApiService.getLastFiveMatches(user.puuid);
+    console.log({ matches });
+    // Queue
+    // Match Time
+    // Result
+    // champion
+    // runes
+    // Items
+    // K/D/A
+    const matchInfo = {};
+
+    return Promise.resolve(undefined);
+  }
 }

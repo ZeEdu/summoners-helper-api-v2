@@ -10,10 +10,7 @@ import { faker } from '@faker-js/faker';
 import request = require('supertest');
 import { RiotApiService } from './service/riot-api.service';
 import { RIOT_SERVERS } from './utils/riot-api.constants';
-import {
-  MockedRiotApiService,
-  MockedRiotApiServiceResponses,
-} from '../__fixtures__/riot-api.fixtures';
+import { RiotApiFixtures } from '../__fixtures__/riot-api.fixtures';
 
 describe('Riot API (e2e)', () => {
   let app: INestApplication;
@@ -24,7 +21,7 @@ describe('Riot API (e2e)', () => {
       imports: [AppModule],
     })
       .overrideProvider(RiotApiService)
-      .useValue(MockedRiotApiService)
+      .useValue(RiotApiFixtures.MockedRiotApiService)
       .compile();
 
     userModel = module.get<Model<UserDocument>>(getModelToken(User.name));
@@ -115,7 +112,7 @@ describe('Riot API (e2e)', () => {
         .expect(200)
         .expect(({ body }) => {
           expect(body).toEqual(
-            MockedRiotApiServiceResponses.getChampionsMasteries,
+            RiotApiFixtures.mocked.service.getChampionsMasteries,
           );
         });
     });
@@ -130,7 +127,7 @@ describe('Riot API (e2e)', () => {
         .expect(200)
         .expect(({ body }) => {
           expect(body).toEqual(
-            MockedRiotApiServiceResponses.getChampionsMasteriesByChampion,
+            RiotApiFixtures.mocked.service.getChampionsMasteriesByChampion,
           );
         });
     });
@@ -145,7 +142,7 @@ describe('Riot API (e2e)', () => {
         .expect(200)
         .expect(({ body }) => {
           expect(body).toEqual(
-            MockedRiotApiServiceResponses.getChampionsMasteriesByTop,
+            RiotApiFixtures.mocked.service.getChampionsMasteriesByTop,
           );
         });
     });
@@ -159,7 +156,7 @@ describe('Riot API (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual(MockedRiotApiServiceResponses.getRankedStatus);
+          expect(body).toEqual(RiotApiFixtures.mocked.service.getRankedStatus);
         });
     });
   });
@@ -172,9 +169,10 @@ describe('Riot API (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual(
-            MockedRiotApiServiceResponses.getLastFiveMatches,
-          );
+          const stringifiedMockedResponse = JSON.parse(
+            JSON.stringify(RiotApiFixtures.mocked.service.getLastFiveMatches),
+          ); // O Nestjs chama o JSON.stringify na responsta o que torna o valores `undefined` em `null`
+          expect(body).toEqual(stringifiedMockedResponse);
         });
     });
   });

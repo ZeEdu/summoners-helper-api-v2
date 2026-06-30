@@ -14,11 +14,9 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 jest.mock('../service/riot-api.service');
 import { RiotApiService } from '../service/riot-api.service';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
-import {
-  MockedRiotApiService,
-  MockedRiotApiServiceResponses,
-} from '../../__fixtures__/riot-api.fixtures';
+
 import { RIOT_SERVERS } from '../utils/riot-api.constants';
+import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
 
 let mongodb: MongoMemoryServer;
 
@@ -54,7 +52,10 @@ describe('RiotApiController', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: RiotApiService, useValue: MockedRiotApiService },
+        {
+          provide: RiotApiService,
+          useValue: RiotApiFixtures.MockedRiotApiService,
+        },
       ],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
@@ -84,7 +85,7 @@ describe('RiotApiController', () => {
     it('should get champions masteries', async () => {
       const result = await controller.getChampionsMasteries(user);
       expect(result).toEqual(
-        MockedRiotApiServiceResponses.getChampionsMasteries,
+        RiotApiFixtures.mocked.service.getChampionsMasteries,
       );
       expect(mockedRiotService.getChampionsMasteries).toHaveBeenCalledWith(
         user.puuid,
@@ -99,7 +100,7 @@ describe('RiotApiController', () => {
         championId,
       );
       expect(result).toEqual(
-        MockedRiotApiServiceResponses.getChampionsMasteriesByChampion,
+        RiotApiFixtures.mocked.service.getChampionsMasteriesByChampion,
       );
       expect(
         mockedRiotService.getChampionsMasteriesByChampion,
@@ -111,7 +112,7 @@ describe('RiotApiController', () => {
       const count = 5;
       const result = await controller.getChampionsMasteriesByTop(user, count);
       expect(result).toEqual(
-        MockedRiotApiServiceResponses.getChampionsMasteriesByTop,
+        RiotApiFixtures.mocked.service.getChampionsMasteriesByTop,
       );
       expect(mockedRiotService.getChampionsMasteriesByTop).toHaveBeenCalledWith(
         user.puuid,
@@ -123,7 +124,7 @@ describe('RiotApiController', () => {
   describe('getRankedStatus', () => {
     it('should get ranked status', async () => {
       const result = await controller.getRankedStatus(user);
-      expect(result).toEqual(MockedRiotApiServiceResponses.getRankedStatus);
+      expect(result).toEqual(RiotApiFixtures.mocked.service.getRankedStatus);
       expect(mockedRiotService.getRankedStatus).toHaveBeenCalledWith(
         user.puuid,
         user.server,
@@ -133,7 +134,7 @@ describe('RiotApiController', () => {
   describe('getLastFiveMatches', () => {
     it('should get user ranked status', async () => {
       const result = await controller.getLastFiveMatches(user);
-      expect(result).toEqual(MockedRiotApiServiceResponses.getLastFiveMatches);
+      expect(result).toEqual(RiotApiFixtures.mocked.service.getLastFiveMatches);
       expect(mockedRiotService.getLastFiveMatches).toHaveBeenCalledWith(
         user.puuid,
       );
