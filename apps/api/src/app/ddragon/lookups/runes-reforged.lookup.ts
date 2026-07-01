@@ -16,14 +16,6 @@ const RUNE_SLOTS = flatRunes.reduce(
   {},
 );
 
-const RUNE_SLOTS_MAP = flatRunes.reduce((previousValue, currentValue) => {
-  return {
-    ...previousValue,
-    [currentValue.id]: currentValue.key,
-    [currentValue.key]: currentValue.id,
-  };
-}, {});
-
 const MAIN_RUNES = runesJSON.reduce(
   (previousValue, currentValue) => ({
     ...previousValue,
@@ -31,16 +23,6 @@ const MAIN_RUNES = runesJSON.reduce(
   }),
   {},
 );
-
-const MAIN_RUNES_MAP = runesJSON.reduce((previousValue, currentValue) => {
-  return {
-    ...previousValue,
-    ...{
-      [currentValue.id]: currentValue.key,
-      [currentValue.key]: currentValue.id,
-    },
-  };
-}, {});
 
 function getMainRuneById(runeId: number) {
   return MAIN_RUNES[runeId];

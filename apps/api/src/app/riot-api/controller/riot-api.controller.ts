@@ -25,7 +25,7 @@ export class RiotApiController {
   @Get('champion-masteries/by-champion/:championId')
   getChampionsMasteriesByChampion(
     @CurrentUser() user: IUserWithPuuid,
-    @Param('championId') championId: number,
+    @Param('championId', ParseIntPipe) championId: number,
   ) {
     return this.riotApiService.getChampionsMasteriesByChampion(
       user.puuid,

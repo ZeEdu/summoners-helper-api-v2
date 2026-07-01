@@ -3,11 +3,16 @@ import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interfa
 import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface';
 import { Match } from '../riot-api/interfaces/match.interface';
 import { Summoner } from '../riot-api/interfaces/summoner.interface';
-import { DataDragonLookup } from './data-dragon.lookup';
+import { ChampionsLookup } from './lookups/champions.lookup';
+import { SummonersSpellLookup } from './lookups/summoner-spell.lookup';
+import { RunesLookup } from './lookups/runes-reforged.lookup';
+import { ItemsLookup } from './lookups/items.lookup';
 
 export const DataDragonTransformer = {
   transformChampionsMastery: (championMastery: ChampionMastery) => {
-    const champion = DataDragonLookup.getChampion(championMastery.championId);
+    const champion = ChampionsLookup.getChampionById(
+      championMastery.championId,
+    );
     return {
       championId: championMastery.championId,
       championLevel: championMastery.championLevel,
@@ -48,7 +53,7 @@ export const DataDragonTransformer = {
 
     const win = userFromParticipants.win;
     const championId = userFromParticipants.championId;
-    const champion = DataDragonLookup.getChampion(championId);
+    const champion = ChampionsLookup.getChampionById(championId);
     const championName = champion.name;
 
     const lane = userFromParticipants.lane;
@@ -64,7 +69,7 @@ export const DataDragonTransformer = {
       userFromParticipants.summoner2Id,
     ];
 
-    const spells = spellsIds.map(DataDragonLookup.getSummonerSpell);
+    const spells = spellsIds.map(SummonersSpellLookup.getSummonerSpellById);
 
     const mainPerksIds = {
       style: userFromParticipants.perks.styles[0].style,
@@ -74,8 +79,8 @@ export const DataDragonTransformer = {
     };
 
     const mainPerks = {
-      style: DataDragonLookup.getRune(mainPerksIds.style),
-      slots: mainPerksIds.slots.map(DataDragonLookup.getRuneSlot),
+      style: RunesLookup.getMainRuneById(mainPerksIds.style),
+      slots: mainPerksIds.slots.map(RunesLookup.getRuneSlotById),
     };
 
     const secondaryPerksIds = {
@@ -86,8 +91,8 @@ export const DataDragonTransformer = {
     };
 
     const secondaryPerks = {
-      style: DataDragonLookup.getRune(secondaryPerksIds.style),
-      slots: secondaryPerksIds.slots.map(DataDragonLookup.getRuneSlot),
+      style: RunesLookup.getMainRuneById(secondaryPerksIds.style),
+      slots: secondaryPerksIds.slots.map(RunesLookup.getRuneSlotById),
     };
 
     const itemsId = [
@@ -102,7 +107,7 @@ export const DataDragonTransformer = {
 
     const items = itemsId
       .filter((item) => item > 0)
-      .map(DataDragonLookup.getItem);
+      .map(ItemsLookup.getItemById);
 
     return {
       gameDuration,
