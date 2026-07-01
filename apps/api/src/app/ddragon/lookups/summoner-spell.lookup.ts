@@ -4,7 +4,7 @@ const summonerSpellsJSON: SummonerSpellDataDragon = require(
   `../../../assets/ddragon/summoner.json`,
 );
 
-export const SUMMONER_SPELL_MAP = Object.values(summonerSpellsJSON.data).reduce(
+const SUMMONER_SPELL_MAP = Object.values(summonerSpellsJSON.data).reduce(
   (previousValue, currentValue) => {
     return {
       ...previousValue,
