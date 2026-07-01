@@ -4,13 +4,13 @@ const championsJSON: ChampionsDataDragon = require(
   `../../../assets/ddragon/championFull.json`,
 );
 
-const CHAMPIONS_MAP: { [key: string]: string } = Object.entries(
-  championsJSON.keys,
+const CHAMPIONS_MAP: { [key: string]: string } = Object.values(
+  championsJSON.data,
 ).reduce((previousValue, champion) => {
-  const [key, value] = champion;
+  const { key, id } = champion;
   return {
     ...previousValue,
-    ...{ [key]: value, [value as string]: key },
+    ...{ [key]: id, [id]: key },
   };
 }, {});
 
