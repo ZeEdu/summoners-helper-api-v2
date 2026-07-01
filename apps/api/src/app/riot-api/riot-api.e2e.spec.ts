@@ -122,7 +122,7 @@ describe('Riot API (e2e)', () => {
     it('should get champions masteries by champion', async () => {
       const { accessToken } = await registerValidUser();
       await request(app.getHttpServer())
-        .get(`/riot-api/champion-masteries/by-champion?championId=312`)
+        .get(`/riot-api/champion-masteries/by-champion/312`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect(({ body }) => {
@@ -173,6 +173,19 @@ describe('Riot API (e2e)', () => {
             JSON.stringify(RiotApiFixtures.mocked.service.getLastFiveMatches),
           ); // O Nestjs chama o JSON.stringify na responsta o que torna o valores `undefined` em `null`
           expect(body).toEqual(stringifiedMockedResponse);
+        });
+    });
+  });
+
+  describe('GET /summoner', () => {
+    it('should get summoner', async () => {
+      const { accessToken } = await registerValidUser();
+      await request(app.getHttpServer())
+        .get(`/riot-api/summoner`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect(({ body }) => {
+          expect(body).toEqual(RiotApiFixtures.mocked.service.getSummoner);
         });
     });
   });

@@ -127,6 +127,7 @@ describe('Riot API errors (e2e)', () => {
           scope.done();
         });
       });
+
       describe('GET /champion-masteries/by-champion', () => {
         it('should log error', async () => {
           await riotApiErrorLoggerModel.deleteMany();
@@ -150,9 +151,7 @@ describe('Riot API errors (e2e)', () => {
             });
 
           await request(app.getHttpServer())
-            .get(
-              `/riot-api/champion-masteries/by-champion?championId=${championId}`,
-            )
+            .get(`/riot-api/champion-masteries/by-champion/${championId}`)
             .set('Authorization', `Bearer ${accessToken}`)
             .expect(503);
 
@@ -166,6 +165,7 @@ describe('Riot API errors (e2e)', () => {
           scope.done();
         });
       });
+
       describe('GET /champion-masteries/top', () => {
         it('should log error', async () => {
           await riotApiErrorLoggerModel.deleteMany();
@@ -202,6 +202,7 @@ describe('Riot API errors (e2e)', () => {
           scope.done();
         });
       });
+
       describe('GET /current-rank', () => {
         it('should log error', async () => {
           await riotApiErrorLoggerModel.deleteMany();
@@ -258,6 +259,42 @@ describe('Riot API errors (e2e)', () => {
 
           await request(app.getHttpServer())
             .get(`/riot-api/last-five-matches`)
+            .set('Authorization', `Bearer ${accessToken}`)
+            .expect(503);
+
+          const errorLog = await riotApiErrorLoggerModel.findOne();
+          expect(errorLog).toBeDefined();
+          expect(errorLog.statusCode).toBe(riotApiError.statusCode);
+          expect(errorLog).toHaveProperty('body');
+          expect(errorLog).toHaveProperty('headers');
+          expect(errorLog).toHaveProperty('url');
+
+          scope.done();
+        });
+      });
+
+      describe('GET /summoner', () => {
+        it('should log error', async () => {
+          await riotApiErrorLoggerModel.deleteMany();
+
+          const { user, accessToken } = await registerValidUser();
+
+          const url = riotApiUtilsService.buildGetSummonerURL(
+            user.puuid,
+            user.server,
+          );
+
+          const scope = nock(url)
+            .get(() => true)
+            .reply(riotApiError.statusCode, {
+              status: {
+                message: riotApiError.error,
+                status_code: riotApiError.statusCode,
+              },
+            });
+
+          await request(app.getHttpServer())
+            .get(`/riot-api/summoner`)
             .set('Authorization', `Bearer ${accessToken}`)
             .expect(503);
 

@@ -4,7 +4,7 @@ import { IRiotApiService } from '../riot-api/service/riot-api.service';
 import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface';
 import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface';
 import { Match } from '../riot-api/interfaces/match.interface';
-import { DataDragonService } from '../ddragon/service/data-dragon.service';
+import { DataDragonTransformer } from '../ddragon/data-dragon.transform';
 
 const userPuuid = faker.string.alphanumeric(78);
 const tagLine = faker.string.alphanumeric(5);
@@ -10013,21 +10013,22 @@ const api = {
 
 const service = {
   getAccountByRiotId,
-  getSummoner: DataDragonService.transformSummoner(api.getSummoner),
+  getSummoner: DataDragonTransformer.transformSummoner(api.getSummoner),
   getChampionsMasteries: api.getChampionsMasteries.map(
-    DataDragonService.transformChampionsMastery,
+    DataDragonTransformer.transformChampionsMastery,
   ),
-  getChampionsMasteriesByChampion: DataDragonService.transformChampionsMastery(
-    api.getChampionsMasteriesByChampion,
-  ),
+  getChampionsMasteriesByChampion:
+    DataDragonTransformer.transformChampionsMastery(
+      api.getChampionsMasteriesByChampion,
+    ),
   getChampionsMasteriesByTop: api.getChampionsMasteriesByTop.map(
-    DataDragonService.transformChampionsMastery,
+    DataDragonTransformer.transformChampionsMastery,
   ),
   getRankedStatus: api.getRankedStatus.map(
-    DataDragonService.transformRankedStatus,
+    DataDragonTransformer.transformRankedStatus,
   ),
   getLastFiveMatches: api.getLastFiveMatches.map((match) =>
-    DataDragonService.transformMatchInfo(match, userPuuid),
+    DataDragonTransformer.transformMatchInfo(match, userPuuid),
   ),
 };
 

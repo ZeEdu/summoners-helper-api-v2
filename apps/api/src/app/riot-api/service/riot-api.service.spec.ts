@@ -377,4 +377,45 @@ describe('RiotApiService', () => {
       });
     });
   });
+  describe('getSummoner', () => {
+    it('should get summoner', async () => {
+      const puuid = faker.string.alphanumeric(78);
+      const url = utilService.buildGetSummonerURL(puuid, RIOT_SERVERS.BR1);
+      const scope = nock(url)
+        .get(() => true)
+        .reply(200, RiotApiFixtures.mocked.api.getSummoner);
+
+      const spy = jest.spyOn(service, 'getSummoner');
+      const result = await service.getSummoner(puuid, RIOT_SERVERS.BR1);
+
+      expect(result).toEqual(RiotApiFixtures.mocked.service.getSummoner);
+      expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
+
+      scope.done();
+    });
+
+    describe('with error', () => {
+      it('should get a error when entry is not found', async () => {
+        const puuid = faker.string.alphanumeric(78);
+
+        const url = utilService.buildGetSummonerURL(puuid, RIOT_SERVERS.BR1);
+        const scope = nock(url)
+          .get(() => true)
+          .reply(404, {
+            status: {
+              message: `Not found`,
+              status_code: 404,
+            },
+          });
+
+        await expect(
+          service.getSummoner(puuid, RIOT_SERVERS.BR1),
+        ).rejects.toThrow(
+          'Não foi possível buscar os dados do jogador em um provedor externo',
+        );
+
+        scope.done();
+      });
+    });
+  });
 });

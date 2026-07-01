@@ -10,7 +10,6 @@ import {
   UserPaginationDto,
 } from '../user.pagination.dto';
 import { faker } from '@faker-js/faker';
-import { RiotApiService } from '../../riot-api/service/riot-api.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import nock from 'nock';
@@ -20,7 +19,6 @@ import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
-import { DataDragonModule } from '../../ddragon/data-dragon.module';
 import { RiotApiModule } from '../../riot-api/riot-api.module';
 
 let mongodb: MongoMemoryServer;
@@ -48,7 +46,6 @@ describe('UsersController', () => {
           secret: faker.string.alphanumeric(16),
         }),
         ConfigModule.forRoot({ isGlobal: true }),
-        DataDragonModule,
         RiotApiModule,
       ],
       controllers: [UsersController],

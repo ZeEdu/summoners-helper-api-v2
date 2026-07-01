@@ -1,4 +1,11 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { RiotApiService } from '../service/riot-api.service';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { IUserWithPuuid } from '../../users/schema/user.schema';
@@ -6,7 +13,6 @@ import { JwtGuard } from '../../guards/jwt.guard';
 import { HasRiotInfoGuard } from '../guards/has-riot-info.guard';
 
 @Controller('riot-api')
-// TODO Adicionar um guard para verificar se o usuário tem os dados basicos da riot vinculado
 @UseGuards(JwtGuard, HasRiotInfoGuard)
 export class RiotApiController {
   constructor(private readonly riotApiService: RiotApiService) {}
@@ -16,10 +22,10 @@ export class RiotApiController {
     return this.riotApiService.getChampionsMasteries(user.puuid, user.server);
   }
 
-  @Get('champion-masteries/by-champion')
+  @Get('champion-masteries/by-champion/:championId')
   getChampionsMasteriesByChampion(
     @CurrentUser() user: IUserWithPuuid,
-    @Query('championId') championId: number,
+    @Param('championId') championId: number,
   ) {
     return this.riotApiService.getChampionsMasteriesByChampion(
       user.puuid,
@@ -31,11 +37,11 @@ export class RiotApiController {
   @Get('champion-masteries/top')
   getChampionsMasteriesByTop(
     @CurrentUser() user: IUserWithPuuid,
-    @Query('count') count: number,
+    @Query('count', new ParseIntPipe({ optional: true })) count?: number,
   ) {
     return this.riotApiService.getChampionsMasteriesByTop(
       user.puuid,
-      count,
+      count ?? 5,
       user.server,
     );
   }
@@ -48,5 +54,10 @@ export class RiotApiController {
   @Get('last-five-matches')
   getLastFiveMatches(@CurrentUser() user: IUserWithPuuid) {
     return this.riotApiService.getLastFiveMatches(user.puuid);
+  }
+
+  @Get('summoner')
+  getSummoner(@CurrentUser() user: IUserWithPuuid) {
+    return this.riotApiService.getSummoner(user.puuid, user.server);
   }
 }

@@ -12,7 +12,6 @@ import {
 } from '../schema/riot-api-error-logger.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { DataDragonService } from '../../ddragon/service/data-dragon.service';
 import { ChampionsDataDragonDetails } from '../../ddragon/dto/champion.dto';
 import { Summoner } from '../interfaces/summoner.interface';
 import { ItemDetails } from '../../ddragon/dto/item.dto';
@@ -21,6 +20,7 @@ import {
   RunesReforgedDataDragon,
   RunesReforgedSlots,
 } from '../../ddragon/dto/runes-reforged-data.dragon';
+import { DataDragonTransformer } from '../../ddragon/data-dragon.transform';
 
 interface IChampionMasteryResponse {
   championId: ChampionMastery['championId'];
@@ -146,7 +146,7 @@ export class RiotApiService implements IRiotApiService {
     );
     const response = await fetch(url);
     const json = await this.responseHandler<ChampionMastery[]>(response);
-    return json.map(DataDragonService.transformChampionsMastery);
+    return json.map(DataDragonTransformer.transformChampionsMastery);
   }
 
   async getChampionsMasteriesByChampion(
@@ -161,7 +161,7 @@ export class RiotApiService implements IRiotApiService {
     );
     const response = await fetch(url);
     const json = await this.responseHandler<ChampionMastery>(response);
-    return DataDragonService.transformChampionsMastery(json);
+    return DataDragonTransformer.transformChampionsMastery(json);
   }
 
   async getChampionsMasteriesByTop(
@@ -177,7 +177,7 @@ export class RiotApiService implements IRiotApiService {
 
     const response = await fetch(url);
     const json = await this.responseHandler<ChampionMastery[]>(response);
-    return json.map(DataDragonService.transformChampionsMastery);
+    return json.map(DataDragonTransformer.transformChampionsMastery);
   }
 
   async getRankedStatus(
@@ -187,7 +187,7 @@ export class RiotApiService implements IRiotApiService {
     const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid, server);
     const response = await fetch(url);
     const json = await this.responseHandler<LeagueEntry[]>(response);
-    return json.map(DataDragonService.transformRankedStatus);
+    return json.map(DataDragonTransformer.transformRankedStatus);
   }
 
   async getLastFiveMatches(
@@ -201,7 +201,7 @@ export class RiotApiService implements IRiotApiService {
       const url = this.riotApiUtilsService.buildGetMatchDetailsURL(matchId);
       const response = await fetch(url);
       const json = await this.responseHandler<Match>(response);
-      return DataDragonService.transformMatchInfo(json, puuid);
+      return DataDragonTransformer.transformMatchInfo(json, puuid);
     });
 
     return Promise.all(promises);
@@ -214,7 +214,7 @@ export class RiotApiService implements IRiotApiService {
     const url = this.riotApiUtilsService.buildGetSummonerURL(puuid, server);
     const response = await fetch(url);
     const json = await this.responseHandler<Summoner>(response);
-    return DataDragonService.transformSummoner(json);
+    return DataDragonTransformer.transformSummoner(json);
   }
 
   private async responseHandler<T>(response: Response): Promise<T> {
@@ -229,7 +229,9 @@ export class RiotApiService implements IRiotApiService {
       headers: JSON.stringify(response.headers),
     };
 
-    await this.riotApiErrorLoggerModel.insertOne(errorLog);
+    await this.riotApiErrorLoggerModel.insertOne(errorLog).catch((err) => {
+      console.error('O salvamento do log de erro falhou', err);
+    });
 
     throw new ServiceUnavailableException(
       'Não foi possível buscar os dados do jogador em um provedor externo',

@@ -7,7 +7,6 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RiotApiModule } from './riot-api/riot-api.module';
-import { DataDragonModule } from './ddragon/data-dragon.module';
 
 @Module({
   imports: [
@@ -24,7 +23,6 @@ import { DataDragonModule } from './ddragon/data-dragon.module';
     AuthModule,
     UsersModule,
     RiotApiModule,
-    DataDragonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
