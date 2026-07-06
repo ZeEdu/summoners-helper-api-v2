@@ -1,10 +1,19 @@
 import { faker } from '@faker-js/faker';
 import { jest } from '@jest/globals';
-import { IRiotApiService } from '../riot-api/service/riot-api.service';
+import {
+  IChampionMasteryResponse,
+  ILastFiveMatchesResponse,
+  IRankedStatusResponse,
+  IRiotApiService,
+  ISummonerResponse,
+} from '../riot-api/service/riot-api.service';
 import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface';
 import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface';
 import { Match } from '../riot-api/interfaces/match.interface';
-import { DataDragonTransformer } from '../ddragon/data-dragon.transform';
+import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
+import { IUserWithPuuid } from '../users/schema/user.schema';
+import { RiotAccount } from '../riot-api/interfaces/riot-account.interface';
+import { RIOT_SERVERS } from '../riot-api/utils/riot-api.constants';
 
 const userPuuid = faker.string.alphanumeric(78);
 const tagLine = faker.string.alphanumeric(5);
@@ -10011,62 +10020,110 @@ const api = {
   getLastFiveMatches,
 };
 
-const service = {
-  getAccountByRiotId,
-  getSummoner: DataDragonTransformer.transformSummoner(api.getSummoner),
-  getChampionsMasteries: api.getChampionsMasteries.map(
-    DataDragonTransformer.transformChampionsMastery,
-  ),
-  getChampionsMasteriesByChampion:
-    DataDragonTransformer.transformChampionsMastery(
-      api.getChampionsMasteriesByChampion,
-    ),
-  getChampionsMasteriesByTop: api.getChampionsMasteriesByTop.map(
-    DataDragonTransformer.transformChampionsMastery,
-  ),
-  getRankedStatus: api.getRankedStatus.map(
-    DataDragonTransformer.transformRankedStatus,
-  ),
-  getLastFiveMatches: api.getLastFiveMatches.map((match) =>
-    DataDragonTransformer.transformMatchInfo(match, userPuuid),
-  ),
-};
-
 class MockedRiotApiServiceClass implements IRiotApiService {
-  getSummoner = jest
-    .fn<IRiotApiService['getSummoner']>()
-    .mockResolvedValue(service.getSummoner);
+  getSummoner: jest.MockedFunction<IRiotApiService['getSummoner']>;
+  getAccountByRiotId: jest.MockedFunction<
+    IRiotApiService['getAccountByRiotId']
+  >;
+  getChampionsMasteries: jest.MockedFunction<
+    IRiotApiService['getChampionsMasteries']
+  >;
+  getChampionsMasteriesByChampion: jest.MockedFunction<
+    IRiotApiService['getChampionsMasteriesByChampion']
+  >;
+  getChampionsMasteriesByTop: jest.MockedFunction<
+    IRiotApiService['getChampionsMasteriesByTop']
+  >;
+  getRankedStatus: jest.MockedFunction<IRiotApiService['getRankedStatus']>;
+  getLastFiveMatches: jest.MockedFunction<
+    IRiotApiService['getLastFiveMatches']
+  >;
 
-  getAccountByRiotId = jest
-    .fn<IRiotApiService['getAccountByRiotId']>()
-    .mockResolvedValue(service.getAccountByRiotId);
+  constructor(private readonly transformer: DataDragonTransformerService) {
+    this.getSummoner = jest
+      .fn<IRiotApiService['getSummoner']>()
+      .mockResolvedValue(this.transformer.transformSummoner(api.getSummoner));
 
-  getChampionsMasteries = jest
-    .fn<IRiotApiService['getChampionsMasteries']>()
-    .mockResolvedValue(service.getChampionsMasteries);
+    this.getAccountByRiotId = jest
+      .fn<IRiotApiService['getAccountByRiotId']>()
+      .mockResolvedValue(getAccountByRiotId);
 
-  getChampionsMasteriesByChampion = jest
-    .fn<IRiotApiService['getChampionsMasteriesByChampion']>()
-    .mockResolvedValue(service.getChampionsMasteriesByChampion);
+    this.getChampionsMasteries = jest
+      .fn<IRiotApiService['getChampionsMasteries']>()
+      .mockResolvedValue(
+        api.getChampionsMasteries.map(
+          this.transformer.transformChampionsMastery,
+        ),
+      );
 
-  getChampionsMasteriesByTop = jest
-    .fn<IRiotApiService['getChampionsMasteriesByTop']>()
-    .mockResolvedValue(service.getChampionsMasteriesByTop);
+    this.getChampionsMasteriesByChampion = jest
+      .fn<IRiotApiService['getChampionsMasteriesByChampion']>()
+      .mockResolvedValue(
+        this.transformer.transformChampionsMastery(
+          api.getChampionsMasteriesByChampion,
+        ),
+      );
 
-  getRankedStatus = jest
-    .fn<IRiotApiService['getRankedStatus']>()
-    .mockResolvedValue(service.getRankedStatus);
+    this.getChampionsMasteriesByTop = jest
+      .fn<IRiotApiService['getChampionsMasteriesByTop']>()
+      .mockResolvedValue(
+        api.getChampionsMasteriesByTop.map(
+          this.transformer.transformChampionsMastery,
+        ),
+      );
 
-  getLastFiveMatches = jest
-    .fn<IRiotApiService['getLastFiveMatches']>()
-    .mockResolvedValue(service.getLastFiveMatches);
+    this.getRankedStatus = jest
+      .fn<IRiotApiService['getRankedStatus']>()
+      .mockResolvedValue(
+        api.getRankedStatus.map(this.transformer.transformRankedStatus),
+      );
+
+    this.getLastFiveMatches = jest
+      .fn<IRiotApiService['getLastFiveMatches']>()
+      .mockResolvedValue(
+        api.getLastFiveMatches.map((match) =>
+          this.transformer.transformMatchInfo(match, userPuuid),
+        ),
+      );
+  }
 }
-const MockedRiotApiService = new MockedRiotApiServiceClass();
+
+export interface IExpectedRiotApiService {
+  getAccountByRiotId: RiotAccount;
+  getChampionsMasteries: IChampionMasteryResponse[];
+  getSummoner: ISummonerResponse;
+  getChampionsMasteriesByChampion: IChampionMasteryResponse;
+  getChampionsMasteriesByTop: IChampionMasteryResponse[];
+  getRankedStatus: IRankedStatusResponse[];
+  getLastFiveMatches: ILastFiveMatchesResponse[];
+}
+
+const buildExpectedRiotApiService = (
+  transformer: DataDragonTransformerService,
+): IExpectedRiotApiService => ({
+  getSummoner: transformer.transformSummoner(api.getSummoner),
+  getAccountByRiotId: getAccountByRiotId,
+  getChampionsMasteries: api.getChampionsMasteries.map(
+    transformer.transformChampionsMastery,
+  ),
+  getChampionsMasteriesByChampion: transformer.transformChampionsMastery(
+    api.getChampionsMasteriesByChampion,
+  ),
+  getChampionsMasteriesByTop: api.getChampionsMasteriesByTop.map(
+    transformer.transformChampionsMastery,
+  ),
+  getRankedStatus: api.getRankedStatus.map(transformer.transformRankedStatus),
+  getLastFiveMatches: api.getLastFiveMatches.map((match) =>
+    transformer.transformMatchInfo(match, userPuuid),
+  ),
+});
 
 export const RiotApiFixtures = {
-  MockedRiotApiService,
+  createMockedRiotApiService: (transformer: DataDragonTransformerService) => {
+    return new MockedRiotApiServiceClass(transformer);
+  },
+  buildExpectedRiotApiService,
   mocked: {
     api,
-    service,
   },
 };

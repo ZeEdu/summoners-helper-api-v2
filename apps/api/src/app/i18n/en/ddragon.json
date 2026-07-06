@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "matchInfo": {
+      "participantNotFound": "Participant with PUUID {puuid} was not found in the match"
+    }
+  }
+}

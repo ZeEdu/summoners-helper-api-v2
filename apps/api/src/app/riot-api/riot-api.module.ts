@@ -7,15 +7,20 @@ import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from './schema/riot-api-error-logger.schema';
+import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
 
 @Module({
   controllers: [RiotApiController],
-  providers: [RiotApiService, RiotApiUtilsService],
+  providers: [
+    RiotApiService,
+    RiotApiUtilsService,
+    DataDragonTransformerService,
+  ],
   imports: [
     MongooseModule.forFeature([
       { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
     ]),
   ],
-  exports: [RiotApiService, RiotApiUtilsService],
+  exports: [RiotApiService, RiotApiUtilsService, DataDragonTransformerService],
 })
 export class RiotApiModule {}

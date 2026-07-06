@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "gameNameOrTagLineIsRequired": "gameName e tagLine são obrigatórios",
+    "serviceUnavailableException": "Não foi possível buscar os dados do jogador em um provedor externo"
+  }
+}

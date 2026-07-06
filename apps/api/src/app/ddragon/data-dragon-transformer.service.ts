@@ -7,9 +7,17 @@ import { ChampionsLookup } from './lookups/champions.lookup';
 import { SummonersSpellLookup } from './lookups/summoner-spell.lookup';
 import { RunesLookup } from './lookups/runes-reforged.lookup';
 import { ItemsLookup } from './lookups/items.lookup';
+import { Injectable } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
+import { IChampionMasteryResponse } from '../riot-api/service/riot-api.service';
 
-export const DataDragonTransformer = {
-  transformChampionsMastery: (championMastery: ChampionMastery) => {
+@Injectable()
+export class DataDragonTransformerService {
+  constructor(private i18n: I18nService) {}
+
+  transformChampionsMastery(
+    championMastery: ChampionMastery,
+  ): IChampionMasteryResponse {
     const champion = ChampionsLookup.getChampionById(
       championMastery.championId,
     );
@@ -24,8 +32,8 @@ export const DataDragonTransformer = {
         championMastery.championPointsUntilNextLevel,
       champion: champion.name,
     };
-  },
-  transformRankedStatus: (entry: LeagueEntry) => {
+  }
+  transformRankedStatus(entry: LeagueEntry) {
     return {
       queueType: entry.queueType,
       tier: entry.tier,
@@ -35,8 +43,28 @@ export const DataDragonTransformer = {
       losses: entry.losses,
       hotStreak: entry.hotStreak,
     };
-  },
-  transformMatchInfo: (match: Match, puuid: IUserWithPuuid['puuid']) => {
+  }
+  transformMatchInfo(
+    match: Match,
+    puuid: IUserWithPuuid['puuid'],
+  ): {
+    gameDuration: number;
+    gameMode;
+    gameType;
+    kills;
+    deaths;
+    assists;
+    win;
+    championId;
+    championName;
+    teamPosition;
+    lane;
+    role;
+    items;
+    spells;
+    mainPerks;
+    secondaryPerks;
+  } {
     const gameDuration = match.info.gameDuration;
     const gameMode = match.info.gameMode;
     const gameType = match.info.gameType;
@@ -47,7 +75,9 @@ export const DataDragonTransformer = {
 
     if (!userFromParticipants) {
       throw new Error(
-        `Participante com puuid ${puuid} não encontrado na partida`,
+        this.i18n.t('ddragon.errors.matchInfo.participantNotFound', {
+          args: { puuid },
+        }),
       );
     }
 
@@ -127,12 +157,16 @@ export const DataDragonTransformer = {
       mainPerks,
       secondaryPerks,
     };
-  },
-  transformSummoner: (summoner: Summoner) => {
+  }
+  transformSummoner(summoner: Summoner): {
+    profileIconId: Summoner['profileIconId'];
+    revisionDate: Summoner['revisionDate'];
+    summonerLevel: Summoner['summonerLevel'];
+  } {
     return {
       profileIconId: summoner.profileIconId,
       revisionDate: summoner.revisionDate,
       summonerLevel: summoner.summonerLevel,
     };
-  },
-};
+  }
+}

@@ -7,6 +7,8 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RiotApiModule } from './riot-api/riot-api.module';
+import { I18nModule } from 'nestjs-i18n';
+import { I18N } from './i18n.config';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { RiotApiModule } from './riot-api/riot-api.module';
       isGlobal: true,
       envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
     }),
+    I18nModule.forRoot(I18N.config),
     AuthModule,
     UsersModule,
     RiotApiModule,

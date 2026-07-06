@@ -11,19 +11,20 @@ import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { Response } from 'express';
 import { ConfigModule } from '@nestjs/config';
-import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
 import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
 import { RiotApiModule } from '../../riot-api/riot-api.module';
+import { I18nModule, I18nService } from 'nestjs-i18n';
+import { I18N } from '../../i18n.config';
 
 let mongodb: MongoMemoryServer;
 
 describe('AuthController', () => {
   let controller: AuthController;
   let userModel: Model<User>;
+  let i18nService: I18nService;
 
   const getMockedResponse = () => {
     return {
@@ -61,12 +62,14 @@ describe('AuthController', () => {
           secret: faker.string.alphanumeric(16),
         }),
         ConfigModule.forRoot({ isGlobal: true }),
+        I18nModule.forRoot(I18N.config),
       ],
       providers: [UsersService, AuthService],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
     userModel = module.get<Model<User>>(getModelToken(User.name));
+    i18nService = module.get<I18nService>(I18nService);
   });
 
   describe('register', () => {
@@ -110,12 +113,15 @@ describe('AuthController', () => {
         };
 
         // Tenta criar um usuário com o email repetido
+        const expectedErrorMessage = i18nService.t(
+          'auth.errors.register.emailInUse',
+        );
         await expect(
           controller.register(
             alreadyInUseEmailPayload,
             getTypedMockedResponse(),
           ),
-        ).rejects.toThrow('Email já está sendo utilizado');
+        ).rejects.toThrow(expectedErrorMessage);
       });
 
       it('username already used', async () => {
@@ -136,33 +142,17 @@ describe('AuthController', () => {
         };
 
         // Tenta criar um usuário com o email repetido
+        const expectedErrorMessage = i18nService.t(
+          'auth.errors.register.usernameInUse',
+        );
         await expect(
           controller.register(
             alreadyInUseEmailPayload,
             getTypedMockedResponse(),
           ),
-        ).rejects.toThrow('Nome de usuário já está sendo utilizado');
+        ).rejects.toThrow(expectedErrorMessage);
       });
-
-      // it('without email', () => {
-
-      // })
-      // it('without password', () => {
-
-      // })
     });
-
-    // it('should return accessToken wrapped in an object', () => { })
-
-    // it('should propagate errors thrown by authService.register', async () => {
-    //   const createUserPayload: CreateUserDto = {
-    //     username: '112312',
-    //     password: 'asdasd',
-    //     email: 'qweqwe'
-    //   }
-
-    //   const accessToken = await controller.register(createUserPayload)
-    // })
   });
 
   describe('login', () => {
@@ -189,7 +179,6 @@ describe('AuthController', () => {
       );
 
       // Deve colocar o refreshToken nos cookies da requisição
-
       expect(accessToken).toBeDefined();
     });
   });
@@ -219,8 +208,6 @@ describe('AuthController', () => {
           email: createUserPayload.email,
         })
         .lean()) as IUser;
-
-      // TODO Deve checar se o refreshToken será removido dos cookies
 
       expect(updatedUser.refreshToken).toBeNull();
     });

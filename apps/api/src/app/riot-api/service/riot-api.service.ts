@@ -20,9 +20,10 @@ import {
   RunesReforgedDataDragon,
   RunesReforgedSlots,
 } from '../../ddragon/dto/runes-reforged-data.dragon';
-import { DataDragonTransformer } from '../../ddragon/data-dragon.transform';
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+import { I18nService } from 'nestjs-i18n';
 
-interface IChampionMasteryResponse {
+export interface IChampionMasteryResponse {
   championId: ChampionMastery['championId'];
   championLevel: ChampionMastery['championLevel'];
   championPoints: ChampionMastery['championPoints'];
@@ -32,13 +33,13 @@ interface IChampionMasteryResponse {
   champion: ChampionsDataDragonDetails['name'];
 }
 
-interface ISummonerResponse {
+export interface ISummonerResponse {
   profileIconId: number;
   revisionDate: number;
   summonerLevel: number;
 }
 
-interface ILastFiveMatchesResponse {
+export interface ILastFiveMatchesResponse {
   gameDuration: Match['info']['gameDuration'];
   gameMode: Match['info']['gameMode'];
   gameType: Match['info']['gameType'];
@@ -63,7 +64,7 @@ interface ILastFiveMatchesResponse {
   };
 }
 
-interface IRankedStatusResponse {
+export interface IRankedStatusResponse {
   queueType: LeagueEntry['queueType'];
   tier: LeagueEntry['tier'];
   rank: LeagueEntry['rank'];
@@ -117,6 +118,8 @@ export class RiotApiService implements IRiotApiService {
     @InjectModel(RiotApiErrorLogger.name)
     private riotApiErrorLoggerModel: Model<RiotApiErrorLogger>,
     private readonly riotApiUtilsService: RiotApiUtilsService,
+    private i18n: I18nService,
+    private dataDragonTransformerService: DataDragonTransformerService,
   ) {}
 
   async getAccountByRiotId(
@@ -124,7 +127,9 @@ export class RiotApiService implements IRiotApiService {
     tagLine: IUserWithPuuid['tagLine'],
   ): Promise<RiotAccount> {
     if (!gameName || !tagLine) {
-      throw new Error('gameName e tagLine são obrigatórios');
+      throw new Error(
+        this.i18n.t('riot-api.errors.gameNameOrTagLineIsRequired'),
+      );
     }
 
     const url = this.riotApiUtilsService.buildGetAccountByRiotIdURL(
@@ -146,7 +151,9 @@ export class RiotApiService implements IRiotApiService {
     );
     const response = await fetch(url);
     const json = await this.responseHandler<ChampionMastery[]>(response);
-    return json.map(DataDragonTransformer.transformChampionsMastery);
+    return json.map(
+      this.dataDragonTransformerService.transformChampionsMastery,
+    );
   }
 
   async getChampionsMasteriesByChampion(
@@ -161,7 +168,7 @@ export class RiotApiService implements IRiotApiService {
     );
     const response = await fetch(url);
     const json = await this.responseHandler<ChampionMastery>(response);
-    return DataDragonTransformer.transformChampionsMastery(json);
+    return this.dataDragonTransformerService.transformChampionsMastery(json);
   }
 
   async getChampionsMasteriesByTop(
@@ -177,7 +184,9 @@ export class RiotApiService implements IRiotApiService {
 
     const response = await fetch(url);
     const json = await this.responseHandler<ChampionMastery[]>(response);
-    return json.map(DataDragonTransformer.transformChampionsMastery);
+    return json.map(
+      this.dataDragonTransformerService.transformChampionsMastery,
+    );
   }
 
   async getRankedStatus(
@@ -187,7 +196,7 @@ export class RiotApiService implements IRiotApiService {
     const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid, server);
     const response = await fetch(url);
     const json = await this.responseHandler<LeagueEntry[]>(response);
-    return json.map(DataDragonTransformer.transformRankedStatus);
+    return json.map(this.dataDragonTransformerService.transformRankedStatus);
   }
 
   async getLastFiveMatches(
@@ -201,7 +210,7 @@ export class RiotApiService implements IRiotApiService {
       const url = this.riotApiUtilsService.buildGetMatchDetailsURL(matchId);
       const response = await fetch(url);
       const json = await this.responseHandler<Match>(response);
-      return DataDragonTransformer.transformMatchInfo(json, puuid);
+      return this.dataDragonTransformerService.transformMatchInfo(json, puuid);
     });
 
     return Promise.all(promises);
@@ -214,7 +223,7 @@ export class RiotApiService implements IRiotApiService {
     const url = this.riotApiUtilsService.buildGetSummonerURL(puuid, server);
     const response = await fetch(url);
     const json = await this.responseHandler<Summoner>(response);
-    return DataDragonTransformer.transformSummoner(json);
+    return this.dataDragonTransformerService.transformSummoner(json);
   }
 
   private async responseHandler<T>(response: Response): Promise<T> {
@@ -234,7 +243,7 @@ export class RiotApiService implements IRiotApiService {
     });
 
     throw new ServiceUnavailableException(
-      'Não foi possível buscar os dados do jogador em um provedor externo',
+      this.i18n.t('riot-api.errors.serviceUnavailableException'),
     );
   }
 }

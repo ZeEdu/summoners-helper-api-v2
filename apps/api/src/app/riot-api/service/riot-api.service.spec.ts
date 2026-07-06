@@ -13,13 +13,21 @@ import {
 } from '../schema/riot-api-error-logger.schema';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { RiotApiModule } from '../riot-api.module';
-import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
+import {
+  IExpectedRiotApiService,
+  RiotApiFixtures,
+} from '../../__fixtures__/riot-api.fixtures';
+import { I18nModule, I18nService } from 'nestjs-i18n';
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+import { I18N } from '../../i18n.config';
 
 let mongodb: MongoMemoryServer;
 
 describe('RiotApiService', () => {
   let service: RiotApiService;
   let utilService: RiotApiUtilsService;
+  let i18nService: I18nService;
+  let buildExpectedRiotApiService: IExpectedRiotApiService;
 
   const userPuuid = faker.string.alphanumeric(78);
   const tagLine = faker.string.alphanumeric(5);
@@ -50,11 +58,21 @@ describe('RiotApiService', () => {
         ]),
         ConfigModule.forRoot({ isGlobal: true }),
         RiotApiModule,
+        I18nModule.forRoot(I18N.config),
       ],
     }).compile();
 
     service = module.get<RiotApiService>(RiotApiService);
     utilService = module.get<RiotApiUtilsService>(RiotApiUtilsService);
+    i18nService = module.get<I18nService>(I18nService);
+
+    const dDragonTransformService = module.get<DataDragonTransformerService>(
+      DataDragonTransformerService,
+    );
+
+    buildExpectedRiotApiService = RiotApiFixtures.buildExpectedRiotApiService(
+      dDragonTransformService,
+    );
   });
 
   describe('getRiotAccount', () => {
@@ -99,8 +117,11 @@ describe('RiotApiService', () => {
       });
 
       it('should get a error when calling with invalid arguments', async () => {
+        const expectedErrorMessage = i18nService.t(
+          'riot-api.errors.gameNameOrTagLineIsRequired',
+        );
         await expect(service.getAccountByRiotId('', '')).rejects.toThrow(
-          'gameName e tagLine são obrigatórios',
+          expectedErrorMessage,
         );
       });
     });
@@ -124,7 +145,7 @@ describe('RiotApiService', () => {
         );
 
         expect(result).toEqual(
-          RiotApiFixtures.mocked.service.getChampionsMasteries,
+          buildExpectedRiotApiService.getChampionsMasteries,
         );
         expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
 
@@ -149,11 +170,12 @@ describe('RiotApiService', () => {
             },
           });
 
+        const expectedErrorMessage = i18nService.t(
+          'riot-api.errors.serviceUnavailableException',
+        );
         await expect(
           service.getChampionsMasteries(puuid, RIOT_SERVERS.BR1),
-        ).rejects.toThrow(
-          'Não foi possível buscar os dados do jogador em um provedor externo',
-        );
+        ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
       });
@@ -179,7 +201,7 @@ describe('RiotApiService', () => {
       );
 
       expect(result).toEqual(
-        RiotApiFixtures.mocked.service.getChampionsMasteriesByChampion,
+        buildExpectedRiotApiService.getChampionsMasteriesByChampion,
       );
       expect(spy).toHaveBeenCalledWith(puuid, championId, RIOT_SERVERS.BR1);
 
@@ -203,15 +225,16 @@ describe('RiotApiService', () => {
             },
           });
 
+        const expectedErrorMessage = i18nService.t(
+          'riot-api.errors.serviceUnavailableException',
+        );
         await expect(
           service.getChampionsMasteriesByChampion(
             puuid,
             championId,
             RIOT_SERVERS.BR1,
           ),
-        ).rejects.toThrow(
-          'Não foi possível buscar os dados do jogador em um provedor externo',
-        );
+        ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
       });
@@ -238,7 +261,7 @@ describe('RiotApiService', () => {
       );
 
       expect(result).toEqual(
-        RiotApiFixtures.mocked.service.getChampionsMasteriesByTop,
+        buildExpectedRiotApiService.getChampionsMasteriesByTop,
       );
       expect(spy).toHaveBeenCalledWith(puuid, count, RIOT_SERVERS.BR1);
 
@@ -263,11 +286,13 @@ describe('RiotApiService', () => {
             },
           });
 
+        const expectedErrorMessage = i18nService.t(
+          'riot-api.errors.serviceUnavailableException',
+        );
+
         await expect(
           service.getChampionsMasteriesByTop(puuid, count, RIOT_SERVERS.BR1),
-        ).rejects.toThrow(
-          'Não foi possível buscar os dados do jogador em um provedor externo',
-        );
+        ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
       });
@@ -284,7 +309,7 @@ describe('RiotApiService', () => {
       const spy = jest.spyOn(service, 'getRankedStatus');
       const result = await service.getRankedStatus(puuid, RIOT_SERVERS.BR1);
 
-      expect(result).toEqual(RiotApiFixtures.mocked.service.getRankedStatus);
+      expect(result).toEqual(buildExpectedRiotApiService.getRankedStatus);
       expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
 
       scope.done();
@@ -304,11 +329,13 @@ describe('RiotApiService', () => {
             },
           });
 
+        const expectedErrorMessage = i18nService.t(
+          'riot-api.errors.serviceUnavailableException',
+        );
+
         await expect(
           service.getRankedStatus(puuid, RIOT_SERVERS.BR1),
-        ).rejects.toThrow(
-          'Não foi possível buscar os dados do jogador em um provedor externo',
-        );
+        ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
       });
@@ -344,7 +371,7 @@ describe('RiotApiService', () => {
       const result = await service.getLastFiveMatches(puuid);
 
       expect(result[0]).toEqual(
-        RiotApiFixtures.mocked.service.getLastFiveMatches[0],
+        buildExpectedRiotApiService.getLastFiveMatches[0],
       );
       expect(spy).toHaveBeenCalledWith(puuid);
 
@@ -369,8 +396,11 @@ describe('RiotApiService', () => {
             },
           });
 
+        const expectedErrorMessage = i18nService.t(
+          'riot-api.errors.serviceUnavailableException',
+        );
         await expect(service.getLastFiveMatches(puuid)).rejects.toThrow(
-          'Não foi possível buscar os dados do jogador em um provedor externo',
+          expectedErrorMessage,
         );
 
         scope.done();
@@ -388,7 +418,7 @@ describe('RiotApiService', () => {
       const spy = jest.spyOn(service, 'getSummoner');
       const result = await service.getSummoner(puuid, RIOT_SERVERS.BR1);
 
-      expect(result).toEqual(RiotApiFixtures.mocked.service.getSummoner);
+      expect(result).toEqual(buildExpectedRiotApiService.getSummoner);
       expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
 
       scope.done();
@@ -408,11 +438,12 @@ describe('RiotApiService', () => {
             },
           });
 
+        const expectedErrorMessage = i18nService.t(
+          'riot-api.errors.serviceUnavailableException',
+        );
         await expect(
           service.getSummoner(puuid, RIOT_SERVERS.BR1),
-        ).rejects.toThrow(
-          'Não foi possível buscar os dados do jogador em um provedor externo',
-        );
+        ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
       });

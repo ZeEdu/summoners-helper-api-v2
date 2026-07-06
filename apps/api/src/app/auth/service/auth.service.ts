@@ -13,6 +13,7 @@ import { randomUUID } from 'crypto';
 import { UsersService } from '../../users/service/users.service';
 import { IUser } from '../../users/schema/user.schema';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
@@ -20,17 +21,22 @@ export class AuthService {
     private readonly usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private i18n: I18nService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<IUser> {
     const user = await this.usersService.findOneByEmailWithPassword(email);
     if (!user) {
-      throw new UnauthorizedException('Email ou senha incorretos');
+      throw new UnauthorizedException(
+        this.i18n.t('auth.errors.validate.unauthorized'),
+      );
     }
 
     const isMatch = await argon2.verify(user.password, password);
     if (!isMatch) {
-      throw new UnauthorizedException('Email ou senha incorretos');
+      throw new UnauthorizedException(
+        this.i18n.t('auth.errors.validate.unauthorized'),
+      );
     }
 
     const { password: _pass, ...result } = user;
@@ -50,14 +56,18 @@ export class AuthService {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const userByEmail = await this.usersService.findOneByEmail(user.email);
     if (userByEmail) {
-      throw new ConflictException('Email já está sendo utilizado');
+      throw new ConflictException(
+        this.i18n.t('auth.errors.register.emailInUse'),
+      );
     }
 
     const userByUsername = await this.usersService.findOneByUsername(
       user.username,
     );
     if (userByUsername) {
-      throw new ConflictException('Nome de usuário já está sendo utilizado');
+      throw new ConflictException(
+        this.i18n.t('auth.errors.register.usernameInUse'),
+      );
     }
 
     const hashedPassword = await argon2.hash(user.password);
@@ -81,7 +91,9 @@ export class AuthService {
   async refreshToken(userId: string, refreshToken: string) {
     const user = await this.usersService.findOneById(userId);
     if (!user || !user.refreshToken) {
-      throw new ForbiddenException('Acesso negado');
+      throw new ForbiddenException(
+        this.i18n.t('auth.errors.refresh.forbidden'),
+      );
     }
 
     const refreshTokenMatches = await argon2.verify(
@@ -89,7 +101,9 @@ export class AuthService {
       refreshToken,
     );
     if (!refreshTokenMatches) {
-      throw new ForbiddenException('Acesso negado');
+      throw new ForbiddenException(
+        this.i18n.t('auth.errors.refresh.forbidden'),
+      );
     }
 
     const tokens = await this.getTokens(user._id.toString(), user.email);

@@ -9,6 +9,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { UsersService } from '../../users/service/users.service';
 import { IUser } from '../../users/schema/user.schema';
+import { I18nService } from 'nestjs-i18n';
 
 type RefreshTokenPayload = {
   sub: string;
@@ -25,6 +26,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   constructor(
     private configService: ConfigService,
     private usersService: UsersService,
+    private i18n: I18nService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -44,7 +46,9 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
     const user = await this.usersService.findOneByEmail(payload.email);
     if (!user) {
-      throw new UnauthorizedException('Usuário não encontrado');
+      throw new UnauthorizedException(
+        this.i18n.t('passport-strategy.errors.validate.userNotFound'),
+      );
     }
 
     // Substitui o token hasheado pelo raw que vem no cookie

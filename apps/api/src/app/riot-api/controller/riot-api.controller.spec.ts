@@ -16,7 +16,13 @@ import { RiotApiService } from '../service/riot-api.service';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 
 import { RIOT_SERVERS } from '../utils/riot-api.constants';
-import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
+import {
+  IExpectedRiotApiService,
+  RiotApiFixtures,
+} from '../../__fixtures__/riot-api.fixtures';
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+import { I18nModule } from 'nestjs-i18n';
+import { I18N } from '../../i18n.config';
 
 let mongodb: MongoMemoryServer;
 
@@ -25,6 +31,7 @@ describe('RiotApiController', () => {
   let userModel: Model<User>;
 
   let user: IUserWithPuuid;
+  let buildExpectedRiotApiService: IExpectedRiotApiService;
 
   const userDto: CreateUserDto = {
     username: faker.internet.userName(),
@@ -52,14 +59,18 @@ describe('RiotApiController', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
+        DataDragonTransformerService,
         {
           provide: RiotApiService,
-          useValue: RiotApiFixtures.MockedRiotApiService,
+          useFactory: (transformer: DataDragonTransformerService) =>
+            RiotApiFixtures.createMockedRiotApiService(transformer),
+          inject: [DataDragonTransformerService],
         },
       ],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        I18nModule.forRoot(I18N.config),
       ],
       controllers: [RiotApiController],
     }).compile();
@@ -67,6 +78,13 @@ describe('RiotApiController', () => {
     controller = module.get<RiotApiController>(RiotApiController);
     mockedRiotService = module.get<jest.Mocked<RiotApiService>>(RiotApiService);
     userModel = module.get<Model<User>>(getModelToken(User.name));
+    const dDragonTransformService = module.get<DataDragonTransformerService>(
+      DataDragonTransformerService,
+    );
+
+    buildExpectedRiotApiService = RiotApiFixtures.buildExpectedRiotApiService(
+      dDragonTransformService,
+    );
 
     await userModel.deleteMany();
 
@@ -84,9 +102,7 @@ describe('RiotApiController', () => {
   describe('getChampionsMastery', () => {
     it('should get champions masteries', async () => {
       const result = await controller.getChampionsMasteries(user);
-      expect(result).toEqual(
-        RiotApiFixtures.mocked.service.getChampionsMasteries,
-      );
+      expect(result).toEqual(buildExpectedRiotApiService.getChampionsMasteries);
       expect(mockedRiotService.getChampionsMasteries).toHaveBeenCalledWith(
         user.puuid,
         user.server,
@@ -100,7 +116,7 @@ describe('RiotApiController', () => {
         championId,
       );
       expect(result).toEqual(
-        RiotApiFixtures.mocked.service.getChampionsMasteriesByChampion,
+        buildExpectedRiotApiService.getChampionsMasteriesByChampion,
       );
       expect(
         mockedRiotService.getChampionsMasteriesByChampion,
@@ -112,7 +128,7 @@ describe('RiotApiController', () => {
       const count = 5;
       const result = await controller.getChampionsMasteriesByTop(user, count);
       expect(result).toEqual(
-        RiotApiFixtures.mocked.service.getChampionsMasteriesByTop,
+        buildExpectedRiotApiService.getChampionsMasteriesByTop,
       );
       expect(mockedRiotService.getChampionsMasteriesByTop).toHaveBeenCalledWith(
         user.puuid,
@@ -124,7 +140,7 @@ describe('RiotApiController', () => {
   describe('getRankedStatus', () => {
     it('should get ranked status', async () => {
       const result = await controller.getRankedStatus(user);
-      expect(result).toEqual(RiotApiFixtures.mocked.service.getRankedStatus);
+      expect(result).toEqual(buildExpectedRiotApiService.getRankedStatus);
       expect(mockedRiotService.getRankedStatus).toHaveBeenCalledWith(
         user.puuid,
         user.server,
@@ -134,7 +150,7 @@ describe('RiotApiController', () => {
   describe('getLastFiveMatches', () => {
     it('should get user ranked status', async () => {
       const result = await controller.getLastFiveMatches(user);
-      expect(result).toEqual(RiotApiFixtures.mocked.service.getLastFiveMatches);
+      expect(result).toEqual(buildExpectedRiotApiService.getLastFiveMatches);
       expect(mockedRiotService.getLastFiveMatches).toHaveBeenCalledWith(
         user.puuid,
       );

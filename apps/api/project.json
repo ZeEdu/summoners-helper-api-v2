@@ -10,7 +10,14 @@
       "options": {
         "command": "webpack-cli build",
         "args": ["--node-env=production"],
-        "cwd": "apps/api"
+        "cwd": "apps/api",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/api/src/i18n",
+            "output": "i18n"
+          }
+        ]
       },
       "configurations": {
         "development": {

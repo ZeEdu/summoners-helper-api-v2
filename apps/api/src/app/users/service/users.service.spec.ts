@@ -9,6 +9,9 @@ import { TestMockUtils } from '../../test.mock.utils';
 import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
 import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+import { I18nModule, I18nService } from 'nestjs-i18n';
+import { I18N } from '../../i18n.config';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -49,10 +52,19 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
+        DataDragonTransformerService,
+        {
+          provide: I18nService,
+          useValue: {
+            t: (key: string) => key,
+          },
+        },
         { provide: getModelToken(User.name), useValue: mockDetailModel },
         {
           provide: RiotApiService,
-          useValue: RiotApiFixtures.MockedRiotApiService,
+          useFactory: (transformer: DataDragonTransformerService) =>
+            RiotApiFixtures.createMockedRiotApiService(transformer),
+          inject: [DataDragonTransformerService],
         },
       ],
     }).compile();

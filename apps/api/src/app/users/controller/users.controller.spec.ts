@@ -20,6 +20,8 @@ import {
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
 import { RiotApiModule } from '../../riot-api/riot-api.module';
+import { I18nModule } from 'nestjs-i18n';
+import { I18N } from '../../i18n.config';
 
 let mongodb: MongoMemoryServer;
 
@@ -47,6 +49,7 @@ describe('UsersController', () => {
         }),
         ConfigModule.forRoot({ isGlobal: true }),
         RiotApiModule,
+        I18nModule.forRoot(I18N.config),
       ],
       controllers: [UsersController],
     }).compile();

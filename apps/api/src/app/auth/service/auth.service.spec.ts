@@ -18,12 +18,16 @@ import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
+import { I18nModule, I18nService } from 'nestjs-i18n';
+import { I18N } from '../../i18n.config';
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 
 let mongodb: MongoMemoryServer;
 
 describe('AuthService', () => {
   let service: AuthService;
   let userModel: Model<User>;
+  let i18nService: I18nService;
 
   beforeAll(async () => {
     mongodb = await MongoMemoryServer.create();
@@ -36,6 +40,7 @@ describe('AuthService', () => {
         UsersService,
         RiotApiService,
         RiotApiUtilsService,
+        DataDragonTransformerService,
       ],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
@@ -45,11 +50,13 @@ describe('AuthService', () => {
         ]),
         JwtModule.register({}),
         ConfigModule.forRoot({ isGlobal: true }),
+        I18nModule.forRoot(I18N.config),
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     userModel = module.get<Model<User>>(getModelToken(User.name));
+    i18nService = module.get<I18nService>(I18nService);
   });
 
   afterAll(async () => {
@@ -83,9 +90,12 @@ describe('AuthService', () => {
         password: hashedPassword,
       };
       await userModel.create(user);
+      const expectedErrorMessage = i18nService.t(
+        'auth.errors.validate.unauthorized',
+      );
       await expect(
         service.validateUser(faker.internet.email(), password),
-      ).rejects.toThrow('Email ou senha incorretos');
+      ).rejects.toThrow(expectedErrorMessage);
     });
     it('should throw an error if password is incorrect', async () => {
       const password = faker.internet.password();
@@ -96,9 +106,12 @@ describe('AuthService', () => {
         password: hashedPassword,
       };
       await userModel.create(user);
+      const expectedErrorMessage = i18nService.t(
+        'auth.errors.validate.unauthorized',
+      );
       await expect(
         service.validateUser(user.email, faker.internet.password()),
-      ).rejects.toThrow('Email ou senha incorretos');
+      ).rejects.toThrow(expectedErrorMessage);
     });
   });
 
@@ -161,8 +174,12 @@ describe('AuthService', () => {
         password: faker.internet.password(),
       };
 
+      const expectedErrorMessage = i18nService.t(
+        'auth.errors.register.emailInUse',
+      );
+
       await expect(service.register(invalidUser)).rejects.toThrow(
-        'Email já está sendo utilizado',
+        expectedErrorMessage,
       );
     });
 
@@ -179,9 +196,11 @@ describe('AuthService', () => {
         username: user.username,
         password: faker.internet.password(),
       };
-
+      const expectedErrorMessage = i18nService.t(
+        'auth.errors.register.usernameInUse',
+      );
       await expect(service.register(invalidUser)).rejects.toThrow(
-        'Nome de usuário já está sendo utilizado',
+        expectedErrorMessage,
       );
     });
   });
@@ -223,13 +242,16 @@ describe('AuthService', () => {
       );
       expect(refreshTokenMatch).toBe(true);
     });
-    it('should throw an error if userId is unknowed', async () => {
+    it('should throw an error if userId is unknown', async () => {
+      const expectedErrorMessage = i18nService.t(
+        'auth.errors.refresh.forbidden',
+      );
       await expect(
         service.refreshToken(
           new Types.ObjectId().toString(),
           TestMockUtils.invalidJwt(),
         ),
-      ).rejects.toThrow('Acesso negado');
+      ).rejects.toThrow(expectedErrorMessage);
     });
     it('should throw an error if argument token do not match with the stored token', async () => {
       const user: CreateUserDto = {
@@ -241,12 +263,16 @@ describe('AuthService', () => {
       await service.register(user);
 
       const storedUser = await userModel.findOne({ email: user.email });
+
+      const expectedErrorMessage = i18nService.t(
+        'auth.errors.refresh.forbidden',
+      );
       await expect(
         service.refreshToken(
           storedUser._id.toString(),
           TestMockUtils.invalidJwt(),
         ),
-      ).rejects.toThrow('Acesso negado');
+      ).rejects.toThrow(expectedErrorMessage);
     });
   });
 
