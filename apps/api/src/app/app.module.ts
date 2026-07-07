@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { RiotApiModule } from './riot-api/riot-api.module';
 import { I18nModule } from 'nestjs-i18n';
 import { I18N } from './i18n.config';
+import { GuidesModule } from './guides/guides.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { I18N } from './i18n.config';
     AuthModule,
     UsersModule,
     RiotApiModule,
+    GuidesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

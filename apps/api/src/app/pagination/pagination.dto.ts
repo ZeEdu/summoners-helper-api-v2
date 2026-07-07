@@ -12,3 +12,6 @@ export class PaginationDto {
   @Type(() => Number)
   offset?: number;
 }
+
+export const DEFAULT_LIMIT = 10;
+export const DEFAULT_OFFSET = 0;

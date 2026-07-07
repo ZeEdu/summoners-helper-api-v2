@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { PaginationDto } from '../../pagination/pagination.dto';
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
+  PaginationDto,
+} from '../../pagination/pagination.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import {
@@ -14,9 +18,6 @@ import {
 } from '../schema/user.schema';
 import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
-
-export const DEFAULT_LIMIT = 10;
-export const DEFAULT_OFFSET = 0;
 
 @Injectable()
 export class UsersService {
