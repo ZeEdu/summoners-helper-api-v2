@@ -1,8 +1,9 @@
+import { ICreateUserDto } from '@summoners-helper/shared-types';
 import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator'
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/
 
-export class CreateUserDto {
+export class CreateUserDto implements ICreateUserDto {
   @IsEmail({}, { message: 'Email deve ser válido' })
   @IsNotEmpty({ message: 'Email é obrigátorio' })
   email: string;

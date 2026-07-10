@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 
-export default function HomeScreen() {
+export function Register() {
   return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>Home - Hello World</Text>
+    <Text>Register</Text>
   </View>
 }
