@@ -1,18 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
-
-export interface IUser {
-  _id: Types.ObjectId;
-  username: string;
-  email: string;
-  password?: string;
-  refreshToken?: string;
-  gameName?: string;
-  tagLine?: string;
-  server?: RIOT_SERVERS;
-  puuid?: string;
-}
+import { IUser } from '@org/shared-types';
+import { RIOT_SERVERS } from '@org/shared-constants';
 
 export type IUserWithPassword = IUser & { password: string };
 export type IUserWithPuuid = IUser & { puuid: string };

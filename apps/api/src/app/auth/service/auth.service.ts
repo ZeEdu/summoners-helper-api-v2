@@ -11,9 +11,9 @@ import * as argon2 from 'argon2';
 import { randomUUID } from 'crypto';
 
 import { UsersService } from '../../users/service/users.service';
-import { IUser } from '../../users/schema/user.schema';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { I18nService } from 'nestjs-i18n';
+import { IUser } from '@org/shared-types';
 
 @Injectable()
 export class AuthService {

@@ -15,7 +15,8 @@
     "baseUrl": ".",
     "strictPropertyInitialization": false,
     "paths": {
-      "@summoners-helper/shared-types": ["./libs/shared-types/src/index.ts"]
+      "@org/shared-constants": ["./libs/shared-constants/src/index.ts"],
+      "@org/shared-types": ["./libs/shared-types/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

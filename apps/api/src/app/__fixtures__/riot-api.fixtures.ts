@@ -5,15 +5,13 @@ import {
   ILastFiveMatchesResponse,
   IRankedStatusResponse,
   IRiotApiService,
-  ISummonerResponse,
+  ISummonerResponse
 } from '../riot-api/service/riot-api.service';
 import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface';
 import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface';
 import { Match } from '../riot-api/interfaces/match.interface';
 import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
-import { IUserWithPuuid } from '../users/schema/user.schema';
 import { RiotAccount } from '../riot-api/interfaces/riot-account.interface';
-import { RIOT_SERVERS } from '../riot-api/utils/riot-api.constants';
 
 const userPuuid = faker.string.alphanumeric(78);
 const tagLine = faker.string.alphanumeric(5);

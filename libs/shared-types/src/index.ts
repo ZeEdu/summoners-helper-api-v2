@@ -1,2 +1,2 @@
-export * from './lib/shared-types';
-export * from './lib/auth.types'
+export * from './lib/users.types';
+export * from './lib/auth.types';

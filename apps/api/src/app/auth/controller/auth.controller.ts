@@ -14,21 +14,21 @@ import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { AuthService } from '../service/auth.service';
 import { Public } from '../../decorators/public.decorator';
 import { LocalGuard } from '../../guards/local.guard';
-import { IUser } from '../../users/schema/user.schema';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { isProduction } from '../../utils';
+import { IUser } from '@org/shared-types';
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
-  @Post('register')
+  @Post('web/register')
   @Public()
-  async register(
+  async webRegister(
     @Body() body: CreateUserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
@@ -36,6 +36,19 @@ export class AuthController {
     this.setRefreshToken(response, tokens.refreshToken);
 
     return { accessToken: tokens.accessToken };
+  }
+
+  @Post('mobile/register')
+  @Public()
+  async mobileRegister(
+    @Body() body: CreateUserDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const tokens = await this.authService.register(body);
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
   }
 
   @Post('login')

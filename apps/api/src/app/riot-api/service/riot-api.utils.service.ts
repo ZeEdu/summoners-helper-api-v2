@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { isTest } from '../../utils';
 import { ConfigService } from '@nestjs/config';
-import { RIOT_SERVERS } from '../utils/riot-api.constants';
+import { RIOT_SERVERS } from '@org/shared-constants';
 
 @Injectable()
 export class RiotApiUtilsService {

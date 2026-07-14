@@ -33,3 +33,7 @@ export enum RIOT_SERVERS_LABEL {
   TW2 = 'Taiwan',
   VN2 = 'Vietnã',
 }
+
+export function sharedTest(): string {
+  return 'shared-test';
+}

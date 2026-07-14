@@ -1,13 +1,31 @@
-import * as SecureStore from 'expo-secure-store'
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
+
+const notMobile = () => {
+  console.log({ OS: Platform.OS });
+  return Platform.OS !== 'android' && Platform.OS !== 'ios';
+};
 
 export const SecureStoreService = {
   get: async (key: string) => {
-    return SecureStore.getItemAsync(key)
+    if (notMobile()) {
+      return localStorage.getItem(key);
+    }
+    return SecureStore.getItemAsync(key);
   },
   set: async (key: string, value: any) => {
-    await SecureStore.setItemAsync(key, value)
+    if (notMobile()) {
+      localStorage.setItem(key, value);
+      console.log('set', key, value);
+      return;
+    }
+    await SecureStore.setItemAsync(key, value);
   },
   delete: async (key: string) => {
-    await SecureStore.deleteItemAsync(key)
-  }
-}
+    if (notMobile()) {
+      localStorage.removeItem(key);
+      return;
+    }
+    await SecureStore.deleteItemAsync(key);
+  },
+};

@@ -10,6 +10,9 @@ import cookieParser = require('cookie-parser');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors({ credentials: true, origin: 'http://localhost:19000' });
+
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 

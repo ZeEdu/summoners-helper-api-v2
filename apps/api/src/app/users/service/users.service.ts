@@ -10,7 +10,6 @@ import {
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import {
-  IUser,
   IUserWithPassword,
   IUserWithPuuid,
   SENSIBLE_FIELDS,
@@ -18,6 +17,8 @@ import {
 } from '../schema/user.schema';
 import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
+
+import { IUser } from '@org/shared-types';
 
 @Injectable()
 export class UsersService {

@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
+import { RIOT_SERVERS } from '@org/shared-constants';
 
 export class UpdateUserProfileDto {
   @IsString()

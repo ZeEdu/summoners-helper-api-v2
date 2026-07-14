@@ -1,4 +1,4 @@
-import { IUser, IUserWithPuuid } from '../schema/user.schema';
+import { IUserWithPuuid } from '../schema/user.schema';
 import { UsersService } from '../service/users.service';
 import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 import {
@@ -9,11 +9,12 @@ import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
+import { IUser } from '@org/shared-types';
 
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) { }
+  constructor(private usersService: UsersService) {}
 
   @Get()
   async getAllUsers(@Query() pagination: UserPaginationDto): Promise<{
@@ -26,10 +27,8 @@ export class UsersController {
   }
 
   @Get('me')
-  async getMe(
-    @CurrentUser() user: IUser,
-  ) {
-    return this.usersService.findOneById(user._id.toString())
+  async getMe(@CurrentUser() user: IUser): Promise<IUser> {
+    return this.usersService.findOneById(user._id.toString());
   }
 
   @Patch('update-profile')

@@ -7,9 +7,9 @@ import {
 import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Guide, IGuide } from '../schema/guide.schema';
-import { IUser } from '../../users/schema/user.schema';
 import { CreateGuideDto } from '../dto/create-guide.dto';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
+import { IUser } from '@org/shared-types';
 
 @Injectable()
 export class GuidesService {

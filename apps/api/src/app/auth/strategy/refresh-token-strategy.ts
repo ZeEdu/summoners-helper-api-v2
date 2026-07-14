@@ -8,8 +8,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { UsersService } from '../../users/service/users.service';
-import { IUser } from '../../users/schema/user.schema';
 import { I18nService } from 'nestjs-i18n';
+import { IUser } from '@org/shared-types';
 
 type RefreshTokenPayload = {
   sub: string;

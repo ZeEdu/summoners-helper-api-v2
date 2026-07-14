@@ -1,7 +1,15 @@
-import { ICreateUserDto } from '@summoners-helper/shared-types';
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator'
+import { ICreateUserDto } from '@org/shared-types';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
-const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/
+const passwordPattern =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/;
 
 export class CreateUserDto implements ICreateUserDto {
   @IsEmail({}, { message: 'Email deve ser válido' })
@@ -10,8 +18,12 @@ export class CreateUserDto implements ICreateUserDto {
 
   @IsString({ message: 'Formato inválido' })
   @IsNotEmpty({ message: 'Nome de usuário é obrigátorio' })
-  @MinLength(5, { message: 'O nome de usuário deve ter pelo menos 5 caracteres' })
-  @MaxLength(16, { message: 'O nome de usuário deve ter no máximo 16 caracteres' })
+  @MinLength(5, {
+    message: 'O nome de usuário deve ter pelo menos 5 caracteres',
+  })
+  @MaxLength(16, {
+    message: 'O nome de usuário deve ter no máximo 16 caracteres',
+  })
   username: string;
 
   @IsString({ message: 'Formato inválido' })

@@ -5,7 +5,6 @@ import { IUserWithPuuid } from '../../users/schema/user.schema';
 import { LeagueEntry } from '../interfaces/league-entry.interface';
 import { Match, MatchParticipant } from '../interfaces/match.interface';
 import { ChampionMastery } from '../interfaces/champion-mastery.interface';
-import { RIOT_SERVERS } from '../utils/riot-api.constants';
 import {
   IRiotApiErrorLogger,
   RiotApiErrorLogger,
@@ -22,6 +21,7 @@ import {
 } from '../../ddragon/dto/runes-reforged-data.dragon';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { I18nService } from 'nestjs-i18n';
+import { RIOT_SERVERS } from '@org/shared-constants';
 
 export interface IChampionMasteryResponse {
   championId: ChampionMastery['championId'];
