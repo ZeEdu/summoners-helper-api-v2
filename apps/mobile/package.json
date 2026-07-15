@@ -9,6 +9,7 @@
     "@expo/metro-config": "*",
     "@testing-library/react-native": "*",
     "expo": "*",
+    "expo-secure-store": "*",
     "expo-splash-screen": "*",
     "expo-status-bar": "*",
     "expo-system-ui": "*",
@@ -19,6 +20,27 @@
     "react-native": "*",
     "react-native-svg": "*",
     "react-native-svg-transformer": "*",
-    "react-native-web": "*"
-  }
+    "react-native-web": "*",
+    "@nx/eslint-plugin": "*",
+    "@expo/metro": "*",
+    "@nx/devkit": "*",
+    "@nx/eslint": "*",
+    "@nx/js": "*",
+    "@nx/react": "*",
+    "enhanced-resolve": "*",
+    "picocolors": "*",
+    "semver": "*",
+    "tsconfig-paths": "*",
+    "tslib": "*",
+    "@nx/detox": "*",
+    "@nx/rollup": "*",
+    "@react-navigation/native": "*",
+    "@react-navigation/native-stack": "*",
+    "@faker-js/faker": "*",
+    "jsonc-eslint-parser": "*",
+    "mongoose": "*",
+    "react-native-screens": "*",
+    "react-native-safe-area-context": "*"
+  },
+  "devDependencies": {}
 }
