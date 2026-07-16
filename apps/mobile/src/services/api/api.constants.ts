@@ -6,6 +6,4 @@ const ADDRESS = Platform.OS === 'web' ? 'localhost' : '10.0.2.2'
 
 const API_URL = `${PROTOCOL}://${ADDRESS}:${PORT}/api`;
 
-console.log({ API_URL });
-
 export const API_CONSTANTS = { API_URL }

@@ -3,36 +3,33 @@ import React from 'react';
 import Home from '../screens/home/Home';
 import Login from '../screens/login/Login';
 import Register from '../screens/register/Register';
-import { AuthProvider } from '../../contexts/auth';
+import { useAuthContext } from '../../contexts/auth/useAuth';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamsList = {
+  Home: undefined,
+  Login: undefined,
+  Register: undefined
+}
+
+const Stack = createNativeStackNavigator<RootStackParamsList>();
 
 export function AppNavigator() {
-  const { useAuthContext } = AuthProvider();
   const authContext = useAuthContext();
-
-  if (authContext?.user) {
-    return (
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerStyle: { backgroundColor: 'purple' },
-        }}
-      >
-        <Stack.Screen name="Home" component={Home}></Stack.Screen>
-      </Stack.Navigator>
-    );
-  }
 
   return (
     <Stack.Navigator
-      initialRouteName="Login"
       screenOptions={{
         headerStyle: { backgroundColor: 'purple' },
       }}
     >
-      <Stack.Screen name="Login" component={Login}></Stack.Screen>
-      <Stack.Screen name="Register" component={Register}></Stack.Screen>
+      {authContext.user ? (
+        <Stack.Screen name="Home" component={Home}></Stack.Screen>
+      ) : (
+        <>
+          <Stack.Screen name="Login" component={Login}></Stack.Screen>
+          <Stack.Screen name="Register" component={Register}></Stack.Screen>
+        </>
+      )}
     </Stack.Navigator>
   );
 }

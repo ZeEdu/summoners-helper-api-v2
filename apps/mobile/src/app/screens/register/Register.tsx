@@ -1,11 +1,13 @@
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { AuthProvider } from '../../../contexts/auth';
 import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { faker } from '@faker-js/faker';
+import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamsList } from '../../navigation/AppNavigator';
 
-export default function Register() {
-  const { useAuthContext } = AuthProvider();
+type Props = NativeStackScreenProps<RootStackParamsList, 'Register'>
+
+export default function Register({ navigation }: Props) {
   const authContext = useAuthContext();
 
   const [email, setEmail] = useState<string>(faker.internet.email());
@@ -14,13 +16,14 @@ export default function Register() {
     faker.internet.password({ prefix: '1!Ab' }),
   );
 
-  const navigation = useNavigation();
-
   const handleSubmit = async () => {
     const register = await authContext.register({ email, username, password });
     if (!register.success) {
-      console.log({ register });
+      // TODO tratar os erros
+      return
     }
+
+    navigation.navigate('Home')
   };
 
   const goToRegister = () => {
@@ -30,7 +33,7 @@ export default function Register() {
   return (
     <View>
       <View style={style.block}>
-        <Text>Email: </Text>
+        <Text>Email:</Text>
         <TextInput
           style={style.textInput}
           onChangeText={setEmail}
@@ -76,6 +79,6 @@ const style = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 3,
-    height: 24,
+    padding: 12,
   },
 });

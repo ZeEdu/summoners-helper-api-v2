@@ -3,16 +3,14 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { AppNavigator } from './navigation/AppNavigator';
-import { AuthProvider } from '../contexts/auth';
+import { AuthProvider } from '../contexts/auth/auth.provider';
 
 export const App = () => {
-  const { Provider } = AuthProvider();
-
   return (
     <NavigationContainer>
-      <Provider>
+      <AuthProvider>
         <AppNavigator />
-      </Provider>
+      </AuthProvider>
     </NavigationContainer>
   );
 };

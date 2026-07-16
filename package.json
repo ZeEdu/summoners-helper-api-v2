@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "start": "nx run-many --target=serve --projects=mobile,api",
-    "api-tests": "nx test api --runInBand --detectOpenHandles --skip-nx-cache"
+    "api-tests": "nx test api --runInBand --detectOpenHandles --skip-nx-cache",
+    "start-mobile": "",
+    "launch-apk": ""
   },
   "private": true,
   "devDependencies": {

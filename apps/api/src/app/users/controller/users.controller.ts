@@ -14,7 +14,7 @@ import { IUser } from '@org/shared-types';
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Get()
   async getAllUsers(@Query() pagination: UserPaginationDto): Promise<{
@@ -27,7 +27,7 @@ export class UsersController {
   }
 
   @Get('me')
-  async getMe(@CurrentUser() user: IUser): Promise<IUser> {
+  async getMe(@CurrentUser() user: IUser): Promise<IUser | null> {
     return this.usersService.findOneById(user._id.toString());
   }
 

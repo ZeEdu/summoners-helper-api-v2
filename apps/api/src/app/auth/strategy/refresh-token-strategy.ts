@@ -18,6 +18,10 @@ type RefreshTokenPayload = {
   exp: number;
 };
 
+function fromCookie(req: Request) {
+  return (req.cookies as Record<string, string>)?.refresh_token ?? null
+}
+
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
@@ -30,16 +34,28 @@ export class RefreshTokenStrategy extends PassportStrategy(
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: Request) =>
-          (req.cookies as Record<string, string>)?.refresh_token ?? null,
+        fromCookie,
+        ExtractJwt.fromBodyField('refreshToken')
       ]),
       secretOrKey: configService.getOrThrow('JWT_REFRESH_SECRET'),
       passReqToCallback: true,
     });
   }
 
+
+  getFromCookies(req: Request) {
+    return (req.cookies as Record<string, string>)?.refresh_token
+  }
+
+  getFromBody(req: Request) {
+    console.log({ body: req.body });
+    return (req.body as Record<string, string>)?.refresh_token
+  }
+
   async validate(req: Request, payload: RefreshTokenPayload): Promise<IUser> {
-    const refreshToken = (req.cookies as Record<string, string>)?.refresh_token;
+    const refreshToken = this.getFromCookies(req) || this.getFromBody(req);
+    console.log({ refreshToken });
+
     if (!refreshToken) {
       throw new ForbiddenException();
     }

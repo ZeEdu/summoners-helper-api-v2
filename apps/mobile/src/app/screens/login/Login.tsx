@@ -1,22 +1,31 @@
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { AuthProvider } from '../../../contexts/auth';
-import { useNavigation } from '@react-navigation/native';
+import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
+import { RootStackParamsList } from '../../navigation/AppNavigator';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export default function Login() {
-  const { useAuthContext } = AuthProvider();
+type Props = NativeStackScreenProps<RootStackParamsList, 'Login'>
+
+export default function Login({ navigation }: Props) {
   const authContext = useAuthContext();
   const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
-  const navigation = useNavigation();
+  const handleSubmit = async () => {
+    const login = await authContext.login({ email, password });
 
-  const handleSubmit = () => {
-    authContext.login({ email });
+    if (!login.success) {
+      return
+    }
+
+    const me = await authContext.me()
+
+    if (me) {
+      navigation.navigate('Home')
+    }
   };
 
   const goToRegister = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     navigation.navigate('Register');
   };
 
@@ -28,6 +37,14 @@ export default function Login() {
           style={style.textInput}
           onChangeText={setEmail}
           value={email}
+        ></TextInput>
+      </View>
+      <View style={style.block}>
+        <Text>Password</Text>
+        <TextInput
+          style={style.textInput}
+          onChangeText={setPassword}
+          value={password}
         ></TextInput>
       </View>
 
@@ -51,6 +68,6 @@ const style = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 3,
-    height: 24,
+    padding: 8
   },
 });
