@@ -13,19 +13,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (loginUserDto: ILoginUserDto) => {
     try {
+      await AuthTokenStorageService.delete()
+
       const response = await ApiService.Auth.login(loginUserDto)
-
-      if (!response.ok) {
-        console.log('login falhou');
-        // TODO Tratar melhor esse erro
-        // Aplicar um tratamento mais robusto no customFetch
-        throw new Error('login falhou');
-      }
-
+      // TODO Tratar melhor esse erro
+      // Aplicar um tratamento mais robusto no customFetch
       const {
         accessToken,
         refreshToken,
-      }: { accessToken: string; refreshToken: string } = await response.json();
+      }: { accessToken: string; refreshToken: string } = response;
 
       console.log({
         accessToken,
@@ -37,6 +33,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Buscar na API
       return { success: true }
     } catch (error) {
+
+      console.log('authProvider => login');
+
       console.log({ error });
       return { success: false, errors: {} };
     }
@@ -84,11 +83,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await ApiService.Users.me();
 
-      if (!response.ok) {
-        throw new Error('Request Failed');
-      }
-
-      const userFromRequest = (await response.json()) as IUser;
+      const userFromRequest = response as IUser;
       console.log({ userFromRequest });
       setUser(userFromRequest)
 

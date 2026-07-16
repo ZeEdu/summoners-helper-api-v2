@@ -22,7 +22,7 @@ export const Users = {
     };
     // No momento vai falhar pois precisa do refresh token na requisição
     // É necessário configurar corretamente para que o fetch o utilize
-    return fetch(url, init)
+    return customFetch(url, init)
   },
 
   users: async () => {
@@ -42,7 +42,7 @@ export const Users = {
     };
     // No momento vai falhar pois precisa do refresh token na requisição
     // É necessário configurar corretamente para que o fetch o utilize
-    return fetch(url, init)
+    return customFetch(url, init)
   }
 };
 

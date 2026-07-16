@@ -1,6 +1,7 @@
 import { ICreateUserDto, ILoginUserDto } from '@org/shared-types';
 import { API_CONSTANTS } from './api.constants';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
+import { customFetch } from '../../customFetch';
 
 const AUTH_ENDPOINT = 'auth';
 
@@ -15,7 +16,7 @@ export const Auth = {
       },
       body: JSON.stringify(loginUserDto),
     };
-    return fetch(url, init);
+    return customFetch(url, init);
   },
   logout: () => { },
   register: async (createUserDto: ICreateUserDto) => {
@@ -28,7 +29,7 @@ export const Auth = {
       },
       body: JSON.stringify(createUserDto),
     };
-    return fetch(url, init);
+    return customFetch(url, init);
   },
   refreshToken: async () => {
     const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/refresh`;
@@ -46,6 +47,13 @@ export const Auth = {
       },
       body: JSON.stringify({ refreshToken: tokens.refreshToken }),
     };
-    return fetch(url, init);
+    const response = await fetch(url, init); // Deve utilizar o fetch por questão de segurança
+    if (!response.ok) {
+      // refresh falhou de verdade: desloga o usuário
+      await AuthTokenStorageService.delete();
+      throw new Error('Failed to refresh token');
+    }
+
+    return response;
   },
 };

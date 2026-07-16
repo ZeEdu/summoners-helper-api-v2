@@ -1,5 +1,5 @@
-import { Button, Text, View } from 'react-native';
-import React from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
 import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../../navigation/AppNavigator';
@@ -9,10 +9,11 @@ type Props = NativeStackScreenProps<RootStackParamsList, 'Home'>
 
 export default function Home({ navigation }: Props) {
   const authContext = useAuthContext();
+  const [canCall, setCanCall] = useState(false)
 
   const handleLogout = () => {
     authContext.logout();
-    navigation.navigate("Login")
+    // navigation.navigate("Login")
   };
 
   if (!authContext.user) {
@@ -22,9 +23,13 @@ export default function Home({ navigation }: Props) {
 
   const handleGetUsers = async () => {
     const response = await ApiService.Users.users()
-    const json = response.json()
-    console.log({ json });
+    console.log({ response });
   }
+
+  setTimeout(() => {
+    console.log('Deu o tempo');
+    setCanCall(true)
+  }, 5_000);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -32,10 +37,22 @@ export default function Home({ navigation }: Props) {
       <View>
         <Text>Email: {authContext.user.email}</Text>
         <Text>Username: {authContext.user.username}</Text>
-
       </View>
-      <Button title="Log out" onPress={handleLogout}></Button>
-      <Button title="Buscar dados" onPress={handleGetUsers}></Button>
+      <View style={styles.buttonsWrapper}>
+        <Button title="Deslogar" onPress={handleLogout}></Button>
+        {canCall && <Button title="Buscar dados" onPress={handleGetUsers}></Button>}
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  buttonsWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5
+  },
+  buttons: {
+    // flex: 1
+  }
+})

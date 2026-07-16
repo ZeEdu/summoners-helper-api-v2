@@ -13,19 +13,13 @@ export default function Login({ navigation }: Props) {
 
   const handleSubmit = async () => {
     const login = await authContext.login({ email, password });
-
-    console.log({ login });
-
     if (!login.success) {
       return
     }
 
     const me = await authContext.me()
-    console.log({ me });
-
-
     if (me) {
-      navigation.navigate('Home')
+      // navigation.navigate('Home')
     }
   };
 

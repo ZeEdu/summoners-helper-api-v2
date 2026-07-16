@@ -21,15 +21,18 @@ export function AppNavigator() {
   // Se tiver
   // Preencher o estado de authContext com ele
 
-  useEffect(() => {
-    async function checkStoredTokens() {
-      const tokens = await AuthTokenStorageService.get()
-      if (tokens.accessToken) {
-        await authContext.me()
-      }
-    }
-    checkStoredTokens()
-  }, [])
+  // useEffect(() => {
+  //   async function checkStoredTokens() {
+  //     const tokens = await AuthTokenStorageService.get()
+  //     if (tokens.accessToken) {
+  //       await authContext.me()
+
+  //       console.log({ 'authContext.user': authContext.user });
+
+  //     }
+  //   }
+  //   checkStoredTokens()
+  // }, [])
 
 
   return (

@@ -87,7 +87,7 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
-  @Get('web/refresh')
+  @Post('web/refresh')
   async webRefreshToken(
     @CurrentUser() user: IUser,
     @Res({ passthrough: true }) response: Response,
@@ -107,7 +107,7 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
-  @Get('mobile/refresh')
+  @Post('mobile/refresh')
   async mobileRefreshToken(
     @CurrentUser() user: IUser
   ): Promise<{

@@ -49,7 +49,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
   getFromBody(req: Request) {
     console.log({ body: req.body });
-    return (req.body as Record<string, string>)?.refresh_token
+    return (req.body as Record<string, string>)?.refreshToken
   }
 
   async validate(req: Request, payload: RefreshTokenPayload): Promise<IUser> {
