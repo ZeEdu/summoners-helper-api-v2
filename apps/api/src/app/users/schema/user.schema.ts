@@ -21,7 +21,7 @@ export class User implements IUser {
   @Prop({ required: true, select: false })
   password: string;
 
-  @Prop()
+  @Prop() //TODO Aplicar o { select: false } nesse campo
   refreshToken: string;
 
   @Prop({ select: false })

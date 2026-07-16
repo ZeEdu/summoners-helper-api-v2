@@ -1,11 +1,11 @@
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
 import { faker } from '@faker-js/faker';
-import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../../navigation/AppNavigator';
+import { useAuthContext } from '../../../contexts/auth/useAuth';
 
-type Props = NativeStackScreenProps<RootStackParamsList, 'Register'>
+type Props = NativeStackScreenProps<RootStackParamsList, 'Register'>;
 
 export default function Register({ navigation }: Props) {
   const authContext = useAuthContext();
@@ -20,10 +20,10 @@ export default function Register({ navigation }: Props) {
     const register = await authContext.register({ email, username, password });
     if (!register.success) {
       // TODO tratar os erros
-      return
+      return;
     }
 
-    navigation.navigate('Home')
+    navigation.navigate('Home');
   };
 
   const goToRegister = () => {

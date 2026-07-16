@@ -16,12 +16,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await ApiService.Auth.login(loginUserDto)
 
       if (!response.ok) {
+        console.log('login falhou');
         // TODO Tratar melhor esse erro
         // Aplicar um tratamento mais robusto no customFetch
         throw new Error('login falhou');
       }
 
-      console.log({ response });
+      const {
+        accessToken,
+        refreshToken,
+      }: { accessToken: string; refreshToken: string } = await response.json();
+
+      console.log({
+        accessToken,
+        refreshToken,
+      });
+
+      await AuthTokenStorageService.set(accessToken, refreshToken)
 
       // Buscar na API
       return { success: true }
@@ -68,6 +79,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const me = useCallback(async () => {
+    console.log('Entrou em me');
+
     try {
       const response = await ApiService.Users.me();
 

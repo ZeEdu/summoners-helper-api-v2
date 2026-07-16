@@ -19,13 +19,14 @@ import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
 
 import { IUser } from '@org/shared-types';
+import { RIOT_SERVERS } from '@org/shared-constants';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly riotApiService: RiotApiService,
-  ) {}
+  ) { }
 
   findOneByEmail(email: User['email']): Promise<IUser | null> {
     return this.userModel.findOne({ email }).lean<IUser>();
@@ -127,7 +128,7 @@ export class UsersService {
     return this.riotApiService.getChampionsMasteriesByTop(
       user.puuid,
       count,
-      user.server,
+      user.server || RIOT_SERVERS.BR1,
     );
   }
 

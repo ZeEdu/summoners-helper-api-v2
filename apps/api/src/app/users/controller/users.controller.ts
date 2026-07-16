@@ -23,7 +23,7 @@ export class UsersController {
   }> {
     const filter = createUserPaginationFilter(pagination);
     const { offset, limit } = pagination;
-    return this.usersService.getAllUsers(filter, { offset, limit });
+    return this.usersService.getAllUsers(filter, { offset, limit })
   }
 
   @Get('me')

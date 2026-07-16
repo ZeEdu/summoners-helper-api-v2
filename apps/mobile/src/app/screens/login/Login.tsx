@@ -8,17 +8,21 @@ type Props = NativeStackScreenProps<RootStackParamsList, 'Login'>
 
 export default function Login({ navigation }: Props) {
   const authContext = useAuthContext();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('Laron_Ernser31@hotmail.com');
+  const [password, setPassword] = useState<string>('1!AbZ6LZHq0WfFn');
 
   const handleSubmit = async () => {
     const login = await authContext.login({ email, password });
+
+    console.log({ login });
 
     if (!login.success) {
       return
     }
 
     const me = await authContext.me()
+    console.log({ me });
+
 
     if (me) {
       navigation.navigate('Home')

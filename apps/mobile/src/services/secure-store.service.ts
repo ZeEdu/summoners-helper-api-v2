@@ -2,7 +2,6 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 const notMobile = () => {
-  console.log({ OS: Platform.OS });
   return Platform.OS !== 'android' && Platform.OS !== 'ios';
 };
 

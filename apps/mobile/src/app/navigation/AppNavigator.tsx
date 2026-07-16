@@ -1,9 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Home from '../screens/home/Home';
 import Login from '../screens/login/Login';
 import Register from '../screens/register/Register';
 import { useAuthContext } from '../../contexts/auth/useAuth';
+import { AuthTokenStorageService } from '../../services/auth-token-storage.service';
 
 export type RootStackParamsList = {
   Home: undefined,
@@ -15,6 +16,21 @@ const Stack = createNativeStackNavigator<RootStackParamsList>();
 
 export function AppNavigator() {
   const authContext = useAuthContext();
+
+  // Verificar se há um usuário local com token
+  // Se tiver
+  // Preencher o estado de authContext com ele
+
+  useEffect(() => {
+    async function checkStoredTokens() {
+      const tokens = await AuthTokenStorageService.get()
+      if (tokens.accessToken) {
+        await authContext.me()
+      }
+    }
+    checkStoredTokens()
+  }, [])
+
 
   return (
     <Stack.Navigator

@@ -1,11 +1,12 @@
 import { ICreateUserDto, ILoginUserDto } from '@org/shared-types';
 import { API_CONSTANTS } from './api.constants';
+import { AuthTokenStorageService } from '../auth-token-storage.service';
 
 const AUTH_ENDPOINT = 'auth';
 
 export const Auth = {
   login: (loginUserDto: ILoginUserDto) => {
-    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/login`;
+    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/login`;
     const init: RequestInit = {
       method: 'POST',
       headers: {
@@ -29,5 +30,22 @@ export const Auth = {
     };
     return fetch(url, init);
   },
-  refreshToken: () => { },
+  refreshToken: async () => {
+    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/refresh`;
+
+    const tokens = await AuthTokenStorageService.get();
+    if (!tokens.refreshToken) {
+      throw new Error('Token not found');
+    }
+
+    const init: RequestInit = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken: tokens.refreshToken }),
+    };
+    return fetch(url, init);
+  },
 };

@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -24,7 +25,7 @@ const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('web/register')
   @Public()
@@ -51,9 +52,9 @@ export class AuthController {
     };
   }
 
-  @Post('login')
+  @Post('web/login')
   @UseGuards(LocalGuard)
-  async login(
+  async webLogin(
     @CurrentUser() user: IUser,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
@@ -61,6 +62,15 @@ export class AuthController {
     this.setRefreshToken(response, tokens.refreshToken);
 
     return { accessToken: tokens.accessToken };
+  }
+
+  @Post('mobile/login')
+  @UseGuards(LocalGuard)
+  async mobileLogin(
+    @CurrentUser() user: IUser
+  ): Promise<{ accessToken: string }> {
+    const tokens = await this.authService.login(user);
+    return { ...tokens };
   }
 
   @UseGuards(JwtGuard)
@@ -77,8 +87,8 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
-  @Get('refresh')
-  async refreshToken(
+  @Get('web/refresh')
+  async webRefreshToken(
     @CurrentUser() user: IUser,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{
@@ -86,11 +96,31 @@ export class AuthController {
   }> {
     const userId = user._id.toString();
     const refreshToken = user.refreshToken;
+    if (!refreshToken) {
+      throw new UnauthorizedException('Token necessário não informado')
+    }
     const tokens = await this.authService.refreshToken(userId, refreshToken);
 
     this.setRefreshToken(response, tokens.refreshToken);
 
     return { accessToken: tokens.accessToken };
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Get('mobile/refresh')
+  async mobileRefreshToken(
+    @CurrentUser() user: IUser
+  ): Promise<{
+    accessToken: string;
+  }> {
+    const userId = user._id.toString();
+    const refreshToken = user.refreshToken;
+    if (!refreshToken) {
+      throw new UnauthorizedException('Token necessário não informado')
+    }
+
+    const tokens = await this.authService.refreshToken(userId, refreshToken);
+    return { ...tokens };
   }
 
   private setRefreshToken(response: Response, token: string) {

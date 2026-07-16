@@ -1,3 +1,4 @@
+import { customFetch } from '../../customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { API_CONSTANTS } from './api.constants';
 
@@ -23,6 +24,26 @@ export const Users = {
     // É necessário configurar corretamente para que o fetch o utilize
     return fetch(url, init)
   },
+
+  users: async () => {
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`;
+
+    const tokens = await AuthTokenStorageService.get();
+
+    if (!tokens.accessToken) {
+      throw new Error('Tokens not found');
+    }
+
+    const init: RequestInit = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+      },
+    };
+    // No momento vai falhar pois precisa do refresh token na requisição
+    // É necessário configurar corretamente para que o fetch o utilize
+    return fetch(url, init)
+  }
 };
 
 
