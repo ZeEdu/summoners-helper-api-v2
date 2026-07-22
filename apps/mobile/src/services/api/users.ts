@@ -1,4 +1,4 @@
-import { customFetch } from '../../customFetch';
+import { customFetch } from '../../utils/customFetch/customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { API_CONSTANTS } from './api.constants';
 

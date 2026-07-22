@@ -21,7 +21,7 @@ import {
 } from '../../ddragon/dto/runes-reforged-data.dragon';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { I18nService } from 'nestjs-i18n';
-import { RIOT_SERVERS } from '@org/shared-constants';
+import { RIOT_SERVERS } from '@org/shared-libs';
 
 export interface IChampionMasteryResponse {
   championId: ChampionMastery['championId'];
@@ -120,7 +120,7 @@ export class RiotApiService implements IRiotApiService {
     private readonly riotApiUtilsService: RiotApiUtilsService,
     private i18n: I18nService,
     private dataDragonTransformerService: DataDragonTransformerService,
-  ) {}
+  ) { }
 
   async getAccountByRiotId(
     gameName: IUserWithPuuid['gameName'],

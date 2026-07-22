@@ -9,7 +9,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { UsersService } from '../../users/service/users.service';
 import { I18nService } from 'nestjs-i18n';
-import { IUser } from '@org/shared-types';
+import { IUser } from '@org/shared-libs';
 
 type RefreshTokenPayload = {
   sub: string;

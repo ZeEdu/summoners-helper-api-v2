@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useMemo, useState } from "react";
-import { ICreateUserDto, ILoginUserDto, IUser } from "@org/shared-types";
+import { ICreateUserDto, ILoginUserDto, IUser } from "@org/shared-libs";
 import { ApiService } from "../../services/api/api.service";
 import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
 import { AuthContext, AuthContextType } from "./auth.context";
@@ -8,7 +8,7 @@ type AuthProviderProps = {
   children: ReactNode
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export default function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<IUser | undefined>(undefined);
 
   const login = async (loginUserDto: ILoginUserDto) => {
@@ -16,58 +16,51 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await AuthTokenStorageService.delete()
 
       const response = await ApiService.Auth.login(loginUserDto)
-      // TODO Tratar melhor esse erro
-      // Aplicar um tratamento mais robusto no customFetch
       const {
         accessToken,
         refreshToken,
       }: { accessToken: string; refreshToken: string } = response;
 
-      console.log({
-        accessToken,
-        refreshToken,
-      });
-
       await AuthTokenStorageService.set(accessToken, refreshToken)
-
-      // Buscar na API
+      await me()
       return { success: true }
     } catch (error) {
-
       console.log('authProvider => login');
-
       console.log({ error });
       return { success: false, errors: {} };
     }
   };
 
   const logout = async () => {
-    // Buscar na API
     await AuthTokenStorageService.delete()
     setUser(undefined);
   };
 
   const register = useCallback(async (createUserDto: ICreateUserDto) => {
+    let accessToken: string
+    let refreshToken: string
+
     try {
       const response = await ApiService.Auth.register(createUserDto);
-      if (!response.ok) {
-        throw new Error('Request Failed');
-      }
-
-      const {
-        accessToken,
-        refreshToken,
-      }: { accessToken: string; refreshToken: string } = await response.json();
+      const tokens: { accessToken: string; refreshToken: string } = response;
+      accessToken = tokens.accessToken
+      refreshToken = tokens.refreshToken
 
       await AuthTokenStorageService.set(accessToken, refreshToken);
+    } catch (error: any) {
+      if (error?.body['username'] || error?.body['email'] || error?.body['password']) {
+        return { success: false, errors: error.body };
+      }
 
+      return { success: false, errors: 'Não foi possível registrar o usuário' };
+    }
+
+    try {
       await me()
-
       return { success: true };
     } catch (error) {
-      // TODO Tratar os erros e retornar um objeto legivel como resposta
       console.log({ error });
-      return { success: false, errors: {} };
+      return { success: false, errors: 'Não foi possivel recuperar os dados do usuário' };
     }
   }, []);
 

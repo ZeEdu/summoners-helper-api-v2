@@ -1,9 +1,10 @@
 import { Button, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
-import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../../navigation/AppNavigator';
 import { ApiService } from 'apps/mobile/src/services/api/api.service';
+import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
+import { AuthEvents } from '../../../auth-events';
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Home'>
 
@@ -26,6 +27,10 @@ export default function Home({ navigation }: Props) {
     console.log({ response });
   }
 
+  const forceLogout = async () => {
+    AuthEvents.emitSessionExpired()
+  }
+
   setTimeout(() => {
     console.log('Deu o tempo');
     setCanCall(true)
@@ -40,6 +45,7 @@ export default function Home({ navigation }: Props) {
       </View>
       <View style={styles.buttonsWrapper}>
         <Button title="Deslogar" onPress={handleLogout}></Button>
+        <Button title="Força deslogar" onPress={forceLogout}></Button>
         {canCall && <Button title="Buscar dados" onPress={handleGetUsers}></Button>}
       </View>
     </View>

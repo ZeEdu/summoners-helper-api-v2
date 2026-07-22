@@ -1,7 +1,7 @@
-import { ICreateUserDto, ILoginUserDto } from '@org/shared-types';
+import { ICreateUserDto, ILoginUserDto } from '@org/shared-libs';
 import { API_CONSTANTS } from './api.constants';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
-import { customFetch } from '../../customFetch';
+import { customFetch } from '../../utils/customFetch/customFetch';
 
 const AUTH_ENDPOINT = 'auth';
 
@@ -16,7 +16,7 @@ export const Auth = {
       },
       body: JSON.stringify(loginUserDto),
     };
-    return customFetch(url, init);
+    return customFetch<{ accessToken: string, refreshToken: string }>(url, init);
   },
   logout: () => { },
   register: async (createUserDto: ICreateUserDto) => {
@@ -29,7 +29,7 @@ export const Auth = {
       },
       body: JSON.stringify(createUserDto),
     };
-    return customFetch(url, init);
+    return customFetch<{ accessToken: string, refreshToken: string }>(url, init);
   },
   refreshToken: async () => {
     const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/refresh`;

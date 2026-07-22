@@ -7,9 +7,8 @@ import {
 } from '../user.pagination.dto';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
-import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUser } from '@org/shared-types';
+import { IUser, UpdateUserProfileDto } from '@org/shared-libs';
 
 @Controller('users')
 @UseGuards(JwtGuard)

@@ -11,9 +11,8 @@ import * as argon2 from 'argon2';
 import { randomUUID } from 'crypto';
 
 import { UsersService } from '../../users/service/users.service';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { I18nService } from 'nestjs-i18n';
-import { IUser } from '@org/shared-types';
+import { CreateUserDto, IUser } from '@org/shared-libs';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +21,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private i18n: I18nService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<IUser> {
     const user = await this.usersService.findOneByEmailWithPassword(email);

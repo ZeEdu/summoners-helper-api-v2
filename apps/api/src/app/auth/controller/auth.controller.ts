@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -11,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { AuthService } from '../service/auth.service';
 import { Public } from '../../decorators/public.decorator';
 import { LocalGuard } from '../../guards/local.guard';
@@ -19,7 +17,7 @@ import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { isProduction } from '../../utils';
-import { IUser } from '@org/shared-types';
+import { IUser, CreateUserDto } from '@org/shared-libs';
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 

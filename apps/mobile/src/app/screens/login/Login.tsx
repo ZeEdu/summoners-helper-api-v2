@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
 import { RootStackParamsList } from '../../navigation/AppNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Login'>
 
@@ -15,11 +15,6 @@ export default function Login({ navigation }: Props) {
     const login = await authContext.login({ email, password });
     if (!login.success) {
       return
-    }
-
-    const me = await authContext.me()
-    if (me) {
-      // navigation.navigate('Home')
     }
   };
 

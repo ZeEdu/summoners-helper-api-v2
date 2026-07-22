@@ -1,70 +1,62 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useState } from 'react';
+import { Alert, Button, StyleSheet, View } from 'react-native';
+import { useForm } from 'react-hook-form';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { faker } from '@faker-js/faker';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamsList } from '../../navigation/AppNavigator';
+import { useState } from 'react';
+
+import { CreateUserDto } from '@org/shared-libs';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 
-type Props = NativeStackScreenProps<RootStackParamsList, 'Register'>;
+const resolver = classValidatorResolver(CreateUserDto)
 
-export default function Register({ navigation }: Props) {
+export default function Register() {
   const authContext = useAuthContext();
 
-  const [email, setEmail] = useState<string>(faker.internet.email());
-  const [username, setUsername] = useState<string>(faker.string.alpha(16));
-  const [password, setPassword] = useState<string>(
-    faker.internet.password({ prefix: '1!Ab' }),
-  );
-
-  const handleSubmit = async () => {
-    const register = await authContext.register({ email, username, password });
-    if (!register.success) {
-      // TODO tratar os erros
-      return;
+  const { control, handleSubmit, formState: { errors } } = useForm<CreateUserDto>({
+    resolver, defaultValues: {
+      email: faker.internet.email(),
+      username: faker.string.alpha(16),
+      password: faker.internet.password({ prefix: '1!Ab' })
     }
+  })
 
-    navigation.navigate('Home');
-  };
+  type ApiErrorsType = Partial<{ [K in keyof CreateUserDto]: string[] }>
+  const [apiErrors, setApiErrors] = useState<ApiErrorsType | undefined>(undefined)
 
-  const goToRegister = () => {
-    navigation.goBack();
+  const onSubmit = async (formData: CreateUserDto) => {
+    const register = await authContext.register({
+      email: formData.email,
+      username: formData.username,
+      password: formData.password
+    });
+
+    if (!register.success) {
+      if (register.errors) {
+        if (typeof register.errors === 'string') {
+          Alert.alert('Um erro ocorreu', register.errors)
+        } else {
+          setApiErrors(register.errors)
+        }
+      }
+    }
   };
 
   return (
     <View>
-      <View style={style.block}>
-        <Text>Email:</Text>
-        <TextInput
-          style={style.textInput}
-          onChangeText={setEmail}
-          value={email}
-        ></TextInput>
-      </View>
+      <AppController name='email' label='Email:' control={control} placeholder='Seu Email' />
+      <FormFieldErrors fieldError={errors.email} />
+      <ApiFieldErrors apiErrors={apiErrors?.email} />
+
+      <AppController name='username' label='Username:' control={control} placeholder='Seu nome de usuário' />
+      <FormFieldErrors fieldError={errors.username} />
+      <ApiFieldErrors apiErrors={apiErrors?.username} />
+
+      <AppController name='password' label='Password:' control={control} placeholder='Sua senha' />
+      <FormFieldErrors fieldError={errors.password} />
+      <ApiFieldErrors apiErrors={apiErrors?.password} />
 
       <View style={style.block}>
-        <Text>Username</Text>
-        <TextInput
-          style={style.textInput}
-          onChangeText={setUsername}
-          value={username}
-        ></TextInput>
-      </View>
-
-      <View style={style.block}>
-        <Text>Password</Text>
-        <TextInput
-          style={style.textInput}
-          onChangeText={setPassword}
-          value={password}
-        ></TextInput>
-      </View>
-
-      <View style={style.block}>
-        <Button title="Submit" onPress={handleSubmit}></Button>
-      </View>
-
-      <View style={style.block}>
-        <Button title="Go back" onPress={goToRegister}></Button>
+        <Button title="Submit" onPress={handleSubmit(onSubmit)}></Button>
       </View>
     </View>
   );

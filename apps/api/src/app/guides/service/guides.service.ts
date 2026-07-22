@@ -9,11 +9,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Guide, IGuide } from '../schema/guide.schema';
 import { CreateGuideDto } from '../dto/create-guide.dto';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
-import { IUser } from '@org/shared-types';
+import { IUser } from '@org/shared-libs';
 
 @Injectable()
 export class GuidesService {
-  constructor(@InjectModel(Guide.name) private guideModel: Model<Guide>) {}
+  constructor(@InjectModel(Guide.name) private guideModel: Model<Guide>) { }
 
   async getGuides(filter?: QueryFilter<Guide>, pagination?: PaginationDto) {
     const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};

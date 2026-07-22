@@ -1,10 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNavigationContainerRef } from '@react-navigation/native';
 import React, { useEffect } from 'react';
+
 import Home from '../screens/home/Home';
 import Login from '../screens/login/Login';
 import Register from '../screens/register/Register';
-import { useAuthContext } from '../../contexts/auth/useAuth';
+import { AuthEvents } from '../../auth-events';
 import { AuthTokenStorageService } from '../../services/auth-token-storage.service';
+import { useAuthContext } from '../../contexts/auth/useAuth';
 
 export type RootStackParamsList = {
   Home: undefined,
@@ -12,27 +15,31 @@ export type RootStackParamsList = {
   Register: undefined
 }
 
+export const navigationRef = createNavigationContainerRef<RootStackParamsList>();
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
 export function AppNavigator() {
   const authContext = useAuthContext();
 
-  // Verificar se há um usuário local com token
-  // Se tiver
-  // Preencher o estado de authContext com ele
+  useEffect(() => {
+    return AuthEvents.onSessionExpired(() => {
+      authContext.logout()
+      if (navigationRef.isReady()) {
+        navigationRef.reset({ index: 0, routes: [{ name: "Login" }] })
+      }
+    })
+  }, [])
 
-  // useEffect(() => {
-  //   async function checkStoredTokens() {
-  //     const tokens = await AuthTokenStorageService.get()
-  //     if (tokens.accessToken) {
-  //       await authContext.me()
+  useEffect(() => {
+    async function checkStoredTokens() {
+      const tokens = await AuthTokenStorageService.get()
 
-  //       console.log({ 'authContext.user': authContext.user });
-
-  //     }
-  //   }
-  //   checkStoredTokens()
-  // }, [])
+      if (tokens.accessToken && !authContext.user) {
+        await authContext.me()
+      }
+    }
+    checkStoredTokens()
+  }, [])
 
 
   return (

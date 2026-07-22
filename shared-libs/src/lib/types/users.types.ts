@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { RIOT_SERVERS } from '@org/shared-constants';
+import { RIOT_SERVERS } from '../constants';
 
 export interface IUser {
   _id: Types.ObjectId;

@@ -4,8 +4,7 @@ import { Platform } from 'react-native';
 const notMobile = () => {
   return Platform.OS !== 'android' && Platform.OS !== 'ios';
 };
-
-export const SecureStoreService = {
+const SecureStoreService = {
   get: async (key: string) => {
     if (notMobile()) {
       return localStorage.getItem(key);
@@ -28,3 +27,5 @@ export const SecureStoreService = {
     await SecureStore.deleteItemAsync(key);
   },
 };
+
+export default SecureStoreService

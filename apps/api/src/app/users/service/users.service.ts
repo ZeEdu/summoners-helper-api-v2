@@ -1,3 +1,4 @@
+import { CreateUserDto, UpdateUserDto, UpdateUserProfileDto } from '@org/shared-libs';
 import { Injectable } from '@nestjs/common';
 import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,19 +8,16 @@ import {
   DEFAULT_OFFSET,
   PaginationDto,
 } from '../../pagination/pagination.dto';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
 import {
   IUserWithPassword,
   IUserWithPuuid,
   SENSIBLE_FIELDS,
   User,
 } from '../schema/user.schema';
-import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
 
-import { IUser } from '@org/shared-types';
-import { RIOT_SERVERS } from '@org/shared-constants';
+import { IUser } from '@org/shared-libs';
+import { RIOT_SERVERS } from '@org/shared-libs';
 
 @Injectable()
 export class UsersService {

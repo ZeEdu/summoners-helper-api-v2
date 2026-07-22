@@ -15,8 +15,7 @@
     "baseUrl": ".",
     "strictPropertyInitialization": false,
     "paths": {
-      "@org/shared-constants": ["./libs/shared-constants/src/index.ts"],
-      "@org/shared-types": ["./libs/shared-types/src/index.ts"]
+      "@org/shared-libs": ["./shared-libs/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

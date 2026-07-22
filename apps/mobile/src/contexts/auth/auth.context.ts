@@ -1,9 +1,9 @@
-import { ICreateUserDto, ILoginUserDto, IUser } from "@org/shared-types";
+import { CreateUserDto, ICreateUserDto, ILoginUserDto, IUser } from "@org/shared-libs";
 import { createContext } from "react";
 
 type Login = (user: ILoginUserDto) => Promise<{ success: boolean }>;
 type Logout = () => Promise<void>;
-type Register = (user: ICreateUserDto) => Promise<{ success: boolean }>;
+type Register = (user: ICreateUserDto) => Promise<{ success: boolean, errors?: Partial<{ [K in keyof CreateUserDto]: string[] }> }>;
 type Refresh = () => void;
 type Me = () => Promise<IUser | undefined>;
 
