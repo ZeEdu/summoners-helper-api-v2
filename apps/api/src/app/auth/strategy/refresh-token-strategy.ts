@@ -42,20 +42,16 @@ export class RefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-
   getFromCookies(req: Request) {
     return (req.cookies as Record<string, string>)?.refresh_token
   }
 
   getFromBody(req: Request) {
-    console.log({ body: req.body });
     return (req.body as Record<string, string>)?.refreshToken
   }
 
   async validate(req: Request, payload: RefreshTokenPayload): Promise<IUser> {
     const refreshToken = this.getFromCookies(req) || this.getFromBody(req);
-    console.log({ refreshToken });
-
     if (!refreshToken) {
       throw new ForbiddenException();
     }
@@ -67,7 +63,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
       );
     }
 
-    // Substitui o token hasheado pelo raw que vem no cookie
     return { ...user, refreshToken };
   }
 }
