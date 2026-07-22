@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Guide, IGuide } from '../schema/guide.schema';
 import { CreateGuideDto } from '../dto/create-guide.dto';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
-import { IUser } from '@org/shared-libs';
+import { IUser } from '@org/contracts';
 
 @Injectable()
 export class GuidesService {

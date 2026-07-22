@@ -9,14 +9,25 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "CommonJS",
-    "lib": ["ES2022", "dom"],
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "strictPropertyInitialization": false,
     "paths": {
-      "@org/shared-libs": ["./shared-libs/src/index.ts"]
+      "@org/ui": [
+        "./libs/ui"
+      ],
+      "@org/contracts": [
+        "./libs/contracts/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

@@ -1,4 +1,4 @@
-import { CreateUserDto, UpdateUserDto, UpdateUserProfileDto } from '@org/shared-libs';
+import { CreateUserDto, UpdateUserDto, UpdateUserProfileDto } from '@org/contracts';
 import { Injectable } from '@nestjs/common';
 import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,8 +16,8 @@ import {
 } from '../schema/user.schema';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
 
-import { IUser } from '@org/shared-libs';
-import { RIOT_SERVERS } from '@org/shared-libs';
+import { IUser } from '@org/contracts';
+import { RIOT_SERVERS } from '@org/contracts';
 
 @Injectable()
 export class UsersService {

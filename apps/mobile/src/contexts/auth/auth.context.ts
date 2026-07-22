@@ -1,4 +1,4 @@
-import { CreateUserDto, ICreateUserDto, ILoginUserDto, IUser } from "@org/shared-libs";
+import { CreateUserDto, ICreateUserDto, ILoginUserDto, IUser } from "@org/contracts";
 import { createContext } from "react";
 
 type Login = (user: ILoginUserDto) => Promise<{ success: boolean }>;

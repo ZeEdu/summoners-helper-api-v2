@@ -1,6 +1,9 @@
 import { Controller, FieldPath, FieldValues, UseControllerProps } from "react-hook-form"
 import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from "react-native"
 
+import { FormControl, FormControlLabel, FormControlLabelText } from "libs/ui/form-control"
+import { Input, InputField } from "libs/ui/input"
+
 interface AppControllerProps<
   T extends FieldValues,
   TName extends FieldPath<T> = FieldPath<T>,
@@ -10,17 +13,23 @@ interface AppControllerProps<
   style?: StyleProp<ViewStyle>
 }
 
-export default function AppController<T extends FieldValues>({ name, label, placeholder, control }: AppControllerProps<T>) {
-  return <Controller name={name} control={control} render={({ field: { onChange, onBlur, value } }) => {
+export function AppController<T extends FieldValues>({ name, label, placeholder, control }: AppControllerProps<T>) {
+  return <Controller name={name} control={control} render={({ formState: { isValid }, field: { onChange, onBlur, value } }) => {
     return <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        placeholder={placeholder}
-        onBlur={onBlur}
-        onChangeText={onChange}
-        value={value}
-        style={styles.input}
-      />
+      <FormControl isInvalid={!isValid} isRequired>
+        <FormControlLabel>
+          <FormControlLabelText>{label}</FormControlLabelText>
+        </FormControlLabel>
+        <Input>
+          <InputField
+            placeholder={placeholder}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            style={styles.input}
+          />
+        </Input>
+      </FormControl>
     </View>
   }}></Controller >
 }

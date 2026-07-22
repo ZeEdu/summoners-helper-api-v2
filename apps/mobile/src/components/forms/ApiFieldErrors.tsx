@@ -1,10 +1,11 @@
-import { FlatList, StyleSheet, Text, View } from "react-native"
+import { FlatList, StyleSheet, View } from "react-native"
+import { Text } from "libs/ui/text"
 
 type ApiFieldErrorsProps = {
   apiErrors: string[] | undefined
 }
 
-export default function ApiFieldErrors({ apiErrors }: ApiFieldErrorsProps) {
+export function ApiFieldErrors({ apiErrors }: ApiFieldErrorsProps) {
   if (!apiErrors?.length) {
     return
   }

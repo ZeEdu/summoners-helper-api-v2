@@ -4,8 +4,11 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { faker } from '@faker-js/faker';
 import { useState } from 'react';
 
-import { CreateUserDto } from '@org/shared-libs';
+import { CreateUserDto } from '@org/contracts';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
+import { AppController } from 'apps/mobile/src/components/forms/AppController';
+import { FormFieldErrors } from 'apps/mobile/src/components/forms/FormFieldErrors';
+import { ApiFieldErrors } from 'apps/mobile/src/components/forms/ApiFieldErrors';
 
 const resolver = classValidatorResolver(CreateUserDto)
 
