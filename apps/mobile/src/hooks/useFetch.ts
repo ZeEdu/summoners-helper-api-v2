@@ -28,7 +28,7 @@ export const useFetch = <T>(
     };
 
     fetchData();
-  }, [init, url]);
+  }, [url, JSON.stringify(init)]);
 
   return { data, loading, error };
 };

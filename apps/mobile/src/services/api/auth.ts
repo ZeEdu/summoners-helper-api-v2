@@ -16,10 +16,13 @@ export const Auth = {
       },
       body: JSON.stringify(loginUserDto),
     };
-    return customFetch<{ accessToken: string, refreshToken: string }>(url, init);
+    return customFetch<{ accessToken: string; refreshToken: string }>(
+      url,
+      init,
+    );
   },
   logout: async () => {
-    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/register`;
+    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/logout`;
     const tokens = await AuthTokenStorageService.get();
 
     if (!tokens.accessToken) {
@@ -30,10 +33,10 @@ export const Auth = {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${tokens.accessToken}`,
-      }
+      },
     };
 
-    return customFetch(url, init)
+    return customFetch(url, init);
   },
   register: async (createUserDto: ICreateUserDto) => {
     const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/register`;
@@ -45,7 +48,10 @@ export const Auth = {
       },
       body: JSON.stringify(createUserDto),
     };
-    return customFetch<{ accessToken: string, refreshToken: string }>(url, init);
+    return customFetch<{ accessToken: string; refreshToken: string }>(
+      url,
+      init,
+    );
   },
   refreshToken: async () => {
     const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/refresh`;
