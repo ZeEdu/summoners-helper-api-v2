@@ -40,7 +40,12 @@
     "jsonc-eslint-parser": "*",
     "mongoose": "*",
     "react-native-screens": "*",
-    "react-native-safe-area-context": "*"
+    "react-native-safe-area-context": "*",
+    "react-hook-form": "*",
+    "@hookform/resolvers": "*",
+    "class-validator": "*",
+    "react-native-reanimated": "*",
+    "react-native-worklets": "*"
   },
   "devDependencies": {}
 }
