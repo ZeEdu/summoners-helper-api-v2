@@ -12,7 +12,7 @@ import { randomUUID } from 'crypto';
 
 import { UsersService } from '../../users/service/users.service';
 import { I18nService } from 'nestjs-i18n';
-import { CreateUserDto, IUser } from '@org/shared-libs';
+import { CreateUserDto, IUser } from '@org/contracts';
 
 @Injectable()
 export class AuthService {

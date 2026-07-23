@@ -21,7 +21,7 @@ import {
 } from '../../ddragon/dto/runes-reforged-data.dragon';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { I18nService } from 'nestjs-i18n';
-import { RIOT_SERVERS } from '@org/shared-libs';
+import { RIOT_SERVERS } from '@org/contracts';
 
 export interface IChampionMasteryResponse {
   championId: ChampionMastery['championId'];

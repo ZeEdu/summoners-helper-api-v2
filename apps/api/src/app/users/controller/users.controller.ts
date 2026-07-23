@@ -8,7 +8,7 @@ import {
 import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUser, UpdateUserProfileDto } from '@org/shared-libs';
+import { IUser, UpdateUserProfileDto } from '@org/contracts';
 
 @Controller('users')
 @UseGuards(JwtGuard)

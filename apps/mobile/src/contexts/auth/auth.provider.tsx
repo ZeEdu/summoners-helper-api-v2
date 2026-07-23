@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useMemo, useState } from "react";
-import { ICreateUserDto, ILoginUserDto, IUser } from "@org/shared-libs";
+import { ICreateUserDto, ILoginUserDto, IUser } from "@org/contracts";
 import { ApiService } from "../../services/api/api.service";
 import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
 import { AuthContext, AuthContextType } from "./auth.context";

@@ -1,5 +1,5 @@
 {
-  "name": "@org/shared-libs",
+  "name": "@org/contracts",
   "version": "0.0.1",
   "private": true,
   "type": "commonjs",
