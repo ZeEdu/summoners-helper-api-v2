@@ -1,5 +1,5 @@
-import { FlatList, StyleSheet, View } from "react-native"
-import { Text } from "@org/ui/text"
+import { FlatList, StyleSheet, Text, View } from "react-native"
+// import { Text } from "@org/ui/text"
 
 type ApiFieldErrorsProps = {
   apiErrors: string[] | undefined
