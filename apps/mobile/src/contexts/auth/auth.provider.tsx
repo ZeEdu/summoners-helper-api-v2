@@ -32,6 +32,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = async () => {
+    await ApiService.Auth.logout()
     await AuthTokenStorageService.delete()
     setUser(undefined);
   };
@@ -64,31 +65,21 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  const refresh = () => {
-    // Faz o refreshToken user atual
-    // Puxando os dados mais recentes
-    // Atualiza o tokenRefresh do mesmo
-  };
-
   const me = useCallback(async () => {
-    console.log('Entrou em me');
-
     try {
       const response = await ApiService.Users.me();
 
       const userFromRequest = response as IUser;
-      console.log({ userFromRequest });
       setUser(userFromRequest)
-
-      return user
+      return userFromRequest
     } catch (error) {
       return undefined
     }
   }, []);
 
   const value: AuthContextType = useMemo(
-    () => ({ user, login, logout, register, refresh, me }),
-    [user, login, logout, register, refresh, me],
+    () => ({ user, login, logout, register, me }),
+    [user, login, logout, register, me],
   );
 
   return (

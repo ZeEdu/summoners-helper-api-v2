@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { RootStackParamsList } from '../../navigation/AppNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useAuthContext } from 'apps/mobile/src/contexts/auth/useAuth';
+import { useAuthContext } from '../../../contexts/auth/useAuth';
 
-type Props = NativeStackScreenProps<RootStackParamsList, 'Login'>
+type Props = NativeStackScreenProps<RootStackParamsList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
   const authContext = useAuthContext();
@@ -14,7 +14,7 @@ export default function Login({ navigation }: Props) {
   const handleSubmit = async () => {
     const login = await authContext.login({ email, password });
     if (!login.success) {
-      return
+      return;
     }
   };
 
@@ -61,6 +61,6 @@ const style = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 3,
-    padding: 8
+    padding: 8,
   },
 });

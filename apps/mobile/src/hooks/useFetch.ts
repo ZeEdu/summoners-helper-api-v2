@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { customFetch } from '../utils/customFetch/customFetch';
 
 export const useFetch = <T>(
   url: string,
@@ -17,12 +18,8 @@ export const useFetch = <T>(
       if (!url) return;
 
       try {
-        const response = await fetch(url, init);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        setData(result);
+        const response = await customFetch<T>(url, init);
+        setData(response);
       } catch (error) {
         setError(error);
       } finally {

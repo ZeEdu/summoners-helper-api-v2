@@ -18,7 +18,23 @@ export const Auth = {
     };
     return customFetch<{ accessToken: string, refreshToken: string }>(url, init);
   },
-  logout: () => { },
+  logout: async () => {
+    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/register`;
+    const tokens = await AuthTokenStorageService.get();
+
+    if (!tokens.accessToken) {
+      throw new Error('Tokens not found');
+    }
+
+    const init: RequestInit = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+      }
+    };
+
+    return customFetch(url, init)
+  },
   register: async (createUserDto: ICreateUserDto) => {
     const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/mobile/register`;
     const init: RequestInit = {
