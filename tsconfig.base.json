@@ -18,8 +18,8 @@
     "baseUrl": ".",
     "strictPropertyInitialization": false,
     "paths": {
-      "@org/ui": [
-        "./libs/ui"
+      "@org/ui/*": [
+        "./libs/ui/*"
       ],
       "@org/contracts": [
         "./libs/contracts/src/index.ts"

@@ -1,8 +1,8 @@
-import { Controller, FieldPath, FieldValues, UseControllerProps } from "react-hook-form"
-import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from "react-native"
+import { Controller, FieldPath, FieldValues, UseControllerProps } from 'react-hook-form';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { FormControl, FormControlLabel, FormControlLabelText } from "libs/ui/form-control"
-import { Input, InputField } from "libs/ui/input"
+import { FormControl, FormControlLabel, FormControlLabelText } from "@org/ui/form-control";
+import { Input, InputField } from "@org/ui/input";
 
 interface AppControllerProps<
   T extends FieldValues,

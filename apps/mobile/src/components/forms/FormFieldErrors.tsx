@@ -1,6 +1,6 @@
 import { FieldError } from "react-hook-form"
 import { StyleSheet, View } from "react-native"
-import { Text } from "libs/ui/text"
+import { Text } from "@org/ui/text"
 
 export function FormFieldErrors({ fieldError }: { fieldError: FieldError | undefined }) {
   if (!fieldError) {
