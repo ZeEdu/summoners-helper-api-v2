@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import Home from '../screens/home/Home';
 import Login from '../screens/login/Login';
@@ -15,8 +15,9 @@ import { AuthEvents } from '../../auth-events';
 import { AuthTokenStorageService } from '../../services/auth-token-storage.service';
 import { useAuthContext } from '../../contexts/auth/useAuth';
 import MyBuilds from '../screens/my-builds/MyBuilds';
-import { StyleProp, TextStyle } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { ThemeStorageService } from '../../services/theme-storage.service';
+import { ThemeContext } from '../../providers/theme.provider';
 
 export type RootStackParamsList = {
   Login: undefined,
@@ -42,6 +43,7 @@ const Tab = createBottomTabNavigator<TabNavigationParamsList>()
 export function AppNavigator() {
   const authContext = useAuthContext();
   const theme = useTheme()
+  const themeContext = useContext(ThemeContext)
 
   useEffect(() => {
     return AuthEvents.onSessionExpired(() => {
@@ -61,6 +63,19 @@ export function AppNavigator() {
       }
     }
     checkStoredTokens()
+  }, [])
+
+  useEffect(() => {
+    async function checkThemePreference() {
+      if (authContext.user) {
+        const isDarkTheme = await ThemeStorageService.isDarkTheme()
+        if (!themeContext.isThemeDark && isDarkTheme) {
+          themeContext.toggleTheme()
+        }
+      }
+    }
+
+    checkThemePreference()
   }, [])
 
   return (
