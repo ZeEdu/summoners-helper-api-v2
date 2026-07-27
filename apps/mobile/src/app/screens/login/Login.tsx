@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { RootStackParamsList } from '../../navigation/AppNavigator';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import { AppButton, AppTextInput } from "@org/ui";
+
+import { RootStackParamsList } from '../../navigation/AppNavigator';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
   const authContext = useAuthContext();
+
   const [email, setEmail] = useState<string>('Laron_Ernser31@hotmail.com');
   const [password, setPassword] = useState<string>('1!AbZ6LZHq0WfFn');
 
@@ -23,44 +27,36 @@ export default function Login({ navigation }: Props) {
   };
 
   return (
-    <View>
-      <View style={style.block}>
-        <Text>Email</Text>
-        <TextInput
-          style={style.textInput}
+    <View style={styles.container}>
+      <View>
+        <AppTextInput
+          label="Email"
           onChangeText={setEmail}
           value={email}
-        ></TextInput>
+        ></AppTextInput>
       </View>
-      <View style={style.block}>
-        <Text>Password</Text>
-        <TextInput
-          style={style.textInput}
+      <View>
+        <AppTextInput
+          label="Senha"
           onChangeText={setPassword}
           value={password}
-        ></TextInput>
+        ></AppTextInput>
       </View>
-
-      <View style={style.block}>
-        <Button title="Submit" onPress={handleSubmit}></Button>
+      <View>
+        <AppButton onPress={handleSubmit}>Submit</AppButton>
       </View>
-
-      <View style={style.block}>
-        <Button title="Go to Register" onPress={goToRegister}></Button>
+      <View>
+        <AppButton mode='contained-tonal' onPress={goToRegister}>Go to Register</AppButton>
       </View>
     </View>
   );
 }
 
-const style = StyleSheet.create({
-  block: {
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 16,
+    flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 3,
-    padding: 8,
+    gap: 16
   },
 });

@@ -1,17 +1,16 @@
 import React from 'react';
 
-import { NavigationContainer } from '@react-navigation/native';
-
 import { AppNavigator } from './navigation/AppNavigator';
 import AuthProvider from '../contexts/auth/auth.provider';
+import ThemeProvider from '../providers/theme.provider';
 
 export const App = () => {
   return (
-    <NavigationContainer>
+    <ThemeProvider>
       <AuthProvider>
         <AppNavigator />
       </AuthProvider>
-    </NavigationContainer>
+    </ThemeProvider>
   );
 };
 

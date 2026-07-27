@@ -1,10 +1,12 @@
-import { Alert, Button, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { faker } from '@faker-js/faker';
 import { useState } from 'react';
 
 import { CreateUserDto } from '@org/shared-libs';
+import { AppButton } from '@org/ui';
+
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import AppController from '../../../components/forms/AppController';
 import FormFieldErrors from '../../../components/forms/FormFieldErrors';
@@ -52,7 +54,7 @@ export default function Register() {
   };
 
   return (
-    <View>
+    <View style={style.block}>
       <AppController
         name="email"
         label="Email:"
@@ -80,8 +82,8 @@ export default function Register() {
       <FormFieldErrors fieldError={errors.password} />
       <ApiFieldErrors apiErrors={apiErrors?.password} />
 
-      <View style={style.block}>
-        <Button title="Submit" onPress={handleSubmit(onSubmit)}></Button>
+      <View>
+        <AppButton onPress={handleSubmit(onSubmit)}>Submit</AppButton>
       </View>
     </View>
   );
@@ -89,8 +91,10 @@ export default function Register() {
 
 const style = StyleSheet.create({
   block: {
+    marginTop: 16,
+    flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    gap: 16
   },
   textInput: {
     borderWidth: 1,

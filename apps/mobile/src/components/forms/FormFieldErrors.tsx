@@ -1,3 +1,4 @@
+import { AppText } from "@org/ui"
 import { FieldError } from "react-hook-form"
 import { StyleSheet, Text, View } from "react-native"
 
@@ -7,7 +8,7 @@ export default function FormFieldErrors({ fieldError }: { fieldError: FieldError
   }
 
   return <View style={styles.container}>
-    <Text style={styles.text}>{fieldError.message}</Text>
+    <AppText style={styles.text}>{fieldError.message}</AppText>
   </View>
 }
 

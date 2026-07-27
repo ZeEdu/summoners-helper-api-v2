@@ -3,7 +3,13 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "jsx": "react-native"
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    // "src/lib/ui.tsx"
+  ]
 }

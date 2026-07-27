@@ -44,7 +44,9 @@
     "react-hook-form": "*",
     "@hookform/resolvers": "*",
     "class-validator": "*",
-    "react-native-paper": "*"
+    "react-native-paper": "*",
+    "@react-navigation/bottom-tabs": "*",
+    "@expo/vector-icons": "*"
   },
   "devDependencies": {}
 }
