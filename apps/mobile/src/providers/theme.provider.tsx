@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useCallback, useMemo, useState } from "react";
+import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from "react";
 import { adaptNavigationTheme, MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import { NavigationContainer } from '@react-navigation/native';
 import {
@@ -12,7 +12,12 @@ const { LightTheme: NavigationAdaptedLightTheme, DarkTheme: NavigationAdaptedDar
   reactNavigationDark: NavigationDarkTheme,
 });
 
-export const ThemeContext = createContext({
+type ThemeContextType = {
+  toggleTheme: () => void,
+  isThemeDark: boolean
+}
+
+const ThemeContext = createContext({
   toggleTheme: () => { },
   isThemeDark: false
 })
@@ -37,4 +42,14 @@ export default function ThemeProvider({ children }: PropsWithChildren) {
       </PaperProvider>
     </ThemeContext.Provider>
   )
-} 
+}
+
+export const useThemeContext = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error(
+      'useThemeContext deve ser utilizado dentro de ThemeProvider',
+    );
+  }
+  return context as ThemeContextType;
+};

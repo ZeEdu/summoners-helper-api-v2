@@ -1,13 +1,13 @@
 import { StyleSheet, View } from 'react-native';
-import React, { useContext } from 'react';
+import React from 'react';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import { MD3Theme, useTheme } from 'react-native-paper';
-import { ThemeContext } from 'apps/mobile/src/providers/theme.provider';
+import { useThemeContext } from 'apps/mobile/src/providers/theme.provider';
 import { AppButton, AppText } from '@org/ui';
 
 export default function Home() {
   const authContext = useAuthContext();
-  const themeContext = useContext(ThemeContext)
+  const themeContext = useThemeContext()
   const theme = useTheme()
 
   const handleLogout = () => {
