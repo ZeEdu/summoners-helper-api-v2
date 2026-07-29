@@ -1,4 +1,4 @@
-import { AppText } from "@org/ui"
+import { StyledText } from "@org/ui"
 import { StyleSheet, View } from "react-native"
 import { MD3Theme, useTheme } from "react-native-paper"
 
@@ -7,7 +7,7 @@ export default function MyBuilds() {
   const style = makeStyles(theme)
   return (
     <View style={style.container}>
-      <AppText>Minhas Builds</AppText>
+      <StyledText>Minhas Builds</StyledText>
     </View>
   )
 }

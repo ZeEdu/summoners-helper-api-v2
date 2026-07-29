@@ -1,4 +1,4 @@
-import { AppText, AppTextInput } from "@org/ui"
+import { StyledText, StyledTextInput } from "@org/ui"
 import { Controller, FieldPath, FieldValues, UseControllerProps } from "react-hook-form"
 import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from "react-native"
 
@@ -14,7 +14,7 @@ interface AppControllerProps<
 export default function AppController<T extends FieldValues>({ name, label, placeholder, control }: AppControllerProps<T>) {
   return <Controller name={name} control={control} render={({ field: { onChange, onBlur, value } }) => {
     return <View style={styles.container}>
-      <AppTextInput
+      <StyledTextInput
         placeholder={placeholder}
         label={label}
         onBlur={onBlur}

@@ -9,6 +9,7 @@ import Login from '../screens/login/Login';
 import Register from '../screens/register/Register';
 import Profile from '../screens/profile/Profile';
 import MyBuilds from '../screens/my-builds/MyBuilds';
+import BindRiotAccount from '../../components/bottom-sheets/BindRiotAccount';
 
 import { AuthEvents } from '../../auth-events';
 import { AuthTokenStorageService } from '../../services/auth-token-storage.service';
@@ -18,8 +19,10 @@ import { ThemeStorageService } from '../../services/theme-storage.service';
 import { useThemeContext } from '../../providers/theme.provider';
 
 export type RootStackParamsList = {
+  Home: undefined,
   Login: undefined,
-  Register: undefined
+  Register: undefined,
+  BindRiotAccount: undefined
 }
 
 export const navigationRef = createNavigationContainerRef<RootStackParamsList>();
@@ -38,9 +41,39 @@ export type TabNavigationParamsList = {
 }
 const Tab = createBottomTabNavigator<TabNavigationParamsList>()
 
+function HomeTabs() {
+  const theme = useTheme()
+
+  return <Tab.Navigator>
+    <Tab.Screen
+      name={TabsSource.Home}
+      component={Home}
+      options={{
+        title: 'Inicio',
+        tabBarIcon: () => <Ionicons style={{ color: theme.colors.primary }} name={tabsIconMap[TabsSource.Home]} />
+      }}>
+    </Tab.Screen>
+    <Tab.Screen
+      name={TabsSource.MyBuilds}
+      component={MyBuilds}
+      options={{
+        title: 'Minhas builds',
+        tabBarIcon: () => <Ionicons style={{ color: theme.colors.primary }} name={tabsIconMap[TabsSource.MyBuilds]} />
+      }}
+    ></Tab.Screen>
+    <Tab.Screen
+      name={TabsSource.Profile}
+      component={Profile}
+      options={{
+        title: 'Perfil',
+        tabBarIcon: () => <Ionicons style={{ color: theme.colors.primary }} name={tabsIconMap[TabsSource.Profile]} />,
+      }}
+    ></Tab.Screen>
+  </Tab.Navigator>
+}
+
 export function AppNavigator() {
   const authContext = useAuthContext();
-  const theme = useTheme()
   const themeContext = useThemeContext()
 
   useEffect(() => {
@@ -77,41 +110,26 @@ export function AppNavigator() {
   }, [])
 
   return (
-    authContext.user ? (
-      <Tab.Navigator>
-        <Tab.Screen
-          name={TabsSource.Home}
-          component={Home}
-          options={{
-            title: 'Inicio',
-            tabBarIcon: () => <Ionicons style={{ color: theme.colors.primary }} name={tabsIconMap[TabsSource.Home]} />
-          }}>
-        </Tab.Screen>
-        <Tab.Screen
-          name={TabsSource.MyBuilds}
-          component={MyBuilds}
-          options={{
-            title: 'Minhas builds',
-            tabBarIcon: () => <Ionicons style={{ color: theme.colors.primary }} name={tabsIconMap[TabsSource.MyBuilds]} />
-          }}
-        ></Tab.Screen>
-        <Tab.Screen
-          name={TabsSource.Profile}
-          component={Profile}
-          options={{
-            title: 'Perfil',
-            tabBarIcon: () => <Ionicons style={{ color: theme.colors.primary }} name={tabsIconMap[TabsSource.Profile]} />,
-          }}
-        ></Tab.Screen>
-      </Tab.Navigator>
-    ) : (
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={Login}></Stack.Screen>
-        <Stack.Screen name="Register" component={Register}></Stack.Screen>
-      </Stack.Navigator>
-    )
+    <Stack.Navigator>{authContext.user ?
+      (
+        <Stack.Group>
+          <Stack.Screen name='Home' component={HomeTabs} options={{ headerShown: false }}></Stack.Screen>
+        </Stack.Group>
+      ) :
+      (
+        <Stack.Group>
+          <Stack.Screen name="Register" component={Register}></Stack.Screen>
+          <Stack.Screen name="Login" component={Login}></Stack.Screen >
+        </Stack.Group>
+      )
+    }
+      <Stack.Group>
+        <Stack.Screen name="BindRiotAccount" component={BindRiotAccount}></Stack.Screen >
+      </Stack.Group>
+    </Stack.Navigator>
   );
 }
+
 export type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 const tabsIconMap: Record<TabsSource, IoniconName> = {

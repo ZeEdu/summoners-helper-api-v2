@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AppButton, AppTextInput } from "@org/ui";
+import { StyledButton, StyledTextInput } from "@org/ui";
 
 import { RootStackParamsList } from '../../navigation/AppNavigator';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
@@ -29,24 +29,24 @@ export default function Login({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View>
-        <AppTextInput
+        <StyledTextInput
           label="Email"
           onChangeText={setEmail}
           value={email}
-        ></AppTextInput>
+        ></StyledTextInput>
       </View>
       <View>
-        <AppTextInput
+        <StyledTextInput
           label="Senha"
           onChangeText={setPassword}
           value={password}
-        ></AppTextInput>
+        ></StyledTextInput>
       </View>
       <View>
-        <AppButton onPress={handleSubmit}>Submit</AppButton>
+        <StyledButton onPress={handleSubmit}>Submit</StyledButton>
       </View>
       <View>
-        <AppButton mode='contained-tonal' onPress={goToRegister}>Go to Register</AppButton>
+        <StyledButton mode='contained-tonal' onPress={goToRegister}>Go to Register</StyledButton>
       </View>
     </View>
   );

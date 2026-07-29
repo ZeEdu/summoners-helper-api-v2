@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import { MD3Theme, useTheme } from 'react-native-paper';
 import { useThemeContext } from 'apps/mobile/src/providers/theme.provider';
-import { AppButton, AppText } from '@org/ui';
+import { StyledButton, StyledText } from '@org/ui';
 
 export default function Home() {
   const authContext = useAuthContext();
@@ -23,14 +23,14 @@ export default function Home() {
   return (
     <View style={style.container}>
       <View>
-        <AppText>Email: {authContext?.user?.email}</AppText>
-        <AppText>Username: {authContext?.user?.username}</AppText>
+        <StyledText>Email: {authContext?.user?.email}</StyledText>
+        <StyledText>Username: {authContext?.user?.username}</StyledText>
       </View>
       <View style={style.buttonsWrapper}>
-        <AppButton onPress={toggleTheme}>Trocar tema</AppButton>
+        <StyledButton onPress={toggleTheme}>Trocar tema</StyledButton>
       </View>
       <View style={style.buttonsWrapper}>
-        <AppButton onPress={handleLogout}>Deslogar</AppButton>
+        <StyledButton onPress={handleLogout}>Deslogar</StyledButton>
       </View>
     </View>
   );

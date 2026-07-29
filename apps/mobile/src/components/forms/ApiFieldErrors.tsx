@@ -1,4 +1,4 @@
-import { AppText } from "@org/ui"
+import { StyledText } from "@org/ui"
 import { FlatList, StyleSheet, View } from "react-native"
 
 type ApiFieldErrorsProps = {
@@ -12,7 +12,7 @@ export default function ApiFieldErrors({ apiErrors }: ApiFieldErrorsProps) {
 
   return <View style={styles.container}>
     <FlatList data={apiErrors} renderItem={({ item }) => {
-      return <AppText style={styles.text}>{item}</AppText>
+      return <StyledText style={styles.text}>{item}</StyledText>
     }} />
   </View>
 }

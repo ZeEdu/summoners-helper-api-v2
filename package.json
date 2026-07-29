@@ -92,6 +92,7 @@
     "@expo/metro-config": "~55.0.8",
     "@expo/metro-runtime": "~55.0.12",
     "@expo/vector-icons": "^15.0.2",
+    "@gorhom/bottom-sheet": "^5.2.14",
     "@hookform/resolvers": "^5.4.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.4",
@@ -132,7 +133,6 @@
     "react-native-svg-transformer": "~1.5.1",
     "react-native-web": "~0.21.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "~7.8.0",
-    "undefined": "@expo/vector-icons/Ionicons"
+    "rxjs": "~7.8.0"
   }
 }

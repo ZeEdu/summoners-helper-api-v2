@@ -1,16 +1,26 @@
-import { Button, Text, TextInput } from "react-native-paper";
-
+import { PropsWithChildren } from "react";
+import { StyleProp, View, ViewStyle } from "react-native";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 
 type AppButtonProps = React.ComponentProps<typeof Button>
 
-export function AppButton(props: AppButtonProps) {
+type StyledProp = { style?: StyleProp<ViewStyle> } & PropsWithChildren
+
+export function StyledButton(props: AppButtonProps) {
   return <Button mode='contained' {...props} />
 }
 
-export function AppTextInput(props: React.ComponentProps<typeof TextInput>) {
+export function StyledTextInput(props: React.ComponentProps<typeof TextInput>) {
   return <TextInput mode='outlined' {...props} />
 }
 
-export function AppText(props: React.ComponentProps<typeof Text>) {
+export function StyledText(props: React.ComponentProps<typeof Text>) {
   return <Text {...props} />
+}
+
+export function StyledView({ children, style }: StyledProp) {
+  const theme = useTheme()
+  return <View style={{ backgroundColor: theme.colors.background, ...style }}>
+    {children}
+  </View>
 }

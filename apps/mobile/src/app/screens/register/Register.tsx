@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 import { useState } from 'react';
 
 import { CreateUserDto } from '@org/shared-libs';
-import { AppButton } from '@org/ui';
+import { StyledButton } from '@org/ui';
 
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import AppController from '../../../components/forms/AppController';
@@ -83,7 +83,7 @@ export default function Register() {
       <ApiFieldErrors apiErrors={apiErrors?.password} />
 
       <View>
-        <AppButton onPress={handleSubmit(onSubmit)}>Submit</AppButton>
+        <StyledButton onPress={handleSubmit(onSubmit)}>Submit</StyledButton>
       </View>
     </View>
   );

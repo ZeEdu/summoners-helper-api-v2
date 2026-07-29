@@ -46,7 +46,8 @@
     "class-validator": "*",
     "react-native-paper": "*",
     "@react-navigation/bottom-tabs": "*",
-    "@expo/vector-icons": "*"
+    "@expo/vector-icons": "*",
+    "@gorhom/bottom-sheet": "*"
   },
   "devDependencies": {}
 }
