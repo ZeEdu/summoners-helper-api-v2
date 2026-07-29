@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "gameNameOrTagLineIsRequired": "gameName and tagLine are required",
+    "serviceUnavailableException": "Failed to retrieve player data from the Riot API"
+  }
+}

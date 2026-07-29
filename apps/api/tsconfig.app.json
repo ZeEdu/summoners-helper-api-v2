@@ -12,7 +12,8 @@
     "moduleResolution": "node"
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "../../shared-libs/src/lib/dtos/update-user.dto.ts"
   ],
   "exclude": [
     "jest.config.ts",

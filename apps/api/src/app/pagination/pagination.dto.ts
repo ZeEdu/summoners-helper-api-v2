@@ -1,11 +1,17 @@
-import { IsOptional, IsPositive, Min } from "class-validator";
+import { IsOptional, IsPositive, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class PaginationDto {
   @IsOptional()
   @IsPositive()
+  @Type(() => Number)
   limit?: number;
 
   @IsOptional()
   @Min(0)
+  @Type(() => Number)
   offset?: number;
 }
+
+export const DEFAULT_LIMIT = 10;
+export const DEFAULT_OFFSET = 0;

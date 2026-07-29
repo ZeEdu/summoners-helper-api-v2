@@ -6,134 +6,254 @@ import { AuthService } from '../service/auth.service';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { JwtModule } from '@nestjs/jwt';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../../users/schema/user.schema';
+import { IUser, User, UserSchema } from '../../users/schema/user.schema';
 import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
+import { Response } from 'express';
+import { ConfigModule } from '@nestjs/config';
+import {
+  RiotApiErrorLogger,
+  RiotApiErrorLoggerSchema,
+} from '../../riot-api/schema/riot-api-error-logger.schema';
+import { RiotApiModule } from '../../riot-api/riot-api.module';
+import { I18nModule, I18nService } from 'nestjs-i18n';
+import { I18N } from '../../i18n.config';
 
-
-let mongodb: MongoMemoryServer
+let mongodb: MongoMemoryServer;
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let userModel: Model<User>
+  let userModel: Model<User>;
+  let i18nService: I18nService;
+
+  const getMockedResponse = () => {
+    return {
+      cookie: jest.fn(),
+      clearCookie: jest.fn(),
+    };
+  };
+
+  const getTypedMockedResponse = () => {
+    return {
+      cookie: jest.fn(),
+      clearCookie: jest.fn(),
+    } as Partial<Response> as Response;
+  };
 
   beforeAll(async () => {
-    mongodb = await MongoMemoryServer.create()
-  })
+    mongodb = await MongoMemoryServer.create();
+  });
+
+  afterAll(async () => {
+    await mongodb.stop();
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       imports: [
+        RiotApiModule,
         MongooseModule.forRoot(mongodb.getUri()),
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        MongooseModule.forFeature([
+          { name: User.name, schema: UserSchema },
+          { name: RiotApiErrorLogger.name, schema: RiotApiErrorLoggerSchema },
+        ]),
         JwtModule.register({
-          secret: 'test-secret',
+          secret: faker.string.alphanumeric(16),
         }),
+        ConfigModule.forRoot({ isGlobal: true }),
+        I18nModule.forRoot(I18N.config),
       ],
-      providers: [UsersService, AuthService]
+      providers: [UsersService, AuthService],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-    userModel = module.get<Model<User>>(getModelToken(User.name))
+    userModel = module.get<Model<User>>(getModelToken(User.name));
+    i18nService = module.get<I18nService>(I18nService);
   });
-
-  afterAll(async () => {
-    await mongodb.stop()
-  })
 
   describe('register', () => {
     it('should call authService.register with createUserDto', async () => {
       const createUserPayload: CreateUserDto = {
         username: faker.internet.userName(),
         password: faker.internet.password(),
-        email: faker.internet.email()
-      }
+        email: faker.internet.email(),
+      };
 
-      const accessToken = await controller.register(createUserPayload)
-      expect(accessToken).toBeDefined()
-      expect(accessToken).toHaveProperty('accessToken')
+      const accessToken = await controller.register(
+        createUserPayload,
+        getTypedMockedResponse(),
+      );
 
-      const createdUser = await userModel.findOne({ email: createUserPayload.email })
-      expect(createdUser).toBeDefined()
-    })
+      expect(accessToken).toBeDefined();
+      expect(accessToken).toHaveProperty('accessToken');
 
+      const createdUser = await userModel.findOne({
+        email: createUserPayload.email,
+      });
+      expect(createdUser).toBeDefined();
+    });
 
     describe('with error', () => {
       it('email already used', async () => {
         const createUserPayload: CreateUserDto = {
           username: faker.internet.userName(),
           password: faker.internet.password(),
-          email: faker.internet.email()
-        }
+          email: faker.internet.email(),
+        };
 
         // Cria um usuário
-        await controller.register(createUserPayload)
+        await controller.register(createUserPayload, getTypedMockedResponse());
 
         // Tenta criar um novo usuário com o mesmo email
         const alreadyInUseEmailPayload: CreateUserDto = {
           username: faker.internet.userName(),
           password: faker.internet.password(),
-          email: createUserPayload.email
-        }
+          email: createUserPayload.email,
+        };
 
         // Tenta criar um usuário com o email repetido
-        await expect(controller.register(alreadyInUseEmailPayload)).rejects.toThrow('Email já está sendo utilizado')
-      })
+        const expectedErrorMessage = i18nService.t(
+          'auth.errors.register.emailInUse',
+        );
+        await expect(
+          controller.register(
+            alreadyInUseEmailPayload,
+            getTypedMockedResponse(),
+          ),
+        ).rejects.toThrow(expectedErrorMessage);
+      });
 
       it('username already used', async () => {
         const createUserPayload: CreateUserDto = {
           username: faker.internet.userName(),
           password: faker.internet.password(),
-          email: faker.internet.email()
-        }
+          email: faker.internet.email(),
+        };
 
         // Cria um usuário
-        await controller.register(createUserPayload)
+        await controller.register(createUserPayload, getTypedMockedResponse());
 
         // Tenta criar um novo usuário com o mesmo email
         const alreadyInUseEmailPayload: CreateUserDto = {
           username: createUserPayload.username,
           password: faker.internet.password(),
-          email: faker.internet.email()
-        }
+          email: faker.internet.email(),
+        };
 
         // Tenta criar um usuário com o email repetido
-        await expect(controller.register(alreadyInUseEmailPayload)).rejects.toThrow('Nome de usuário já está sendo utilizado')
-      })
+        const expectedErrorMessage = i18nService.t(
+          'auth.errors.register.usernameInUse',
+        );
+        await expect(
+          controller.register(
+            alreadyInUseEmailPayload,
+            getTypedMockedResponse(),
+          ),
+        ).rejects.toThrow(expectedErrorMessage);
+      });
+    });
+  });
 
-      // it('without email', () => {
+  describe('login', () => {
+    it('should call authService.login with current user', async () => {
+      const createUserPayload: CreateUserDto = {
+        username: faker.internet.userName(),
+        password: faker.internet.password(),
+        email: faker.internet.email(),
+      };
 
-      // })
-      // it('without password', () => {
+      await controller.register(createUserPayload, getTypedMockedResponse());
 
-      // })
-    })
+      const createdUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
 
-    // it('should return accessToken wrapped in an object', () => { })
+      expect(createdUser).toBeDefined();
 
-    // it('should propagate errors thrown by authService.register', async () => {
-    //   const createUserPayload: CreateUserDto = {
-    //     username: '112312',
-    //     password: 'asdasd',
-    //     email: 'qweqwe'
-    //   }
+      const { accessToken } = await controller.login(
+        createdUser,
+        getTypedMockedResponse(),
+      );
 
-    //   const accessToken = await controller.register(createUserPayload)
-    // })
-  })
+      // Deve colocar o refreshToken nos cookies da requisição
+      expect(accessToken).toBeDefined();
+    });
+  });
 
-  // describe('login', () => {
-  //   it('should call authService.login with current user', () => {
+  describe('logout', () => {
+    it('should call authService.logout and remove refreshToken from user', async () => {
+      const createUserPayload: CreateUserDto = {
+        username: faker.internet.userName(),
+        password: faker.internet.password(),
+        email: faker.internet.email(),
+      };
 
-  //   })
+      await controller.register(createUserPayload, getTypedMockedResponse());
 
-  //   it('should return the result from authService.login', () => {
+      const createdUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
 
-  //   })
+      expect(createdUser.refreshToken).toBeDefined();
 
-  //   it('should propagate errors thrown by authService.login', () => {
+      await controller.logout(createdUser, getTypedMockedResponse());
 
-  //   })
-  // })
-})
+      const updatedUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
+
+      expect(updatedUser.refreshToken).toBeNull();
+    });
+  });
+
+  describe('refresh', () => {
+    it('should call authService.refresh and update refreshToken from user', async () => {
+      const createUserPayload: CreateUserDto = {
+        username: faker.internet.userName(),
+        password: faker.internet.password(),
+        email: faker.internet.email(),
+      };
+
+      const mockedResponse = getMockedResponse();
+      let rawRefreshToken: string;
+      jest.spyOn(mockedResponse, 'cookie').mockImplementation((name, value) => {
+        if (name === 'refresh_token') {
+          rawRefreshToken = value as string;
+        }
+        return mockedResponse;
+      });
+
+      await controller.register(
+        createUserPayload,
+        mockedResponse as Partial<Response> as Response,
+      );
+
+      const createdUser = (await userModel
+        .findOne({
+          email: createUserPayload.email,
+        })
+        .lean()) as IUser;
+      expect(createdUser.refreshToken).toBeDefined();
+
+      expect(rawRefreshToken).toBeDefined();
+
+      await controller.refreshToken(
+        { _id: createdUser._id, refreshToken: rawRefreshToken } as IUser,
+        getTypedMockedResponse(),
+      );
+
+      const updatedUser = (await userModel.findOne({
+        email: createUserPayload.email,
+      })) as IUser;
+
+      expect(updatedUser.refreshToken).not.toBe(createdUser.refreshToken);
+    });
+  });
+});

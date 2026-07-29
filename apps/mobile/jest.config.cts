@@ -1,21 +1,22 @@
+/// <reference types="jest" />
+/// <reference types="node" />
 module.exports = {
   displayName: 'mobile',
-  preset: '../../jest.preset.js',
+  preset: 'jest-expo',
+  moduleFileExtensions: ['ts', 'js', 'html', 'tsx', 'jsx'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/apps/mobile',
+  moduleNameMapper: {
+    '[.]svg$': '@nx/expo/plugins/jest/svg-mock',
+  },
   transform: {
-    '^.+\\.(ts|mjs|js|html)$': [
-      'jest-preset-angular',
+    '[.][jt]sx?$': [
+      'babel-jest',
       {
-        tsconfig: '<rootDir>/tsconfig.spec.json',
-        stringifyContentPathRegex: '\\.(html|svg)$',
+        configFile: __dirname + '/.babelrc.js',
       },
     ],
+    '^.+[.](bmp|gif|jpg|jpeg|mp4|png|psd|svg|webp|ttf|otf|m4v|mov|mp4|mpeg|mpg|webm|aac|aiff|caf|m4a|mp3|wav|html|pdf|obj)$':
+      require.resolve('jest-expo/src/preset/assetFileTransformer.js'),
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
-  snapshotSerializers: [
-    'jest-preset-angular/build/serializers/no-ng-attributes',
-    'jest-preset-angular/build/serializers/ng-snapshot',
-    'jest-preset-angular/build/serializers/html-comment',
-  ],
+  coverageDirectory: '../../coverage/apps/mobile',
 };
