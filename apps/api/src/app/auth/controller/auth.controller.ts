@@ -17,7 +17,7 @@ import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { isProduction } from '../../utils';
-import { IUser, CreateUserDto } from '@org/shared-libs';
+import { CreateUserDto, IUser } from '@org/contracts';
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 

@@ -3,10 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { UsersService } from '../../users/service/users.service';
 import { AuthService } from '../service/auth.service';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { JwtModule } from '@nestjs/jwt';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { IUser, User, UserSchema } from '../../users/schema/user.schema';
+import { User, UserSchema } from '../../users/schema/user.schema';
 import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { Response } from 'express';
@@ -18,6 +17,7 @@ import {
 import { RiotApiModule } from '../../riot-api/riot-api.module';
 import { I18nModule, I18nService } from 'nestjs-i18n';
 import { I18N } from '../../i18n.config';
+import { CreateUserDto, IUser } from '@org/contracts';
 
 let mongodb: MongoMemoryServer;
 
@@ -80,7 +80,7 @@ describe('AuthController', () => {
         email: faker.internet.email(),
       };
 
-      const accessToken = await controller.register(
+      const accessToken = await controller.webRegister(
         createUserPayload,
         getTypedMockedResponse(),
       );
@@ -103,7 +103,7 @@ describe('AuthController', () => {
         };
 
         // Cria um usuário
-        await controller.register(createUserPayload, getTypedMockedResponse());
+        await controller.webRegister(createUserPayload, getTypedMockedResponse());
 
         // Tenta criar um novo usuário com o mesmo email
         const alreadyInUseEmailPayload: CreateUserDto = {
@@ -117,7 +117,7 @@ describe('AuthController', () => {
           'auth.errors.register.emailInUse',
         );
         await expect(
-          controller.register(
+          controller.webRegister(
             alreadyInUseEmailPayload,
             getTypedMockedResponse(),
           ),
@@ -132,7 +132,7 @@ describe('AuthController', () => {
         };
 
         // Cria um usuário
-        await controller.register(createUserPayload, getTypedMockedResponse());
+        await controller.webRegister(createUserPayload, getTypedMockedResponse());
 
         // Tenta criar um novo usuário com o mesmo email
         const alreadyInUseEmailPayload: CreateUserDto = {
@@ -146,7 +146,7 @@ describe('AuthController', () => {
           'auth.errors.register.usernameInUse',
         );
         await expect(
-          controller.register(
+          controller.webRegister(
             alreadyInUseEmailPayload,
             getTypedMockedResponse(),
           ),
@@ -163,7 +163,7 @@ describe('AuthController', () => {
         email: faker.internet.email(),
       };
 
-      await controller.register(createUserPayload, getTypedMockedResponse());
+      await controller.webRegister(createUserPayload, getTypedMockedResponse());
 
       const createdUser = (await userModel
         .findOne({
@@ -173,7 +173,7 @@ describe('AuthController', () => {
 
       expect(createdUser).toBeDefined();
 
-      const { accessToken } = await controller.login(
+      const { accessToken } = await controller.webLogin(
         createdUser,
         getTypedMockedResponse(),
       );
@@ -191,7 +191,7 @@ describe('AuthController', () => {
         email: faker.internet.email(),
       };
 
-      await controller.register(createUserPayload, getTypedMockedResponse());
+      await controller.webRegister(createUserPayload, getTypedMockedResponse());
 
       const createdUser = (await userModel
         .findOne({
@@ -230,7 +230,7 @@ describe('AuthController', () => {
         return mockedResponse;
       });
 
-      await controller.register(
+      await controller.webRegister(
         createUserPayload,
         mockedResponse as Partial<Response> as Response,
       );
@@ -242,10 +242,10 @@ describe('AuthController', () => {
         .lean()) as IUser;
       expect(createdUser.refreshToken).toBeDefined();
 
-      expect(rawRefreshToken).toBeDefined();
+      expect(rawRefreshToken!).toBeDefined();
 
-      await controller.refreshToken(
-        { _id: createdUser._id, refreshToken: rawRefreshToken } as IUser,
+      await controller.webRefreshToken(
+        { _id: createdUser._id, refreshToken: rawRefreshToken! } as IUser,
         getTypedMockedResponse(),
       );
 

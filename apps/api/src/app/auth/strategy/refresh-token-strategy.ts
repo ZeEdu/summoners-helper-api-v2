@@ -7,9 +7,11 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { UsersService } from '../../users/service/users.service';
 import { I18nService } from 'nestjs-i18n';
-import { IUser } from '@org/shared-libs';
+
+import { IUser } from '@org/contracts';
+
+import { UsersService } from '../../users/service/users.service';
 
 type RefreshTokenPayload = {
   sub: string;
@@ -54,7 +56,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
   async validate(req: Request, payload: RefreshTokenPayload): Promise<IUser> {
     const refreshToken = this.getFromCookies(req) || this.getFromBody(req);
-    console.log({ refreshToken });
 
     if (!refreshToken) {
       throw new ForbiddenException();
@@ -67,7 +68,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
       );
     }
 
-    // Substitui o token hasheado pelo raw que vem no cookie
     return { ...user, refreshToken };
   }
 }

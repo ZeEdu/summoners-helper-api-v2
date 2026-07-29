@@ -4,11 +4,13 @@ import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 import {
   createUserPaginationFilter,
   UserPaginationDto,
+  userPaginationSchema,
 } from '../user.pagination.dto';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUser, UpdateUserProfileDto } from '@org/shared-libs';
+import { IUser, UpdateUserProfileDto } from '@org/contracts';
+import { ZodValidationPipe } from '../../pipes/zodValidation.pipe';
 
 @Controller('users')
 @UseGuards(JwtGuard)
@@ -16,7 +18,10 @@ export class UsersController {
   constructor(private usersService: UsersService) { }
 
   @Get()
-  async getAllUsers(@Query() pagination: UserPaginationDto): Promise<{
+  async getAllUsers(
+    @Query(new ZodValidationPipe(userPaginationSchema))
+    pagination: UserPaginationDto
+  ): Promise<{
     count: number;
     users: IUser[];
   }> {

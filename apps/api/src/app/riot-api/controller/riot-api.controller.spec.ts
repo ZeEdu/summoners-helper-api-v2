@@ -13,9 +13,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 
 jest.mock('../service/riot-api.service');
 import { RiotApiService } from '../service/riot-api.service';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
 
-import { RIOT_SERVERS } from '../utils/riot-api.constants';
 import {
   IExpectedRiotApiService,
   RiotApiFixtures,
@@ -23,6 +21,7 @@ import {
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { I18nModule } from 'nestjs-i18n';
 import { I18N } from '../../i18n.config';
+import { CreateUserDto, RIOT_SERVERS } from '@org/contracts';
 
 let mongodb: MongoMemoryServer;
 

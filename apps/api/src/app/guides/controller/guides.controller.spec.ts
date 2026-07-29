@@ -1,14 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GuidesController } from './guides.controller';
 import { Model } from 'mongoose';
-import { User, UserSchema } from '../../users/schema/user.schema';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
-import { AbilityOption, Guide, GuideSchema } from '../schema/guide.schema';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { GuidesService } from '../service/guides.service';
-import { PaginationGuidesDto } from '../dto/pagination-guides.dto';
 import { faker } from '@faker-js/faker';
+
+import { RIOT_SERVERS } from '@org/contracts';
+
+import { GuidesController } from './guides.controller';
+import { User, UserSchema } from '../../users/schema/user.schema';
+import { AbilityOption, Guide, GuideSchema } from '../schema/guide.schema';
+import { GuidesService } from '../service/guides.service';
+import { GuidePaginationDto } from '../dto/pagination-guides.dto';
 
 let mongodb: MongoMemoryServer;
 
@@ -185,7 +187,7 @@ describe('GuidesController', () => {
           createdBy: user._id.toString(),
         });
 
-        const pagination: PaginationGuidesDto = {
+        const pagination: GuidePaginationDto = {
           title,
         };
         const result = await controller.getGuides(pagination);
@@ -198,8 +200,8 @@ describe('GuidesController', () => {
           createdBy: user._id.toString(),
         });
 
-        const pagination: PaginationGuidesDto = {
-          createdBy: user._id,
+        const pagination: GuidePaginationDto = {
+          createdBy: user._id.toString(),
         };
         const result = await controller.getGuides(pagination);
         expect(result.guides).toBeDefined();
@@ -235,10 +237,10 @@ describe('GuidesController', () => {
       patchPayload,
     );
 
-    expect(result.title).toEqual(patchPayload.title);
+    expect(result?.title).toEqual(patchPayload.title);
 
     const patchedGuide = await guideModel.findById(document._id);
-    expect(patchedGuide.title).toEqual(patchPayload.title);
+    expect(patchedGuide?.title).toEqual(patchPayload.title);
   });
 
   it('should delete', async () => {

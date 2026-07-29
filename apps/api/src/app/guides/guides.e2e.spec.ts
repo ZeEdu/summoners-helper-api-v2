@@ -4,15 +4,14 @@ import { RiotApiService } from '../riot-api/service/riot-api.service';
 import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
 import { RiotApiFixtures } from '../__fixtures__/riot-api.fixtures';
 import { Model } from 'mongoose';
-import { IUser, User, UserDocument } from '../users/schema/user.schema';
+import { User } from '../users/schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
-import { RIOT_SERVERS } from '../riot-api/utils/riot-api.constants';
 import request = require('supertest');
 import { AbilityOption, Guide } from './schema/guide.schema';
+import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
 
 describe('Guides (e2e)', () => {
   let app: INestApplication;
@@ -157,7 +156,7 @@ describe('Guides (e2e)', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/register')
+      .post('/auth/web/register')
       .send(createUserPayload)
       .expect(201);
 
@@ -187,7 +186,7 @@ describe('Guides (e2e)', () => {
 
       const insertedGuide = await guideModel.insertOne({
         ...mockGuidePayload,
-        createdBy: otherUser.user._id,
+        createdBy: otherUser?.user?._id,
       });
 
       const title = faker.lorem.sentence({ max: 10, min: 1 });

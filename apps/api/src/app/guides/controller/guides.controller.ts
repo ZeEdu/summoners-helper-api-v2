@@ -12,21 +12,26 @@ import {
 import { GuidesService } from '../service/guides.service';
 import {
   createGuidesPaginationFilter,
-  PaginationGuidesDto,
+  guidesPaginationSchema,
+  GuidePaginationDto
 } from '../dto/pagination-guides.dto';
 import { CreateGuideDto } from '../dto/create-guide.dto';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 import { IsGuideCreatorGuard } from '../../riot-api/guards/is-guide-creator.guard';
+import { ZodValidationPipe } from '../../pipes/zodValidation.pipe';
 
 @Controller('guides')
 @UseGuards(JwtGuard, HasRiotInfoGuard)
 export class GuidesController {
-  constructor(private guidesService: GuidesService) {}
+  constructor(private guidesService: GuidesService) { }
 
   @Get('')
-  getGuides(@Query() pagination: PaginationGuidesDto) {
+  getGuides(
+    @Query(new ZodValidationPipe(guidesPaginationSchema))
+    pagination: GuidePaginationDto
+  ) {
     const { offset, limit } = pagination;
     const filter = createGuidesPaginationFilter(pagination);
     return this.guidesService.getGuides(filter, { offset, limit });
