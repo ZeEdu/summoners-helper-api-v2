@@ -7,10 +7,10 @@ export interface IThreat {
 
 @Schema()
 export class Threat implements IThreat {
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   threat: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   description: string;
 }
 

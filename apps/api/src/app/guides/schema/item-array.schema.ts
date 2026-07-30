@@ -7,10 +7,10 @@ export interface IItemArray {
 
 @Schema()
 export class ItemArray implements IItemArray {
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   id: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   description: string;
 }
 

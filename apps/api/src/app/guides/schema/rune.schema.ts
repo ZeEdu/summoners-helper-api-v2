@@ -10,16 +10,16 @@ export interface IRunes {
 
 @Schema()
 export class Runes implements IRunes {
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   primaryRune: string;
 
-  @Prop({ type: RuneSlotsSchema })
+  @Prop({ type: RuneSlotsSchema, required: true })
   primarySlots: RuneSlots;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   secondaryRune: string;
 
-  @Prop({ type: RuneSlotsSchema })
+  @Prop({ type: RuneSlotsSchema, required: true })
   secondarySlots: RuneSlots;
 }
 

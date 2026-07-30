@@ -9,17 +9,11 @@ export interface IGuide {
   _id: Types.ObjectId;
   title: string;
   createdBy: Types.ObjectId;
-
   introduction: string;
-
   patchVersion: string;
-
   createdAt: Date;
-
   updatedAt?: Date;
-
   champion: string;
-
   role: string;
 
   // Runes
@@ -45,15 +39,17 @@ export interface IGuide {
   // Abilities Progression
   abilitiesProgression: AbilitiesProgression;
   abilitiesProgressionDescription: string;
+
+  threatsDescription: string;
   threats: IThreat[];
 }
 
 @Schema()
 export class Guide implements IGuide {
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   introduction: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   patchVersion: string;
 
   @Prop({ type: Date })
@@ -61,60 +57,63 @@ export class Guide implements IGuide {
   @Prop({ type: Date })
   updatedAt?: Date;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   champion: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   role: string;
 
-  @Prop({ type: RunesSchema })
-  runes: Runes;
-
-  @Prop({ type: String })
-  runesDescription: string;
-
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   bonusSlotOne: string;
-  @Prop({ type: String })
+
+  @Prop({ type: String, required: true })
   bonusSlotTwo: string;
-  @Prop({ type: String })
+
+  @Prop({ type: String, required: true })
   bonusSlotThree: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   bonusDescription: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   firstSpell: string;
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   secondSpell: string;
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   spellsDescription: string;
 
-  @Prop([{ type: ItemSchema }])
-  itemsBlock: Items[];
-
-  @Prop({ type: String })
-  itemsDescription: string;
-
-  @Prop({ type: AbilitiesProgressionSchema }) // TODO Garantir que isso funciona
-  abilitiesProgression: AbilitiesProgression;
-
-  @Prop({ type: String })
-  abilitiesProgressionDescription: string;
-
-  @Prop([{ type: ThreatSchema }])
-  threats: Threat[]; // TODO Garantir que isso funciona
-
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   title: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;
 
+  @Prop({ type: String, required: true })
+  abilitiesProgressionDescription: string;
+
+  @Prop({ type: AbilitiesProgressionSchema }) // TODO Garantir que isso funciona
+  abilitiesProgression: AbilitiesProgression;
+
+  @Prop({ type: String, required: true })
+  itemsDescription: string;
+
+  @Prop([{ type: ItemSchema }])
+  itemsBlock: Items[];
+
+  @Prop({ type: String, required: true })
+  threatsDescription: string;
+
+  @Prop([{ type: ThreatSchema }])
+  threats: Threat[]; // TODO Garantir que isso funciona
+
+  @Prop({ type: String, required: true })
+  runesDescription: string;
+
+  @Prop({ type: RunesSchema })
+  runes: Runes;
+
   _id: Types.ObjectId;
 }
-
-// Criar schemas proprios para os documentos internos do schema como spells, runes, items, etc.
 
 export const GuideSchema = SchemaFactory.createForClass(Guide);
 

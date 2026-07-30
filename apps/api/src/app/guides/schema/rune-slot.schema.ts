@@ -9,17 +9,17 @@ export interface IRuneSlots {
 
 @Schema()
 export class RuneSlots implements IRuneSlots {
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   first: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   second: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   third: string;
 
   @Prop({ type: String })
-  fourth?: string;
+  fourth: string;
 }
 
 export const RuneSlotsSchema = SchemaFactory.createForClass(RuneSlots);
