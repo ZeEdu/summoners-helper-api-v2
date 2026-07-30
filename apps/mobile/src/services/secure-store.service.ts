@@ -14,13 +14,9 @@ const SecureStoreService = {
   set: async (key: string, value: any) => {
     if (notMobile()) {
       localStorage.setItem(key, value);
-      console.log('set', key, value);
       return;
     }
-    await SecureStore.setItemAsync(key, value).catch((err) => {
-      console.log({ err });
-      console.log({ value });
-    });
+    await SecureStore.setItemAsync(key, value)
   },
   delete: async (key: string) => {
     if (notMobile()) {
