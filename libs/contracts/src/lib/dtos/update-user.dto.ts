@@ -1,47 +1,55 @@
-import { IsDate, IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { z } from 'zod';
 import { RIOT_SERVERS } from '../constants';
 
 const passwordPattern =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/;
 
-export class UpdateUserDto {
-  @IsEmail({}, { message: 'Email deve ser válido' })
-  @IsOptional()
-  email?: string;
+export const updateUserSchema = z.object({
+  email: z
+    .email({ error: 'Email deve ser válido' })
+    .optional(),
 
-  @IsString({ message: 'Formato inválido' })
-  @MinLength(5, {
-    message: 'O nome de usuário deve ter pelo menos 5 caracteres',
-  })
-  @MaxLength(16, {
-    message: 'O nome de usuário deve ter no máximo 16 caracteres',
-  })
-  @IsOptional()
-  username?: string;
+  username: z
+    .string({ error: 'Formato inválido' })
+    .min(5, {
+      error: 'O nome de usuário deve ter pelo menos 5 caracteres',
+    })
+    .max(16, {
+      error: 'O nome de usuário deve ter no máximo 16 caracteres',
+    })
+    .optional(),
 
-  @IsString({ message: 'Formato inválido' })
-  @MinLength(8, { message: 'A senha deve ter no mínimo 8 caracteres' })
-  @MaxLength(64, { message: 'A senha deve ter no máximo 64 caracteres' })
-  @Matches(passwordPattern, {
-    message:
-      'A senha deve ter ao menos uma letra maiúsculas, minúsculas, número e caracter especial (@, $, !, %, ? ou &)',
-  })
-  @IsOptional()
-  password?: string;
+  password: z
+    .string({ error: 'Formato inválido' })
+    .min(8, {
+      error: 'A senha deve ter no mínimo 8 caracteres',
+    })
+    .max(64, {
+      error: 'A senha deve ter no máximo 64 caracteres',
+    })
+    .regex(passwordPattern, {
+      error:
+        'A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)',
+    })
+    .optional(),
 
-  @IsString({ message: 'Formato inválido' })
-  @IsOptional()
-  puuid?: string;
+  puuid: z
+    .string({ error: 'Formato inválido' })
+    .optional(),
 
-  @IsString({ message: 'Formato inválido' })
-  @IsOptional()
-  tagLine?: string;
+  tagLine: z
+    .string({ error: 'Formato inválido' })
+    .optional(),
 
-  @IsDate({ message: 'Formato inválido' })
-  @IsOptional()
-  gameName?: string;
+  gameName: z
+    .string({ error: 'Formato inválido' })
+    .optional(),
 
-  @IsString({ message: 'Formato inválido' })
-  @IsOptional()
-  server?: RIOT_SERVERS;
-}
+  server: z
+    .enum(RIOT_SERVERS, {
+      error: 'Servidor inválido',
+    })
+    .optional(),
+});
+
+export type UpdateUserDto = z.infer<typeof updateUserSchema>;

@@ -9,13 +9,13 @@ import {
 import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUser, UpdateUserProfileDto } from '@org/contracts';
+import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Get()
   async getAllUsers(
@@ -37,8 +37,10 @@ export class UsersController {
 
   @Patch('update-profile')
   async updateProfile(
-    @CurrentUser() user: IUser,
-    @Body() updateProfileDto: UpdateUserProfileDto,
+    @CurrentUser()
+    user: IUser,
+    @Body(new ZodValidationPipe(updateUserProfileSchema))
+    updateProfileDto: UpdateUserProfileDto,
   ) {
     await this.usersService.updateUserWithRiotData(user, updateProfileDto);
   }
