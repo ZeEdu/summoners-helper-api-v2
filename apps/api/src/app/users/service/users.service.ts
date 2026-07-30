@@ -14,7 +14,13 @@ import {
   User,
 } from '../schema/user.schema';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import { CreateUserDto, IUser, RIOT_SERVERS, UpdateUserDto, UpdateUserProfileDto } from '@org/contracts';
+import {
+  CreateUserDto,
+  IUser,
+  RIOT_SERVERS,
+  UpdateUserDto,
+  UpdateUserProfileDto
+} from '@org/contracts';
 
 @Injectable()
 export class UsersService {
