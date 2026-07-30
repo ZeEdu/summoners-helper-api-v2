@@ -21,7 +21,6 @@ type RefreshTokenPayload = {
 };
 
 function fromCookie(req: Request) {
-  console.log({ req });
   return (req.cookies as Record<string, string>)?.refresh_token ?? null
 }
 
@@ -51,7 +50,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   getFromBody(req: Request) {
-    console.log({ body: req.body });
     return (req.body as Record<string, string>)?.refreshToken
   }
 
