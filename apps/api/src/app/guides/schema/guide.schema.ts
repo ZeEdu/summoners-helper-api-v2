@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
-import { Items, ItemSchema } from './item.schema';
+import { Types, HydratedDocument } from 'mongoose';
+import { IItems, Items, ItemSchema } from './item.schema';
+import { AbilitiesProgression, AbilitiesProgressionSchema } from './abilities-progression.schema';
+import { IThreat, Threat, ThreatSchema } from './threat.schema';
+import { IRunes, Runes, RunesSchema } from './rune.schema';
 
 export interface IGuide {
   _id: Types.ObjectId;
@@ -20,7 +23,7 @@ export interface IGuide {
   role: string;
 
   // Runes
-  runes: Runes;
+  runes: IRunes;
   runesDescription: string;
 
   // Bonus
@@ -36,13 +39,13 @@ export interface IGuide {
   spellsDescription: string;
 
   // Items
-  itemsBlock: Items[];
+  itemsBlock: IItems[];
   itemsDescription: string;
 
   // Abilities Progression
   abilitiesProgression: AbilitiesProgression;
   abilitiesProgressionDescription: string;
-  threats: Threat[];
+  threats: IThreat[];
 }
 
 @Schema()
@@ -64,6 +67,7 @@ export class Guide implements IGuide {
   @Prop({ type: String })
   role: string;
 
+  @Prop({ type: RunesSchema })
   runes: Runes;
 
   @Prop({ type: String })
@@ -86,30 +90,35 @@ export class Guide implements IGuide {
   @Prop({ type: String })
   spellsDescription: string;
 
-  @Prop([{ type: ItemSchema }]) // TODO Garantir que isso funciona
+  @Prop([{ type: ItemSchema }])
   itemsBlock: Items[];
 
   @Prop({ type: String })
   itemsDescription: string;
 
+  @Prop({ type: AbilitiesProgressionSchema }) // TODO Garantir que isso funciona
   abilitiesProgression: AbilitiesProgression;
+
   @Prop({ type: String })
   abilitiesProgressionDescription: string;
 
+  @Prop([{ type: ThreatSchema }])
   threats: Threat[]; // TODO Garantir que isso funciona
-
-  _id: Types.ObjectId;
 
   @Prop({ type: String })
   title: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;
+
+  _id: Types.ObjectId;
 }
 
 // Criar schemas proprios para os documentos internos do schema como spells, runes, items, etc.
 
 export const GuideSchema = SchemaFactory.createForClass(Guide);
+
+export type GuideDocument = HydratedDocument<Guide>
 
 export const CAN_UPDATE_FIELDS = [
   'introduction',
@@ -144,50 +153,4 @@ export interface BonusItem {
 export interface Spells {
   first: string;
   second: string;
-}
-
-export interface AbilitiesProgression {
-  l1: AbilityOption;
-  l2: AbilityOption;
-  l3: AbilityOption;
-  l4: AbilityOption;
-  l5: AbilityOption;
-  l6: AbilityOption;
-  l7: AbilityOption;
-  l8: AbilityOption;
-  l9: AbilityOption;
-  l10: AbilityOption;
-  l11: AbilityOption;
-  l12: AbilityOption;
-  l13: AbilityOption;
-  l14: AbilityOption;
-  l15: AbilityOption;
-  l16: AbilityOption;
-  l17: AbilityOption;
-  l18: AbilityOption;
-}
-export enum AbilityOption {
-  A = 'a',
-  B = 'b',
-  C = 'c',
-  D = 'd',
-}
-
-export interface Runes {
-  primaryRune: string;
-  primarySlots: RuneSlots;
-  secondaryRune: string;
-  secondarySlots: RuneSlots;
-}
-
-export interface RuneSlots {
-  first: string;
-  second: string;
-  third: string;
-  fourth?: string;
-}
-
-export interface Threat {
-  threat: string;
-  description: string;
 }

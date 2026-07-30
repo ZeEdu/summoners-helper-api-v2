@@ -1,19 +1,18 @@
-import { Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ItemArray, ItemArraySchema } from './item-array.schema';
 
-export interface Items {
+export interface IItems {
   itemRollName: string;
   itemArray: ItemArray[];
-}
-
-export interface ItemArray {
-  id: string;
-  description: string;
 }
 
 @Schema()
-export class Item implements Items {
+export class Items implements IItems {
+  @Prop({ type: String })
   itemRollName: string;
+
+  @Prop([ItemArraySchema])
   itemArray: ItemArray[];
 }
 
-export const ItemSchema = SchemaFactory.createForClass(Item);
+export const ItemSchema = SchemaFactory.createForClass(Items);

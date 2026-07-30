@@ -8,9 +8,10 @@ import { RIOT_SERVERS } from '@org/contracts';
 
 import { GuidesController } from './guides.controller';
 import { User, UserSchema } from '../../users/schema/user.schema';
-import { AbilityOption, Guide, GuideSchema } from '../schema/guide.schema';
+import { Guide, GuideSchema } from '../schema/guide.schema';
 import { GuidesService } from '../service/guides.service';
 import { GuidePaginationDto } from '../dto/pagination-guides.dto';
+import { AbilityOption } from '../schema/abilities-progression.schema';
 
 let mongodb: MongoMemoryServer;
 

@@ -10,8 +10,9 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { faker } from '@faker-js/faker';
 import request = require('supertest');
-import { AbilityOption, Guide } from './schema/guide.schema';
+import { Guide } from './schema/guide.schema';
 import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+import { AbilityOption } from './schema/abilities-progression.schema';
 
 describe('Guides (e2e)', () => {
   let app: INestApplication;

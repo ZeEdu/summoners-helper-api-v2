@@ -1,19 +1,8 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import z from 'zod';
 
-export class RuneSlotsDto {
-  @IsString({ message: 'O campo `first` deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo `first` é obrigatório' })
-  first: string;
-
-  @IsString({ message: 'O campo `second` deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo `second` é obrigatório' })
-  second: string;
-
-  @IsString({ message: 'O campo `third` deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo `third` é obrigatório' })
-  third: string;
-
-  @IsOptional()
-  @IsString({ message: 'O campo `fourth` deve ser uma string' })
-  fourth?: string;
-}
+export const runeSlotSchema = z.object({
+  first: z.string({ error: 'formato do campo é inválido' }).nonoptional({ error: 'o campo é obrigatório' }),
+  second: z.string({ error: 'formato do campo é inválido' }).nonoptional({ error: 'o campo é obrigatório' }),
+  third: z.string({ error: 'formato do campo é inválido' }).nonoptional({ error: 'o campo é obrigatório' }),
+  fourth: z.string({ error: 'formato do campo é inválido' }).optional(),
+})

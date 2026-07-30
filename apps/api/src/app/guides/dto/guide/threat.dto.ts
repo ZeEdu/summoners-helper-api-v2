@@ -1,11 +1,6 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import z from 'zod';
 
-export class ThreatDto {
-  @IsString({ message: 'O campo "ameaça" deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo "ameaça" é obrigatória' })
-  threat: string;
-
-  @IsString({ message: 'O campo `Descrição` deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo `Descrição` é obrigatório' })
-  description: string;
-}
+export const threatSchema = z.object({
+  threat: z.string({ error: 'formato do campo é inválido' }).nonoptional({ error: 'o campo é obrigatório' }),
+  description: z.string({ error: 'formato do campo é inválido' }).nonoptional({ error: 'o campo é obrigatório' })
+})

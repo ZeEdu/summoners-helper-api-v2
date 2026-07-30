@@ -15,7 +15,7 @@ import {
   guidesPaginationSchema,
   GuidePaginationDto
 } from '../dto/pagination-guides.dto';
-import { CreateGuideDto } from '../dto/create-guide.dto';
+import { CreateGuideDto, createGuideSchema } from '../dto/create-guide.dto';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
@@ -43,7 +43,7 @@ export class GuidesController {
   }
 
   @Post('')
-  createGuide(@Body() body: CreateGuideDto) {
+  createGuide(@Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto) {
     return this.guidesService.createGuide(body);
   }
 
@@ -51,7 +51,7 @@ export class GuidesController {
   @UseGuards(IsGuideCreatorGuard)
   editGuide(
     @Param('guideId') guideId: string,
-    @Body() patchGuide: PatchGuideDto,
+    @Body() patchGuide: Partial<PatchGuideDto>,
   ) {
     return this.guidesService.patchGuide(guideId, patchGuide);
   }
