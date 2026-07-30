@@ -21,6 +21,7 @@ type RefreshTokenPayload = {
 };
 
 function fromCookie(req: Request) {
+  console.log({ req });
   return (req.cookies as Record<string, string>)?.refresh_token ?? null
 }
 

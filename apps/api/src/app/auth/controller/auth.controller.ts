@@ -17,7 +17,8 @@ import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { isProduction } from '../../utils';
-import { CreateUserDto, IUser } from '@org/contracts';
+import { CreateUserDto, createUserSchema, IUser } from '@org/contracts';
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
@@ -28,7 +29,7 @@ export class AuthController {
   @Post('web/register')
   @Public()
   async webRegister(
-    @Body() body: CreateUserDto,
+    @Body(new ZodValidationPipe(createUserSchema)) body: CreateUserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
     const tokens = await this.authService.register(body);
@@ -40,7 +41,7 @@ export class AuthController {
   @Post('mobile/register')
   @Public()
   async mobileRegister(
-    @Body() body: CreateUserDto,
+    @Body(new ZodValidationPipe(createUserSchema)) body: CreateUserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const tokens = await this.authService.register(body);
 
@@ -65,7 +66,7 @@ export class AuthController {
   @Post('mobile/login')
   @UseGuards(LocalGuard)
   async mobileLogin(
-    @CurrentUser() user: IUser
+    @CurrentUser() user: IUser,
   ): Promise<{ accessToken: string }> {
     const tokens = await this.authService.login(user);
     return { ...tokens };
@@ -95,7 +96,7 @@ export class AuthController {
     const userId = user._id.toString();
     const refreshToken = user.refreshToken;
     if (!refreshToken) {
-      throw new UnauthorizedException('Token necessário não informado')
+      throw new UnauthorizedException('Token necessário não informado');
     }
     const tokens = await this.authService.refreshToken(userId, refreshToken);
 
@@ -106,15 +107,13 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @Post('mobile/refresh')
-  async mobileRefreshToken(
-    @CurrentUser() user: IUser
-  ): Promise<{
+  async mobileRefreshToken(@CurrentUser() user: IUser): Promise<{
     accessToken: string;
   }> {
     const userId = user._id.toString();
     const refreshToken = user.refreshToken;
     if (!refreshToken) {
-      throw new UnauthorizedException('Token necessário não informado')
+      throw new UnauthorizedException('Token necessário não informado');
     }
 
     const tokens = await this.authService.refreshToken(userId, refreshToken);

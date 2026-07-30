@@ -10,24 +10,24 @@ import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 import { IUser, UpdateUserProfileDto } from '@org/contracts';
-import { ZodValidationPipe } from '../../pipes/zodValidation.pipe';
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) { }
+  constructor(private usersService: UsersService) {}
 
   @Get()
   async getAllUsers(
     @Query(new ZodValidationPipe(userPaginationSchema))
-    pagination: UserPaginationDto
+    pagination: UserPaginationDto,
   ): Promise<{
     count: number;
     users: IUser[];
   }> {
     const filter = createUserPaginationFilter(pagination);
     const { offset, limit } = pagination;
-    return this.usersService.getAllUsers(filter, { offset, limit })
+    return this.usersService.getAllUsers(filter, { offset, limit });
   }
 
   @Get('me')
