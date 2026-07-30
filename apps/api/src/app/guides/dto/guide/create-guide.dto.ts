@@ -1,12 +1,12 @@
 import z from 'zod';
 
-import { runeSchema } from './guide/runes.dto';
-import { itemSchema } from './guide/item.dto';
-import { abilitiesProgressionSchema } from './guide/abilities-progression.dto';
-import { threatSchema } from './guide/threat.dto';
-import { IGuide } from '../schema/guide.schema';
-import { objectIdSchema } from '../../dto/custom-schemas';
+import { IGuide } from '../../schema/guide.schema';
+import { runeSchema } from './runes.dto';
+import { itemSchema } from './item.dto';
+import { abilitiesProgressionSchema } from './abilities-progression.dto';
+import { threatSchema } from './threat.dto';
 
+import { objectIdSchema } from '../../../dtos/custom-schemas';
 
 type OmittedFields = '_id' | 'createdBy' | 'createdAt'
 

@@ -13,7 +13,6 @@
   },
   "include": [
     "src/**/*.ts",
-    "../../shared-libs/src/lib/dtos/update-user.dto.ts"
   ],
   "exclude": [
     "jest.config.ts",

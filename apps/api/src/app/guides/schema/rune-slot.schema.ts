@@ -19,7 +19,7 @@ export class RuneSlots implements IRuneSlots {
   third: string;
 
   @Prop({ type: String })
-  fourth: string;
+  fourth?: string;
 }
 
 export const RuneSlotsSchema = SchemaFactory.createForClass(RuneSlots);

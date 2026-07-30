@@ -15,7 +15,7 @@ import {
   guidesPaginationSchema,
   GuidePaginationDto
 } from '../dto/pagination-guides.dto';
-import { CreateGuideDto, createGuideSchema } from '../dto/create-guide.dto';
+import { CreateGuideDto, createGuideSchema } from '../dto/guide/create-guide.dto';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
