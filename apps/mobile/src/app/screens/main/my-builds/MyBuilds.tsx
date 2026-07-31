@@ -4,14 +4,14 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { CompositeScreenProps } from "@react-navigation/native"
 import { StyleSheet, View } from "react-native"
 import { MD3Theme, useTheme } from "react-native-paper"
-import { AppStackParamList, RootStackParamList } from "../../../navigation/types"
+import { MainTabsParamList, RootStackParamList } from "../../../navigation/types"
 
-type Props = CompositeScreenProps<
-  BottomTabScreenProps<AppStackParamList, 'MyBuilds'>,
+export type MyBuildsProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabsParamList, 'MyBuilds'>,
   NativeStackScreenProps<RootStackParamList>
 >
 
-export default function MyBuilds(props: Props) {
+export default function MyBuilds(props: MyBuildsProps) {
   const theme = useTheme()
   const style = makeStyles(theme)
   return (

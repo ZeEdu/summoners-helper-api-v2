@@ -2,11 +2,11 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import MainTabs from './MainTabs';
-import { AppStackParamList } from './types';
+import { MainTabsParamList } from './types';
 
-const Stack = createNativeStackNavigator<AppStackParamList>();
+const Stack = createNativeStackNavigator<MainTabsParamList>();
 
-export default function AppNavigator() {
+export default function MainNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name='Home' component={MainTabs} options={{ headerShown: false }}></Stack.Screen>

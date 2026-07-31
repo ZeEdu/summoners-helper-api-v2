@@ -3,16 +3,16 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAuthContext } from "apps/mobile/src/contexts/auth/useAuth";
 import { StyleSheet, View } from "react-native";
 import { Button, List, MD3Theme, Text } from "react-native-paper";
-import { AppStackParamList, RootStackParamList } from "../../../navigation/types";
+import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { CompositeScreenProps } from "@react-navigation/native";
 
-type Props = CompositeScreenProps<
-  BottomTabScreenProps<AppStackParamList, 'Profile'>,
+export type ProfileProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabsParamList, 'Profile'>,
   NativeStackScreenProps<RootStackParamList>
 >
 
-export default function Profile({ navigation }: Props) {
+export default function Profile({ navigation }: ProfileProps) {
   const authContext = useAuthContext()
   const hasRiotInfo = authContext.user?.puuid
 
