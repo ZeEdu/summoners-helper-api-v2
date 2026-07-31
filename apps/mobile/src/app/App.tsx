@@ -6,11 +6,11 @@ import RootNavigator from './navigation/RootNavigator';
 
 export const App = () => {
   return (
-    <ThemeProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <ThemeProvider>
         <RootNavigator />
-      </AuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 };
 
