@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { AuthEvents } from "../../auth-events";
 import { ApiService } from "../../services/api/api.service";
 import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
@@ -19,7 +20,7 @@ interface FetchOptions {
 
 interface RefreshTokenResponse {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string;
 }
 
 interface FailedRequestInfo {
@@ -158,7 +159,13 @@ const doRefreshToken = async (): Promise<{ accessToken: string }> => {
   }
 
   const { accessToken, refreshToken }: RefreshTokenResponse = await response.json();
-  await AuthTokenStorageService.set(accessToken, refreshToken);
+
+  if (Platform.OS === 'web') {
+    await AuthTokenStorageService.set(accessToken);
+  } else {
+    await AuthTokenStorageService.set(accessToken, refreshToken);
+  }
+
   return { accessToken };
 };
 

@@ -20,8 +20,7 @@ export const Users = {
         Authorization: `Bearer ${tokens.accessToken}`,
       },
     };
-    // No momento vai falhar pois precisa do refresh token na requisição
-    // É necessário configurar corretamente para que o fetch o utilize
+
     return customFetch(url, init)
   },
 
