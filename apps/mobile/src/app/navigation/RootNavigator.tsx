@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { AuthEvents } from '../../auth-events';
-import { AuthTokenStorageService } from '../../services/auth-token-storage.service';
 import { useAuthContext } from '../../contexts/auth/useAuth';
 import { ThemeStorageService } from '../../services/theme-storage.service';
 import { useThemeContext } from '../../providers/theme.provider';
@@ -34,7 +33,7 @@ export default function RootNavigator() {
     }
 
     checkThemePreference()
-  }, [])
+  }, [authContext.user])
 
   return (
     <Stack.Navigator>{
