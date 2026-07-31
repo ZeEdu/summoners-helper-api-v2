@@ -24,16 +24,6 @@ export default function RootNavigator() {
   }, [])
 
   useEffect(() => {
-    async function checkStoredTokens() {
-      const tokens = await AuthTokenStorageService.get()
-      if (tokens.accessToken && !authContext.user) {
-        await authContext.me()
-      }
-    }
-    checkStoredTokens()
-  }, [])
-
-  useEffect(() => {
     async function checkThemePreference() {
       if (authContext.user) {
         const isDarkTheme = await ThemeStorageService.isDarkTheme()

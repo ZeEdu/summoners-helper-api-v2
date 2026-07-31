@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { ICreateUserDto, ILoginUserDto, IUser } from "@org/contracts";
 import { ApiService } from "../../services/api/api.service";
 import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
@@ -76,6 +76,17 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       return undefined
     }
   }, []);
+
+
+  useEffect(() => {
+    async function checkStoredTokens() {
+      const tokens = await AuthTokenStorageService.get()
+      if (tokens.accessToken && !user) {
+        await me()
+      }
+    }
+    checkStoredTokens()
+  }, [])
 
   const value: AuthContextType = useMemo(
     () => ({ user, login, logout, register, me }),
