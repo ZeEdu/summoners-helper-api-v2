@@ -1,23 +1,27 @@
 import { StyledView } from "@org/ui";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAuthContext } from "apps/mobile/src/contexts/auth/useAuth";
 import { StyleSheet, View } from "react-native";
-import { Button, List, MD3Theme, Text, useTheme } from "react-native-paper";
+import { Button, List, MD3Theme, Text } from "react-native-paper";
+import { AppStackParamList, RootStackParamList } from "../../../navigation/types";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { CompositeScreenProps } from "@react-navigation/native";
 
-export default function Profile() {
-  const theme = useTheme()
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<AppStackParamList, 'Profile'>,
+  NativeStackScreenProps<RootStackParamList>
+>
+
+export default function Profile({ navigation }: Props) {
   const authContext = useAuthContext()
-  const style = makeStyles(theme)
-
   const hasRiotInfo = authContext.user?.puuid
 
   const handleAccountBindind = () => {
-    // Navegar para uma outra tela
-
-
+    navigation.navigate('Modals', { screen: 'BindRiotAccount' })
   }
 
   return (
-    <StyledView >
+    <StyledView>
       <List.Section>
         <List.Subheader>Informações pessoais</List.Subheader>
         <List.Item

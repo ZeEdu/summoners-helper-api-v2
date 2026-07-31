@@ -7,14 +7,18 @@ import { useState } from 'react';
 import { CreateUserDto, createUserSchema } from '@org/contracts';
 import { StyledButton } from '@org/ui';
 
-import { useAuthContext } from '../../../contexts/auth/useAuth';
-import AppController from '../../../components/forms/AppController';
-import FormFieldErrors from '../../../components/forms/FormFieldErrors';
-import ApiFieldErrors from '../../../components/forms/ApiFieldErrors';
+import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import AppController from '../../../../components/forms/AppController';
+import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
+import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList, RootStackParamList } from '../../../navigation/types';
 
 const resolver = zodResolver(createUserSchema);
 
-export default function Register() {
+type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>
+
+export default function Register(props: Props) {
   const authContext = useAuthContext();
 
   const {

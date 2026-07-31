@@ -4,10 +4,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { StyledButton, StyledTextInput } from "@org/ui";
 
-import { RootStackParamsList } from '../../navigation/AppNavigator';
-import { useAuthContext } from '../../../contexts/auth/useAuth';
+import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import { AuthStackParamList } from '../../../navigation/types';
 
-type Props = NativeStackScreenProps<RootStackParamsList, 'Login'>;
+type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>
 
 export default function Login({ navigation }: Props) {
   const authContext = useAuthContext();
