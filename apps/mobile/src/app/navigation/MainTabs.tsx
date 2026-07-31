@@ -1,12 +1,10 @@
-import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTheme } from 'react-native-paper';
 
 import Home from '../screens/main/home/Home';
-import Profile from '../screens/main/profile/Profile';
 import MyBuilds from '../screens/main/my-builds/MyBuilds';
-
-import { useTheme } from 'react-native-paper';
+import Profile from '../screens/main/profile/Profile';
 import { MainTabsParamList, Routes } from './types';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];

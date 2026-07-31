@@ -1,18 +1,18 @@
-import { Alert, StyleSheet, View } from 'react-native';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { faker } from '@faker-js/faker';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Alert, StyleSheet, View } from 'react-native';
 
 import { CreateUserDto, createUserSchema } from '@org/contracts';
 import { StyledButton } from '@org/ui';
 
-import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
 import AppController from '../../../../components/forms/AppController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
-import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AuthStackParamList, RootStackParamList } from '../../../navigation/types';
+import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import { AuthStackParamList } from '../../../navigation/types';
 
 const resolver = zodResolver(createUserSchema);
 

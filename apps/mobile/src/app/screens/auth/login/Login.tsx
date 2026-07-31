@@ -1,6 +1,6 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { StyledButton, StyledTextInput } from "@org/ui";
 

@@ -1,8 +1,10 @@
-import { ICreateUserDto, ILoginUserDto } from '@org/contracts';
-import { API_CONSTANTS } from './api.constants';
-import { AuthTokenStorageService } from '../auth-token-storage.service';
-import { customFetch } from '../../utils/customFetch/customFetch';
 import { Platform } from 'react-native';
+
+import { ICreateUserDto, ILoginUserDto } from '@org/contracts';
+
+import { customFetch } from '../../utils/customFetch/customFetch';
+import { AuthTokenStorageService } from '../auth-token-storage.service';
+import { API_CONSTANTS } from './api.constants';
 
 const isWeb = Platform.OS === 'web'
 

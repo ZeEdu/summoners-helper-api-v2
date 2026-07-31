@@ -4,6 +4,7 @@ import {
 } from '@react-navigation/native';
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { adaptNavigationTheme, MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+
 import { useAuthContext } from "../contexts/auth/useAuth";
 import { ThemeStorageService } from "../services/theme-storage.service";
 

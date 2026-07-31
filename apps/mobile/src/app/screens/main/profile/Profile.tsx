@@ -1,11 +1,13 @@
-import { StyledView } from "@org/ui";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useAuthContext } from "apps/mobile/src/contexts/auth/useAuth";
-import { StyleSheet, View } from "react-native";
-import { Button, List, MD3Theme, Text } from "react-native-paper";
-import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { CompositeScreenProps } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StyleSheet, View } from "react-native";
+import { Button, List, MD3Theme, Text } from "react-native-paper";
+
+import { StyledView } from "@org/ui";
+
+import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
+import { useAuthContext } from "../../../../contexts/auth/useAuth";
 
 export type ProfileProps = CompositeScreenProps<
   BottomTabScreenProps<MainTabsParamList, 'Profile'>,

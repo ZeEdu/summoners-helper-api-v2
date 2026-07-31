@@ -1,8 +1,7 @@
-import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { ModalStackParamList } from './types';
 import BindRiotAccount from '../screens/modals/BindRiotAccount';
+import { ModalStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<ModalStackParamList>();
 

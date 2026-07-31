@@ -1,6 +1,7 @@
-import { StyledText, StyledTextInput } from "@org/ui"
 import { Controller, FieldPath, FieldValues, UseControllerProps } from "react-hook-form"
-import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from "react-native"
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native"
+
+import { StyledTextInput } from "@org/ui"
 
 interface AppControllerProps<
   T extends FieldValues,
