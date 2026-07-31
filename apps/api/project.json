@@ -82,7 +82,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "apps/api/jest.config.cts",
+        "jestConfig": "apps/api/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,17 +1,11 @@
-import { IsOptional, IsPositive, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import * as z from 'zod';
 
-export class PaginationDto {
-  @IsOptional()
-  @IsPositive()
-  @Type(() => Number)
-  limit?: number;
+export const paginationSchema = z.object({
+  limit: z.coerce.number({ error: 'Valor deve ser um número' }).nonnegative({ error: 'Valor deve ser positivo' }).optional(),
+  offset: z.coerce.number({ error: 'Valor deve ser um número' }).nonnegative({ error: 'Valor deve ser positivo' }).optional()
+})
 
-  @IsOptional()
-  @Min(0)
-  @Type(() => Number)
-  offset?: number;
-}
+export type PaginationDto = z.infer<typeof paginationSchema>
 
 export const DEFAULT_LIMIT = 10;
 export const DEFAULT_OFFSET = 0;

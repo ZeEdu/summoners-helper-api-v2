@@ -4,7 +4,6 @@ import { faker } from '@faker-js/faker';
 import { RiotApiUtilsService } from './riot-api.utils.service';
 import { ConfigModule } from '@nestjs/config';
 import nock from 'nock';
-import { RIOT_SERVERS } from '../utils/riot-api.constants';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../../users/schema/user.schema';
 import {
@@ -20,6 +19,7 @@ import {
 import { I18nModule, I18nService } from 'nestjs-i18n';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { I18N } from '../../i18n.config';
+import { RIOT_SERVERS } from '@org/contracts';
 
 let mongodb: MongoMemoryServer;
 

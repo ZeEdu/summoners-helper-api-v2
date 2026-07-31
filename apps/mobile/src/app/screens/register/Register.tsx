@@ -1,10 +1,10 @@
 import { Alert, StyleSheet, View } from 'react-native';
 import { useForm } from 'react-hook-form';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { faker } from '@faker-js/faker';
 import { useState } from 'react';
 
-import { CreateUserDto } from '@org/shared-libs';
+import { CreateUserDto, createUserSchema } from '@org/contracts';
 import { StyledButton } from '@org/ui';
 
 import { useAuthContext } from '../../../contexts/auth/useAuth';
@@ -12,7 +12,7 @@ import AppController from '../../../components/forms/AppController';
 import FormFieldErrors from '../../../components/forms/FormFieldErrors';
 import ApiFieldErrors from '../../../components/forms/ApiFieldErrors';
 
-const resolver = classValidatorResolver(CreateUserDto);
+const resolver = zodResolver(createUserSchema);
 
 export default function Register() {
   const authContext = useAuthContext();

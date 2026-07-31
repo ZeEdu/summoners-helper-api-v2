@@ -3,15 +3,14 @@ import { Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import cookieParser = require('cookie-parser');
-import { IUser, User, UserDocument } from '../users/schema/user.schema';
+import { User, UserDocument } from '../users/schema/user.schema';
 import { AppModule } from '../app.module';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
 import request = require('supertest');
-import { RIOT_SERVERS } from './utils/riot-api.constants';
 import { RiotApiErrorLogger } from './schema/riot-api-error-logger.schema';
 import nock from 'nock';
 import { RiotApiUtilsService } from './service/riot-api.utils.service';
+import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
 
 describe('Riot API errors (e2e)', () => {
   let app: INestApplication;
@@ -68,7 +67,7 @@ describe('Riot API errors (e2e)', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/register')
+      .post('/auth/web/register')
       .send(createUserPayload)
       .expect(201);
 
@@ -99,8 +98,8 @@ describe('Riot API errors (e2e)', () => {
 
           const { user, accessToken } = await registerValidUser();
           const url = riotApiUtilsService.buildGetChampionMasteryURL(
-            user.puuid,
-            user.server,
+            user!.puuid,
+            user!.server,
           );
 
           const scope = nock(url)
@@ -119,7 +118,7 @@ describe('Riot API errors (e2e)', () => {
 
           const errorLog = await riotApiErrorLoggerModel.findOne();
           expect(errorLog).toBeDefined();
-          expect(errorLog.statusCode).toBe(riotApiError.statusCode);
+          expect(errorLog?.statusCode).toBe(riotApiError.statusCode);
           expect(errorLog).toHaveProperty('body');
           expect(errorLog).toHaveProperty('headers');
           expect(errorLog).toHaveProperty('url');
@@ -136,9 +135,9 @@ describe('Riot API errors (e2e)', () => {
 
           const championId = 123;
           const url = riotApiUtilsService.buildGetChampionMasteryByChampionURL(
-            user.puuid,
+            user!.puuid,
             championId,
-            user.server,
+            user!.server,
           );
 
           const scope = nock(url)
@@ -157,7 +156,7 @@ describe('Riot API errors (e2e)', () => {
 
           const errorLog = await riotApiErrorLoggerModel.findOne();
           expect(errorLog).toBeDefined();
-          expect(errorLog.statusCode).toBe(riotApiError.statusCode);
+          expect(errorLog?.statusCode).toBe(riotApiError.statusCode);
           expect(errorLog).toHaveProperty('body');
           expect(errorLog).toHaveProperty('headers');
           expect(errorLog).toHaveProperty('url');
@@ -173,9 +172,9 @@ describe('Riot API errors (e2e)', () => {
           const { user, accessToken } = await registerValidUser();
 
           const url = riotApiUtilsService.buildGetChampionMasteryByTopURL(
-            user.puuid,
+            user!.puuid,
             5,
-            user.server,
+            user!.server,
           );
 
           const scope = nock(url)
@@ -194,7 +193,7 @@ describe('Riot API errors (e2e)', () => {
 
           const errorLog = await riotApiErrorLoggerModel.findOne();
           expect(errorLog).toBeDefined();
-          expect(errorLog.statusCode).toBe(riotApiError.statusCode);
+          expect(errorLog?.statusCode).toBe(riotApiError.statusCode);
           expect(errorLog).toHaveProperty('body');
           expect(errorLog).toHaveProperty('headers');
           expect(errorLog).toHaveProperty('url');
@@ -210,8 +209,8 @@ describe('Riot API errors (e2e)', () => {
           const { user, accessToken } = await registerValidUser();
 
           const url = riotApiUtilsService.buildGetRankedStatsURL(
-            user.puuid,
-            user.server,
+            user!.puuid,
+            user!.server,
           );
 
           const scope = nock(url)
@@ -230,7 +229,7 @@ describe('Riot API errors (e2e)', () => {
 
           const errorLog = await riotApiErrorLoggerModel.findOne();
           expect(errorLog).toBeDefined();
-          expect(errorLog.statusCode).toBe(riotApiError.statusCode);
+          expect(errorLog?.statusCode).toBe(riotApiError.statusCode);
           expect(errorLog).toHaveProperty('body');
           expect(errorLog).toHaveProperty('headers');
           expect(errorLog).toHaveProperty('url');
@@ -245,7 +244,7 @@ describe('Riot API errors (e2e)', () => {
           const { user, accessToken } = await registerValidUser();
 
           const url = riotApiUtilsService.buildGetLastFiveMatchesURL(
-            user.puuid,
+            user!.puuid,
           );
 
           const scope = nock(url)
@@ -264,7 +263,7 @@ describe('Riot API errors (e2e)', () => {
 
           const errorLog = await riotApiErrorLoggerModel.findOne();
           expect(errorLog).toBeDefined();
-          expect(errorLog.statusCode).toBe(riotApiError.statusCode);
+          expect(errorLog?.statusCode).toBe(riotApiError.statusCode);
           expect(errorLog).toHaveProperty('body');
           expect(errorLog).toHaveProperty('headers');
           expect(errorLog).toHaveProperty('url');
@@ -280,8 +279,8 @@ describe('Riot API errors (e2e)', () => {
           const { user, accessToken } = await registerValidUser();
 
           const url = riotApiUtilsService.buildGetSummonerURL(
-            user.puuid,
-            user.server,
+            user!.puuid,
+            user!.server,
           );
 
           const scope = nock(url)
@@ -300,7 +299,7 @@ describe('Riot API errors (e2e)', () => {
 
           const errorLog = await riotApiErrorLoggerModel.findOne();
           expect(errorLog).toBeDefined();
-          expect(errorLog.statusCode).toBe(riotApiError.statusCode);
+          expect(errorLog!.statusCode).toBe(riotApiError.statusCode);
           expect(errorLog).toHaveProperty('body');
           expect(errorLog).toHaveProperty('headers');
           expect(errorLog).toHaveProperty('url');

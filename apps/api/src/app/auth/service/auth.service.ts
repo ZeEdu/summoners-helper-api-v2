@@ -6,13 +6,12 @@ import {
 } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-
-import * as argon2 from 'argon2';
+import { I18nService } from 'nestjs-i18n';
+import { CreateUserDto, IUser } from '@org/contracts';
 import { randomUUID } from 'crypto';
+import * as argon2 from 'argon2';
 
 import { UsersService } from '../../users/service/users.service';
-import { I18nService } from 'nestjs-i18n';
-import { CreateUserDto, IUser } from '@org/shared-libs';
 
 @Injectable()
 export class AuthService {

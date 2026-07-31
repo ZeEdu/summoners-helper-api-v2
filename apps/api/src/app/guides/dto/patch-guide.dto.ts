@@ -1,6 +1,9 @@
-import { CreateGuideDto } from './create-guide.dto';
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import z from 'zod';
+import { createGuideSchema } from './guide/create-guide.dto';
 
-export class PatchGuideDto extends PartialType(
-  OmitType(CreateGuideDto, ['createdBy']),
-) {}
+export const patchGuideSchema = createGuideSchema.omit({
+  createdBy: true,
+  createdAt: true
+})
+
+export type PatchGuideDto = z.infer<typeof patchGuideSchema>

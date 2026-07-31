@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { IUser } from '@org/shared-libs';
-import { RIOT_SERVERS } from '@org/shared-libs';
+import { IUser, RIOT_SERVERS } from '@org/contracts';
 
 export type IUserWithPassword = IUser & { password: string };
 export type IUserWithPuuid = IUser & { puuid: string };

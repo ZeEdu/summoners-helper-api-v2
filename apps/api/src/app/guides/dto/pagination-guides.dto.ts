@@ -1,18 +1,18 @@
-import { PaginationDto } from '../../pagination/pagination.dto';
-import { IsOptional } from 'class-validator';
-import { QueryFilter, Types } from 'mongoose';
+import z from 'zod';
+import { QueryFilter } from 'mongoose';
+
+import { paginationSchema } from '../../pagination/pagination.dto';
 import { Guide } from '../schema/guide.schema';
 
-export class PaginationGuidesDto extends PaginationDto {
-  @IsOptional()
-  title?: string;
+export const guidesPaginationSchema = paginationSchema.safeExtend({
+  title: z.string({ error: 'O campo deve ser uma string' }).optional(),
+  createdBy: z.string({ error: 'O campo deve ser uma string' }).optional()
+})
 
-  @IsOptional()
-  createdBy?: Types.ObjectId;
-}
+export type GuidePaginationDto = z.infer<typeof guidesPaginationSchema>
 
 export const createGuidesPaginationFilter = (
-  query: PaginationGuidesDto,
+  query: GuidePaginationDto,
 ): QueryFilter<Guide> => {
   const filter: QueryFilter<Guide> = {};
 

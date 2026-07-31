@@ -1,4 +1,3 @@
-import { CreateUserDto, UpdateUserDto, UpdateUserProfileDto } from '@org/shared-libs';
 import { Injectable } from '@nestjs/common';
 import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,9 +14,13 @@ import {
   User,
 } from '../schema/user.schema';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
-
-import { IUser } from '@org/shared-libs';
-import { RIOT_SERVERS } from '@org/shared-libs';
+import {
+  CreateUserDto,
+  IUser,
+  RIOT_SERVERS,
+  UpdateUserDto,
+  UpdateUserProfileDto
+} from '@org/contracts';
 
 @Injectable()
 export class UsersService {
@@ -131,8 +134,6 @@ export class UsersService {
   }
 
   async getLastFiveMatches(user: IUser & { puuid: string }) {
-    const matches = await this.riotApiService.getLastFiveMatches(user.puuid);
-    console.log({ matches });
     // Queue
     // Match Time
     // Result
@@ -140,8 +141,6 @@ export class UsersService {
     // runes
     // Items
     // K/D/A
-    const matchInfo = {};
-
-    return Promise.resolve(undefined);
+    return this.riotApiService.getLastFiveMatches(user.puuid);
   }
 }

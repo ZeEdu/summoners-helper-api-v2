@@ -1,3 +1,4 @@
+import { CreateUserDto } from '@org/contracts';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '../../users/service/users.service';
@@ -9,7 +10,6 @@ import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
 
 import { TestMockUtils } from '../../test.mock.utils';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
@@ -129,7 +129,7 @@ describe('AuthService', () => {
       expect(result.refreshToken).toBeDefined();
 
       const updatedUser = await userModel.findById(userDocument._id);
-      expect(updatedUser.refreshToken).toBeDefined();
+      expect(updatedUser?.refreshToken).toBeDefined();
     });
   });
 
@@ -151,10 +151,10 @@ describe('AuthService', () => {
         .select('+password');
 
       expect(storedUser).toBeDefined();
-      expect(storedUser.refreshToken).toBeDefined();
+      expect(storedUser?.refreshToken).toBeDefined();
 
       const matchPassword = await argon2.verify(
-        storedUser.password,
+        storedUser!.password,
         user.password,
       );
       expect(matchPassword).toBe(true);
@@ -218,7 +218,7 @@ describe('AuthService', () => {
       const storedUser = await userModel.findOne({ email: user.email });
 
       const refreshTokenResult = await service.refreshToken(
-        storedUser._id.toString(),
+        storedUser!._id.toString(),
         registerResult.refreshToken,
       );
       expect(refreshTokenResult).toBeDefined();
@@ -237,7 +237,7 @@ describe('AuthService', () => {
       });
 
       const refreshTokenMatch = await argon2.verify(
-        updatedRefreshTokenUser.refreshToken,
+        updatedRefreshTokenUser!.refreshToken,
         refreshTokenResult.refreshToken,
       );
       expect(refreshTokenMatch).toBe(true);
@@ -269,7 +269,7 @@ describe('AuthService', () => {
       );
       await expect(
         service.refreshToken(
-          storedUser._id.toString(),
+          storedUser!._id.toString(),
           TestMockUtils.invalidJwt(),
         ),
       ).rejects.toThrow(expectedErrorMessage);
@@ -287,12 +287,12 @@ describe('AuthService', () => {
       await service.register(user);
       const storedUser = await userModel.findOne({ email: user.email });
 
-      await service.logout(storedUser._id.toString());
+      await service.logout(storedUser!._id.toString());
 
       const updateRefreshTokenUser = await userModel.findOne({
         email: user.email,
       });
-      expect(updateRefreshTokenUser.refreshToken).toBeNull();
+      expect(updateRefreshTokenUser!.refreshToken).toBeNull();
     });
   });
 });

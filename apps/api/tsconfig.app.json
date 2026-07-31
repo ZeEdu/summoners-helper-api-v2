@@ -13,11 +13,10 @@
   },
   "include": [
     "src/**/*.ts",
-    "../../shared-libs/src/lib/dtos/update-user.dto.ts"
   ],
   "exclude": [
     "jest.config.ts",
-    "jest.config.cts",
+    "jest.config.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts"
   ]

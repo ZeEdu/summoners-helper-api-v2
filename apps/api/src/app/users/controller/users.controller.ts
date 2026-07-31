@@ -4,11 +4,13 @@ import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 import {
   createUserPaginationFilter,
   UserPaginationDto,
+  userPaginationSchema,
 } from '../user.pagination.dto';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUser, UpdateUserProfileDto } from '@org/shared-libs';
+import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 
 @Controller('users')
 @UseGuards(JwtGuard)
@@ -16,13 +18,16 @@ export class UsersController {
   constructor(private usersService: UsersService) { }
 
   @Get()
-  async getAllUsers(@Query() pagination: UserPaginationDto): Promise<{
+  async getAllUsers(
+    @Query(new ZodValidationPipe(userPaginationSchema))
+    pagination: UserPaginationDto,
+  ): Promise<{
     count: number;
     users: IUser[];
   }> {
     const filter = createUserPaginationFilter(pagination);
     const { offset, limit } = pagination;
-    return this.usersService.getAllUsers(filter, { offset, limit })
+    return this.usersService.getAllUsers(filter, { offset, limit });
   }
 
   @Get('me')
@@ -32,8 +37,10 @@ export class UsersController {
 
   @Patch('update-profile')
   async updateProfile(
-    @CurrentUser() user: IUser,
-    @Body() updateProfileDto: UpdateUserProfileDto,
+    @CurrentUser()
+    user: IUser,
+    @Body(new ZodValidationPipe(updateUserProfileSchema))
+    updateProfileDto: UpdateUserProfileDto,
   ) {
     await this.usersService.updateUserWithRiotData(user, updateProfileDto);
   }

@@ -1,21 +1,30 @@
 import { AppModule } from '../app.module';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { User, UserDocument } from '../users/schema/user.schema';
+import { getModelToken } from '@nestjs/mongoose';
+import { CreateUserDto, IUser } from '@org/contracts';
 import cookieParser = require('cookie-parser');
 import request = require('supertest');
-import { Model } from 'mongoose';
-import { IUser, User, UserDocument } from '../users/schema/user.schema';
-import { getModelToken } from '@nestjs/mongoose';
 
 describe('AuthController e2e', () => {
   let app: INestApplication;
   let userModel: Model<User>;
 
-  function extractCookie(headers: Record<string, string[]>, name: string) {
+  function extractCookie(headers: Record<string, string[]>, name: string): string {
     const cookies = headers['set-cookie'] as string[];
-    return cookies?.find((c) => c.startsWith(`${name}=`));
+    if (!cookies) {
+      throw new Error('No set-cookie found')
+    }
+
+    const cookie = cookies.find((c) => c.startsWith(`${name}=`));
+    if (!cookie) {
+      throw new Error('No cookie found')
+    }
+
+    return cookie
   }
 
   function transformCookie(cookie: string) {
@@ -32,17 +41,24 @@ describe('AuthController e2e', () => {
       .reduce((previous, current) => ({ ...previous, ...current }), {});
   }
 
-  function checkRefreshCookieOnResponse(headers: Record<string, string>) {
+  function getCookieFromHeader(headers: Record<string, string>) {
+    if (!headers['set-cookie']?.[0]) {
+      return null
+    }
+
     const refreshTokenCookie = headers['set-cookie'][0];
+    return transformCookie(refreshTokenCookie);
+  }
 
-    const cookie = transformCookie(refreshTokenCookie);
+  function checkRefreshCookieOnResponse(headers: Record<string, string>) {
+    const cookie = getCookieFromHeader(headers)
 
-    expect(cookie.refresh_token).toBeDefined();
-    expect(cookie.max_age).toBeDefined();
-    expect(cookie.path).toBeDefined();
-    expect(cookie.expires).toBeDefined();
-    expect(cookie.httponly).toBeDefined();
-    expect(cookie.samesite).toBeDefined();
+    expect(cookie?.refresh_token).toBeDefined();
+    expect(cookie?.max_age).toBeDefined();
+    expect(cookie?.path).toBeDefined();
+    expect(cookie?.expires).toBeDefined();
+    expect(cookie?.httponly).toBeDefined();
+    expect(cookie?.samesite).toBeDefined();
   }
 
   beforeAll(async () => {
@@ -66,265 +82,600 @@ describe('AuthController e2e', () => {
   });
 
   describe('register', () => {
-    it('POST /auth/register → retorna accessToken', async () => {
-      const createUserPayload: CreateUserDto = {
-        username: faker.string.alpha(16),
-        password: faker.internet.password({ prefix: '1!Ab' }),
-        email: faker.internet.email(),
-      };
+    describe('mobile', () => {
+      it('POST /auth/mobile/register → retorna accessToken', async () => {
+        const createUserPayload: CreateUserDto = {
+          username: faker.string.alpha(16),
+          password: faker.internet.password({ prefix: '1!Ab' }),
+          email: faker.internet.email(),
+        };
 
-      await request(app.getHttpServer())
-        .post('/auth/register')
-        .send(createUserPayload)
-        .expect(201)
-        .expect((response) => {
-          expect(response.body.accessToken).toBeDefined();
-          checkRefreshCookieOnResponse(response.headers);
+        await request(app.getHttpServer())
+          .post('/auth/mobile/register')
+          .send(createUserPayload)
+          .expect(201)
+          .expect((response) => {
+            expect(response.body.accessToken).toBeDefined();
+            expect(response.body.refreshToken).toBeDefined();
+            const cookie = getCookieFromHeader(response.headers);
+            expect(cookie?.refresh_token).toBeUndefined();
+          })
+      });
+
+      describe('with error', () => {
+        describe('username', () => {
+          it('without username', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            });
+          });
+
+          it('with empty string', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+                username: ''
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Nome de usuário é obrigátorio",
+              "path": "username"
+            });
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            });
+          })
+
+          it('with a non string username', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                username: faker.number.int({ min: 10_000, max: 20_000 }),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            });
+          });
+
+          it('without minimal length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                username: 'inva',
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            });
+          });
+
+          it('with over maximum length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                username: faker.string.alpha(17),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": "O nome de usuário deve ter no máximo 16 caracteres",
+              "path": "username"
+            });
+          });
         })
-        .catch((err) => {
-          console.log({ err });
-        });
-    });
 
-    describe('with error', () => {
-      describe('username', () => {
-        it('without username', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              password: faker.internet.password({ prefix: '1!Ab' }),
-              email: faker.internet.email(),
-            })
-            .expect(400);
+        describe('password', () => {
+          it('with empty field', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
 
-          expect(body.error).toBe('Bad Request');
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            });
+          });
 
-          const expectedErrors = [
-            'O nome de usuário deve ter no máximo 16 caracteres',
-            'O nome de usuário deve ter pelo menos 5 caracteres',
-            'Nome de usuário é obrigátorio',
-            'Formato inválido',
-          ];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
+          it('with empty string', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                password: '',
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Senha é obrigátoria",
+              "path": "password"
+            });
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "A senha deve ter no mínimo 8 caracteres",
+              "path": "password"
+            });
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "path": "password"
+            });
+          });
+
+          it('with invalid type format', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                password: faker.number.int({ min: 10_000, max: 20_000 }),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            });
+          });
+
+          it('with invalid minimal length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab', length: 6 }),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "A senha deve ter no mínimo 8 caracteres",
+              "path": "password"
+            });
+          });
+
+          it('with invalid maximum length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab', length: 65 }),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": "A senha deve ter no máximo 64 caracteres",
+              "path": "password"
+            });
+          });
+
+          it('with invalid pattern', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                password: faker.internet.password(),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "path": "password"
+            });
           });
         });
 
-        it('with a non string username', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              username: faker.number.int({ min: 10_000, max: 20_000 }),
-              password: faker.internet.password({ prefix: '1!Ab' }),
-              email: faker.internet.email(),
-            })
-            .expect(400);
+        describe('email', () => {
+          it('with empty field', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                username: faker.string.alpha(16),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+              })
+              .expect(400);
 
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = [
-            'O nome de usuário deve ter no máximo 16 caracteres',
-            'O nome de usuário deve ter pelo menos 5 caracteres',
-            'Formato inválido',
-          ];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Email deve ser válido",
+              "path": "email"
+            });
           });
-        });
 
-        it('without minimal length', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              username: 'inva',
+          it('with empty string', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send({
+                email: '',
+                username: faker.string.alpha(16),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
+            });
+          });
+
+          it('with invalid format', async () => {
+            const createUserPayload = {
+              username: faker.string.alpha(16),
               password: faker.internet.password({ prefix: '1!Ab' }),
-              email: faker.internet.email(),
-            })
-            .expect(400);
+              email: faker.word.verb({ length: 16 }),
+            };
 
-          expect(body.error).toBe('Bad Request');
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/mobile/register')
+              .send(createUserPayload)
+              .expect(400);
 
-          const expectedErrors = [
-            'O nome de usuário deve ter pelo menos 5 caracteres',
-          ];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
+            });
           });
         });
       });
+    })
 
-      describe('password', () => {
-        it('with empty field', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              username: faker.string.alpha(16),
-              email: faker.internet.email(),
-            })
-            .expect(400);
+    describe('web', () => {
+      it('POST /auth/web/register → retorna accessToken', async () => {
+        const createUserPayload: CreateUserDto = {
+          username: faker.string.alpha(16),
+          password: faker.internet.password({ prefix: '1!Ab' }),
+          email: faker.internet.email(),
+        };
 
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = [
-            'A senha deve ter ao menos uma letra maiúsculas, minúsculas, número e caracter especial (@, $, !, %, ? ou &)',
-            'A senha deve ter no máximo 64 caracteres',
-            'A senha deve ter no mínimo 8 caracteres',
-            'Senha é obrigátoria',
-            'Formato inválido',
-          ];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
-          });
-        });
-        it('with invalid type format', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              password: faker.number.int({ min: 10_000, max: 20_000 }),
-              username: faker.string.alpha(16),
-              email: faker.internet.email(),
-            })
-            .expect(400);
-
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = [
-            'A senha deve ter ao menos uma letra maiúsculas, minúsculas, número e caracter especial (@, $, !, %, ? ou &)',
-            'A senha deve ter no máximo 64 caracteres',
-            'A senha deve ter no mínimo 8 caracteres',
-            'Formato inválido',
-          ];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
-          });
-        });
-        it('with invalid minimal length', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              password: faker.internet.password({ prefix: '1!Ab', length: 6 }),
-              username: faker.string.alpha(16),
-              email: faker.internet.email(),
-            })
-            .expect(400);
-
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = ['A senha deve ter no mínimo 8 caracteres'];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
-          });
-        });
-        it('with invalid maximum length', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              password: faker.internet.password({ prefix: '1!Ab', length: 65 }),
-              username: faker.string.alpha(16),
-              email: faker.internet.email(),
-            })
-            .expect(400);
-
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = ['A senha deve ter no máximo 64 caracteres'];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
-          });
-        });
-        it('with invalid pattern', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
-              password: faker.internet.password(),
-              username: faker.string.alpha(16),
-              email: faker.internet.email(),
-            })
-            .expect(400);
-
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = [
-            'A senha deve ter ao menos uma letra maiúsculas, minúsculas, número e caracter especial (@, $, !, %, ? ou &)',
-          ];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
-          });
-        });
+        await request(app.getHttpServer())
+          .post('/auth/web/register')
+          .send(createUserPayload)
+          .expect(201)
+          .expect((response) => {
+            expect(response.body.accessToken).toBeDefined();
+            checkRefreshCookieOnResponse(response.headers);
+          })
       });
 
-      describe('email', () => {
-        it('with empty field', async () => {
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send({
+      describe('with error', () => {
+        describe('username', () => {
+          it('without username', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            })
+          });
+
+          it('with empty string', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+                username: ''
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Nome de usuário é obrigátorio",
+              "path": "username"
+            })
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            })
+          })
+
+          it('with a non string username', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                username: faker.number.int({ min: 10_000, max: 20_000 }),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            })
+          });
+
+          it('without minimal length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                username: 'inva',
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            })
+          });
+
+          it('with over maximum length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                username: faker.string.alpha(17),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": "O nome de usuário deve ter no máximo 16 caracteres",
+              "path": "username"
+            })
+          });
+        })
+
+        describe('password', () => {
+          it('with empty field', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            })
+          });
+
+          it('with empty string', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                password: '',
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Senha é obrigátoria",
+              "path": "password"
+            })
+
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "A senha deve ter no mínimo 8 caracteres",
+              "path": "password"
+            })
+
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "path": "password"
+            })
+          });
+
+          it('with invalid type format', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                password: faker.number.int({ min: 10_000, max: 20_000 }),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            })
+          });
+
+          it('with invalid minimal length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab', length: 6 }),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": 'A senha deve ter no mínimo 8 caracteres',
+              "path": "password"
+            })
+          });
+
+          it('with invalid maximum length', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                password: faker.internet.password({ prefix: '1!Ab', length: 65 }),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": 'A senha deve ter no máximo 64 caracteres',
+              "path": "password"
+            })
+          });
+
+          it('with invalid pattern', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                password: faker.internet.password(),
+                username: faker.string.alpha(16),
+                email: faker.internet.email(),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": 'A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)',
+              "path": "password"
+            })
+          });
+        });
+
+        describe('email', () => {
+          it('with empty field', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                username: faker.string.alpha(16),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Email deve ser válido",
+              "path": "email"
+            })
+          });
+
+          it('with empty string', async () => {
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send({
+                email: '',
+                username: faker.string.alpha(16),
+                password: faker.internet.password({ prefix: '1!Ab' }),
+              })
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
+            })
+          });
+
+          it('with invalid format', async () => {
+            const createUserPayload = {
               username: faker.string.alpha(16),
               password: faker.internet.password({ prefix: '1!Ab' }),
+              email: faker.word.verb({ length: 16 }),
+            };
+
+            const { body } = await request(app.getHttpServer())
+              .post('/auth/web/register')
+              .send(createUserPayload)
+              .expect(400);
+
+            expect(body.error).toBe('Bad Request');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
             })
-            .expect(400);
-
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = [
-            'Email é obrigátorio',
-            'Email deve ser válido',
-          ];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
-          });
-        });
-        it('with invalid format', async () => {
-          const createUserPayload = {
-            username: faker.string.alpha(16),
-            password: faker.internet.password({ prefix: '1!Ab' }),
-            email: faker.word.verb({ length: 16 }),
-          };
-
-          const { body } = await request(app.getHttpServer())
-            .post('/auth/register')
-            .send(createUserPayload)
-            .expect(400);
-
-          expect(body.error).toBe('Bad Request');
-
-          const expectedErrors = ['Email deve ser válido'];
-          body.message.forEach((error: string) => {
-            expect(expectedErrors).toContain(error);
           });
         });
       });
-    });
+    })
   });
 
   describe('login', () => {
-    it('POST /auth/login → retorna accessToken', async () => {
-      const createUserPayload: CreateUserDto = {
-        username: faker.string.alpha(16),
-        password: faker.internet.password({ prefix: '1!Ab' }),
-        email: faker.internet.email(),
-      };
-
-      await request(app.getHttpServer())
-        .post('/auth/register')
-        .send(createUserPayload)
-        .expect(201)
-        .catch((err) => {
-          console.log({ err });
-        });
-
-      const response = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          email: createUserPayload.email,
-          password: createUserPayload.password,
-        })
-        .expect(201);
-
-      checkRefreshCookieOnResponse(response.headers);
-    });
-
-    describe('with error', () => {
-      it('with wrong email', async () => {
+    describe('mobile', () => {
+      it('POST /auth/mobile/login → retorna accessToken e refreshToken', async () => {
         const createUserPayload: CreateUserDto = {
           username: faker.string.alpha(16),
           password: faker.internet.password({ prefix: '1!Ab' }),
@@ -332,53 +683,170 @@ describe('AuthController e2e', () => {
         };
 
         await request(app.getHttpServer())
-          .post('/auth/register')
+          .post('/auth/mobile/register')
           .send(createUserPayload)
           .expect(201)
           .catch((err) => {
             console.log({ err });
           });
 
-        await request(app.getHttpServer())
-          .post('/auth/login')
-          .send({
-            email: faker.internet.email(),
-            password: createUserPayload.password,
-          })
-          .expect(401)
-          .expect(({ body }) => {
-            expect(body.error).toBe('Unauthorized');
-            expect(body.message).toBe('Email ou senha incorretos');
-          });
-      });
-      it('with wrong password', async () => {
-        const createUserPayload: CreateUserDto = {
-          username: faker.string.alpha(16),
-          password: faker.internet.password({ prefix: '1!Ab' }),
-          email: faker.internet.email(),
-        };
-
-        await request(app.getHttpServer())
-          .post('/auth/register')
-          .send(createUserPayload)
-          .expect(201)
-          .catch((err) => {
-            console.log({ err });
-          });
-
-        await request(app.getHttpServer())
-          .post('/auth/login')
+        const response = await request(app.getHttpServer())
+          .post('/auth/mobile/login')
           .send({
             email: createUserPayload.email,
-            password: faker.internet.password(),
+            password: createUserPayload.password,
           })
-          .expect(401)
-          .expect(({ body }) => {
-            expect(body.error).toBe('Unauthorized');
-            expect(body.message).toBe('Email ou senha incorretos');
-          });
+          .expect(201);
+
+        expect(response.body.accessToken).toBeDefined()
+        expect(response.body.refreshToken).toBeDefined()
+
+        const cookie = getCookieFromHeader(response.headers)
+        expect(cookie?.refresh_token).toBeUndefined()
       });
-    });
+
+      describe('with error', () => {
+        it('with wrong email', async () => {
+          const createUserPayload: CreateUserDto = {
+            username: faker.string.alpha(16),
+            password: faker.internet.password({ prefix: '1!Ab' }),
+            email: faker.internet.email(),
+          };
+
+          await request(app.getHttpServer())
+            .post('/auth/mobile/register')
+            .send(createUserPayload)
+            .expect(201)
+            .catch((err) => {
+              console.log({ err });
+            });
+
+          await request(app.getHttpServer())
+            .post('/auth/mobile/login')
+            .send({
+              email: faker.internet.email(),
+              password: createUserPayload.password,
+            })
+            .expect(401)
+            .expect(({ body }) => {
+              expect(body.error).toBe('Unauthorized');
+              expect(body.message).toBe('Email ou senha incorretos');
+            });
+        });
+        it('with wrong password', async () => {
+          const createUserPayload: CreateUserDto = {
+            username: faker.string.alpha(16),
+            password: faker.internet.password({ prefix: '1!Ab' }),
+            email: faker.internet.email(),
+          };
+
+          await request(app.getHttpServer())
+            .post('/auth/mobile/register')
+            .send(createUserPayload)
+            .expect(201)
+            .catch((err) => {
+              console.log({ err });
+            });
+
+          await request(app.getHttpServer())
+            .post('/auth/mobile/login')
+            .send({
+              email: createUserPayload.email,
+              password: faker.internet.password(),
+            })
+            .expect(401)
+            .expect(({ body }) => {
+              expect(body.error).toBe('Unauthorized');
+              expect(body.message).toBe('Email ou senha incorretos');
+            });
+        });
+      });
+    })
+
+    describe('web', () => {
+      it('POST /auth/web/login → retorna accessToken', async () => {
+        const createUserPayload: CreateUserDto = {
+          username: faker.string.alpha(16),
+          password: faker.internet.password({ prefix: '1!Ab' }),
+          email: faker.internet.email(),
+        };
+
+        await request(app.getHttpServer())
+          .post('/auth/web/register')
+          .send(createUserPayload)
+          .expect(201)
+          .catch((err) => {
+            console.log({ err });
+          });
+
+        const response = await request(app.getHttpServer())
+          .post('/auth/web/login')
+          .send({
+            email: createUserPayload.email,
+            password: createUserPayload.password,
+          })
+          .expect(201);
+
+        checkRefreshCookieOnResponse(response.headers);
+      });
+
+      describe('with error', () => {
+        it('with wrong email', async () => {
+          const createUserPayload: CreateUserDto = {
+            username: faker.string.alpha(16),
+            password: faker.internet.password({ prefix: '1!Ab' }),
+            email: faker.internet.email(),
+          };
+
+          await request(app.getHttpServer())
+            .post('/auth/web/register')
+            .send(createUserPayload)
+            .expect(201)
+            .catch((err) => {
+              console.log({ err });
+            });
+
+          await request(app.getHttpServer())
+            .post('/auth/web/login')
+            .send({
+              email: faker.internet.email(),
+              password: createUserPayload.password,
+            })
+            .expect(401)
+            .expect(({ body }) => {
+              expect(body.error).toBe('Unauthorized');
+              expect(body.message).toBe('Email ou senha incorretos');
+            });
+        });
+        it('with wrong password', async () => {
+          const createUserPayload: CreateUserDto = {
+            username: faker.string.alpha(16),
+            password: faker.internet.password({ prefix: '1!Ab' }),
+            email: faker.internet.email(),
+          };
+
+          await request(app.getHttpServer())
+            .post('/auth/web/register')
+            .send(createUserPayload)
+            .expect(201)
+            .catch((err) => {
+              console.log({ err });
+            });
+
+          await request(app.getHttpServer())
+            .post('/auth/web/login')
+            .send({
+              email: createUserPayload.email,
+              password: faker.internet.password(),
+            })
+            .expect(401)
+            .expect(({ body }) => {
+              expect(body.error).toBe('Unauthorized');
+              expect(body.message).toBe('Email ou senha incorretos');
+            });
+        });
+      });
+    })
   });
 
   describe('logout', () => {
@@ -390,7 +858,7 @@ describe('AuthController e2e', () => {
       };
 
       const createUserResponse = await request(app.getHttpServer())
-        .post('/auth/register')
+        .post('/auth/web/register')
         .send(createUserPayload)
         .expect(201);
 
@@ -412,51 +880,88 @@ describe('AuthController e2e', () => {
         logoutResponse.headers as unknown as Record<string, string[]>,
         'refresh_token',
       );
-      const token = refreshTokenCookie
-        .split(';')[0]
+      const token = refreshTokenCookie?.split(';')[0]
         .replaceAll('refresh_token=', '');
       expect(token).toBeFalsy();
     });
   });
 
   describe('refresh', () => {
-    it('POST /auth/refresh-token → deve atualizar o refresh-token', async () => {
-      const createUserPayload: CreateUserDto = {
-        username: faker.string.alpha(16),
-        password: faker.internet.password({ prefix: '1!Ab' }),
-        email: faker.internet.email(),
-      };
+    describe('mobile', () => {
+      it('POST /auth/mobile/refresh-token → deve atualizar o refresh-token', async () => {
+        const createUserPayload: CreateUserDto = {
+          username: faker.string.alpha(16),
+          password: faker.internet.password({ prefix: '1!Ab' }),
+          email: faker.internet.email(),
+        };
 
-      const registerUserResponse = await request(app.getHttpServer())
-        .post('/auth/register')
-        .send(createUserPayload)
-        .expect(201);
+        const registerUserResponse = await request(app.getHttpServer())
+          .post('/auth/mobile/register')
+          .send(createUserPayload)
+          .expect(201);
 
-      const oldRefreshTokenUser = (await userModel
-        .findOne({
-          email: createUserPayload.email,
-        })
-        .lean()) as IUser;
+        const oldRefreshTokenUser = (await userModel
+          .findOne({
+            email: createUserPayload.email,
+          })
+          .lean()) as IUser;
 
-      const refreshToken = extractCookie(
-        registerUserResponse.headers as unknown as Record<string, string[]>,
-        'refresh_token',
-      );
+        await request(app.getHttpServer())
+          .post('/auth/mobile/refresh')
+          .send({ 'refreshToken': registerUserResponse.body.refreshToken })
+          .expect(201);
 
-      await request(app.getHttpServer())
-        .get('/auth/refresh')
-        .set('Cookie', refreshToken)
-        .expect(200);
+        const updateRefreshTokenUser = (await userModel
+          .findOne({
+            email: createUserPayload.email,
+          })
+          .lean()) as IUser;
 
-      const updateRefreshTokenUser = (await userModel
-        .findOne({
-          email: createUserPayload.email,
-        })
-        .lean()) as IUser;
+        expect(oldRefreshTokenUser.refreshToken).not.toBe(
+          updateRefreshTokenUser.refreshToken,
+        );
+      });
+    })
+    describe('web', () => {
+      it('POST /auth/web/refresh-token → deve atualizar o refresh-token', async () => {
+        const createUserPayload: CreateUserDto = {
+          username: faker.string.alpha(16),
+          password: faker.internet.password({ prefix: '1!Ab' }),
+          email: faker.internet.email(),
+        };
 
-      expect(oldRefreshTokenUser.refreshToken).not.toBe(
-        updateRefreshTokenUser.refreshToken,
-      );
-    });
+        const registerUserResponse = await request(app.getHttpServer())
+          .post('/auth/web/register')
+          .send(createUserPayload)
+          .expect(201);
+
+        const oldRefreshTokenUser = (await userModel
+          .findOne({
+            email: createUserPayload.email,
+          })
+          .lean()) as IUser;
+
+        const refreshToken = extractCookie(
+          registerUserResponse.headers as unknown as Record<string, string[]>,
+          'refresh_token',
+        );
+
+        await request(app.getHttpServer())
+          .post('/auth/web/refresh')
+          .set('Cookie', refreshToken)
+          .expect(201);
+
+        const updateRefreshTokenUser = (await userModel
+          .findOne({
+            email: createUserPayload.email,
+          })
+          .lean()) as IUser;
+
+        expect(oldRefreshTokenUser.refreshToken).not.toBe(
+          updateRefreshTokenUser.refreshToken,
+        );
+      });
+    })
+
   });
 });

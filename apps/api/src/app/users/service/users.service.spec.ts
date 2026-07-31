@@ -1,17 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DEFAULT_LIMIT, DEFAULT_OFFSET, UsersService } from './users.service';
-import { IUser, User } from '../schema/user.schema';
+import { UsersService } from './users.service';
+import { User } from '../schema/user.schema';
 import { Model, QueryFilter, Types } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { faker } from '@faker-js/faker';
-import { CreateUserDto } from '../dto/create-user.dto';
 import { TestMockUtils } from '../../test.mock.utils';
-import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
 import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
-import { I18nModule, I18nService } from 'nestjs-i18n';
-import { I18N } from '../../i18n.config';
+import { I18nService } from 'nestjs-i18n';
+import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+import { DEFAULT_LIMIT, DEFAULT_OFFSET } from '../../pagination/pagination.dto';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -122,7 +121,7 @@ describe('UsersService', () => {
       const result = await service.findOneByEmailWithPassword(mockedUser.email);
 
       expect(result).toEqual(mockedUser);
-      expect(result.password).toBeDefined();
+      expect(result?.password).toBeDefined();
       expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
     });
   });
@@ -148,7 +147,7 @@ describe('UsersService', () => {
       const result = await service.findOneByEmailWithPuuid(mockedUser.email);
 
       expect(result).toEqual(mockedUser);
-      expect(result.puuid).toBeDefined();
+      expect(result?.puuid).toBeDefined();
       expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
     });
   });

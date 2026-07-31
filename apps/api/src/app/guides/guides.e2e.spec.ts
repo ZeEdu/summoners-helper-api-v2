@@ -4,26 +4,26 @@ import { RiotApiService } from '../riot-api/service/riot-api.service';
 import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
 import { RiotApiFixtures } from '../__fixtures__/riot-api.fixtures';
 import { Model } from 'mongoose';
-import { IUser, User, UserDocument } from '../users/schema/user.schema';
+import { User } from '../users/schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
-import { RIOT_SERVERS } from '../riot-api/utils/riot-api.constants';
 import request = require('supertest');
-import { AbilityOption, Guide } from './schema/guide.schema';
+import { Guide, GuideDocument } from './schema/guide.schema';
+import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+import { AbilityOption } from './schema/abilities-progression.schema';
+import { CreateGuideDto } from './dto/guide/create-guide.dto';
 
 describe('Guides (e2e)', () => {
   let app: INestApplication;
   let userModel: Model<User>;
-  let guideModel: Model<Guide>;
+  let guideModel: Model<GuideDocument>;
 
-  const mockGuidePayload = {
+  const mockGuidePayload: CreateGuideDto = {
     title: 'Guia de Ahri Mid - Season 2026',
     createdBy: '64f1a2b3c4d5e6f7a8b9c0d1',
-    introduction:
-      'Ahri é uma campeã de mid lane focada em burst mágico e mobilidade através de Charme e Espírito da Raposa.',
+    introduction: 'Ahri é uma campeã de mid lane focada em burst mágico e mobilidade através de Charme e Espírito da Raposa.',
 
     patchVersion: '14.13',
 
@@ -47,21 +47,18 @@ describe('Guides (e2e)', () => {
       },
     },
 
-    runesDescription:
-      'Dominação como árvore primária garante dano explosivo, enquanto Feitiçaria complementa o poder mágico e sustain.',
+    runesDescription: 'Dominação como árvore primária garante dano explosivo, enquanto Feitiçaria complementa o poder mágico e sustain.',
 
     // Bonus
     bonusSlotOne: '5008',
     bonusSlotTwo: '5008',
     bonusSlotThree: '5001',
-    bonusDescription:
-      'Priorize poder de habilidade nos dois primeiros slots para maximizar o dano nas primeiras rotações de combos.',
+    bonusDescription: 'Priorize poder de habilidade nos dois primeiros slots para maximizar o dano nas primeiras rotações de combos.',
 
     // Spells
     firstSpell: '4',
     secondSpell: '12',
-    spellsDescription:
-      'Chama garante segurança e potencial de kill, enquanto Teleporte ajuda no controle de mapa e trocas de rota.',
+    spellsDescription: 'Chama garante segurança e potencial de kill, enquanto Teleporte ajuda no controle de mapa e trocas de rota.',
 
     // Items
     itemsBlock: [
@@ -82,8 +79,7 @@ describe('Guides (e2e)', () => {
         ],
       },
     ],
-    itemsDescription:
-      'A build padrão foca em burst e segurança, enquanto a build alternativa aumenta a penetração mágica contra times com muita resistência.',
+    itemsDescription: 'A build padrão foca em burst e segurança, enquanto a build alternativa aumenta a penetração mágica contra times com muita resistência.',
 
     // Abilities Progression
     abilitiesProgression: {
@@ -106,21 +102,20 @@ describe('Guides (e2e)', () => {
       l17: AbilityOption.D,
       l18: AbilityOption.D,
     },
-    abilitiesProgressionDescription:
-      'Priorize a habilidade A (Bola de Fogo Enganosa) no máximo, seguida por B para trocas, deixando C para os pontos obrigatórios de ultimate.',
+    abilitiesProgressionDescription: 'Priorize a habilidade A (Bola de Fogo Enganosa) no máximo, seguida por B para trocas, deixando C para os pontos obrigatórios de ultimate.',
 
     threats: [
       {
         threat: 'Zed',
-        description:
-          'Zed pode dar all-in facilmente após o nível 6; mantenha distância e use Charme para interromper o combo dele.',
+        description: 'Zed pode dar all-in facilmente após o nível 6; mantenha distância e use Charme para interromper o combo dele.',
       },
       {
         threat: 'LeBlanc',
-        description:
-          'LeBlanc tem burst comparável; evite ficar exposta sem Espírito da Raposa disponível para escapar.',
+        description: 'LeBlanc tem burst comparável; evite ficar exposta sem Espírito da Raposa disponível para escapar.',
       },
     ],
+    threatsDescription: 'lorem ipsum',
+    createdAt: '2026-01-01'
   };
 
   beforeAll(async () => {
@@ -136,7 +131,7 @@ describe('Guides (e2e)', () => {
       .compile();
 
     userModel = module.get<Model<User>>(getModelToken(User.name));
-    guideModel = module.get<Model<Guide>>(getModelToken(Guide.name));
+    guideModel = module.get<Model<GuideDocument>>(getModelToken(Guide.name));
 
     await userModel.deleteMany();
 
@@ -157,7 +152,7 @@ describe('Guides (e2e)', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/register')
+      .post('/auth/web/register')
       .send(createUserPayload)
       .expect(201);
 
@@ -187,7 +182,7 @@ describe('Guides (e2e)', () => {
 
       const insertedGuide = await guideModel.insertOne({
         ...mockGuidePayload,
-        createdBy: otherUser.user._id,
+        createdBy: otherUser?.user?._id,
       });
 
       const title = faker.lorem.sentence({ max: 10, min: 1 });

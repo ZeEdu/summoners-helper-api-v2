@@ -2,9 +2,10 @@ import { ConfigService } from '@nestjs/config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { I18nService } from 'nestjs-i18n';
+
 import { UsersService } from '../../users/service/users.service';
 import { IUserWithPuuid } from '../../users/schema/user.schema';
-import { I18nService } from 'nestjs-i18n';
 
 interface JwtPayload {
   email: string;

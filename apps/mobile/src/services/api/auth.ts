@@ -1,4 +1,4 @@
-import { ICreateUserDto, ILoginUserDto } from '@org/shared-libs';
+import { ICreateUserDto, ILoginUserDto } from '@org/contracts';
 import { API_CONSTANTS } from './api.constants';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { customFetch } from '../../utils/customFetch/customFetch';

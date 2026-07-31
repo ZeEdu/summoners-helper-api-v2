@@ -1,16 +1,19 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { z } from 'zod';
+
 import { RIOT_SERVERS } from '../constants';
 
-export class UpdateUserProfileDto {
-  @IsString()
-  @IsNotEmpty({ message: 'gameName é obrigatório' })
-  gameName: string;
+export const updateUserProfileSchema = z.object({
+  gameName: z
+    .string({ error: 'Formato inválido' })
+    .min(1, { error: 'gameName é obrigatório' }),
 
-  @IsString()
-  @IsNotEmpty({ message: 'tagLine é obrigatório' })
-  tagLine: string;
+  tagLine: z
+    .string({ error: 'Formato inválido' })
+    .min(1, { error: 'tagLine é obrigatório' }),
 
-  @IsString()
-  @IsNotEmpty({ message: 'tagLine é obrigatório' })
-  server: RIOT_SERVERS;
-}
+  server: z.enum(RIOT_SERVERS, {
+    error: 'Servidor inválido',
+  }),
+});
+
+export type UpdateUserProfileDto = z.infer<typeof updateUserProfileSchema>;

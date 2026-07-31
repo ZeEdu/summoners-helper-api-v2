@@ -1,12 +1,14 @@
-import { PaginationDto } from '../pagination/pagination.dto';
-import { IsOptional } from 'class-validator';
 import { QueryFilter } from 'mongoose';
+import z from 'zod';
+
+import { paginationSchema } from '../pagination/pagination.dto';
 import { User } from './schema/user.schema';
 
-export class UserPaginationDto extends PaginationDto {
-  @IsOptional()
-  username: string;
-}
+export const userPaginationSchema = paginationSchema.safeExtend({
+  username: z.string({ error: '' })
+})
+
+export type UserPaginationDto = z.infer<typeof userPaginationSchema>
 
 export const createUserPaginationFilter = (
   query: UserPaginationDto,

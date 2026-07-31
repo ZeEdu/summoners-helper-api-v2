@@ -3,18 +3,17 @@ import { Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import cookieParser = require('cookie-parser');
-import { IUser, User, UserDocument } from '../users/schema/user.schema';
+import { User, UserDocument } from '../users/schema/user.schema';
 import { AppModule } from '../app.module';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { faker } from '@faker-js/faker';
 import request = require('supertest');
 import { RiotApiService } from './service/riot-api.service';
-import { RIOT_SERVERS } from './utils/riot-api.constants';
 import {
   IExpectedRiotApiService,
   RiotApiFixtures,
 } from '../__fixtures__/riot-api.fixtures';
 import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
+import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
 
 describe('Riot API (e2e)', () => {
   let app: INestApplication;
@@ -65,7 +64,7 @@ describe('Riot API (e2e)', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/register')
+      .post('/auth/web/register')
       .send(createUserPayload)
       .expect(201);
 
@@ -105,7 +104,7 @@ describe('Riot API (e2e)', () => {
         };
 
         const registerUserResponse = await request(app.getHttpServer())
-          .post('/auth/register')
+          .post('/auth/web/register')
           .send(createUserPayload)
           .expect(201);
 

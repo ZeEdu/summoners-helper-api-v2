@@ -14,7 +14,6 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import nock from 'nock';
 import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
-import { RIOT_SERVERS } from '../../riot-api/utils/riot-api.constants';
 import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
@@ -22,6 +21,7 @@ import {
 import { RiotApiModule } from '../../riot-api/riot-api.module';
 import { I18nModule } from 'nestjs-i18n';
 import { I18N } from '../../i18n.config';
+import { RIOT_SERVERS } from '@org/contracts';
 
 let mongodb: MongoMemoryServer;
 
@@ -115,9 +115,9 @@ describe('UsersController', () => {
 
       const updatedUser = await userModel.findById(user._id).select('+puuid');
       expect(updatedUser).toBeDefined();
-      expect(updatedUser.tagLine).toBe(tagLine);
-      expect(updatedUser.gameName).toBe(gameName);
-      expect(updatedUser.puuid).toBe(puuid);
+      expect(updatedUser?.tagLine).toBe(tagLine);
+      expect(updatedUser?.gameName).toBe(gameName);
+      expect(updatedUser?.puuid).toBe(puuid);
 
       scope.done();
     });
