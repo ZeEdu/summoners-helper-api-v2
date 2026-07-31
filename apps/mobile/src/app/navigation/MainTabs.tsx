@@ -2,23 +2,23 @@ import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import Home from '../screens/app/home/Home';
-import Profile from '../screens/app/profile/Profile';
-import MyBuilds from '../screens/app/my-builds/MyBuilds';
+import Home from '../screens/main/home/Home';
+import Profile from '../screens/main/profile/Profile';
+import MyBuilds from '../screens/main/my-builds/MyBuilds';
 
 import { useTheme } from 'react-native-paper';
-import { AppStackParamList, Routes } from './types';
+import { MainTabsParamList, Routes } from './types';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
-type TabsTypes = {
-  name: keyof AppStackParamList,
-  component: (props: any) => React.JSX.Element,
+type TabsType = {
+  name: keyof MainTabsParamList,
+  component: React.ComponentType<any>,
   title: string,
   icon: IoniconName
 }
 
-const TABS: TabsTypes[] = [
+const TABS: TabsType[] = [
   {
     name: Routes.Home,
     component: Home,
@@ -39,7 +39,7 @@ const TABS: TabsTypes[] = [
   }
 ]
 
-const Tab = createBottomTabNavigator<AppStackParamList>()
+const Tab = createBottomTabNavigator<MainTabsParamList>()
 
 export default function MainTabs() {
   const theme = useTheme()

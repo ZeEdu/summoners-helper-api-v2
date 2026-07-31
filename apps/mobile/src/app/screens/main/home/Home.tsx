@@ -9,15 +9,15 @@ import { StyleSheet, View } from 'react-native';
 import { StyledButton, StyledText } from '@org/ui';
 
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import { AppStackParamList, RootStackParamList } from '../../../navigation/types';
+import { MainTabsParamList, RootStackParamList } from '../../../navigation/types';
 import { useThemeContext } from 'apps/mobile/src/providers/theme.provider';
 
-type Props = CompositeScreenProps<
-  BottomTabScreenProps<AppStackParamList, 'Home'>,
+export type HomeProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabsParamList, 'Home'>,
   NativeStackScreenProps<RootStackParamList>
 >
 
-export default function Home(props: Props) {
+export default function Home(props: HomeProps) {
   const authContext = useAuthContext();
   const themeContext = useThemeContext()
   const theme = useTheme()

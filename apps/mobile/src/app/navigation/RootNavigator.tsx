@@ -8,7 +8,7 @@ import { ThemeStorageService } from '../../services/theme-storage.service';
 import { useThemeContext } from '../../providers/theme.provider';
 import ModalsNavigator from './ModalsNavigator';
 import AuthNavigator from './AuthNavigator';
-import AppNavigator from './AppNavigator';
+import MainNavigator from './MainNavigator';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -51,8 +51,8 @@ export default function RootNavigator() {
       authContext.user ?
         (
           <Stack.Screen
-            name='App'
-            component={AppNavigator}
+            name='Main'
+            component={MainNavigator}
             options={{ headerShown: false }}
           >
           </Stack.Screen>
