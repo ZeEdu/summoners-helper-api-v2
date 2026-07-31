@@ -114,7 +114,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            });
           });
 
           it('with empty string', async () => {
@@ -128,7 +132,16 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Nome de usuário é obrigátorio');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Nome de usuário é obrigátorio",
+              "path": "username"
+            });
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            });
           })
 
           it('with a non string username', async () => {
@@ -142,7 +155,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            });
           });
 
           it('without minimal length', async () => {
@@ -156,7 +173,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('O nome de usuário deve ter pelo menos 5 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            });
           });
 
           it('with over maximum length', async () => {
@@ -170,7 +191,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('O nome de usuário deve ter no máximo 16 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": "O nome de usuário deve ter no máximo 16 caracteres",
+              "path": "username"
+            });
           });
         })
 
@@ -185,7 +210,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            });
           });
 
           it('with empty string', async () => {
@@ -199,7 +228,21 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Senha é obrigátoria');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Senha é obrigátoria",
+              "path": "password"
+            });
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "A senha deve ter no mínimo 8 caracteres",
+              "path": "password"
+            });
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "path": "password"
+            });
           });
 
           it('with invalid type format', async () => {
@@ -213,7 +256,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            });
           });
 
           it('with invalid minimal length', async () => {
@@ -227,7 +274,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('A senha deve ter no mínimo 8 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "A senha deve ter no mínimo 8 caracteres",
+              "path": "password"
+            });
           });
 
           it('with invalid maximum length', async () => {
@@ -241,7 +292,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('A senha deve ter no máximo 64 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": "A senha deve ter no máximo 64 caracteres",
+              "path": "password"
+            });
           });
 
           it('with invalid pattern', async () => {
@@ -255,7 +310,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "path": "password"
+            });
           });
         });
 
@@ -270,7 +329,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Email deve ser válido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Email deve ser válido",
+              "path": "email"
+            });
           });
 
           it('with empty string', async () => {
@@ -284,7 +347,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Email deve ser válido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
+            });
           });
 
           it('with invalid format', async () => {
@@ -300,7 +367,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Email deve ser válido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
+            });
           });
         });
       });
@@ -336,7 +407,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            })
           });
 
           it('with empty string', async () => {
@@ -350,7 +425,16 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Nome de usuário é obrigátorio');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Nome de usuário é obrigátorio",
+              "path": "username"
+            })
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            })
           })
 
           it('with a non string username', async () => {
@@ -364,7 +448,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "username"
+            })
           });
 
           it('without minimal length', async () => {
@@ -378,7 +466,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('O nome de usuário deve ter pelo menos 5 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "path": "username"
+            })
           });
 
           it('with over maximum length', async () => {
@@ -392,7 +484,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('O nome de usuário deve ter no máximo 16 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": "O nome de usuário deve ter no máximo 16 caracteres",
+              "path": "username"
+            })
           });
         })
 
@@ -407,7 +503,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            })
           });
 
           it('with empty string', async () => {
@@ -421,7 +521,23 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Senha é obrigátoria');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "Senha é obrigátoria",
+              "path": "password"
+            })
+
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": "A senha deve ter no mínimo 8 caracteres",
+              "path": "password"
+            })
+
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "path": "password"
+            })
           });
 
           it('with invalid type format', async () => {
@@ -435,7 +551,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Formato inválido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Formato inválido",
+              "path": "password"
+            })
           });
 
           it('with invalid minimal length', async () => {
@@ -449,7 +569,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('A senha deve ter no mínimo 8 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_small",
+              "message": 'A senha deve ter no mínimo 8 caracteres',
+              "path": "password"
+            })
           });
 
           it('with invalid maximum length', async () => {
@@ -463,7 +587,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('A senha deve ter no máximo 64 caracteres');
+            expect(body.message).toContainEqual({
+              "code": "too_big",
+              "message": 'A senha deve ter no máximo 64 caracteres',
+              "path": "password"
+            })
           });
 
           it('with invalid pattern', async () => {
@@ -477,7 +605,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": 'A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)',
+              "path": "password"
+            })
           });
         });
 
@@ -492,7 +624,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Email deve ser válido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_type",
+              "message": "Email deve ser válido",
+              "path": "email"
+            })
           });
 
           it('with empty string', async () => {
@@ -506,7 +642,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Email deve ser válido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
+            })
           });
 
           it('with invalid format', async () => {
@@ -522,7 +662,11 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toBe('Email deve ser válido');
+            expect(body.message).toContainEqual({
+              "code": "invalid_format",
+              "message": "Email deve ser válido",
+              "path": "email"
+            })
           });
         });
       });
