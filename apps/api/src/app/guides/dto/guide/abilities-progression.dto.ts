@@ -2,7 +2,7 @@ import z from 'zod';
 
 import { AbilityOption } from '../../schema/abilities-progression.schema';
 
-const enumAbilitiesOption = z.enum(AbilityOption)
+const enumAbilitiesOption = z.enum(AbilityOption, { error: `Valor invalido. Deve ser um dos seguintes valores: ${AbilityOption.A},${AbilityOption.B},${AbilityOption.C} ou ${AbilityOption.D}` })
 
 export const abilitiesProgressionSchema = z.object({
   l1: enumAbilitiesOption,
