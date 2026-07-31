@@ -11,7 +11,7 @@ import request = require('supertest');
 
 describe('AuthController e2e', () => {
   let app: INestApplication;
-  let userModel: Model<User>;
+  let userModel: Model<UserDocument>;
 
   function extractCookie(headers: Record<string, string[]>, name: string): string {
     const cookies = headers['set-cookie'] as string[];

@@ -3,9 +3,11 @@ import SecureStoreService from "./secure-store.service"
 const ACCESS_TOKEN = 'access_token'
 const REFRESH_TOKEN = 'refresh_token'
 export const AuthTokenStorageService = {
-  set: async (accessToken: string, refreshToken: string) => {
+  set: async (accessToken: string, refreshToken?: string) => {
     await SecureStoreService.set(ACCESS_TOKEN, accessToken)
-    await SecureStoreService.set(REFRESH_TOKEN, refreshToken)
+    if (refreshToken) {
+      await SecureStoreService.set(REFRESH_TOKEN, refreshToken)
+    }
   },
   get: async () => {
     const accessToken = await SecureStoreService.get(ACCESS_TOKEN)
