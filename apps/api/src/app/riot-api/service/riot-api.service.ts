@@ -1,27 +1,27 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { RiotAccount } from '../interfaces/riot-account.interface';
-import { RiotApiUtilsService } from './riot-api.utils.service';
-import { IUserWithPuuid } from '../../users/schema/user.schema';
-import { LeagueEntry } from '../interfaces/league-entry.interface';
-import { Match, MatchParticipant } from '../interfaces/match.interface';
-import { ChampionMastery } from '../interfaces/champion-mastery.interface';
-import {
-  IRiotApiErrorLogger,
-  RiotApiErrorLogger,
-} from '../schema/riot-api-error-logger.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { RIOT_SERVERS } from '@org/contracts';
 import { Model } from 'mongoose';
+import { I18nService } from 'nestjs-i18n';
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { ChampionsDataDragonDetails } from '../../ddragon/dto/champion.dto';
-import { Summoner } from '../interfaces/summoner.interface';
 import { ItemDetails } from '../../ddragon/dto/item.dto';
-import { SummonerSpell } from '../../ddragon/dto/spell.dto';
 import {
   RunesReforgedDataDragon,
   RunesReforgedSlots,
 } from '../../ddragon/dto/runes-reforged-data.dragon';
-import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
-import { I18nService } from 'nestjs-i18n';
-import { RIOT_SERVERS } from '@org/contracts';
+import { SummonerSpell } from '../../ddragon/dto/spell.dto';
+import { IUserWithPuuid } from '../../users/schema/user.schema';
+import { ChampionMastery } from '../interfaces/champion-mastery.interface';
+import { LeagueEntry } from '../interfaces/league-entry.interface';
+import { Match, MatchParticipant } from '../interfaces/match.interface';
+import { RiotAccount } from '../interfaces/riot-account.interface';
+import { Summoner } from '../interfaces/summoner.interface';
+import {
+  IRiotApiErrorLogger,
+  RiotApiErrorLogger,
+} from '../schema/riot-api-error-logger.schema';
+import { RiotApiUtilsService } from './riot-api.utils.service';
 
 export interface IChampionMasteryResponse {
   championId: ChampionMastery['championId'];
@@ -143,7 +143,7 @@ export class RiotApiService implements IRiotApiService {
 
   async getChampionsMasteries(
     puuid: IUserWithPuuid['puuid'],
-    server: RIOT_SERVERS,
+    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
   ): Promise<IChampionMasteryResponse[]> {
     const url = this.riotApiUtilsService.buildGetChampionMasteryURL(
       puuid,
@@ -159,7 +159,7 @@ export class RiotApiService implements IRiotApiService {
   async getChampionsMasteriesByChampion(
     puuid: IUserWithPuuid['puuid'],
     championId: number,
-    server: RIOT_SERVERS,
+    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
   ): Promise<IChampionMasteryResponse> {
     const url = this.riotApiUtilsService.buildGetChampionMasteryByChampionURL(
       puuid,
@@ -174,7 +174,7 @@ export class RiotApiService implements IRiotApiService {
   async getChampionsMasteriesByTop(
     puuid: IUserWithPuuid['puuid'],
     count: number,
-    server: RIOT_SERVERS,
+    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
   ): Promise<IChampionMasteryResponse[]> {
     const url = this.riotApiUtilsService.buildGetChampionMasteryByTopURL(
       puuid,
@@ -191,7 +191,7 @@ export class RiotApiService implements IRiotApiService {
 
   async getRankedStatus(
     puuid: IUserWithPuuid['puuid'],
-    server: RIOT_SERVERS,
+    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
   ): Promise<IRankedStatusResponse[]> {
     const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid, server);
     const response = await fetch(url);
@@ -218,7 +218,7 @@ export class RiotApiService implements IRiotApiService {
 
   async getSummoner(
     puuid: IUserWithPuuid['puuid'],
-    server: RIOT_SERVERS,
+    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
   ): Promise<ISummonerResponse> {
     const url = this.riotApiUtilsService.buildGetSummonerURL(puuid, server);
     const response = await fetch(url);

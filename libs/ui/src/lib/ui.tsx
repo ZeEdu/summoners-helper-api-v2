@@ -24,3 +24,6 @@ export function StyledView({ children, style }: StyledProp) {
     {children}
   </View>
 }
+
+export { Dropdown } from "./components";
+
