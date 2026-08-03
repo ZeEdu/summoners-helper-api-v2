@@ -12,13 +12,12 @@ export default function RootNavigator() {
   const authContext = useAuthContext();
 
   return (
-    <Stack.Navigator>{
+    <Stack.Navigator screenOptions={{ headerShown: false }}>{
       authContext.user ?
         (
           <Stack.Screen
             name='Main'
             component={MainNavigator}
-            options={{ headerShown: false }}
           >
           </Stack.Screen>
         ) :
@@ -26,12 +25,11 @@ export default function RootNavigator() {
           <Stack.Screen
             name='Auth'
             component={AuthNavigator}
-            options={{ headerShown: false }}
           >
           </Stack.Screen>
         )
     }
-      <Stack.Screen name='Modals' component={ModalsNavigator} options={{ presentation: 'modal', headerShown: false }}>
+      <Stack.Screen name='Modals' component={ModalsNavigator} options={{ presentation: 'modal' }}>
       </Stack.Screen>
     </Stack.Navigator>
   );

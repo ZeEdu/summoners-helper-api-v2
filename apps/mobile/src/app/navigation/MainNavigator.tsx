@@ -7,8 +7,8 @@ const Stack = createNativeStackNavigator<MainTabsParamList>();
 
 export default function MainNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name='Home' component={MainTabs} options={{ headerShown: false }}></Stack.Screen>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='Home' component={MainTabs}></Stack.Screen>
     </Stack.Navigator>
   );
 }
