@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "validate": {
+      "userNotFound": "User not found"
+    }
+  }
+}

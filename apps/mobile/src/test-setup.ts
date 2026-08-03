@@ -1,6 +1,11 @@
-import { setupZonelessTestEnv } from 'jest-preset-angular/setup-env/zoneless';
+jest.mock('expo/src/winter/ImportMetaRegistry', () => ({
+  ImportMetaRegistry: {
+    get url() {
+      return null;
+    },
+  },
+}));
 
-setupZonelessTestEnv({
-  errorOnUnknownElements: true,
-  errorOnUnknownProperties: true,
-});
+if (typeof global.structuredClone === 'undefined') {
+  global.structuredClone = (object) => JSON.parse(JSON.stringify(object));
+}

@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "matchInfo": {
+      "participantNotFound": "Participante com puuid {puuid} não encontrado na partida"
+    }
+  }
+}

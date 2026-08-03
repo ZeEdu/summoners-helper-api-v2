@@ -1,10 +1,53 @@
 {
   "name": "mobile",
-  "dependencies": {
-    "@capacitor/ios": "../../node_modules/@capacitor/ios",
-    "@capacitor/android": "../../node_modules/@capacitor/android"
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/mobile"
   },
-  "devDependencies": {
-    "@capacitor/cli": "^6.0.0"
-  }
+  "dependencies": {
+    "@expo/metro-config": "*",
+    "@testing-library/react-native": "*",
+    "expo": "*",
+    "expo-secure-store": "*",
+    "expo-splash-screen": "*",
+    "expo-status-bar": "*",
+    "expo-system-ui": "*",
+    "jest-expo": "*",
+    "metro-config": "*",
+    "metro-resolver": "*",
+    "react": "*",
+    "react-native": "*",
+    "react-native-svg": "*",
+    "react-native-svg-transformer": "*",
+    "react-native-web": "*",
+    "@nx/eslint-plugin": "*",
+    "@expo/metro": "*",
+    "@nx/devkit": "*",
+    "@nx/eslint": "*",
+    "@nx/js": "*",
+    "@nx/react": "*",
+    "enhanced-resolve": "*",
+    "picocolors": "*",
+    "semver": "*",
+    "tsconfig-paths": "*",
+    "tslib": "*",
+    "@nx/detox": "*",
+    "@nx/rollup": "*",
+    "@react-navigation/native": "*",
+    "@react-navigation/native-stack": "*",
+    "@faker-js/faker": "*",
+    "jsonc-eslint-parser": "*",
+    "mongoose": "*",
+    "react-native-screens": "*",
+    "react-native-safe-area-context": "*",
+    "react-hook-form": "*",
+    "@hookform/resolvers": "*",
+    "class-validator": "*",
+    "react-native-paper": "*",
+    "@react-navigation/bottom-tabs": "*",
+    "@expo/vector-icons": "*",
+    "@gorhom/bottom-sheet": "*"
+  },
+  "devDependencies": {}
 }

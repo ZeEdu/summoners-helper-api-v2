@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getData(): { message: string } {
-    console.log('Entrou na rota');
+  getApi(): { message: string } {
     return { message: 'Hello API' };
   }
 }

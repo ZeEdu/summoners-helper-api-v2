@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "gameNameOrTagLineIsRequired": "gameName y tagLine son obligatorios",
+    "serviceUnavailableException": "No se pudieron obtener los datos del jugador desde la API de Riot"
+  }
+}

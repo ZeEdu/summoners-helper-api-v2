@@ -1,32 +1,146 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { User } from '../schema/user.schema';
-import { Model } from 'mongoose';
+import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
+  PaginationDto,
+} from '../../pagination/pagination.dto';
+import {
+  IUserWithPassword,
+  IUserWithPuuid,
+  SENSIBLE_FIELDS,
+  User,
+} from '../schema/user.schema';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import {
+  CreateUserDto,
+  IUser,
+  RIOT_SERVERS,
+  UpdateUserDto,
+  UpdateUserProfileDto
+} from '@org/contracts';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) { }
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly riotApiService: RiotApiService,
+  ) { }
 
-  findOneByEmail(email: User['email']) {
-    return this.userModel.findOne({ email });
+  findOneByEmail(email: User['email']): Promise<IUser | null> {
+    return this.userModel.findOne({ email }).lean<IUser>();
   }
 
-  findOneByUsername(username: User['username']) {
-    return this.userModel.findOne({ username });
+  findOneByEmailWithPuuid(
+    email: User['email'],
+  ): Promise<IUserWithPuuid | null> {
+    return this.userModel
+      .findOne({ email })
+      .select('+puuid')
+      .lean<IUserWithPuuid>();
   }
 
-  findOneById(id: string) {
-    return this.userModel.findById(id);
+  findOneByEmailWithPassword(
+    email: User['email'],
+  ): Promise<IUserWithPassword | null> {
+    return this.userModel
+      .findOne({ email })
+      .select('+password')
+      .lean<IUserWithPassword>();
   }
 
-  create(user: CreateUserDto) {
-    return new this.userModel(user).save();
+  findOneByUsername(username: User['username']): Promise<IUser | null> {
+    return this.userModel.findOne({ username }).lean<IUser>();
   }
 
-  update(userId: string, userInformation: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(userId, userInformation);
+  findOneById(id: string): Promise<IUser | null> {
+    return this.userModel.findById(id).lean<IUser>();
   }
 
+  async create(user: CreateUserDto): Promise<IUser> {
+    const createdUser = await new this.userModel(user).save();
+    return createdUser.toJSON();
+  }
+
+  update(
+    userId: string,
+    updatedUserInformation: Partial<UpdateUserDto>,
+    queryOptions?: QueryOptions<User>,
+  ) {
+    const { returnDocument = 'after' } = queryOptions || {};
+    return this.userModel
+      .findByIdAndUpdate(userId, updatedUserInformation, {
+        ...queryOptions,
+        returnDocument,
+      })
+      .lean<IUser>();
+  }
+
+  async getAllUsers(
+    filter?: QueryFilter<User>,
+    pagination?: PaginationDto,
+  ): Promise<{ count: number; users: IUser[] }> {
+    const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};
+    filter = filter || {};
+
+    const safeFilter = { ...filter };
+    SENSIBLE_FIELDS.forEach((field) => delete safeFilter[field]);
+
+    const count = await this.userModel.countDocuments(safeFilter);
+    const users = await this.userModel
+      .find(safeFilter)
+      .limit(limit)
+      .skip(offset)
+      .lean<IUser[]>();
+
+    return { users, count };
+  }
+
+  async updateRefreshToken(userId: string, refreshToken: string) {
+    await this.userModel.updateOne({ _id: userId }, { refreshToken });
+  }
+
+  async removeRefreshToken(userId: string) {
+    await this.userModel.updateOne({ _id: userId }, { refreshToken: null });
+  }
+
+  async updateUserWithRiotData(
+    user: IUser,
+    updateProfileDto: UpdateUserProfileDto,
+  ) {
+    const accountData = await this.riotApiService.getAccountByRiotId(
+      updateProfileDto.gameName,
+      updateProfileDto.tagLine,
+    );
+
+    const updateData: UpdateUserDto = {
+      puuid: accountData.puuid,
+      tagLine: accountData.tagLine,
+      gameName: accountData.gameName,
+      server: updateProfileDto.server,
+    };
+
+    return this.update(user._id.toString(), updateData);
+  }
+
+  async getTopMasteries(user: IUserWithPuuid, count: number) {
+    return this.riotApiService.getChampionsMasteriesByTop(
+      user.puuid,
+      count,
+      user.server || RIOT_SERVERS.BR1,
+    );
+  }
+
+  async getLastFiveMatches(user: IUser & { puuid: string }) {
+    // Queue
+    // Match Time
+    // Result
+    // champion
+    // runes
+    // Items
+    // K/D/A
+    return this.riotApiService.getLastFiveMatches(user.puuid);
+  }
 }
