@@ -3,8 +3,10 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { ICreateUserDto, ILoginUserDto, IUser } from "@org/contracts";
 
 import { AuthEvents } from "../../auth-events";
+import { useThemeContext } from "../../providers/theme.provider";
 import { ApiService } from "../../services/api/api.service";
 import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
+import { ThemeStorageService } from "../../services/theme-storage.service";
 import { AuthContext, AuthContextType } from "./auth.context";
 
 type AuthProviderProps = {
@@ -12,6 +14,7 @@ type AuthProviderProps = {
 }
 
 export default function AuthProvider({ children }: AuthProviderProps) {
+  const themeContext = useThemeContext()
   const [user, setUser] = useState<IUser | undefined>(undefined);
 
   const login = async (loginUserDto: ILoginUserDto) => {
@@ -28,8 +31,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       await me()
       return { success: true }
     } catch (error) {
-      console.log('authProvider => login');
-      console.log({ error });
       return { success: false, errors: {} };
     }
   };
@@ -63,7 +64,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       await me()
       return { success: true };
     } catch (error) {
-      console.log({ error });
       return { success: false, errors: 'Não foi possivel recuperar os dados do usuário' };
     }
   }, []);
@@ -96,6 +96,19 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       logout()
     })
   }, [])
+
+  useEffect(() => {
+    async function checkThemePreference() {
+      if (user) {
+        const isDarkTheme = await ThemeStorageService.isDarkTheme()
+        if (!themeContext.isThemeDark && isDarkTheme) {
+          themeContext.toggleTheme()
+        }
+      }
+    }
+
+    checkThemePreference()
+  }, [user])
 
   const value: AuthContextType = useMemo(
     () => ({ user, login, logout, register, me }),
