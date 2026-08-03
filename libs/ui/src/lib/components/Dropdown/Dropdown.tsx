@@ -98,7 +98,6 @@ const Dropdown = ({
   }, [open, menu])
 
   useEffect(() => {
-
     if (typeof valueFromProps !== 'undefined') {
       setInternalValue(valueFromProps)
     }
