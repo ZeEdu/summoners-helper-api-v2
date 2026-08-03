@@ -1,6 +1,7 @@
-import { StyledText } from "@org/ui"
 import { FieldError } from "react-hook-form"
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, View } from "react-native"
+
+import { StyledText } from "@org/ui"
 
 export default function FormFieldErrors({ fieldError }: { fieldError: FieldError | undefined }) {
   if (!fieldError) {

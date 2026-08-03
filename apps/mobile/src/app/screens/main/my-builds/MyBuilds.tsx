@@ -1,8 +1,19 @@
-import { StyledText } from "@org/ui"
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs"
+import { CompositeScreenProps } from "@react-navigation/native"
+import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { StyleSheet, View } from "react-native"
 import { MD3Theme, useTheme } from "react-native-paper"
 
-export default function MyBuilds() {
+import { StyledText } from "@org/ui"
+
+import { MainTabsParamList, RootStackParamList } from "../../../navigation/types"
+
+export type MyBuildsProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabsParamList, 'MyBuilds'>,
+  NativeStackScreenProps<RootStackParamList>
+>
+
+export default function MyBuilds(props: MyBuildsProps) {
   const theme = useTheme()
   const style = makeStyles(theme)
   return (

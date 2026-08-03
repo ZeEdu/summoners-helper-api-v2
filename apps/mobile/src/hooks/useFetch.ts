@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import { customFetch } from '../utils/customFetch/customFetch';
 
 export const useFetch = <T>(

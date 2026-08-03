@@ -1,11 +1,21 @@
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { CompositeScreenProps } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StyleSheet, View } from 'react-native';
-import React from 'react';
-import { useAuthContext } from '../../../contexts/auth/useAuth';
 import { MD3Theme, useTheme } from 'react-native-paper';
-import { useThemeContext } from 'apps/mobile/src/providers/theme.provider';
+
 import { StyledButton, StyledText } from '@org/ui';
 
-export default function Home() {
+import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import { useThemeContext } from '../../../../providers/theme.provider';
+import { MainTabsParamList, RootStackParamList } from '../../../navigation/types';
+
+export type HomeProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabsParamList, 'Home'>,
+  NativeStackScreenProps<RootStackParamList>
+>
+
+export default function Home(props: HomeProps) {
   const authContext = useAuthContext();
   const themeContext = useThemeContext()
   const theme = useTheme()
