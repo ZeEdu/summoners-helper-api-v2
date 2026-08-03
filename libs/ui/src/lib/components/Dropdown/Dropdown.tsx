@@ -1,153 +1,32 @@
-import { ReactElement, useEffect, useState } from "react";
-import { Menu, TextInput, TextInputProps, TouchableRipple } from "react-native-paper";
+import { ReactNode, useMemo, useState } from "react";
 
-import { View } from "react-native";
-import DropdownContext from "./DropdownContext";
-import { Props as DropdownItemProps } from './DrowpdownItem';
+import { DropdownContext } from "./DropdownContext";
 
-export interface Props extends Omit<TextInputProps, 'value' | 'onChange'> {
-  /**
-    * List of underlying dropdown options.
-    */
-  children?:
-  | ReactElement<DropdownItemProps>
-  | Array<ReactElement<DropdownItemProps>>;
-  /**
-   * Callback called when the selected option changes.
-   * @param value new selected value
-   */
-  onChange?: (value: string | null) => void;
-  /**
-   * Currently selected value in the dropdown. When undefined, the dropdown behaves as an uncontrolled input.
-   */
-  value?: string | null;
-  /**
-   * Text displayed in the underlying TextInput. When undefined, the text displayed is equal to the selected value.
-   */
-  valueText?: string;
-  /**
-   * Initial value for the dropdown.
-   */
-  defaultValue?: string;
-  /**
-   * The clear button will show by default to remove the current value.
-   * If required is set to true, this button will not appear.
-   */
-  required?: boolean;
+export interface DropdownProps {
+  children: ReactNode;
 }
 
-/**
- * Dropdowns present a list of options which a user can select from.
- * A selected option can represent a value in a form, or can be used as an action to filter or sort existing content.
- *
- * ## Usage
- * ```js
- * import * as React from 'react';
- * import { Dropdown, Provider, Text, Title } from 'react-native-paper';
- *
- * const MyComponent = () => {
- *   const [selected, setSelected] = React.useState(null);
- *   const options = [
- *     {id: 1, name: 'Cookie', calories: 502},
- *     {id: 2, name: 'Candy', calories: 535},
- *   ];
- *
- *   return (
- *     <Provider>
- *       <Dropdown onChange={setSelected}>
- *         {options.map(option => (
- *           <Dropdown.Item
- *            value={option.name}
- *            title={option.name}
- *            key={value.id}
- *            label={value.name}
- *           />
- *         ))}
- *       </Dropdown>
- *       <Title>{selectedOption}</Title>
- *     </Provider>
- *   );
- * };
- *
- * export default MyComponent;
- * ```
- */
-
-const Dropdown = ({
-  value: valueFromProps,
-  valueText: valueTextFromProps,
-  required,
-  onChange,
+export function Dropdown({
   children,
-  defaultValue,
-  ...textInputProps
-}: Props) => {
-  const isControlled = typeof valueFromProps !== 'undefined'
+}: DropdownProps) {
+  const [visible, setVisible] = useState(false);
 
-  const [menu, setMenu] = useState<View | null>(null)
-  const [width, setWidth] = useState(0)
-  const [open, setOpen] = useState(false)
-  const [internalValue, setInternalValue] = useState<string | null>(defaultValue ?? null)
-
-  useEffect(() => {
-    menu?.measureInWindow((_x, _y, width, _height) => {
-      console.log({ width });
-
-      setWidth(width)
-    })
-  }, [open, menu])
-
-  useEffect(() => {
-    if (typeof valueFromProps !== 'undefined') {
-      setInternalValue(valueFromProps)
-    }
-  }, [valueFromProps])
-
-  const value = isControlled ? valueFromProps : internalValue;
-  const valueText = typeof valueFromProps !== 'undefined' ? valueTextFromProps : value;
+  const context = useMemo(() => ({
+    visible,
+    openMenu() {
+      setVisible(true);
+    },
+    closeMenu() {
+      setVisible(false);
+    },
+    toggleMenu() {
+      setVisible(value => !value);
+    },
+  }), [visible]);
 
   return (
-    <View>
-      <Menu anchor={
-        <View ref={setMenu}>
-          <TouchableRipple onPress={() => setOpen(true)}>
-            <TextInput
-              editable={false}
-              right={
-                value && !required ? (
-                  <TextInput.Icon icon={'icon-circle-outline'} onPress={() => {
-                    onChange?.(null)
-                    setInternalValue(null)
-                  }} />
-                ) : undefined
-              }
-              value={valueText ?? ''}
-              mode='outlined'
-              {...textInputProps}
-            >
-            </TextInput>
-          </TouchableRipple>
-        </View>
-      }
-        anchorPosition="bottom"
-        contentStyle={{ width }}
-        visible={open}
-        onDismiss={() => setOpen(false)}
-      >
-        <DropdownContext.Provider
-          value={{
-            onChange: (newValue: string) => {
-              setInternalValue(newValue)
-              onChange?.(newValue)
-              setOpen(false)
-            }
-          }}
-        >
-          {children}
-        </DropdownContext.Provider>
-      </Menu>
-    </View>
-  )
+    <DropdownContext.Provider value={context}>
+      {children}
+    </DropdownContext.Provider>
+  );
 }
-
-export default Dropdown
