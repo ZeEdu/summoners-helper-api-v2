@@ -7,9 +7,8 @@ const Stack = createNativeStackNavigator<ModalStackParamList>();
 
 export default function ModalsNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="BindRiotAccount" component={BindRiotAccount}>
-      </Stack.Screen>
+    <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
+      <Stack.Screen name="BindRiotAccount" component={BindRiotAccount} />
     </Stack.Navigator>
   );
 }

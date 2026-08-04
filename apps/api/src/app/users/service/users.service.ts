@@ -1,19 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model, QueryFilter, QueryOptions } from 'mongoose';
 
-import {
-  DEFAULT_LIMIT,
-  DEFAULT_OFFSET,
-  PaginationDto,
-} from '../../pagination/pagination.dto';
-import {
-  IUserWithPassword,
-  IUserWithPuuid,
-  SENSIBLE_FIELDS,
-  User,
-} from '../schema/user.schema';
-import { RiotApiService } from '../../riot-api/service/riot-api.service';
 import {
   CreateUserDto,
   IUser,
@@ -21,6 +9,18 @@ import {
   UpdateUserDto,
   UpdateUserProfileDto
 } from '@org/contracts';
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
+  PaginationDto,
+} from '../../pagination/pagination.dto';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import {
+  IUserWithPassword,
+  IUserWithPuuid,
+  SENSIBLE_FIELDS,
+  User,
+} from '../schema/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -38,6 +38,15 @@ export class UsersService {
   ): Promise<IUserWithPuuid | null> {
     return this.userModel
       .findOne({ email })
+      .select('+puuid')
+      .lean<IUserWithPuuid>();
+  }
+
+  findOneByIdWithPuuid(
+    id: string,
+  ): Promise<IUserWithPuuid | null> {
+    return this.userModel
+      .findById(id)
       .select('+puuid')
       .lean<IUserWithPuuid>();
   }

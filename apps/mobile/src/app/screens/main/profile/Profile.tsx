@@ -1,13 +1,14 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Button, List, MD3Theme, Text } from "react-native-paper";
 
-import { StyledView } from "@org/ui";
+import { StyledButton, StyledView } from "@org/ui";
 
-import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
 import { useAuthContext } from "../../../../contexts/auth/useAuth";
+import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
 
 export type ProfileProps = CompositeScreenProps<
   BottomTabScreenProps<MainTabsParamList, 'Profile'>,
@@ -22,28 +23,47 @@ export default function Profile({ navigation }: ProfileProps) {
     navigation.navigate('Modals', { screen: 'BindRiotAccount' })
   }
 
+  const copyEmail = () => {
+    Clipboard.setString(authContext.user?.email!)
+    console.log('Copiado para a clipboard');
+  }
+
+  const handleChangeRiotAccount = () => {
+    navigation.navigate('Modals', { screen: 'BindRiotAccount' })
+  }
+
   return (
     <StyledView>
       <List.Section>
         <List.Subheader>Informações pessoais</List.Subheader>
-        <List.Item
-          title="Email"
-          description={authContext.user?.email}
-        ></List.Item>
+        <Pressable onPress={copyEmail}>
+          <List.Item
+            title="Email"
+            description={authContext.user?.email}
+          />
+        </Pressable>
         <List.Item
           title="Username"
           description={authContext.user?.username}
-        ></List.Item>
+        />
       </List.Section>
       {
         hasRiotInfo ? (
           <List.Section>
             <List.Subheader>Informações da conta Riot</List.Subheader>
             <List.Item
-              title="Username"
-              description={authContext.user?.username}
-            >
-            </List.Item>
+              title="Nome no jogo"
+              description={authContext.user?.gameName}
+            />
+            <List.Item
+              title="Tag line"
+              description={authContext.user?.tagLine}
+            />
+            <List.Item
+              title="Servidor"
+              description={authContext.user?.server}
+            />
+            <StyledButton style={{ marginHorizontal: 16 }} onPress={handleChangeRiotAccount}>Trocar conta Riot</StyledButton>
           </List.Section>
         ) : (
           <>

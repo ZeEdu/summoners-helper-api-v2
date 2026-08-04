@@ -156,7 +156,7 @@
     }
   },
   "tui": {
-    "enabled": true
+    "enabled": false
   },
   "neverConnectToCloud": true
 }

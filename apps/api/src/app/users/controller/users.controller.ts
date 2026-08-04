@@ -1,16 +1,16 @@
+import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
+import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
+import { CurrentUser } from '../../decorators/user.decorator';
+import { JwtGuard } from '../../guards/jwt.guard';
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
+import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 import { IUserWithPuuid } from '../schema/user.schema';
 import { UsersService } from '../service/users.service';
-import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 import {
   createUserPaginationFilter,
   UserPaginationDto,
   userPaginationSchema,
 } from '../user.pagination.dto';
-import { JwtGuard } from '../../guards/jwt.guard';
-import { CurrentUser } from '../../decorators/user.decorator';
-import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
-import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 
 @Controller('users')
 @UseGuards(JwtGuard)
@@ -31,8 +31,11 @@ export class UsersController {
   }
 
   @Get('me')
-  async getMe(@CurrentUser() user: IUser): Promise<IUser | null> {
-    return this.usersService.findOneById(user._id.toString());
+  async getMe(@CurrentUser() user: IUser): Promise<IUserWithPuuid | null> {
+    const response = this.usersService.findOneByIdWithPuuid(user._id.toString())
+    console.log({ response });
+
+    return response;
   }
 
   @Patch('update-profile')
@@ -43,6 +46,7 @@ export class UsersController {
     updateProfileDto: UpdateUserProfileDto,
   ) {
     await this.usersService.updateUserWithRiotData(user, updateProfileDto);
+    return {}
   }
 
   @Get('top-masteries')
