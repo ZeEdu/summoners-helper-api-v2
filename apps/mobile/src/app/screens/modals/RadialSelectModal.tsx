@@ -6,39 +6,49 @@ import { Button, Checkbox, Divider, MD3Theme, Text, useTheme } from 'react-nativ
 type Props = {
   title: string,
   options: { value: string, label: string }[],
-  state: any,
-  setState: (React.Dispatch<React.SetStateAction<any>>),
+  value: any,
+  onChange: (...event: any[]) => void,
   dismiss: () => void,
-  dismissWithValue: () => void,
-  multiselect?: boolean,
+  multiSelect?: boolean,
   okText?: string,
   cancelText?: string
 }
 
-export default function RadialSelectModal({ title, options, state, setState, dismiss, dismissWithValue, multiselect = false, okText, cancelText }: Props) {
+export default function RadialSelectModal({ title, options, value, onChange, dismiss, multiSelect = false, okText, cancelText }: Props) {
   const theme = useTheme()
   const styles = makeStyles(theme)
 
-  const toggleCheckbox = (value: any) => {
-    setState((oldValue: any) => {
-      if (multiselect) {
-        const current = oldValue ?? {};
+  const computeNewValue = (oldValue: any, toggleValue: any) => {
+    if (multiSelect) {
+      const current = oldValue ?? {};
 
-        if (current[value]) {
-          const { [value]: _, ...newValue } = current;
-          return newValue;
-        }
-
-        const newValue = {
-          ...current,
-          [value]: true,
-        };
-
+      if (current[toggleValue]) {
+        const { [toggleValue]: _, ...newValue } = current;
         return newValue;
       }
 
-      return value;
-    })
+      const newValue = {
+        ...current,
+        [toggleValue]: true,
+      };
+
+      return newValue;
+    }
+
+    return toggleValue;
+  }
+
+  const toggleCheckbox = (toggleValue: any) => {
+    const newValue = computeNewValue(value, toggleValue)
+    onChange(newValue)
+  }
+
+  const getCheckboxStatus = (key: any) => {
+    const checked = typeof value === 'object'
+      ? value?.[key]
+      : value === key
+
+    return checked ? 'checked' : 'unchecked'
   }
 
   return (
@@ -49,15 +59,14 @@ export default function RadialSelectModal({ title, options, state, setState, dis
         <Checkbox.Item
           label={label}
           key={value}
-          status={multiselect ? state[value] ? 'checked' : 'unchecked' : state === value ? 'checked' : 'unchecked'}
+          status={getCheckboxStatus(value)}
           onPress={() => {
             toggleCheckbox(value)
           }} />
       ))}
       <Divider />
       <View style={styles.actionButtons}>
-        <Button onPress={dismiss}>{cancelText ?? 'CANCEL'}</Button>
-        <Button onPress={dismissWithValue}>{okText ?? 'OK'}</Button>
+        <Button onPress={dismiss}>{okText ?? 'OK'}</Button>
       </View>
     </View>
   )

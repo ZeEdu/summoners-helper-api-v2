@@ -143,7 +143,7 @@ export class RiotApiService implements IRiotApiService {
 
   async getChampionsMasteries(
     puuid: IUserWithPuuid['puuid'],
-    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+    server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IChampionMasteryResponse[]> {
     const url = this.riotApiUtilsService.buildGetChampionMasteryURL(
       puuid,
@@ -159,7 +159,7 @@ export class RiotApiService implements IRiotApiService {
   async getChampionsMasteriesByChampion(
     puuid: IUserWithPuuid['puuid'],
     championId: number,
-    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+    server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IChampionMasteryResponse> {
     const url = this.riotApiUtilsService.buildGetChampionMasteryByChampionURL(
       puuid,
@@ -174,7 +174,7 @@ export class RiotApiService implements IRiotApiService {
   async getChampionsMasteriesByTop(
     puuid: IUserWithPuuid['puuid'],
     count: number,
-    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+    server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IChampionMasteryResponse[]> {
     const url = this.riotApiUtilsService.buildGetChampionMasteryByTopURL(
       puuid,
@@ -191,7 +191,7 @@ export class RiotApiService implements IRiotApiService {
 
   async getRankedStatus(
     puuid: IUserWithPuuid['puuid'],
-    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+    server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IRankedStatusResponse[]> {
     const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid, server);
     const response = await fetch(url);
@@ -218,7 +218,7 @@ export class RiotApiService implements IRiotApiService {
 
   async getSummoner(
     puuid: IUserWithPuuid['puuid'],
-    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+    server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<ISummonerResponse> {
     const url = this.riotApiUtilsService.buildGetSummonerURL(puuid, server);
     const response = await fetch(url);

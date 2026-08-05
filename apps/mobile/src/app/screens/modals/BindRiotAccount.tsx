@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { Dialog, Portal, Snackbar, TextInput, TouchableRipple } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 
 import { RIOT_SERVERS, RIOT_SERVERS_LABEL, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
@@ -13,68 +13,68 @@ import FormFieldErrors from '../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import { ApiService } from '../../../services/api/api.service';
 import { ModalStackParamList } from '../../navigation/types';
-import RadialSelectModal from './RadialSelectModal';
+import AppSelectController from './AppSelect';
 
 const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
   {
-    value: RIOT_SERVERS.BR1,
-    label: RIOT_SERVERS_LABEL.BR1,
+    value: RIOT_SERVERS.br1,
+    label: RIOT_SERVERS_LABEL.br1,
   },
   {
-    value: RIOT_SERVERS.EUN1,
-    label: RIOT_SERVERS_LABEL.EUN1,
+    value: RIOT_SERVERS.eun1,
+    label: RIOT_SERVERS_LABEL.eun1,
   },
   {
-    value: RIOT_SERVERS.EUW1,
-    label: RIOT_SERVERS_LABEL.EUW1,
+    value: RIOT_SERVERS.euw1,
+    label: RIOT_SERVERS_LABEL.euw1,
   },
   {
-    value: RIOT_SERVERS.JP1,
-    label: RIOT_SERVERS_LABEL.JP1,
+    value: RIOT_SERVERS.jp1,
+    label: RIOT_SERVERS_LABEL.jp1,
   },
   {
-    value: RIOT_SERVERS.KR,
-    label: RIOT_SERVERS_LABEL.KR,
+    value: RIOT_SERVERS.kr,
+    label: RIOT_SERVERS_LABEL.kr,
   },
   {
-    value: RIOT_SERVERS.LA1,
-    label: RIOT_SERVERS_LABEL.LA1,
+    value: RIOT_SERVERS.la1,
+    label: RIOT_SERVERS_LABEL.la1,
   },
   {
-    value: RIOT_SERVERS.LA2,
-    label: RIOT_SERVERS_LABEL.LA2,
+    value: RIOT_SERVERS.la2,
+    label: RIOT_SERVERS_LABEL.la2,
   },
   {
-    value: RIOT_SERVERS.ME1,
-    label: RIOT_SERVERS_LABEL.ME1,
+    value: RIOT_SERVERS.me1,
+    label: RIOT_SERVERS_LABEL.me1,
   },
   {
-    value: RIOT_SERVERS.NA1,
-    label: RIOT_SERVERS_LABEL.NA1,
+    value: RIOT_SERVERS.na1,
+    label: RIOT_SERVERS_LABEL.na1,
   },
   {
-    value: RIOT_SERVERS.OC1,
-    label: RIOT_SERVERS_LABEL.OC1,
+    value: RIOT_SERVERS.oc1,
+    label: RIOT_SERVERS_LABEL.oc1,
   },
   {
-    value: RIOT_SERVERS.RU,
-    label: RIOT_SERVERS_LABEL.RU,
+    value: RIOT_SERVERS.ru,
+    label: RIOT_SERVERS_LABEL.ru,
   },
   {
-    value: RIOT_SERVERS.SG2,
-    label: RIOT_SERVERS_LABEL.SG2,
+    value: RIOT_SERVERS.sg2,
+    label: RIOT_SERVERS_LABEL.sg2,
   },
   {
-    value: RIOT_SERVERS.TR1,
-    label: RIOT_SERVERS_LABEL.TR1,
+    value: RIOT_SERVERS.tr1,
+    label: RIOT_SERVERS_LABEL.tr1,
   },
   {
-    value: RIOT_SERVERS.TW2,
-    label: RIOT_SERVERS_LABEL.TW2,
+    value: RIOT_SERVERS.tw2,
+    label: RIOT_SERVERS_LABEL.tw2,
   },
   {
-    value: RIOT_SERVERS.VN2,
-    label: RIOT_SERVERS_LABEL.VN2,
+    value: RIOT_SERVERS.vn2,
+    label: RIOT_SERVERS_LABEL.vn2,
   },
 ] as const;
 
@@ -85,12 +85,11 @@ type Props = NativeStackScreenProps<ModalStackParamList, 'BindRiotAccount'>
 export default function BindRiotAccount({ navigation }: Props) {
   const authContext = useAuthContext()
 
-  const defaultServerValue = RIOT_SERVERS.NA1
+  const defaultServerValue = RIOT_SERVERS.na1
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm<UpdateUserProfileDto>({
     resolver,
     defaultValues: {
@@ -100,52 +99,33 @@ export default function BindRiotAccount({ navigation }: Props) {
     },
   });
 
-  const [server, setServer] = useState<RIOT_SERVERS>(defaultServerValue);
-  const [serverInputLabel, setServerInputLabel] = useState<string>(defaultServerValue)
-
-  const [modalVisible, setModalVisible] = useState(false)
   const [visibleSnackbar, setVisibleSnackbar] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('')
+  const [updateSuccess, setUpdateSuccess] = useState(false)
+
+  const snackbarFeedback = {
+    success: 'Dados atualizados com sucesso',
+    error: 'Um erro ocorreu. Tente novamente'
+  }
 
   const hideSnackbar = () => {
     setVisibleSnackbar(false)
-  }
 
-  const handleSelectPress = () => {
-    setModalVisible(true)
-  }
-
-  const makeInputLabel = () => {
-    const label = serverOptions.find((option) => option.value === server)?.label
-    setServerInputLabel(label!)
-  }
-
-  const onCancel = () => {
-    setServer(defaultServerValue)
-    setModalVisible(false)
-
-    makeInputLabel()
-  }
-
-  const dismissWithValue = () => {
-    setModalVisible(false)
-    makeInputLabel()
-    if (server) {
-      setValue('server', server)
+    if (updateSuccess) {
+      navigation.goBack()
     }
   }
 
   const onSubmit = async (value: UpdateUserProfileDto) => {
+    setUpdateSuccess(false)
+
     try {
       await ApiService.Users.updateProfile(value)
       await authContext.me()
-      setSnackbarMessage('Dados atualizados com sucesso')
 
-      setTimeout(() => {
-        navigation.goBack()
-      }, 5_000)
+      setUpdateSuccess(true)
     } catch (_) {
-      setSnackbarMessage('Um erro ocorreu. Tente novamente')
+      setUpdateSuccess(false)
+    } finally {
       setVisibleSnackbar(true)
     }
   }
@@ -154,25 +134,13 @@ export default function BindRiotAccount({ navigation }: Props) {
     <>
       <StyledView style={style.container}>
         <View style={style.items}>
-          <Portal>
-            <Dialog visible={modalVisible} onDismiss={onCancel}>
-              <Dialog.Content>
-                <RadialSelectModal title='Selecione um servidor' options={serverOptions} state={server} setState={setServer} dismiss={onCancel} dismissWithValue={dismissWithValue} />
-              </Dialog.Content>
-            </Dialog>
-          </Portal>
-          <TouchableRipple onPress={handleSelectPress} >
-            <TextInput
-              mode="outlined"
-              label={serverInputLabel}
-              editable={false}
-              right={
-                <TextInput.Icon
-                  icon="menu-down"
-                  onPress={handleSelectPress}
-                />}
-            ></TextInput>
-          </TouchableRipple>
+          <AppSelectController
+            control={control}
+            title={'Selecione um servidor'}
+            options={serverOptions}
+            placeholder={'Selecione um servidor'}
+            name={'server'}
+          />
           <FormFieldErrors fieldError={errors.server} />
 
           <AppController
@@ -205,7 +173,7 @@ export default function BindRiotAccount({ navigation }: Props) {
           }
         }
       >
-        {snackbarMessage}
+        {updateSuccess ? snackbarFeedback['success'] : snackbarFeedback['error']}
       </Snackbar>
     </>
   )

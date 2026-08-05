@@ -2,11 +2,12 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, List, MD3Theme, Text } from "react-native-paper";
 
 import { StyledButton, StyledView } from "@org/ui";
 
+import { RIOT_SERVERS_LABEL } from '../../../../../../../libs/contracts/src';
 import { useAuthContext } from "../../../../contexts/auth/useAuth";
 import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
 
@@ -24,8 +25,9 @@ export default function Profile({ navigation }: ProfileProps) {
   }
 
   const copyEmail = () => {
-    Clipboard.setString(authContext.user?.email!)
-    console.log('Copiado para a clipboard');
+    if (!authContext.user) return null
+
+    Clipboard.setString(authContext.user.email)
   }
 
   const handleChangeRiotAccount = () => {
@@ -36,12 +38,11 @@ export default function Profile({ navigation }: ProfileProps) {
     <StyledView>
       <List.Section>
         <List.Subheader>Informações pessoais</List.Subheader>
-        <Pressable onPress={copyEmail}>
-          <List.Item
-            title="Email"
-            description={authContext.user?.email}
-          />
-        </Pressable>
+        <List.Item
+          onPress={copyEmail}
+          title="Email"
+          description={authContext.user?.email}
+        />
         <List.Item
           title="Username"
           description={authContext.user?.username}
@@ -59,10 +60,12 @@ export default function Profile({ navigation }: ProfileProps) {
               title="Tag line"
               description={authContext.user?.tagLine}
             />
-            <List.Item
-              title="Servidor"
-              description={authContext.user?.server}
-            />
+            {authContext.user?.server && (
+              <List.Item
+                title="Servidor"
+                description={RIOT_SERVERS_LABEL[authContext.user?.server]}
+              />
+            )}
             <StyledButton style={{ marginHorizontal: 16 }} onPress={handleChangeRiotAccount}>Trocar conta Riot</StyledButton>
           </List.Section>
         ) : (

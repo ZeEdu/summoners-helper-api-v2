@@ -138,7 +138,7 @@ export class UsersService {
     return this.riotApiService.getChampionsMasteriesByTop(
       user.puuid,
       count,
-      user.server || RIOT_SERVERS.BR1,
+      user.server || RIOT_SERVERS.br1,
     );
   }
 
