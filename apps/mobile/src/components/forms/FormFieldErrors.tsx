@@ -13,7 +13,7 @@ export default function FormFieldErrors({ fieldError }: { fieldError: FieldError
   const styles = makeStyles(theme)
 
   return (
-    <View style={styles.container}>
+    <View>
       <StyledText style={styles.text}>{fieldError.message}</StyledText>
     </View>
   )
@@ -22,9 +22,8 @@ export default function FormFieldErrors({ fieldError }: { fieldError: FieldError
 const makeStyles = ({ colors, fonts }: MD3Theme) => {
 
   return StyleSheet.create({
-    container: {},
     text: {
-      color: colors.onError
+      color: colors.error
     }
   })
 }
