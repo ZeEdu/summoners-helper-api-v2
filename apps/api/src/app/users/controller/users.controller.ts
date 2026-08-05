@@ -32,10 +32,7 @@ export class UsersController {
 
   @Get('me')
   async getMe(@CurrentUser() user: IUser): Promise<IUserWithPuuid | null> {
-    const response = this.usersService.findOneByIdWithPuuid(user._id.toString())
-    console.log({ response });
-
-    return response;
+    return this.usersService.findOneByIdWithPuuid(user._id.toString());
   }
 
   @Patch('update-profile')
