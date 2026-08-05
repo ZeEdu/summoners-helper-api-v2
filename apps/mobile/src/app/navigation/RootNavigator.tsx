@@ -29,8 +29,7 @@ export default function RootNavigator() {
           </Stack.Screen>
         )
     }
-      <Stack.Screen name='Modals' component={ModalsNavigator} options={{ presentation: 'modal' }}>
-      </Stack.Screen>
+      <Stack.Screen name='Modals' component={ModalsNavigator}></Stack.Screen>
     </Stack.Navigator>
   );
 }

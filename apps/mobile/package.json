@@ -47,7 +47,9 @@
     "react-native-paper": "*",
     "@react-navigation/bottom-tabs": "*",
     "@expo/vector-icons": "*",
-    "@gorhom/bottom-sheet": "*"
+    "@gorhom/bottom-sheet": "*",
+    "zod": "*",
+    "@react-native-clipboard/clipboard": "*"
   },
   "devDependencies": {}
 }

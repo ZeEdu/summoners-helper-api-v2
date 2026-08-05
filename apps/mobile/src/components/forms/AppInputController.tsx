@@ -12,7 +12,7 @@ interface AppControllerProps<
   style?: StyleProp<ViewStyle>
 }
 
-export default function AppController<T extends FieldValues>({ name, label, placeholder, control }: AppControllerProps<T>) {
+export default function AppInputController<T extends FieldValues>({ name, label, placeholder, control }: AppControllerProps<T>) {
   return <Controller name={name} control={control} render={({ field: { onChange, onBlur, value } }) => {
     return <View style={styles.container}>
       <StyledTextInput

@@ -1,3 +1,5 @@
+import { UpdateUserProfileDto } from "@org/contracts";
+
 import { customFetch } from '../../utils/customFetch/customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { API_CONSTANTS } from './api.constants';
@@ -9,7 +11,6 @@ export const Users = {
     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/me`;
 
     const tokens = await AuthTokenStorageService.get();
-
     if (!tokens.accessToken) {
       throw new Error('Tokens not found');
     }
@@ -28,7 +29,6 @@ export const Users = {
     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`;
 
     const tokens = await AuthTokenStorageService.get();
-
     if (!tokens.accessToken) {
       throw new Error('Tokens not found');
     }
@@ -41,6 +41,28 @@ export const Users = {
     };
     // No momento vai falhar pois precisa do refresh token na requisição
     // É necessário configurar corretamente para que o fetch o utilize
+    return customFetch(url, init)
+  },
+
+  updateProfile: async (updateUserProfileDto: UpdateUserProfileDto) => {
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/update-profile`;
+
+    const tokens = await AuthTokenStorageService.get();
+    if (!tokens.accessToken) {
+      throw new Error('Tokens not found');
+    }
+
+    const init: RequestInit = {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateUserProfileDto)
+    };
+
+    console.log({ init });
+
     return customFetch(url, init)
   }
 };

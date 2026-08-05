@@ -1,22 +1,28 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { StyledButton, StyledTextInput } from "@org/ui";
+import { LoginUserDto, loginUserSchema } from "@org/contracts";
+import { StyledButton } from "@org/ui";
 
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import AppInputController from '../../../../components/forms/AppInputController';
+import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import { AuthStackParamList } from '../../../navigation/types';
+
+const resolver = zodResolver(loginUserSchema)
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>
 
 export default function Login({ navigation }: Props) {
   const authContext = useAuthContext();
 
-  const [email, setEmail] = useState<string>('Laron_Ernser31@hotmail.com');
-  const [password, setPassword] = useState<string>('1!AbZ6LZHq0WfFn');
+  const { control, handleSubmit, formState: { errors } } = useForm<LoginUserDto>({ resolver })
 
-  const handleSubmit = async () => {
-    const login = await authContext.login({ email, password });
+  const onSubmit = async (formData: LoginUserDto) => {
+    const login = await authContext.login(formData);
     if (!login.success) {
       return;
     }
@@ -29,23 +35,25 @@ export default function Login({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View>
-        <StyledTextInput
-          label="Email"
-          onChangeText={setEmail}
-          value={email}
-        ></StyledTextInput>
+        <AppInputController
+          control={control}
+          label='Email'
+          placeholder='Email'
+          name='email'
+        />
+        <FormFieldErrors fieldError={errors.email} />
       </View>
       <View>
-        <StyledTextInput
-          label="Senha"
-          onChangeText={setPassword}
-          value={password}
-        ></StyledTextInput>
+        <AppInputController
+          control={control}
+          label='Senha'
+          placeholder='Senha'
+          name='password'
+        />
+        <FormFieldErrors fieldError={errors.password} />
       </View>
       <View>
-        <StyledButton onPress={handleSubmit}>Submit</StyledButton>
-      </View>
-      <View>
+        <StyledButton onPress={handleSubmit(onSubmit)}>Submit</StyledButton>
         <StyledButton mode='contained-tonal' onPress={goToRegister}>Go to Register</StyledButton>
       </View>
     </View>
