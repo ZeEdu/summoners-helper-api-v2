@@ -1,0 +1,1408 @@
+diff --git a/apps/api/src/app/riot-api/service/riot-api.service.ts b/apps/api/src/app/riot-api/service/riot-api.service.ts
+index f8e3567..31fe72c 100644
+--- a/apps/api/src/app/riot-api/service/riot-api.service.ts
++++ b/apps/api/src/app/riot-api/service/riot-api.service.ts
+@@ -1,27 +1,27 @@
+ import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+-import { RiotAccount } from '../interfaces/riot-account.interface';
+-import { RiotApiUtilsService } from './riot-api.utils.service';
+-import { IUserWithPuuid } from '../../users/schema/user.schema';
+-import { LeagueEntry } from '../interfaces/league-entry.interface';
+-import { Match, MatchParticipant } from '../interfaces/match.interface';
+-import { ChampionMastery } from '../interfaces/champion-mastery.interface';
+-import {
+-  IRiotApiErrorLogger,
+-  RiotApiErrorLogger,
+-} from '../schema/riot-api-error-logger.schema';
+ import { InjectModel } from '@nestjs/mongoose';
++import { RIOT_SERVERS } from '@org/contracts';
+ import { Model } from 'mongoose';
++import { I18nService } from 'nestjs-i18n';
++import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+ import { ChampionsDataDragonDetails } from '../../ddragon/dto/champion.dto';
+-import { Summoner } from '../interfaces/summoner.interface';
+ import { ItemDetails } from '../../ddragon/dto/item.dto';
+-import { SummonerSpell } from '../../ddragon/dto/spell.dto';
+ import {
+   RunesReforgedDataDragon,
+   RunesReforgedSlots,
+ } from '../../ddragon/dto/runes-reforged-data.dragon';
+-import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+-import { I18nService } from 'nestjs-i18n';
+-import { RIOT_SERVERS } from '@org/contracts';
++import { SummonerSpell } from '../../ddragon/dto/spell.dto';
++import { IUserWithPuuid } from '../../users/schema/user.schema';
++import { ChampionMastery } from '../interfaces/champion-mastery.interface';
++import { LeagueEntry } from '../interfaces/league-entry.interface';
++import { Match, MatchParticipant } from '../interfaces/match.interface';
++import { RiotAccount } from '../interfaces/riot-account.interface';
++import { Summoner } from '../interfaces/summoner.interface';
++import {
++  IRiotApiErrorLogger,
++  RiotApiErrorLogger,
++} from '../schema/riot-api-error-logger.schema';
++import { RiotApiUtilsService } from './riot-api.utils.service';
+ 
+ export interface IChampionMasteryResponse {
+   championId: ChampionMastery['championId'];
+@@ -143,7 +143,7 @@ export class RiotApiService implements IRiotApiService {
+ 
+   async getChampionsMasteries(
+     puuid: IUserWithPuuid['puuid'],
+-    server: RIOT_SERVERS,
++    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+   ): Promise<IChampionMasteryResponse[]> {
+     const url = this.riotApiUtilsService.buildGetChampionMasteryURL(
+       puuid,
+@@ -159,7 +159,7 @@ export class RiotApiService implements IRiotApiService {
+   async getChampionsMasteriesByChampion(
+     puuid: IUserWithPuuid['puuid'],
+     championId: number,
+-    server: RIOT_SERVERS,
++    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+   ): Promise<IChampionMasteryResponse> {
+     const url = this.riotApiUtilsService.buildGetChampionMasteryByChampionURL(
+       puuid,
+@@ -174,7 +174,7 @@ export class RiotApiService implements IRiotApiService {
+   async getChampionsMasteriesByTop(
+     puuid: IUserWithPuuid['puuid'],
+     count: number,
+-    server: RIOT_SERVERS,
++    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+   ): Promise<IChampionMasteryResponse[]> {
+     const url = this.riotApiUtilsService.buildGetChampionMasteryByTopURL(
+       puuid,
+@@ -191,7 +191,7 @@ export class RiotApiService implements IRiotApiService {
+ 
+   async getRankedStatus(
+     puuid: IUserWithPuuid['puuid'],
+-    server: RIOT_SERVERS,
++    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+   ): Promise<IRankedStatusResponse[]> {
+     const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid, server);
+     const response = await fetch(url);
+@@ -218,7 +218,7 @@ export class RiotApiService implements IRiotApiService {
+ 
+   async getSummoner(
+     puuid: IUserWithPuuid['puuid'],
+-    server: RIOT_SERVERS,
++    server: RIOT_SERVERS = RIOT_SERVERS.BR1,
+   ): Promise<ISummonerResponse> {
+     const url = this.riotApiUtilsService.buildGetSummonerURL(puuid, server);
+     const response = await fetch(url);
+diff --git a/apps/api/src/app/users/controller/users.controller.ts b/apps/api/src/app/users/controller/users.controller.ts
+index 9791537..b76855f 100644
+--- a/apps/api/src/app/users/controller/users.controller.ts
++++ b/apps/api/src/app/users/controller/users.controller.ts
+@@ -1,16 +1,16 @@
++import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
++import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
++import { CurrentUser } from '../../decorators/user.decorator';
++import { JwtGuard } from '../../guards/jwt.guard';
++import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
++import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
+ import { IUserWithPuuid } from '../schema/user.schema';
+ import { UsersService } from '../service/users.service';
+-import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
+ import {
+   createUserPaginationFilter,
+   UserPaginationDto,
+   userPaginationSchema,
+ } from '../user.pagination.dto';
+-import { JwtGuard } from '../../guards/jwt.guard';
+-import { CurrentUser } from '../../decorators/user.decorator';
+-import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
+-import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
+-import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
+ 
+ @Controller('users')
+ @UseGuards(JwtGuard)
+@@ -31,8 +31,11 @@ export class UsersController {
+   }
+ 
+   @Get('me')
+-  async getMe(@CurrentUser() user: IUser): Promise<IUser | null> {
+-    return this.usersService.findOneById(user._id.toString());
++  async getMe(@CurrentUser() user: IUser): Promise<IUserWithPuuid | null> {
++    const response = this.usersService.findOneByIdWithPuuid(user._id.toString())
++    console.log({ response });
++
++    return response;
+   }
+ 
+   @Patch('update-profile')
+@@ -43,6 +46,7 @@ export class UsersController {
+     updateProfileDto: UpdateUserProfileDto,
+   ) {
+     await this.usersService.updateUserWithRiotData(user, updateProfileDto);
++    return {}
+   }
+ 
+   @Get('top-masteries')
+diff --git a/apps/api/src/app/users/service/users.service.ts b/apps/api/src/app/users/service/users.service.ts
+index 1de09f3..f1ca5d7 100644
+--- a/apps/api/src/app/users/service/users.service.ts
++++ b/apps/api/src/app/users/service/users.service.ts
+@@ -1,26 +1,26 @@
+ import { Injectable } from '@nestjs/common';
+-import { Model, QueryFilter, QueryOptions } from 'mongoose';
+ import { InjectModel } from '@nestjs/mongoose';
++import { Model, QueryFilter, QueryOptions } from 'mongoose';
+ 
++import {
++  CreateUserDto,
++  IUser,
++  RIOT_SERVERS,
++  UpdateUserDto,
++  UpdateUserProfileDto
++} from '@org/contracts';
+ import {
+   DEFAULT_LIMIT,
+   DEFAULT_OFFSET,
+   PaginationDto,
+ } from '../../pagination/pagination.dto';
++import { RiotApiService } from '../../riot-api/service/riot-api.service';
+ import {
+   IUserWithPassword,
+   IUserWithPuuid,
+   SENSIBLE_FIELDS,
+   User,
+ } from '../schema/user.schema';
+-import { RiotApiService } from '../../riot-api/service/riot-api.service';
+-import {
+-  CreateUserDto,
+-  IUser,
+-  RIOT_SERVERS,
+-  UpdateUserDto,
+-  UpdateUserProfileDto
+-} from '@org/contracts';
+ 
+ @Injectable()
+ export class UsersService {
+@@ -42,6 +42,15 @@ export class UsersService {
+       .lean<IUserWithPuuid>();
+   }
+ 
++  findOneByIdWithPuuid(
++    id: string,
++  ): Promise<IUserWithPuuid | null> {
++    return this.userModel
++      .findById(id)
++      .select('+puuid')
++      .lean<IUserWithPuuid>();
++  }
++
+   findOneByEmailWithPassword(
+     email: User['email'],
+   ): Promise<IUserWithPassword | null> {
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index 500ff15..cc1cc87 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -47,7 +47,9 @@
+     "react-native-paper": "*",
+     "@react-navigation/bottom-tabs": "*",
+     "@expo/vector-icons": "*",
+-    "@gorhom/bottom-sheet": "*"
++    "@gorhom/bottom-sheet": "*",
++    "zod": "*",
++    "@react-native-clipboard/clipboard": "*"
+   },
+   "devDependencies": {}
+ }
+\ No newline at end of file
+diff --git a/apps/mobile/src/app/navigation/ModalsNavigator.tsx b/apps/mobile/src/app/navigation/ModalsNavigator.tsx
+index a946d23..ecab9e4 100644
+--- a/apps/mobile/src/app/navigation/ModalsNavigator.tsx
++++ b/apps/mobile/src/app/navigation/ModalsNavigator.tsx
+@@ -7,9 +7,8 @@ const Stack = createNativeStackNavigator<ModalStackParamList>();
+ 
+ export default function ModalsNavigator() {
+   return (
+-    <Stack.Navigator>
+-      <Stack.Screen name="BindRiotAccount" component={BindRiotAccount}>
+-      </Stack.Screen>
++    <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
++      <Stack.Screen name="BindRiotAccount" component={BindRiotAccount} />
+     </Stack.Navigator>
+   );
+ }
+\ No newline at end of file
+diff --git a/apps/mobile/src/app/navigation/RootNavigator.tsx b/apps/mobile/src/app/navigation/RootNavigator.tsx
+index 22c16b7..950b245 100644
+--- a/apps/mobile/src/app/navigation/RootNavigator.tsx
++++ b/apps/mobile/src/app/navigation/RootNavigator.tsx
+@@ -29,8 +29,7 @@ export default function RootNavigator() {
+           </Stack.Screen>
+         )
+     }
+-      <Stack.Screen name='Modals' component={ModalsNavigator} options={{ presentation: 'modal' }}>
+-      </Stack.Screen>
++      <Stack.Screen name='Modals' component={ModalsNavigator}></Stack.Screen>
+     </Stack.Navigator>
+   );
+ }
+\ No newline at end of file
+diff --git a/apps/mobile/src/app/screens/main/profile/Profile.tsx b/apps/mobile/src/app/screens/main/profile/Profile.tsx
+index f55a763..872176f 100644
+--- a/apps/mobile/src/app/screens/main/profile/Profile.tsx
++++ b/apps/mobile/src/app/screens/main/profile/Profile.tsx
+@@ -1,13 +1,14 @@
++import Clipboard from '@react-native-clipboard/clipboard';
+ import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+ import { CompositeScreenProps } from "@react-navigation/native";
+ import { NativeStackScreenProps } from "@react-navigation/native-stack";
+-import { StyleSheet, View } from "react-native";
++import { Pressable, StyleSheet, View } from "react-native";
+ import { Button, List, MD3Theme, Text } from "react-native-paper";
+ 
+-import { StyledView } from "@org/ui";
++import { StyledButton, StyledView } from "@org/ui";
+ 
+-import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
+ import { useAuthContext } from "../../../../contexts/auth/useAuth";
++import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
+ 
+ export type ProfileProps = CompositeScreenProps<
+   BottomTabScreenProps<MainTabsParamList, 'Profile'>,
+@@ -22,28 +23,47 @@ export default function Profile({ navigation }: ProfileProps) {
+     navigation.navigate('Modals', { screen: 'BindRiotAccount' })
+   }
+ 
++  const copyEmail = () => {
++    Clipboard.setString(authContext.user?.email!)
++    console.log('Copiado para a clipboard');
++  }
++
++  const handleChangeRiotAccount = () => {
++    navigation.navigate('Modals', { screen: 'BindRiotAccount' })
++  }
++
+   return (
+     <StyledView>
+       <List.Section>
+         <List.Subheader>Informações pessoais</List.Subheader>
+-        <List.Item
+-          title="Email"
+-          description={authContext.user?.email}
+-        ></List.Item>
++        <Pressable onPress={copyEmail}>
++          <List.Item
++            title="Email"
++            description={authContext.user?.email}
++          />
++        </Pressable>
+         <List.Item
+           title="Username"
+           description={authContext.user?.username}
+-        ></List.Item>
++        />
+       </List.Section>
+       {
+         hasRiotInfo ? (
+           <List.Section>
+             <List.Subheader>Informações da conta Riot</List.Subheader>
+             <List.Item
+-              title="Username"
+-              description={authContext.user?.username}
+-            >
+-            </List.Item>
++              title="Nome no jogo"
++              description={authContext.user?.gameName}
++            />
++            <List.Item
++              title="Tag line"
++              description={authContext.user?.tagLine}
++            />
++            <List.Item
++              title="Servidor"
++              description={authContext.user?.server}
++            />
++            <StyledButton style={{ marginHorizontal: 16 }} onPress={handleChangeRiotAccount}>Trocar conta Riot</StyledButton>
+           </List.Section>
+         ) : (
+           <>
+diff --git a/apps/mobile/src/app/screens/modals/BindRiotAccount.tsx b/apps/mobile/src/app/screens/modals/BindRiotAccount.tsx
+index ed3610c..ecc206a 100644
+--- a/apps/mobile/src/app/screens/modals/BindRiotAccount.tsx
++++ b/apps/mobile/src/app/screens/modals/BindRiotAccount.tsx
+@@ -1,9 +1,222 @@
+-import { Text } from 'react-native-paper';
++import { zodResolver } from '@hookform/resolvers/zod';
++import { NativeStackScreenProps } from '@react-navigation/native-stack';
++import React, { useState } from 'react';
++import { useForm } from 'react-hook-form';
++import { StyleSheet, View } from 'react-native';
++import { Dialog, Portal, Snackbar, TextInput, TouchableRipple } from 'react-native-paper';
+ 
+-import { StyledView } from '@org/ui';
++import { RIOT_SERVERS, RIOT_SERVERS_LABEL, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
++import { StyledButton, StyledView } from '@org/ui';
+ 
+-export default function BindRiotAccount() {
+-  return <StyledView>
+-    <Text>BindRiotAccount</Text>
+-  </StyledView>
+-}
+\ No newline at end of file
++import AppController from '../../../components/forms/AppController';
++import FormFieldErrors from '../../../components/forms/FormFieldErrors';
++import { useAuthContext } from '../../../contexts/auth/useAuth';
++import { ApiService } from '../../../services/api/api.service';
++import { ModalStackParamList } from '../../navigation/types';
++import RadialSelectModal from './RadialSelectModal';
++
++const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
++  {
++    value: RIOT_SERVERS.BR1,
++    label: RIOT_SERVERS_LABEL.BR1,
++  },
++  {
++    value: RIOT_SERVERS.EUN1,
++    label: RIOT_SERVERS_LABEL.EUN1,
++  },
++  {
++    value: RIOT_SERVERS.EUW1,
++    label: RIOT_SERVERS_LABEL.EUW1,
++  },
++  {
++    value: RIOT_SERVERS.JP1,
++    label: RIOT_SERVERS_LABEL.JP1,
++  },
++  {
++    value: RIOT_SERVERS.KR,
++    label: RIOT_SERVERS_LABEL.KR,
++  },
++  {
++    value: RIOT_SERVERS.LA1,
++    label: RIOT_SERVERS_LABEL.LA1,
++  },
++  {
++    value: RIOT_SERVERS.LA2,
++    label: RIOT_SERVERS_LABEL.LA2,
++  },
++  {
++    value: RIOT_SERVERS.ME1,
++    label: RIOT_SERVERS_LABEL.ME1,
++  },
++  {
++    value: RIOT_SERVERS.NA1,
++    label: RIOT_SERVERS_LABEL.NA1,
++  },
++  {
++    value: RIOT_SERVERS.OC1,
++    label: RIOT_SERVERS_LABEL.OC1,
++  },
++  {
++    value: RIOT_SERVERS.RU,
++    label: RIOT_SERVERS_LABEL.RU,
++  },
++  {
++    value: RIOT_SERVERS.SG2,
++    label: RIOT_SERVERS_LABEL.SG2,
++  },
++  {
++    value: RIOT_SERVERS.TR1,
++    label: RIOT_SERVERS_LABEL.TR1,
++  },
++  {
++    value: RIOT_SERVERS.TW2,
++    label: RIOT_SERVERS_LABEL.TW2,
++  },
++  {
++    value: RIOT_SERVERS.VN2,
++    label: RIOT_SERVERS_LABEL.VN2,
++  },
++] as const;
++
++const resolver = zodResolver(updateUserProfileSchema);
++
++type Props = NativeStackScreenProps<ModalStackParamList, 'BindRiotAccount'>
++
++export default function BindRiotAccount({ navigation }: Props) {
++  const authContext = useAuthContext()
++
++  const defaultServerValue = RIOT_SERVERS.NA1
++  const {
++    control,
++    handleSubmit,
++    formState: { errors },
++    setValue
++  } = useForm<UpdateUserProfileDto>({
++    resolver,
++    defaultValues: {
++      server: defaultServerValue,
++      gameName: 'MunchyPunchyLOL',
++      tagLine: 'TTV1'
++    },
++  });
++
++  const [server, setServer] = useState<RIOT_SERVERS>(defaultServerValue);
++  const [serverInputLabel, setServerInputLabel] = useState<string>(defaultServerValue)
++
++  const [modalVisible, setModalVisible] = useState(false)
++  const [visibleSnackbar, setVisibleSnackbar] = useState(false)
++  const [snackbarMessage, setSnackbarMessage] = useState<string>('')
++
++  const hideSnackbar = () => {
++    setVisibleSnackbar(false)
++  }
++
++  const handleSelectPress = () => {
++    setModalVisible(true)
++  }
++
++  const makeInputLabel = () => {
++    const label = serverOptions.find((option) => option.value === server)?.label
++    setServerInputLabel(label!)
++  }
++
++  const onCancel = () => {
++    setServer(defaultServerValue)
++    setModalVisible(false)
++
++    makeInputLabel()
++  }
++
++  const dismissWithValue = () => {
++    setModalVisible(false)
++    makeInputLabel()
++    if (server) {
++      setValue('server', server)
++    }
++  }
++
++  const onSubmit = async (value: UpdateUserProfileDto) => {
++    try {
++      await ApiService.Users.updateProfile(value)
++      await authContext.me()
++      setSnackbarMessage('Dados atualizados com sucesso')
++
++      setTimeout(() => {
++        navigation.goBack()
++      }, 5_000)
++    } catch (_) {
++      setSnackbarMessage('Um erro ocorreu. Tente novamente')
++      setVisibleSnackbar(true)
++    }
++  }
++
++  return (
++    <>
++      <StyledView style={style.container}>
++        <View style={style.items}>
++          <Portal>
++            <Dialog visible={modalVisible} onDismiss={onCancel}>
++              <Dialog.Content>
++                <RadialSelectModal title='Selecione um servidor' options={serverOptions} state={server} setState={setServer} dismiss={onCancel} dismissWithValue={dismissWithValue} />
++              </Dialog.Content>
++            </Dialog>
++          </Portal>
++          <TouchableRipple onPress={handleSelectPress} >
++            <TextInput
++              mode="outlined"
++              label={serverInputLabel}
++              editable={false}
++              right={
++                <TextInput.Icon
++                  icon="menu-down"
++                  onPress={handleSelectPress}
++                />}
++            ></TextInput>
++          </TouchableRipple>
++          <FormFieldErrors fieldError={errors.server} />
++
++          <AppController
++            control={control}
++            name="gameName"
++            label="Nome no jogo"
++            placeholder="Seu nome no jogo"
++          />
++          <FormFieldErrors fieldError={errors.gameName} />
++
++          <AppController
++            control={control}
++            name="tagLine"
++            label="Tag line"
++            placeholder="Sua tag line"
++          />
++          <FormFieldErrors fieldError={errors.tagLine} />
++        </View>
++        <StyledButton onPress={handleSubmit(onSubmit)}>Enviar</StyledButton>
++      </StyledView>
++      <Snackbar
++        visible={visibleSnackbar}
++        onDismiss={hideSnackbar}
++        action={
++          {
++            label: 'OK',
++            onPress: () => {
++              hideSnackbar()
++            }
++          }
++        }
++      >
++        {snackbarMessage}
++      </Snackbar>
++    </>
++  )
++}
++
++const style = StyleSheet.create({
++  container: {
++    marginTop: 16,
++    flex: 1,
++    paddingHorizontal: 16,
++    gap: 16,
++  },
++  items: { gap: 16 }
++})
+\ No newline at end of file
+diff --git a/apps/mobile/src/app/screens/modals/RadialSelectModal.tsx b/apps/mobile/src/app/screens/modals/RadialSelectModal.tsx
+new file mode 100644
+index 0000000..899897f
+--- /dev/null
++++ b/apps/mobile/src/app/screens/modals/RadialSelectModal.tsx
+@@ -0,0 +1,86 @@
++
++import React from 'react';
++import { StyleSheet, View } from 'react-native';
++import { Button, Checkbox, Divider, MD3Theme, Text, useTheme } from 'react-native-paper';
++
++type Props = {
++  title: string,
++  options: { value: string, label: string }[],
++  state: any,
++  setState: (React.Dispatch<React.SetStateAction<any>>),
++  dismiss: () => void,
++  dismissWithValue: () => void,
++  multiselect?: boolean,
++  okText?: string,
++  cancelText?: string
++}
++
++export default function RadialSelectModal({ title, options, state, setState, dismiss, dismissWithValue, multiselect = false, okText, cancelText }: Props) {
++  const theme = useTheme()
++  const styles = makeStyles(theme)
++
++  const toggleCheckbox = (value: any) => {
++    setState((oldValue: any) => {
++      if (multiselect) {
++        const current = oldValue ?? {};
++
++        if (current[value]) {
++          const { [value]: _, ...newValue } = current;
++          return newValue;
++        }
++
++        const newValue = {
++          ...current,
++          [value]: true,
++        };
++
++        return newValue;
++      }
++
++      return value;
++    })
++  }
++
++  return (
++    <View>
++      <Text style={styles.title}>{title}</Text>
++      <Divider />
++      {options.map(({ label, value }) => (
++        <Checkbox.Item
++          label={label}
++          key={value}
++          status={multiselect ? state[value] ? 'checked' : 'unchecked' : state === value ? 'checked' : 'unchecked'}
++          onPress={() => {
++            toggleCheckbox(value)
++          }} />
++      ))}
++      <Divider />
++      <View style={styles.actionButtons}>
++        <Button onPress={dismiss}>{cancelText ?? 'CANCEL'}</Button>
++        <Button onPress={dismissWithValue}>{okText ?? 'OK'}</Button>
++      </View>
++    </View>
++  )
++}
++
++const makeStyles = ({ fonts }: MD3Theme) => {
++  const { fontFamily, fontSize, fontWeight, letterSpacing, lineHeight, fontStyle } = fonts.titleLarge
++  return StyleSheet.create({
++    title: {
++      marginHorizontal: 16,
++      marginBottom: 16,
++      fontFamily,
++      fontSize,
++      fontWeight,
++      letterSpacing,
++      lineHeight,
++      fontStyle
++    },
++    actionButtons: {
++      display: 'flex',
++      flexDirection: 'row',
++      justifyContent: 'flex-end',
++      marginTop: 8
++    }
++  })
++}
+\ No newline at end of file
+diff --git a/apps/mobile/src/components/forms/FormFieldErrors.tsx b/apps/mobile/src/components/forms/FormFieldErrors.tsx
+index a3d4c34..76b9755 100644
+--- a/apps/mobile/src/components/forms/FormFieldErrors.tsx
++++ b/apps/mobile/src/components/forms/FormFieldErrors.tsx
+@@ -2,18 +2,29 @@ import { FieldError } from "react-hook-form"
+ import { StyleSheet, View } from "react-native"
+ 
+ import { StyledText } from "@org/ui"
++import { MD3Theme, useTheme } from "react-native-paper"
+ 
+ export default function FormFieldErrors({ fieldError }: { fieldError: FieldError | undefined }) {
+   if (!fieldError) {
+     return
+   }
+ 
+-  return <View style={styles.container}>
+-    <StyledText style={styles.text}>{fieldError.message}</StyledText>
+-  </View>
++  const theme = useTheme()
++  const styles = makeStyles(theme)
++
++  return (
++    <View style={styles.container}>
++      <StyledText style={styles.text}>{fieldError.message}</StyledText>
++    </View>
++  )
+ }
+ 
+-const styles = StyleSheet.create({
+-  container: {},
+-  text: {}
+-})
+\ No newline at end of file
++const makeStyles = ({ colors, fonts }: MD3Theme) => {
++
++  return StyleSheet.create({
++    container: {},
++    text: {
++      color: colors.onError
++    }
++  })
++}
+\ No newline at end of file
+diff --git a/apps/mobile/src/services/api/users.ts b/apps/mobile/src/services/api/users.ts
+index 75c2fc9..dc8f7f8 100644
+--- a/apps/mobile/src/services/api/users.ts
++++ b/apps/mobile/src/services/api/users.ts
+@@ -1,3 +1,5 @@
++import { UpdateUserProfileDto } from "@org/contracts";
++
+ import { customFetch } from '../../utils/customFetch/customFetch';
+ import { AuthTokenStorageService } from '../auth-token-storage.service';
+ import { API_CONSTANTS } from './api.constants';
+@@ -9,7 +11,6 @@ export const Users = {
+     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/me`;
+ 
+     const tokens = await AuthTokenStorageService.get();
+-
+     if (!tokens.accessToken) {
+       throw new Error('Tokens not found');
+     }
+@@ -28,7 +29,6 @@ export const Users = {
+     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`;
+ 
+     const tokens = await AuthTokenStorageService.get();
+-
+     if (!tokens.accessToken) {
+       throw new Error('Tokens not found');
+     }
+@@ -41,6 +41,28 @@ export const Users = {
+     };
+     // No momento vai falhar pois precisa do refresh token na requisição
+     // É necessário configurar corretamente para que o fetch o utilize
++    return customFetch(url, init)
++  },
++
++  updateProfile: async (updateUserProfileDto: UpdateUserProfileDto) => {
++    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/update-profile`;
++
++    const tokens = await AuthTokenStorageService.get();
++    if (!tokens.accessToken) {
++      throw new Error('Tokens not found');
++    }
++
++    const init: RequestInit = {
++      method: 'PATCH',
++      headers: {
++        Authorization: `Bearer ${tokens.accessToken}`,
++        'Content-Type': 'application/json',
++      },
++      body: JSON.stringify(updateUserProfileDto)
++    };
++
++    console.log({ init });
++
+     return customFetch(url, init)
+   }
+ };
+diff --git a/libs/ui/src/lib/components/Dropdown/Dropdown.tsx b/libs/ui/src/lib/components/Dropdown/Dropdown.tsx
+new file mode 100644
+index 0000000..61e72c2
+--- /dev/null
++++ b/libs/ui/src/lib/components/Dropdown/Dropdown.tsx
+@@ -0,0 +1,32 @@
++import { ReactNode, useMemo, useState } from "react";
++
++import { DropdownContext } from "./DropdownContext";
++
++export interface DropdownProps {
++  children: ReactNode;
++}
++
++export function Dropdown({
++  children,
++}: DropdownProps) {
++  const [visible, setVisible] = useState(false);
++
++  const context = useMemo(() => ({
++    visible,
++    openMenu() {
++      setVisible(true);
++    },
++    closeMenu() {
++      setVisible(false);
++    },
++    toggleMenu() {
++      setVisible(value => !value);
++    },
++  }), [visible]);
++
++  return (
++    <DropdownContext.Provider value={context}>
++      {children}
++    </DropdownContext.Provider>
++  );
++}
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/Dropdown/DropdownContext.ts b/libs/ui/src/lib/components/Dropdown/DropdownContext.ts
+new file mode 100644
+index 0000000..b0ab3c0
+--- /dev/null
++++ b/libs/ui/src/lib/components/Dropdown/DropdownContext.ts
+@@ -0,0 +1,23 @@
++import { createContext, useContext } from 'react';
++
++export interface DropdownContextValue {
++  visible: boolean;
++  openMenu(): void;
++  closeMenu(): void;
++  toggleMenu(): void;
++}
++
++export const DropdownContext =
++  createContext<DropdownContextValue | null>(null);
++
++export function useDropdownContext() {
++  const context = useContext(DropdownContext);
++
++  if (!context) {
++    throw new Error(
++      'Dropdown components must be rendered inside <Dropdown>.'
++    );
++  }
++
++  return context;
++}
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/Dropdown/DropdownItem.tsx b/libs/ui/src/lib/components/Dropdown/DropdownItem.tsx
+new file mode 100644
+index 0000000..b1347c2
+--- /dev/null
++++ b/libs/ui/src/lib/components/Dropdown/DropdownItem.tsx
+@@ -0,0 +1,27 @@
++
++import React from 'react';
++import { useDropdownContext } from './DropdownContext';
++
++import type { DropdownItemProps as CustomDropdownItemProps } from '../DropdownItem';
++import { DropdownItem as CustomDropdownItem } from '../DropdownItem';
++
++export interface Props extends Omit<CustomDropdownItemProps, 'onPress'> {
++  value: string
++}
++
++const DropdownItem = (props: Props) => {
++  const {
++    closeMenu,
++  } = useDropdownContext();
++
++  return (
++    <CustomDropdownItem
++      {...props}
++      onPress={() => {
++        dropdownContext.onChange?.(props.value)
++      }}
++    ></CustomDropdownItem>
++  )
++}
++
++export default DropdownItem
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/Dropdown/DropdownMenu.tsx b/libs/ui/src/lib/components/Dropdown/DropdownMenu.tsx
+new file mode 100644
+index 0000000..409d6d7
+--- /dev/null
++++ b/libs/ui/src/lib/components/Dropdown/DropdownMenu.tsx
+@@ -0,0 +1,19 @@
++import { PropsWithChildren } from "react";
++import { Menu } from "react-native-paper";
++import { useDropdownContext } from "./Dropdown.context";
++
++export function DropdownMenu({
++  children,
++}: PropsWithChildren) {
++  const { visible, closeMenu } = useDropdownContext();
++
++  return (
++    <Menu
++      visible={visible}
++      onDismiss={closeMenu}
++      anchor={undefined}
++    >
++      {children}
++    </Menu>
++  );
++}
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/Dropdown/DropdownTrigger.tsx b/libs/ui/src/lib/components/Dropdown/DropdownTrigger.tsx
+new file mode 100644
+index 0000000..2d776dd
+--- /dev/null
++++ b/libs/ui/src/lib/components/Dropdown/DropdownTrigger.tsx
+@@ -0,0 +1,17 @@
++import { PropsWithChildren } from "react";
++import { TouchableRipple } from "react-native-paper";
++import { useDropdownContext } from "./DropdownContext";
++
++export function DropdownTrigger({
++  children,
++}: PropsWithChildren) {
++  const { toggleMenu } = useDropdownContext();
++
++  return (
++    <TouchableRipple
++      onPress={toggleMenu}
++    >
++      {children}
++    </TouchableRipple>
++  );
++}
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/Dropdown/index.ts b/libs/ui/src/lib/components/Dropdown/index.ts
+new file mode 100644
+index 0000000..7c33c5f
+--- /dev/null
++++ b/libs/ui/src/lib/components/Dropdown/index.ts
+@@ -0,0 +1,17 @@
++import DropdownComponent from './Dropdown'
++import DropdownItem from './DrowpdownItem'
++
++type DropdownExport = typeof DropdownComponent & {
++  Item: typeof DropdownItem
++}
++
++const Dropdown: DropdownExport = Object.assign(
++  //@component ./Dropdown.tsx
++  DropdownComponent,
++  {
++    // @component ./DropdownItem.tsx
++    Item: DropdownItem
++  }
++)
++
++export default Dropdown
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/Dropdown/utils.ts b/libs/ui/src/lib/components/Dropdown/utils.ts
+new file mode 100644
+index 0000000..f69aa08
+--- /dev/null
++++ b/libs/ui/src/lib/components/Dropdown/utils.ts
+@@ -0,0 +1,38 @@
++import type { MD3Theme } from "react-native-paper";
++
++const stateOpacity = {
++  dragged: 0.16,
++  pressed: 0.1,
++  focused: 0.1,
++  hovered: 0.08,
++  disabled: 0.38,
++  enabled: 1.0,
++};
++
++export const MIN_WIDTH = 112;
++export const MAX_WIDTH = '100%';
++
++type ColorProps = {
++  theme: MD3Theme;
++  disabled?: boolean;
++};
++
++const getTitleColor = ({ theme }: ColorProps) => {
++  return theme.colors.onSurface;
++};
++
++const getIconColor = ({ theme }: ColorProps) => {
++  return theme.colors.onSurfaceVariant;
++};
++
++export const getMenuItemColor = ({ theme, disabled }: ColorProps) => {
++  const contentOpacity = disabled
++    ? stateOpacity.disabled
++    : stateOpacity.enabled;
++
++  return {
++    titleColor: getTitleColor({ theme, disabled }),
++    iconColor: getIconColor({ theme, disabled }),
++    contentOpacity,
++  };
++};
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/DropdownItem/DropdownItem.constants.tsx b/libs/ui/src/lib/components/DropdownItem/DropdownItem.constants.tsx
+new file mode 100644
+index 0000000..4d7bcf1
+--- /dev/null
++++ b/libs/ui/src/lib/components/DropdownItem/DropdownItem.constants.tsx
+@@ -0,0 +1,34 @@
++/**
++ * Altura padrão do item seguindo o Material Design 3.
++ */
++export const DROPDOWN_ITEM_HEIGHT = 48;
++
++/**
++ * Altura utilizada quando dense=true.
++ */
++export const DROPDOWN_ITEM_DENSE_HEIGHT = 40;
++
++/**
++ * Padding horizontal do item.
++ */
++export const DROPDOWN_ITEM_HORIZONTAL_PADDING = 12;
++
++/**
++ * Padding vertical.
++ */
++export const DROPDOWN_ITEM_VERTICAL_PADDING = 4;
++
++/**
++ * Espaço entre ícone e conteúdo.
++ */
++export const DROPDOWN_ITEM_ICON_SPACING = 12;
++
++/**
++ * Tamanho padrão dos ícones.
++ */
++export const DROPDOWN_ITEM_ICON_SIZE = 24;
++
++/**
++ * Opacidade aplicada quando o item estiver desabilitado.
++ */
++export const DROPDOWN_ITEM_DISABLED_OPACITY = 0.38;
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/DropdownItem/DropdownItem.styles.tsx b/libs/ui/src/lib/components/DropdownItem/DropdownItem.styles.tsx
+new file mode 100644
+index 0000000..2044bae
+--- /dev/null
++++ b/libs/ui/src/lib/components/DropdownItem/DropdownItem.styles.tsx
+@@ -0,0 +1,52 @@
++import { StyleSheet } from 'react-native';
++
++import {
++  DROPDOWN_ITEM_DENSE_HEIGHT,
++  DROPDOWN_ITEM_HEIGHT,
++  DROPDOWN_ITEM_HORIZONTAL_PADDING,
++  DROPDOWN_ITEM_ICON_SPACING,
++  DROPDOWN_ITEM_VERTICAL_PADDING,
++} from './DropdownItem.constants';
++
++export const styles = StyleSheet.create({
++  container: {
++    width: '100%',
++
++    flexDirection: 'row',
++    alignItems: 'center',
++
++    minHeight: DROPDOWN_ITEM_HEIGHT,
++
++    paddingHorizontal: DROPDOWN_ITEM_HORIZONTAL_PADDING,
++    paddingVertical: DROPDOWN_ITEM_VERTICAL_PADDING,
++  },
++
++  dense: {
++    minHeight: DROPDOWN_ITEM_DENSE_HEIGHT,
++  },
++
++  leading: {
++    justifyContent: 'center',
++    alignItems: 'center',
++
++    marginRight: DROPDOWN_ITEM_ICON_SPACING,
++  },
++
++  content: {
++    flex: 1,
++
++    justifyContent: 'center',
++    alignSelf: 'stretch',
++  },
++
++  trailing: {
++    justifyContent: 'center',
++    alignItems: 'center',
++
++    marginLeft: DROPDOWN_ITEM_ICON_SPACING,
++  },
++
++  title: {
++    flexShrink: 1,
++  },
++});
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/DropdownItem/DropdownItem.tsx b/libs/ui/src/lib/components/DropdownItem/DropdownItem.tsx
+new file mode 100644
+index 0000000..44b62b2
+--- /dev/null
++++ b/libs/ui/src/lib/components/DropdownItem/DropdownItem.tsx
+@@ -0,0 +1,107 @@
++import { View } from 'react-native';
++
++import {
++  Text,
++  TouchableRipple,
++  useTheme,
++} from 'react-native-paper';
++
++
++import { useDropdownContext } from '../Dropdown/DropdownContext';
++import { styles } from './DropdownItem.styles';
++import type { DropdownItemProps } from './DropdownItem.types';
++
++export function DropdownItem({
++  title,
++  leading,
++  trailing,
++
++  dense = false,
++  disabled = false,
++  closeOnPress = true,
++
++  onPress,
++
++  containerStyle,
++  contentStyle,
++  titleStyle,
++
++  testID,
++}: DropdownItemProps) {
++  const theme = useTheme();
++
++  const { closeMenu } = useDropdownContext();
++
++  const handlePress = (event: any) => {
++    if (disabled) {
++      return;
++    }
++
++    onPress?.(event);
++
++    if (closeOnPress) {
++      closeMenu();
++    }
++  };
++
++  return (
++    <TouchableRipple
++      borderless={false}
++      disabled={disabled}
++      onPress={handlePress}
++      testID={testID}
++    >
++      <View
++        style={[
++          styles.container,
++          dense && styles.dense,
++          disabled && styles.disabled,
++          containerStyle,
++        ]}
++      >
++        {leading && (
++          <View style={styles.leading}>
++            {leading}
++          </View>
++        )}
++
++        <View
++          style={[
++            styles.content,
++            contentStyle,
++          ]}
++        >
++          {typeof title === 'string'
++            ? (
++              <Text
++                variant="bodyLarge"
++                numberOfLines={1}
++                style={[
++                  styles.title,
++                  {
++                    color: disabled
++                      ? theme.colors.onSurfaceDisabled
++                      : theme.colors.onSurface,
++                  },
++                  titleStyle,
++                ]}
++              >
++                {title}
++              </Text>
++            )
++            : (
++              title
++            )}
++        </View>
++
++        {trailing && (
++          <View style={styles.trailing}>
++            {trailing}
++          </View>
++        )}
++      </View>
++    </TouchableRipple>
++  );
++}
++
++export default DropdownItem;
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/DropdownItem/DropdownItem.types.tsx b/libs/ui/src/lib/components/DropdownItem/DropdownItem.types.tsx
+new file mode 100644
+index 0000000..f84feb0
+--- /dev/null
++++ b/libs/ui/src/lib/components/DropdownItem/DropdownItem.types.tsx
+@@ -0,0 +1,59 @@
++import type { ReactNode } from 'react';
++import type { GestureResponderEvent, StyleProp, TextStyle, ViewStyle } from 'react-native';
++
++export interface DropdownItemProps {
++  /**
++   * Conteúdo principal do item.
++   */
++  title: ReactNode;
++
++  /**
++   * Elemento renderizado à esquerda.
++   *
++   * Ex:
++   * <Icon source="check" />
++   * <ChampionAvatar />
++   */
++  leading?: ReactNode;
++
++  /**
++   * Elemento renderizado à direita.
++   *
++   * Ex:
++   * <Icon source="chevron-right" />
++   * <Badge />
++   */
++  trailing?: ReactNode;
++
++  /**
++   * Desabilita interação.
++   */
++  disabled?: boolean;
++
++  /**
++   * Exibe o estado de seleção.
++   */
++  selected?: boolean;
++
++  /**
++   * Diminui a altura do item.
++   */
++  dense?: boolean;
++
++  /**
++   * Fecha automaticamente o menu ao clicar.
++   *
++   * @default true
++   */
++  closeOnPress?: boolean;
++
++  onPress?: (event: GestureResponderEvent) => void;
++
++  containerStyle?: StyleProp<ViewStyle>;
++
++  contentStyle?: StyleProp<ViewStyle>;
++
++  titleStyle?: StyleProp<TextStyle>;
++
++  testID?: string;
++}
+\ No newline at end of file
+diff --git a/libs/ui/src/lib/components/DropdownItem/index.tsx b/libs/ui/src/lib/components/DropdownItem/index.tsx
+new file mode 100644
+index 0000000..e112a3d
+--- /dev/null
++++ b/libs/ui/src/lib/components/DropdownItem/index.tsx
+@@ -0,0 +1,3 @@
++export { DropdownItem } from './DropdownItem';
++export { DropdownItemProps } from './DropdownItem.types';
++
+diff --git a/libs/ui/src/lib/components/index.ts b/libs/ui/src/lib/components/index.ts
+new file mode 100644
+index 0000000..7c9f62a
+--- /dev/null
++++ b/libs/ui/src/lib/components/index.ts
+@@ -0,0 +1,2 @@
++export { default as Dropdown } from './Dropdown';
++
+diff --git a/nx.json b/nx.json
+index 961809f..007fbd7 100644
+--- a/nx.json
++++ b/nx.json
+@@ -156,7 +156,7 @@
+     }
+   },
+   "tui": {
+-    "enabled": true
++    "enabled": false
+   },
+   "neverConnectToCloud": true
+ }
+\ No newline at end of file
+diff --git a/package-lock.json b/package-lock.json
+index c2da9bd..c35dba5 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -25,6 +25,7 @@
+         "@nestjs/mongoose": "^11.0.4",
+         "@nestjs/passport": "^11.0.5",
+         "@nestjs/platform-express": "^11.0.0",
++        "@react-native-clipboard/clipboard": "^1.16.3",
+         "@react-navigation/bottom-tabs": "^7.18.14",
+         "@react-navigation/native": "^7.3.8",
+         "@react-navigation/native-stack": "^7.17.10",
+@@ -164,6 +165,24 @@
+         }
+       }
+     },
++    "node_modules/@angular-devkit/core/node_modules/ajv-formats": {
++      "version": "3.0.1",
++      "resolved": "https://registry.npmjs.org/ajv-formats/-/ajv-formats-3.0.1.tgz",
++      "integrity": "sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "ajv": "^8.0.0"
++      },
++      "peerDependencies": {
++        "ajv": "^8.0.0"
++      },
++      "peerDependenciesMeta": {
++        "ajv": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@angular-devkit/core/node_modules/picomatch": {
+       "version": "4.0.4",
+       "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.4.tgz",
+@@ -9027,6 +9046,29 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/@react-native-clipboard/clipboard": {
++      "version": "1.16.3",
++      "resolved": "https://registry.npmjs.org/@react-native-clipboard/clipboard/-/clipboard-1.16.3.tgz",
++      "integrity": "sha512-cMIcvoZKIrShzJHEaHbTAp458R9WOv0fB6UyC7Ek4Qk561Ow/DrzmmJmH/rAZg21Z6ixJ4YSdFDC14crqIBmCQ==",
++      "license": "MIT",
++      "workspaces": [
++        "example"
++      ],
++      "peerDependencies": {
++        "react": ">= 16.9.0",
++        "react-native": ">= 0.61.5",
++        "react-native-macos": ">= 0.61.0",
++        "react-native-windows": ">= 0.61.0"
++      },
++      "peerDependenciesMeta": {
++        "react-native-macos": {
++          "optional": true
++        },
++        "react-native-windows": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@react-native/assets-registry": {
+       "version": "0.83.6",
+       "resolved": "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.83.6.tgz",
+@@ -13259,9 +13301,9 @@
+       }
+     },
+     "node_modules/ajv-formats": {
+-      "version": "3.0.1",
+-      "resolved": "https://registry.npmjs.org/ajv-formats/-/ajv-formats-3.0.1.tgz",
+-      "integrity": "sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==",
++      "version": "2.1.1",
++      "resolved": "https://registry.npmjs.org/ajv-formats/-/ajv-formats-2.1.1.tgz",
++      "integrity": "sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==",
+       "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -35070,24 +35112,6 @@
+         "url": "https://opencollective.com/webpack"
+       }
+     },
+-    "node_modules/schema-utils/node_modules/ajv-formats": {
+-      "version": "2.1.1",
+-      "resolved": "https://registry.npmjs.org/ajv-formats/-/ajv-formats-2.1.1.tgz",
+-      "integrity": "sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==",
+-      "dev": true,
+-      "license": "MIT",
+-      "dependencies": {
+-        "ajv": "^8.0.0"
+-      },
+-      "peerDependencies": {
+-        "ajv": "^8.0.0"
+-      },
+-      "peerDependenciesMeta": {
+-        "ajv": {
+-          "optional": true
+-        }
+-      }
+-    },
+     "node_modules/secure-compare": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/secure-compare/-/secure-compare-3.0.1.tgz",
+diff --git a/package.json b/package.json
+index 945e8b7..2b24110 100644
+--- a/package.json
++++ b/package.json
+@@ -101,6 +101,7 @@
+     "@nestjs/mongoose": "^11.0.4",
+     "@nestjs/passport": "^11.0.5",
+     "@nestjs/platform-express": "^11.0.0",
++    "@react-native-clipboard/clipboard": "^1.16.3",
+     "@react-navigation/bottom-tabs": "^7.18.14",
+     "@react-navigation/native": "^7.3.8",
+     "@react-navigation/native-stack": "^7.17.10",
+@@ -135,4 +136,4 @@
+     "rxjs": "~7.8.0",
+     "zod": "^4.4.3"
+   }
+-}
+\ No newline at end of file
++}

@@ -3,7 +3,7 @@ import { Dialog, Portal, TextInput, TouchableRipple } from "react-native-paper";
 
 import { useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
-import RadialSelectModal from "./RadialSelectModal";
+import SelectModal from "./SelectModal";
 
 interface AppSelectControllerProps<
   T extends FieldValues,
@@ -65,7 +65,7 @@ export default function AppSelectController<T extends FieldValues>({ control, na
               <Portal>
                 <Dialog visible={isVisible} onDismiss={close}>
                   <Dialog.Content>
-                    <RadialSelectModal
+                    <SelectModal
                       value={draftValue}
                       onChange={setDraftValue}
                       title={title}

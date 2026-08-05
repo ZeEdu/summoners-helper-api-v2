@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Checkbox, Divider, MD3Theme, Text, useTheme } from 'react-native-paper';
@@ -14,7 +13,7 @@ type Props = {
   cancelText?: string
 }
 
-export default function RadialSelectModal({ title, options, value, onChange, dismiss, multiSelect = false, okText, cancelText }: Props) {
+export default function SelectModal({ title, options, value, onChange, dismiss, multiSelect = false, okText, cancelText }: Props) {
   const theme = useTheme()
   const styles = makeStyles(theme)
 

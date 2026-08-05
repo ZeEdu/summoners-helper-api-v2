@@ -9,7 +9,7 @@ import { CreateUserDto, createUserSchema } from '@org/contracts';
 import { StyledButton } from '@org/ui';
 
 import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
-import AppController from '../../../../components/forms/AppController';
+import AppInputController from '../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import { AuthStackParamList } from '../../../navigation/types';
@@ -59,7 +59,7 @@ export default function Register(props: Props) {
 
   return (
     <View style={style.block}>
-      <AppController
+      <AppInputController
         name="email"
         label="Email:"
         control={control}
@@ -68,7 +68,7 @@ export default function Register(props: Props) {
       <FormFieldErrors fieldError={errors.email} />
       <ApiFieldErrors apiErrors={apiErrors?.email} />
 
-      <AppController
+      <AppInputController
         name="username"
         label="Username:"
         control={control}
@@ -77,7 +77,7 @@ export default function Register(props: Props) {
       <FormFieldErrors fieldError={errors.username} />
       <ApiFieldErrors apiErrors={apiErrors?.username} />
 
-      <AppController
+      <AppInputController
         name="password"
         label="Password:"
         control={control}

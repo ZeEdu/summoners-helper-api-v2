@@ -8,12 +8,12 @@ import { Snackbar } from 'react-native-paper';
 import { RIOT_SERVERS, RIOT_SERVERS_LABEL, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
-import AppController from '../../../components/forms/AppController';
+import AppSelectController from '../../../components/forms/app-select-controller/AppSelectController';
+import AppInputController from '../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import { ApiService } from '../../../services/api/api.service';
 import { ModalStackParamList } from '../../navigation/types';
-import AppSelectController from './AppSelect';
 
 const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
   {
@@ -143,7 +143,7 @@ export default function BindRiotAccount({ navigation }: Props) {
           />
           <FormFieldErrors fieldError={errors.server} />
 
-          <AppController
+          <AppInputController
             control={control}
             name="gameName"
             label="Nome no jogo"
@@ -151,7 +151,7 @@ export default function BindRiotAccount({ navigation }: Props) {
           />
           <FormFieldErrors fieldError={errors.gameName} />
 
-          <AppController
+          <AppInputController
             control={control}
             name="tagLine"
             label="Tag line"
