@@ -10,6 +10,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const authContext = useAuthContext();
+  // Deve buscar o JSON atualizado do DataDragon
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>{

@@ -10,7 +10,10 @@ interface AppSelectControllerProps<
   TName extends FieldPath<T> = FieldPath<T>,
 > extends UseControllerProps<T, TName> {
   title: string,
-  options: { value: string; label: string }[],
+  options: {
+    value: string,
+    label: string
+  }[],
   placeholder: string,
   multiSelect?: boolean,
   style?: StyleProp<ViewStyle>,

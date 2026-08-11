@@ -14,7 +14,8 @@ export const Routes = {
   Login: 'Login',
   Register: 'Register',
 
-  BindRiotAccount: 'BindRiotAccount'
+  BindRiotAccount: 'BindRiotAccount',
+  CreateGuide: 'CreateGuide'
 } as const
 
 export type RootStackParamList = {
@@ -36,4 +37,5 @@ export type AuthStackParamList = {
 
 export type ModalStackParamList = {
   [Routes.BindRiotAccount]: undefined;
+  [Routes.CreateGuide]: { guideId?: string };
 };
