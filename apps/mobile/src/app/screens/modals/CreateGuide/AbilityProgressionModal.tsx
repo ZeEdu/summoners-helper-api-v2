@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Dimensions, FlatList, Image, Pressable, ScrollView, View } from "react-native";
-import { Appbar, Modal, Portal, Snackbar, Text, useTheme } from "react-native-paper";
+import { Dimensions, FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Appbar, MD3Theme, Modal, Portal, Snackbar, Text, useTheme } from "react-native-paper";
 
 import { StyledView } from "@org/ui";
 
@@ -41,8 +41,9 @@ const CHAPIOM_LEVELS = 18
 
 export default function AbilitiesProgressionField({ visible, abilities, championId, closeModal }: AbilitiesProgressionModalProps) {
   const theme = useTheme()
+  const styles = makeStyles(theme)
+
   const { version } = usePatchVersion()
-  const { height } = Dimensions.get("window")
 
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false)
 
@@ -105,27 +106,27 @@ export default function AbilitiesProgressionField({ visible, abilities, champion
         <Modal
           visible={visible} onDismiss={closeModal}
         >
-          <StyledView style={{ height }}>
+          <StyledView style={styles.modalContainer}>
             <Appbar.Header>
               <Appbar.BackAction onPress={closeModal} />
               <Appbar.Content title="Progressão de habilidades" />
-              <Appbar.Action icon="magnify" onPress={() => { console.log({ draft }) }} />
               <Appbar.Action icon="check" onPress={handleModalDissmis} />
             </Appbar.Header>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={styles.contentContainer}>
               {/* Header */}
               {
                 abilities.map((ability, index) => {
+                  const keymap = indexToKeyMap[(index as indexKeyType)]
                   return (
                     <View
                       key={ability.id}
-                      style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}
+                      style={styles.headerContainer}
                     >
                       <Image
-                        style={{ width: 64, height: 64, borderRadius: 15 }}
-                        source={{ uri: `https://cdn.communitydragon.org/${version}/champion/${championId}/ability-icon/${indexToKeyMap[(index as indexKeyType)]}` }}
+                        style={styles.headerImage}
+                        source={{ uri: `https://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${championId}${keymap.toUpperCase()}.png` }}
                       />
-                      <Text style={{ textAlign: 'center' }}>{ability.name}</Text>
+                      <Text style={styles.headerTitle}>{ability.name}</Text>
                     </View>
                   )
                 })
@@ -133,33 +134,28 @@ export default function AbilitiesProgressionField({ visible, abilities, champion
             </View>
             {/* Body */}
             <ScrollView>
-              <View style={{ flexDirection: 'row', marginBottom: 16 }}>
+              <View style={styles.levelContainer}>
                 {abilities.map((_, index) => {
                   return (
                     <FlatList
                       data={Array.from({ length: CHAPIOM_LEVELS }, (_, i) => i + 1)}
                       keyExtractor={(level) => level.toString()}
-                      style={{ flex: 1 }}
+                      style={styles.list}
                       renderItem={({ item: level }) => {
                         return (
                           <Pressable
                             onPress={() => setFieldOnDraft(level, index)}
-                            style={{
-                              marginHorizontal: 'auto',
-                              marginTop: 16,
-                              width: 64,
-                              height: 64,
-                              backgroundColor: isSelected(level, index) ? theme.colors.onPrimaryContainer : theme.colors.onPrimary,
-                              borderRadius: 15,
-                              display: "flex",
-                              justifyContent: 'center'
-                            }}
+                            style={[
+                              styles.listItemContainer,
+                              {
+                                backgroundColor: isSelected(level, index) ? theme.colors.onPrimaryContainer : theme.colors.onPrimary,
+                              }
+                            ]}
                           >
                             <Text
-                              style={{
-                                textAlign: 'center',
+                              style={[styles.listItemText, {
                                 color: isSelected(level, index) ? theme.colors.onPrimary : theme.colors.onPrimaryContainer
-                              }}
+                              }]}
                             >
                               {level}
                             </Text>
@@ -188,4 +184,52 @@ export default function AbilitiesProgressionField({ visible, abilities, champion
       </Portal>
     </>
   )
+}
+
+const makeStyles = ({ roundness }: MD3Theme) => {
+  const { height } = Dimensions.get("window")
+
+  return StyleSheet.create({
+    modalContainer: {
+      height
+    },
+    contentContainer: {
+      flexDirection: 'row'
+    },
+    headerContainer: {
+      flex: 1,
+      justifyContent: 'flex-start',
+      alignItems: 'center'
+    },
+    headerImage: {
+      width: 64,
+      height: 64,
+      borderRadius: roundness
+    },
+    headerTitle: {
+      textAlign: 'center'
+    },
+    levelContainer: {
+      flexDirection: 'row',
+      marginBottom: 16
+    },
+    list: {
+      flex: 1
+    },
+    listItemContainer: {
+      marginHorizontal: 'auto',
+      marginTop: 16,
+      width: 64,
+      height: 64,
+      borderRadius: roundness,
+      display: "flex",
+      justifyContent: 'center',
+
+
+    },
+    listItemText: {
+      textAlign: 'center',
+    }
+
+  })
 }

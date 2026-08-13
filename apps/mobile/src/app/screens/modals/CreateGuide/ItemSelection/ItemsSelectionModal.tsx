@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import { Dimensions, FlatList, Image, ScrollView, View } from "react-native";
-import { Appbar, Button, Card, Modal, Portal, Searchbar, Snackbar, Text, useTheme } from "react-native-paper";
+import { Dimensions, FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Appbar, Button, Card, MD3Theme, Modal, Portal, Searchbar, Snackbar, Text, useTheme } from "react-native-paper";
 import z from "zod";
 
 import { StyledView } from "@org/ui";
@@ -65,6 +65,7 @@ function ItemSelectionModalContent({
   itemsMap
 }: ItemSelectionModalContentProps) {
   const theme = useTheme()
+  const styles = makeStyles(theme)
   const { version } = usePatchVersion()
 
   const itemSelectionContext = useItemSelectionContext()
@@ -74,10 +75,8 @@ function ItemSelectionModalContent({
   })
   const { control, handleSubmit } = methods
   const { append, remove, fields } = useFieldArray({ control, name: 'itemsBlock' })
-  const { height } = Dimensions.get("window")
 
   const handleModalDissmis = (values: ItemsBlockDto) => {
-    console.log({ values });
     closeModal(values)
   }
 
@@ -95,7 +94,7 @@ function ItemSelectionModalContent({
       onDismiss={closeModal}
     >
       <StyledView
-        style={{ height }}
+        style={styles.container}
       >
         <Appbar.Header>
           <Appbar.BackAction onPress={closeModal} />
@@ -110,17 +109,20 @@ function ItemSelectionModalContent({
           )
           : (
             <>
-              <Button style={{ margin: 16, }} mode="contained" onPress={addNewBlock}>Adicionar um novo bloco</Button>
+              <Button style={styles.newBlockButton} mode="contained" onPress={addNewBlock}>Adicionar um novo bloco</Button>
               <ScrollView>
                 <FormProvider {...methods}>
-                  <View style={{ flexDirection: 'column', marginBottom: 16, marginHorizontal: 16 }}>
+                  <View style={styles.formContainer}>
                     {fields.map((field, index) => {
                       return <View key={field.id}>
                         <ItemArrayField id={field.id} index={index} itemsMap={itemsMap} />
-                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 16 }}>
-                          <Button mode="contained" style={{ borderWidth: 1, alignSelf: 'flex-start' }} onPress={() => {
-                            removeBlock(index)
-                          }}>
+                        <View style={styles.removeBlockButtonContainer}>
+                          <Button
+                            mode="contained"
+                            style={styles.removeBlockButton}
+                            onPress={() => {
+                              removeBlock(index)
+                            }}>
                             Remover bloco
                           </Button>
                         </View>
@@ -132,14 +134,13 @@ function ItemSelectionModalContent({
               {itemSelectionContext.showItemSearcher ? (
                 <View>
                   {/* 
-                        Jogar isso para um Portal
-                        Para que a lista não seja renderizada junto do conteúdo que já existe
+                        TODO: Migrar para um bottomSheet
                      */}
-                  {searchList.length ? <ScrollView style={{ maxHeight: 420 }}>
+                  {searchList.length ? <ScrollView style={styles.scroll}>
                     <FlatList
                       data={searchList}
                       keyExtractor={({ id }) => id}
-                      contentContainerStyle={{ margin: 8 }}
+                      contentContainerStyle={styles.listContainer}
                       renderItem={({ item }) => {
                         const { name, image, description, id } = item
 
@@ -150,16 +151,12 @@ function ItemSelectionModalContent({
                         const itemImageUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/img/item/${image.full}`
 
                         return (
-                          <Card style={{ marginBottom: 8 }}>
+                          <Card style={styles.card}>
                             <Card.Title
                               title={name}
                               left={() => {
                                 return <Image
-                                  style={{
-                                    width: 48,
-                                    height: 48,
-                                    borderRadius: theme.roundness
-                                  }}
+                                  style={styles.cardImage}
                                   source={{ uri: itemImageUrl }}
                                 />
                               }}
@@ -191,6 +188,47 @@ function ItemSelectionModalContent({
       </StyledView>
     </Modal >
   )
+}
+
+const makeStyles = ({ roundness }: MD3Theme) => {
+  const { height } = Dimensions.get("window")
+
+  return StyleSheet.create({
+    container: {
+      height
+    },
+    newBlockButton: {
+      margin: 16
+    },
+    formContainer: {
+      flexDirection: 'column',
+      marginBottom: 16,
+      marginHorizontal: 16
+    },
+    removeBlockButtonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      marginTop: 16
+    },
+    removeBlockButton: {
+      borderWidth: 1,
+      alignSelf: 'flex-start'
+    },
+    scroll: {
+      maxHeight: 420
+    },
+    listContainer: {
+      margin: 8
+    },
+    card: {
+      marginBottom: 8
+    },
+    cardImage: {
+      width: 48,
+      height: 48,
+      borderRadius: roundness
+    }
+  })
 }
 
 export default function ItemsSelectionModal({ visible, closeModal }: AbilitiesProgressionModalProps) {

@@ -1,5 +1,5 @@
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import { FlatList, Pressable, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Icon, TextInput, useTheme } from "react-native-paper";
 
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
@@ -52,7 +52,7 @@ export default function ItemArrayField({ id, index }: ItemArrayFieldProps) {
         <FlatList
           data={[...childrens, { showAddMoreButton: true }]}
           horizontal={true}
-          contentContainerStyle={{ margin: 8, gap: 8 }}
+          contentContainerStyle={styles.listContentContainer}
           renderItem={({ item }) => {
             const forceCasting = item as any
 
@@ -92,3 +92,10 @@ export default function ItemArrayField({ id, index }: ItemArrayFieldProps) {
     </Pressable>
   )
 }
+
+const styles = StyleSheet.create({
+  listContentContainer: {
+    margin: 8,
+    gap: 8
+  }
+})
