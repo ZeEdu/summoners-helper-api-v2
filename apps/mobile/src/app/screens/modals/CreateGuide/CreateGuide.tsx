@@ -7,16 +7,14 @@ import z from 'zod';
 
 import { StyledButton, StyledView } from "@org/ui";
 
-import { Dimensions, ScrollView, View } from "react-native";
-import AppSelectController from "../../../../components/forms/app-select-controller/AppSelectController";
-import AppInputController from "../../../../components/forms/AppInputController";
-import FormFieldErrors from "../../../../components/forms/FormFieldErrors";
+import { ScrollView, View } from "react-native";
 import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
 import { ChampionDataDragon, ChampionsDataDragon, ChampionsDataDragonDetails, ChampionsDataDragonDetailsSolo } from "../../../../dtos/champion.dto";
 import { RunesReforgedDataDragon } from "../../../../dtos/runes-reforged.dto";
 import { SummonerSpell, SummonerSpellDataDragon } from "../../../../dtos/spell.dto";
 import { ModalStackParamList } from "../../../navigation/types";
 import AbilitiesProgressionField from "./AbilityProgressionModal";
+import ItemsSelectionModal from "./ItemsSelectionModal";
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>
 
@@ -140,6 +138,16 @@ export const abilitiesProgressionSchema = z.object({
   l18: enumAbilitiesOption,
 })
 
+const itemArraySchema = z.object({
+  id: z.string({ error: 'formato do campo é inválido' }),
+  description: z.string({ error: 'formato do campo é inválido' }),
+})
+
+const itemSchema = z.object({
+  itemRollName: z.string({ error: 'formato do campo é inválido' }),
+  itemArray: z.array(itemArraySchema)
+})
+
 export const createGuideSchema = z.object({
   title: z.string({ error: 'formato do campo é inválido' }),
   introduction: z.string({ error: 'formato do campo é inválido' }),
@@ -162,8 +170,8 @@ export const createGuideSchema = z.object({
   spellsDescription: z.string({ error: 'formato do campo é inválido' }),
 
   // Items
-  // itemsBlock: z.array(itemSchema),
-  // itemsDescription: z.string({ error: 'formato do campo é inválido' }),
+  itemsBlock: z.array(itemSchema),
+  itemsDescription: z.string({ error: 'formato do campo é inválido' }),
 
   // Abilities Progression
   abilitiesProgression: abilitiesProgressionSchema,
@@ -232,9 +240,7 @@ const ROLE_OPTIONS: { value: string, label: string }[] = [
 ]
 
 export default function CreateGuide(_: Props) {
-  const screenHeight = Dimensions.get('window').height
   const { version } = usePatchVersion()
-
   console.log({ version });
 
   const [loading, setLoading] = useState(false)
@@ -272,6 +278,7 @@ export default function CreateGuide(_: Props) {
   const [runesMap, setRunesMap] = useState<Record<string, RunesReforgedDataDragon>>({})
 
   const [showAbilitiesProgressionModal, setShowAbilitiesProgressionModal] = useState(false)
+  const [showItemsSelectionModal, setShowItemsSelectionModal] = useState(false)
 
   const onSubmit = (value: CreateGuideDto) => {
     console.log({ value });
@@ -468,6 +475,14 @@ export default function CreateGuide(_: Props) {
     }
   }
 
+  const handleCloseItemsSelectionModal = (value?: any) => {
+    setShowItemsSelectionModal(false)
+
+    if (value) {
+      setValue('itemsBlock', value)
+    }
+  }
+
   if (loading || !version) {
     return (
       <StyledView>
@@ -499,7 +514,7 @@ export default function CreateGuide(_: Props) {
           <View>
             <StyledButton onPress={checkFormErrors}>Checar errors</StyledButton>
           </View>
-          <AppInputController
+          {/* <AppInputController
             control={control}
             name={"title"}
             inputOptions={{
@@ -731,10 +746,21 @@ export default function CreateGuide(_: Props) {
                 return <List.Icon {...props} icon='chevron-right'></List.Icon>
               }}
             />
-          )}
+          )} */}
+
+          <List.Item
+            title={'Seleção de itens'}
+            onPress={() => {
+              setShowItemsSelectionModal(true)
+            }}
+            right={(props) => {
+              return <List.Icon {...props} icon='chevron-right'></List.Icon>
+            }}
+          />
           <StyledButton onPress={handleSubmit(onSubmit)}>Enviar</StyledButton>
         </ScrollView>
         {championData && <AbilitiesProgressionField visible={showAbilitiesProgressionModal} closeModal={handleCloseAbilitiesProgressionModal} championId={championData.id} abilities={championData.spells} />}
+        <ItemsSelectionModal visible={showItemsSelectionModal} closeModal={handleCloseItemsSelectionModal} />
       </StyledView>
 
     </>
