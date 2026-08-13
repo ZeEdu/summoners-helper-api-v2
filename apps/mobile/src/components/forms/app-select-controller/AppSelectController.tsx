@@ -2,7 +2,7 @@ import { Controller, ControllerRenderProps, FieldPath, FieldValues, Path, UseCon
 import { Dialog, Portal, TextInput, TouchableRipple } from "react-native-paper";
 
 import { useState } from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import SelectModal from "./SelectModal";
 
 interface AppSelectControllerProps<
@@ -54,6 +54,7 @@ export default function AppSelectController<T extends FieldValues>({ control, na
               <TouchableRipple onPress={open} >
                 <TextInput
                   mode="outlined"
+                  style={style.input}
                   label={syncLabel(field)}
                   placeholder={placeholder}
                   editable={false}
@@ -85,3 +86,10 @@ export default function AppSelectController<T extends FieldValues>({ control, na
       } />
   )
 }
+
+
+const style = StyleSheet.create({
+  input: {
+    marginVertical: 8
+  }
+})

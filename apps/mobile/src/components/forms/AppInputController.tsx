@@ -31,7 +31,7 @@ export default function AppInputController<T extends FieldValues>({ name, inputO
 }
 
 const styles = StyleSheet.create({
-  container: {},
-  label: {},
-  input: {}
+  input: {
+    marginVertical: 8
+  }
 })

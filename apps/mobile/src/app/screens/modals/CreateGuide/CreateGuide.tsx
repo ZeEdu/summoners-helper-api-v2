@@ -2,12 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { List, Text } from "react-native-paper";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Button, List, Text } from "react-native-paper";
 import z from 'zod';
 
 import { StyledButton, StyledView } from "@org/ui";
 
-import { ScrollView, StyleSheet, View } from "react-native";
 import AppSelectController from "../../../../components/forms/app-select-controller/AppSelectController";
 import AppInputController from "../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../components/forms/FormFieldErrors";
@@ -242,7 +242,7 @@ const ROLE_OPTIONS: { value: string, label: string }[] = [
   }
 ]
 
-export default function CreateGuide(_: Props) {
+export default function CreateGuide({ navigation }: Props) {
   const { version } = usePatchVersion()
 
   const [loading, setLoading] = useState(false)
@@ -266,7 +266,9 @@ export default function CreateGuide(_: Props) {
       bonusSlotOne: '',
       bonusSlotThree: '',
       bonusSlotTwo: '',
+
       threats: [],
+
       createdAt: new Date().toDateString()
     }
   })
@@ -376,6 +378,16 @@ export default function CreateGuide(_: Props) {
         setLoading(false)
       })
   }, [])
+
+  useEffect(() => {
+    // Use `setOptions` to update the button that we previously specified
+    // Now the button includes an `onPress` handler to update the count
+    navigation.setOptions({
+      headerRight: () => (
+        <Button mode="contained" style={style.headerButton} onPress={handleSubmit(onSubmit)}>Salvar</Button>
+      ),
+    });
+  }, [navigation]);
 
   const appendThreat = () => {
     append({
@@ -498,25 +510,18 @@ export default function CreateGuide(_: Props) {
               placeholder: 'Titulo'
             }}
           />
-
-          <AppInputController
-            control={control}
-            name={"patchVersion"}
-            inputOptions={{
-              label: 'Versão do patch',
-              disabled: true
-            }}
-          />
+          <FormFieldErrors fieldError={errors.title} />
 
           <AppInputController
             control={control}
             name={"introduction"}
             inputOptions={{
-              label: 'Introdução label',
-              placeholder: 'Introdução place',
+              label: 'Introdução',
+              placeholder: 'Introdução',
               multiline: true
             }}
           />
+          <FormFieldErrors fieldError={errors.introduction} />
 
           <AppSelectController
             control={control}
@@ -525,6 +530,7 @@ export default function CreateGuide(_: Props) {
             placeholder={'Selecione um campeão'}
             name={'champion'}
           />
+          <FormFieldErrors fieldError={errors.champion} />
 
           <AppSelectController
             control={control}
@@ -533,6 +539,7 @@ export default function CreateGuide(_: Props) {
             placeholder={'Selecione um role'}
             name={'role'}
           />
+          <FormFieldErrors fieldError={errors.role} />
 
           <AppSelectController
             control={control}
@@ -612,6 +619,8 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione uma ameaça'}
                   name={`threats.${index}.threat`}
                 />
+                <FormFieldErrors fieldError={errors.threats?.[index]?.threat} />
+
                 <AppInputController
                   key={`${field.id}.description`}
                   control={control}
@@ -622,6 +631,8 @@ export default function CreateGuide(_: Props) {
                     multiline: true
                   }}
                 />
+                <FormFieldErrors fieldError={errors.threats?.[index]?.description} />
+
                 <StyledButton onPress={() => { remove(index) }}>Remover ameaça</StyledButton>
               </View>
             )
@@ -636,6 +647,8 @@ export default function CreateGuide(_: Props) {
             placeholder={'Selecione um caminho'}
             name={`runes.primaryRune`}
           />
+          <FormFieldErrors fieldError={errors.runes?.primaryRune} />
+
           {
             (!!watchPrimaryRune) && (
               <>
@@ -646,6 +659,7 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione a primeira runa'}
                   name={`runes.primarySlots.first`}
                 />
+                <FormFieldErrors fieldError={errors.runes?.primarySlots?.first} />
 
                 <AppSelectController
                   control={control}
@@ -654,6 +668,7 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione a segunda runa'}
                   name={`runes.primarySlots.second`}
                 />
+                <FormFieldErrors fieldError={errors.runes?.primarySlots?.second} />
 
                 <AppSelectController
                   control={control}
@@ -662,6 +677,7 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione a terceira runa'}
                   name={`runes.primarySlots.third`}
                 />
+                <FormFieldErrors fieldError={errors.runes?.primarySlots?.third} />
 
                 <AppSelectController
                   control={control}
@@ -670,6 +686,7 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione a quarta runa'}
                   name={`runes.primarySlots.fourth`}
                 />
+                <FormFieldErrors fieldError={errors.runes?.primarySlots?.fourth} />
               </>
             )
           }
@@ -681,6 +698,7 @@ export default function CreateGuide(_: Props) {
             placeholder={'Selecione um caminho secundario'}
             name={`runes.secondaryRune`}
           />
+          <FormFieldErrors fieldError={errors.runes?.secondaryRune} />
 
           {
             (!!watchSecondaryRune) && (
@@ -692,6 +710,8 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione a primeira runa secundária'}
                   name={`runes.secondarySlots.first`}
                 />
+                <FormFieldErrors fieldError={errors.runes?.secondarySlots?.first} />
+
 
                 <AppSelectController
                   control={control}
@@ -700,6 +720,8 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione a segunda runa secundária'}
                   name={`runes.secondarySlots.second`}
                 />
+                <FormFieldErrors fieldError={errors.runes?.secondarySlots?.second} />
+
 
                 <AppSelectController
                   control={control}
@@ -708,6 +730,8 @@ export default function CreateGuide(_: Props) {
                   placeholder={'Selecione a terceira runa secundária'}
                   name={`runes.secondarySlots.third`}
                 />
+                <FormFieldErrors fieldError={errors.runes?.secondarySlots?.third} />
+
               </>
             )
           }
@@ -733,7 +757,6 @@ export default function CreateGuide(_: Props) {
               return <List.Icon {...props} icon='chevron-right' />
             }}
           />
-          <StyledButton onPress={handleSubmit(onSubmit)}>Enviar</StyledButton>
         </ScrollView>
         {championData && <AbilitiesProgressionField visible={showAbilitiesProgressionModal} closeModal={handleCloseAbilitiesProgressionModal} championId={championData.id} abilities={championData.spells} />}
         <ItemsSelectionModal visible={showItemsSelectionModal} closeModal={handleCloseItemsSelectionModal} />
@@ -742,7 +765,10 @@ export default function CreateGuide(_: Props) {
   )
 }
 
-const style = StyleSheet.create({
+export const style = StyleSheet.create({
+  headerButton: {
+    marginRight: 16
+  },
   container: {
     marginHorizontal: 16,
     flex: 1

@@ -5,9 +5,6 @@ export default function PatchVersionProvider({ children }: PropsWithChildren) {
   const [version, setVersion] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    console.log('Entrou no useEffect');
-
-    // Buscar qual é o patch mais recente
     async function getCurrenVersion() {
       const response = await fetch('https://ddragon.leagueoflegends.com/api/versions.json')
       const json = await response.json()
@@ -16,7 +13,6 @@ export default function PatchVersionProvider({ children }: PropsWithChildren) {
 
     async function loadDataDragon() {
       const version = await getCurrenVersion()
-      console.log({ version });
       setVersion(version)
     }
 
