@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, Image, Pressable, ScrollView, View } from "react-native";
-import { Appbar, Button, Card, Dialog, Icon, Modal, Portal, Searchbar, Snackbar, Text, TextInput, useTheme } from "react-native-paper";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { Dimensions, FlatList, Image, ScrollView, View } from "react-native";
+import { Appbar, Button, Card, Modal, Portal, Searchbar, Snackbar, Text, useTheme } from "react-native-paper";
 import z from "zod";
 
 import { StyledView } from "@org/ui";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, FormProvider, useFieldArray, UseFieldArrayRemove, useForm, useFormContext } from "react-hook-form";
-import PatchVersionProvider from "../../../../contexts/patchVersion/patch-version.provider";
-import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
-import { ItemDetails, ItemsDataDragon } from "../../../../dtos/item.dto";
-import { ItemSelectionProvider, useItemSelectionContext } from "./context/itemSelectionProvider";
+import PatchVersionProvider from "../../../../../contexts/patchVersion/patch-version.provider";
+import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
+import { ItemDetails, ItemsDataDragon } from "../../../../../dtos/item.dto";
+import { ItemSelectionProvider, useItemSelectionContext } from "../context/ItemSelectionProvider";
+import ItemArrayField from "./ItemArrayFields";
 
 type AbilitiesProgressionModalProps = {
   visible: boolean,
@@ -27,9 +28,9 @@ const itemArraySchema = z.object({
 
 const itemSchema = z.object(
   {
-    itemRollName: z.string({ error: 'formato do campo é inválido' }),
-    itemArray: z.array(itemArraySchema),
-    description: z.string({ error: 'formato do campo é inválido' }),
+    itemRollName: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+    itemArray: z.array(itemArraySchema).min(1, { error: 'É obrigátorio ter ao menos um item' }),
+    description: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
   }
 )
 
@@ -37,137 +38,14 @@ const itemsBlockSchema = z.object({
   itemsBlock: z.array(itemSchema)
 })
 
-type ItemsBlockDto = z.infer<typeof itemsBlockSchema>
+export type ItemsBlockDto = z.infer<typeof itemsBlockSchema>
 
 const resolver = zodResolver(itemsBlockSchema)
-
-type ItemArrayFieldProps = {
-  id: string;
-  index: number;
-  itemsMap: {
-    [key: string]: ItemDetails;
-  }
-}
-
-
-type ItemProps = {
-  index: number
-  itemId: string,
-  removeItem: UseFieldArrayRemove,
-}
-
-function Item({ itemId, index, removeItem }: ItemProps) {
-  const theme = useTheme()
-  const { version } = usePatchVersion()
-
-  const [visible, setVisible] = useState(false)
-
-  return (
-    <>
-      {/* TODO: Trocar para um onLongPress após os testes */}
-      <Pressable style={{ maxWidth: 52 }} onPress={() => {
-        setVisible(true)
-      }}>
-        <Image source={{ uri: `https://ddragon.leagueoflegends.com/cdn/${version}/img/item/${itemId}.png` }} style={{ width: 48, height: 48, borderRadius: theme.roundness }} />
-      </Pressable>
-
-      <Portal>
-        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
-          <Dialog.Title>Tem certeza?</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">O item será removido da lista</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setVisible(false)}>Cancelar</Button>
-            <Button onPress={() => removeItem(index)}>Tenho certeza</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-    </>
-  )
-}
-
-function ItemArrayField({ id, index }: ItemArrayFieldProps) {
-  const theme = useTheme()
-
-  const { control } = useFormContext()
-  const itemSelectionContext = useItemSelectionContext()
-
-  const {
-    fields: childrens,
-    append: appendChild,
-    remove: removeChild
-  } = useFieldArray({
-    name: `itemsBlock.${index}.itemArray`
-  })
-
-  const handleAppend = (value: any) => {
-    appendChild({ itemId: value })
-  }
-
-  return (
-    <Pressable key={id}>
-      <View>
-        <Controller
-          control={control}
-          name={`itemsBlock.${index}.itemRollName`}
-          render={({ field: { onChange, onBlur, value } }) => {
-            return <TextInput
-              placeholder="Nome do bloco de itens"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          }}
-        />
-        <FlatList
-          data={[...childrens, { showAddMoreButton: true }]}
-          horizontal={true}
-          contentContainerStyle={{ margin: 8, gap: 8 }}
-          renderItem={({ item }) => {
-            const forceCasting = item as any
-
-            if (forceCasting.showAddMoreButton) {
-              return (
-                <Pressable
-                  onPress={() => {
-                    itemSelectionContext.setShowItemSearcher(true)
-                    itemSelectionContext.setAppendFunction(() => handleAppend)
-                  }}
-                >
-                  <Icon source='plus' size={48} color={theme.colors.onPrimaryContainer}></Icon>
-                </Pressable>
-              )
-            }
-
-            return <Item key={index} index={index} itemId={forceCasting.itemId} removeItem={removeChild} />
-          }}
-        />
-
-        <Controller
-          control={control}
-          name={`itemsBlock.${index}.description`}
-          render={({ field: { onChange, onBlur, value } }) => {
-            return <TextInput
-              multiline={true}
-              placeholder="Descrição do bloco de itens"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          }}
-        />
-      </View>
-    </Pressable>
-  )
-}
-
 
 type ItemSelectionModalContentProps = {
   visible: boolean,
   loading: boolean,
   closeModal: (value?: any) => void,
-  setShowSnackbar: (value: React.SetStateAction<boolean>) => void,
   searchQuery: string,
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
   searchList: ItemDetailsWithId[],
@@ -183,7 +61,6 @@ function ItemSelectionModalContent({
   searchList,
   searchQuery,
   closeModal,
-  setShowSnackbar,
   setSearchQuery,
   itemsMap
 }: ItemSelectionModalContentProps) {
@@ -195,26 +72,13 @@ function ItemSelectionModalContent({
   const methods = useForm<ItemsBlockDto>({
     resolver
   })
-  const { control, handleSubmit, getValues } = methods
+  const { control, handleSubmit } = methods
   const { append, remove, fields } = useFieldArray({ control, name: 'itemsBlock' })
   const { height } = Dimensions.get("window")
 
-  const handleModalDissmis = () => {
-    if (!areFieldsValid()) {
-      setShowSnackbar(true)
-      return
-    }
-    const currentValues = getValues()
-    console.log({ currentValues });
-    // TODO: Validar melhor isso daqui
-    if (currentValues) {
-      closeModal(currentValues)
-    }
-    closeModal()
-  }
-
-  const areFieldsValid = () => {
-    return false
+  const handleModalDissmis = (values: ItemsBlockDto) => {
+    console.log({ values });
+    closeModal(values)
   }
 
   const addNewBlock = () => {
@@ -223,10 +87,6 @@ function ItemSelectionModalContent({
 
   const removeBlock = (index: number) => {
     remove(index)
-  }
-
-  const checkCurrentValue = (value: ItemsBlockDto) => {
-    console.log({ value });
   }
 
   return (
@@ -240,7 +100,6 @@ function ItemSelectionModalContent({
         <Appbar.Header>
           <Appbar.BackAction onPress={closeModal} />
           <Appbar.Content title="Seleção de itens" />
-          <Appbar.Action icon="magnify" onPress={handleSubmit(checkCurrentValue)} />
           <Appbar.Action icon="check" onPress={handleSubmit(handleModalDissmis)} />
         </Appbar.Header>
         {loading ?
@@ -253,7 +112,6 @@ function ItemSelectionModalContent({
             <>
               <Button style={{ margin: 16, }} mode="contained" onPress={addNewBlock}>Adicionar um novo bloco</Button>
               <ScrollView>
-                {/* Body */}
                 <FormProvider {...methods}>
                   <View style={{ flexDirection: 'column', marginBottom: 16, marginHorizontal: 16 }}>
                     {fields.map((field, index) => {
@@ -348,6 +206,8 @@ export default function ItemsSelectionModal({ visible, closeModal }: AbilitiesPr
   const [error, setError] = useState<string | null>(null)
 
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+
 
   useEffect(() => {
     if (!searchQuery) {
@@ -402,7 +262,6 @@ export default function ItemsSelectionModal({ visible, closeModal }: AbilitiesPr
               visible={visible}
               loading={loading}
               closeModal={closeModal}
-              setShowSnackbar={setShowSnackbar}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               searchList={searchList}
@@ -420,7 +279,7 @@ export default function ItemsSelectionModal({ visible, closeModal }: AbilitiesPr
             onPress: () => setShowSnackbar(false),
           }}
         >
-          {error}
+          {error || snackbarMessage}
         </Snackbar>
       </Portal>
     </>

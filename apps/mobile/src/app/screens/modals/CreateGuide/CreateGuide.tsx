@@ -7,14 +7,17 @@ import z from 'zod';
 
 import { StyledButton, StyledView } from "@org/ui";
 
-import { ScrollView, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import AppSelectController from "../../../../components/forms/app-select-controller/AppSelectController";
+import AppInputController from "../../../../components/forms/AppInputController";
+import FormFieldErrors from "../../../../components/forms/FormFieldErrors";
 import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
 import { ChampionDataDragon, ChampionsDataDragon, ChampionsDataDragonDetails, ChampionsDataDragonDetailsSolo } from "../../../../dtos/champion.dto";
 import { RunesReforgedDataDragon } from "../../../../dtos/runes-reforged.dto";
 import { SummonerSpell, SummonerSpellDataDragon } from "../../../../dtos/spell.dto";
 import { ModalStackParamList } from "../../../navigation/types";
 import AbilitiesProgressionField from "./AbilityProgressionModal";
-import ItemsSelectionModal from "./ItemsSelectionModal";
+import ItemsSelectionModal, { ItemsBlockDto } from "./ItemSelection/ItemsSelectionModal";
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>
 
@@ -139,13 +142,13 @@ export const abilitiesProgressionSchema = z.object({
 })
 
 const itemArraySchema = z.object({
-  id: z.string({ error: 'formato do campo é inválido' }),
-  description: z.string({ error: 'formato do campo é inválido' }),
+  itemId: z.string({ error: 'formato do campo é inválido' }),
 })
 
 const itemSchema = z.object({
   itemRollName: z.string({ error: 'formato do campo é inválido' }),
-  itemArray: z.array(itemArraySchema)
+  itemArray: z.array(itemArraySchema),
+  description: z.string({ error: 'formato do campo é inválido' }),
 })
 
 export const createGuideSchema = z.object({
@@ -184,7 +187,7 @@ export const createGuideSchema = z.object({
       description: z.string({ error: 'formato do campo é inválido' })
     })
   ),
-  // createdAt: z.string({ error: 'formato do campo é inválido' })
+  createdAt: z.string({ error: 'formato do campo é inválido' })
 })
   .superRefine(({ firstSpell, secondSpell }, ctx) => {
     if (firstSpell === secondSpell) {
@@ -241,7 +244,6 @@ const ROLE_OPTIONS: { value: string, label: string }[] = [
 
 export default function CreateGuide(_: Props) {
   const { version } = usePatchVersion()
-  console.log({ version });
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
@@ -264,7 +266,8 @@ export default function CreateGuide(_: Props) {
       bonusSlotOne: '',
       bonusSlotThree: '',
       bonusSlotTwo: '',
-      threats: []
+      threats: [],
+      createdAt: new Date().toDateString()
     }
   })
 
@@ -282,11 +285,6 @@ export default function CreateGuide(_: Props) {
 
   const onSubmit = (value: CreateGuideDto) => {
     console.log({ value });
-  }
-
-  const checkValues = () => {
-    const values = getValues()
-    console.log({ values });
   }
 
   const watchChampion = useWatch({
@@ -308,10 +306,6 @@ export default function CreateGuide(_: Props) {
     control,
     name: ['runes.secondarySlots.first', 'runes.secondarySlots.second', 'runes.secondarySlots.third']
   })
-
-  useEffect(() => {
-    console.log({ errors });
-  }, [errors])
 
   useEffect(() => {
     async function getChampionData(championName: string) {
@@ -338,7 +332,7 @@ export default function CreateGuide(_: Props) {
 
   // Carregar todos os dados
   useEffect(() => {
-    // TODO : Puxar tudo isso num serviço chamado no startup da aplicação
+    // TODO: Puxar tudo isso num serviço chamado no startup da aplicação
     async function loadChampionList() {
       const response = await fetch('https://ddragon.leagueoflegends.com/cdn/12.6.1/data/pt_BR/champion.json')
       const json = await response.json() as ChampionsDataDragon
@@ -383,27 +377,12 @@ export default function CreateGuide(_: Props) {
       })
   }, [])
 
-
-  // Peguar a lista de campões
-  // Ao selecionar o campeão - Carregar os dados do mesmo
-
-  const checkRootError = () => {
-    console.log({ root: errors.root });
-  }
-
-  const checkFormErrors = () => {
-    console.log({ errors });
-    const currentValues = getValues()
-    console.log({ currentValues });
-  }
-
   const appendThreat = () => {
     append({
       threat: '',
       description: ''
     })
   }
-
 
   const buildMainRunesOptions = () => {
     return runes
@@ -475,11 +454,11 @@ export default function CreateGuide(_: Props) {
     }
   }
 
-  const handleCloseItemsSelectionModal = (value?: any) => {
+  const handleCloseItemsSelectionModal = (value?: ItemsBlockDto) => {
     setShowItemsSelectionModal(false)
 
     if (value) {
-      setValue('itemsBlock', value)
+      setValue('itemsBlock', value.itemsBlock)
     }
   }
 
@@ -509,12 +488,9 @@ export default function CreateGuide(_: Props) {
 
   return (
     <>
-      <StyledView style={{ marginHorizontal: 16, flex: 1 }}>
+      <StyledView style={style.container}>
         <ScrollView>
-          <View>
-            <StyledButton onPress={checkFormErrors}>Checar errors</StyledButton>
-          </View>
-          {/* <AppInputController
+          <AppInputController
             control={control}
             name={"title"}
             inputOptions={{
@@ -627,7 +603,7 @@ export default function CreateGuide(_: Props) {
 
           {fields.map((field, index) => {
             return (
-              <View style={{ display: 'flex', gap: 8 }}>
+              <View style={style.fieldContainer}>
                 <AppSelectController
                   key={`${field.id}.threat`}
                   control={control}
@@ -743,10 +719,10 @@ export default function CreateGuide(_: Props) {
                 setShowAbilitiesProgressionModal(true)
               }}
               right={(props) => {
-                return <List.Icon {...props} icon='chevron-right'></List.Icon>
+                return <List.Icon {...props} icon='chevron-right' />
               }}
             />
-          )} */}
+          )}
 
           <List.Item
             title={'Seleção de itens'}
@@ -754,7 +730,7 @@ export default function CreateGuide(_: Props) {
               setShowItemsSelectionModal(true)
             }}
             right={(props) => {
-              return <List.Icon {...props} icon='chevron-right'></List.Icon>
+              return <List.Icon {...props} icon='chevron-right' />
             }}
           />
           <StyledButton onPress={handleSubmit(onSubmit)}>Enviar</StyledButton>
@@ -762,7 +738,17 @@ export default function CreateGuide(_: Props) {
         {championData && <AbilitiesProgressionField visible={showAbilitiesProgressionModal} closeModal={handleCloseAbilitiesProgressionModal} championId={championData.id} abilities={championData.spells} />}
         <ItemsSelectionModal visible={showItemsSelectionModal} closeModal={handleCloseItemsSelectionModal} />
       </StyledView>
-
     </>
   )
 }
+
+const style = StyleSheet.create({
+  container: {
+    marginHorizontal: 16,
+    flex: 1
+  },
+  fieldContainer: {
+    display: 'flex',
+    gap: 8
+  }
+})
