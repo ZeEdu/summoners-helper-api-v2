@@ -16,77 +16,13 @@ import { ModalStackParamList } from "../../../navigation/types";
 import { ItemsBlockDto } from "./ItemSelection/ItemsSelectionModal";
 import { CreateGuideDto, createGuideSchema } from "./dto/create-guide-schema";
 import GuideAbilitiesProgressionForm from "./forms/AbilitiesProgressionForm";
+import BonusForm from "./forms/BonusForm";
 import GuideIntroductionForm from "./forms/GuideIntroductionForm";
 import GuideSummonerSpellsForm from "./forms/GuideSpellsForm";
 import GuideMainRunesForm from "./forms/MainRunesForm";
 import GuideSecondaryRunesForm from "./forms/SecondaryRunesForm";
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>
-
-export enum SLOT_BONUS {
-  ADAPTIVE = 'ADAPTIVE',
-  ATTACK_SPEED = 'ATTACK_SPEED',
-  HASTE = 'HASTE',
-  MOVEMENT_SPEED = 'MOVEMENT_SPEED',
-  BONUS_HEALTH = 'BONUS_HEALTH',
-  BASE_HEALTH = 'BASE_HEALTH',
-  TENACITY = 'TENACITY',
-}
-
-export enum SLOT_BONUS_LABELS {
-  ADAPTIVE = '9 Adaptive',
-  ATTACK_SPEED = '10% Attack Speed',
-  HASTE = '8 Ability Haste',
-  MOVEMENT_SPEED = '2.5% Movement Speed',
-  BONUS_HEALTH = '10 - 180 Bonus Health',
-  BASE_HEALTH = '65 Base Health',
-  TENACITY = '15% Tenacity/Slow Resist',
-}
-
-const slotOne = [
-  {
-    value: SLOT_BONUS.ADAPTIVE,
-    label: SLOT_BONUS_LABELS.ADAPTIVE,
-  },
-  {
-    value: SLOT_BONUS.ATTACK_SPEED,
-    label: SLOT_BONUS_LABELS.ATTACK_SPEED,
-  },
-  {
-    value: SLOT_BONUS.HASTE,
-    label: SLOT_BONUS_LABELS.HASTE,
-  },
-];
-
-const slotTwo = [
-  {
-    value: SLOT_BONUS.ADAPTIVE,
-    label: SLOT_BONUS_LABELS.ADAPTIVE,
-  },
-  {
-    value: SLOT_BONUS.MOVEMENT_SPEED,
-    label: SLOT_BONUS_LABELS.MOVEMENT_SPEED,
-  },
-  {
-    value: SLOT_BONUS.BONUS_HEALTH,
-    label: SLOT_BONUS_LABELS.BONUS_HEALTH,
-  },
-];
-
-const slotThree = [
-  {
-    value: SLOT_BONUS.BASE_HEALTH,
-    label: SLOT_BONUS_LABELS.BASE_HEALTH,
-  },
-  {
-    value: SLOT_BONUS.TENACITY,
-    label: SLOT_BONUS_LABELS.TENACITY,
-  },
-  {
-    value: SLOT_BONUS.BONUS_HEALTH,
-    label: SLOT_BONUS_LABELS.BONUS_HEALTH,
-  },
-];
 
 const resolver = zodResolver(createGuideSchema)
 
@@ -101,7 +37,7 @@ export default function CreateGuide({ navigation }: Props) {
     defaultValues: {
       patchVersion: version, // Valor travado
       createdAt: new Date().toDateString(),
-      champion: 'Ahri'
+      champion: 'Ahri' // Define um valor padrão para facilitar os testes
     }
   })
 
@@ -243,7 +179,7 @@ export default function CreateGuide({ navigation }: Props) {
 
   useEffect(() => {
     methods.setValue('champion', 'Ahri')
-  }, [championList])
+  }, [championList]) // TODO: Tirar isso daqui depois
 
   useEffect(() => {
     // Use `setOptions` to update the button that we previously specified
@@ -270,15 +206,17 @@ export default function CreateGuide({ navigation }: Props) {
     }
   }
 
-  if (loading || !version) {
+  const Loading = () => <StyledView>
+    <Text
+      variant="headlineLarge"
+    >
+      Carregando
+    </Text>
+  </StyledView>
+
+  if (loading || !version || !championData) {
     return (
-      <StyledView>
-        <Text
-          variant="headlineLarge"
-        >
-          Carregando
-        </Text>
-      </StyledView>
+      <Loading />
     )
   }
 
@@ -296,34 +234,39 @@ export default function CreateGuide({ navigation }: Props) {
 
   return (
     <StyledView style={{ ...style.container, height: height }}>
-      <FormProvider {...methods}>
-        <StepperProvider>
-          <Stepper>
-            <StepperItem title="Primeiro Step">
-              <GuideIntroductionForm championList={championList} />
-            </StepperItem>
-            <StepperItem title="Segundo Step">
-              <GuideSummonerSpellsForm summonerSpells={summonerSpells} />
-            </StepperItem>
-            <StepperItem title="Terceiro Step">
-              <GuideMainRunesForm
-                runes={runes}
-                runesMap={runesMap}
-                secondaryRune={secondaryRune}
-              />
-            </StepperItem>
-            <StepperItem title="Quarto Step">
-              <GuideSecondaryRunesForm
-                runes={runes}
-                runesMap={runesMap}
-              />
-            </StepperItem>
-            <StepperItem title="Quinto Step">
-              {championData && <GuideAbilitiesProgressionForm championData={championData} />}
-            </StepperItem>
-          </Stepper>
-        </StepperProvider>
-      </FormProvider>
+      {
+        <FormProvider {...methods}>
+          <StepperProvider>
+            <Stepper>
+              <StepperItem title="Primeiro Step">
+                <GuideIntroductionForm championList={championList} />
+              </StepperItem>
+              <StepperItem title="Segundo Step">
+                <GuideSummonerSpellsForm summonerSpells={summonerSpells} />
+              </StepperItem>
+              <StepperItem title="Terceiro Step">
+                <GuideMainRunesForm
+                  runes={runes}
+                  runesMap={runesMap}
+                  secondaryRune={secondaryRune}
+                />
+              </StepperItem>
+              <StepperItem title="Quarto Step">
+                <GuideSecondaryRunesForm
+                  runes={runes}
+                  runesMap={runesMap}
+                />
+              </StepperItem>
+              <StepperItem title="Quinto Step">
+                <BonusForm />
+              </StepperItem>
+              <StepperItem title="Sexto Step">
+                <GuideAbilitiesProgressionForm championData={championData} />
+              </StepperItem>
+            </Stepper>
+          </StepperProvider>
+        </FormProvider>
+      }
     </StyledView>
   )
 }

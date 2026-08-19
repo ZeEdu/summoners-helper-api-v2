@@ -37,7 +37,6 @@ export enum AbilityOption {
   D = 'd',
 }
 
-
 export type Lvls = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18
 export type LvlKey = `l${Lvls}`
 
@@ -84,6 +83,26 @@ const itemSchema = z.object({
   description: z.string({ error: 'formato do campo é inválido' }),
 })
 
+export enum SLOT_BONUS {
+  ADAPTIVE = 'ADAPTIVE',
+  ATTACK_SPEED = 'ATTACK_SPEED',
+  HASTE = 'HASTE',
+  MOVEMENT_SPEED = 'MOVEMENT_SPEED',
+  BONUS_HEALTH = 'BONUS_HEALTH',
+  BASE_HEALTH = 'BASE_HEALTH',
+  TENACITY = 'TENACITY',
+}
+
+export enum SLOT_BONUS_LABELS {
+  ADAPTIVE = '9 Adaptive',
+  ATTACK_SPEED = '10% Attack Speed',
+  HASTE = '8 Ability Haste',
+  MOVEMENT_SPEED = '2.5% Movement Speed',
+  BONUS_HEALTH = '10 - 180 Bonus Health',
+  BASE_HEALTH = '65 Base Health',
+  TENACITY = '15% Tenacity/Slow Resist',
+}
+
 export const createGuideSchemaShape = z.object({
   patchVersion: z.string({ error: 'formato do campo é inválido' }),
 
@@ -96,10 +115,10 @@ export const createGuideSchemaShape = z.object({
   // runes: runeSchema,
 
   // Bonus
-  bonusSlotOne: z.string({ error: 'formato do campo é inválido' }),
-  bonusSlotTwo: z.string({ error: 'formato do campo é inválido' }),
-  bonusSlotThree: z.string({ error: 'formato do campo é inválido' }),
-  bonusDescription: z.string({ error: 'formato do campo é inválido' }),
+  bonusSlotOne: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  bonusSlotTwo: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  bonusSlotThree: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  bonusDescription: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
 
   primaryRune: z.string({ error: 'formato do campo é inválido' }),
   primarySlots: z.object({
