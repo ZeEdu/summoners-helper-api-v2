@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
 import { View } from "react-native";
 import { Button } from "react-native-paper";
-
-import { useStepperContext } from "./Stepper";
+import { useStepperContext } from "./context";
 
 type Props = {
   customPreviousButtonText?: string;

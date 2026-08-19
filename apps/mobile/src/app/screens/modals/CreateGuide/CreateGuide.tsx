@@ -7,7 +7,6 @@ import { Button, Text } from "react-native-paper";
 
 import { StyledView } from "@org/ui";
 
-import { Stepper, StepperItem, StepperProvider } from "../../../../components/stepper/Stepper";
 import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
 import { ChampionDataDragon, ChampionsDataDragon, ChampionsDataDragonDetails, ChampionsDataDragonDetailsSolo } from "../../../../dtos/champion.dto";
 import { RunesReforgedDataDragon } from "../../../../dtos/runes-reforged.dto";
@@ -21,6 +20,9 @@ import GuideIntroductionForm from "./forms/GuideIntroductionForm";
 import GuideSummonerSpellsForm from "./forms/GuideSpellsForm";
 import GuideMainRunesForm from "./forms/MainRunesForm";
 import GuideSecondaryRunesForm from "./forms/SecondaryRunesForm";
+import ThreatsForm from "./forms/ThreatsForm";
+import { Stepper, StepperItem } from "../../../../components/stepper";
+import { StepperProvider } from "../../../../components/stepper/context";
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>
 
@@ -261,6 +263,9 @@ export default function CreateGuide({ navigation }: Props) {
                 <BonusForm />
               </StepperItem>
               <StepperItem title="Sexto Step">
+                <ThreatsForm />
+              </StepperItem>
+              <StepperItem title="Sétimo Step">
                 <GuideAbilitiesProgressionForm championData={championData} />
               </StepperItem>
             </Stepper>

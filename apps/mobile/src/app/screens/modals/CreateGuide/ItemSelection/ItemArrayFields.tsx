@@ -4,7 +4,7 @@ import { Icon, TextInput, useTheme } from "react-native-paper";
 
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { ItemDetails } from "../../../../../dtos/item.dto";
-import { useItemSelectionContext } from "../context/ItemSelectionProvider";
+import { useItemSelectionContext } from "../context/item-selection.provider";
 import ArrayItem from "./Item";
 
 type ItemArrayFieldProps = {

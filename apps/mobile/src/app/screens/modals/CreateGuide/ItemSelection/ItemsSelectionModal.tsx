@@ -10,7 +10,7 @@ import { StyledView } from "@org/ui";
 import PatchVersionProvider from "../../../../../contexts/patchVersion/patch-version.provider";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import { ItemDetails, ItemsDataDragon } from "../../../../../dtos/item.dto";
-import { ItemSelectionProvider, useItemSelectionContext } from "../context/ItemSelectionProvider";
+import { ItemSelectionProvider, useItemSelectionContext } from "../context/item-selection.provider";
 import ItemArrayField from "./ItemArrayFields";
 
 type AbilitiesProgressionModalProps = {

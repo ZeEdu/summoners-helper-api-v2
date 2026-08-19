@@ -6,11 +6,11 @@ import { Button, MD3Theme, Text, useTheme } from "react-native-paper";
 import z from "zod";
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
-import { useStepperContext } from "../../../../../components/stepper/Stepper";
 import StepperFooter from "../../../../../components/stepper/StepperFooter";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import { ChampionsDataDragonDetailsSolo } from "../../../../../dtos/champion.dto";
 import { CreateGuideDto, createGuideSchemaShape, keyFromLvlsBuilder, LvlKey, lvlsArrayBuilder } from "../dto/create-guide-schema";
+import { useStepperContext } from "../../../../../components/stepper/context";
 
 export const abilitiesProgressionSchema = createGuideSchemaShape.pick({
   abilitiesProgression: true,
