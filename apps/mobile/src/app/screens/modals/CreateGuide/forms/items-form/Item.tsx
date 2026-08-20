@@ -2,7 +2,7 @@ import { useState } from "react"
 import { UseFieldArrayRemove } from "react-hook-form"
 import { Image, Pressable, StyleSheet } from "react-native"
 import { Button, Dialog, MD3Theme, Portal, Text, useTheme } from "react-native-paper"
-import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion"
+import { usePatchVersion } from "../../../../../../contexts/patchVersion/usePatchVersion"
 
 type ItemProps = {
   index: number

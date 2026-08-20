@@ -11,15 +11,17 @@ import { Stepper, StepperItem } from "../../../../components/stepper";
 import { StepperProvider } from "../../../../components/stepper/context";
 import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
 import { ChampionDataDragon, ChampionsDataDragon, ChampionsDataDragonDetails, ChampionsDataDragonDetailsSolo } from "../../../../dtos/champion.dto";
+import { ItemDetails, ItemsDataDragon } from "../../../../dtos/item.dto";
 import { RunesReforgedDataDragon } from "../../../../dtos/runes-reforged.dto";
 import { SummonerSpell, SummonerSpellDataDragon } from "../../../../dtos/spell.dto";
 import { ModalStackParamList } from "../../../navigation/types";
-import { ItemsBlockDto } from "./ItemSelection/ItemsSelectionModal";
 import { CreateGuideDto, createGuideSchema } from "./dto/create-guide-schema";
 import GuideAbilitiesProgressionForm from "./forms/AbilitiesProgressionForm";
 import BonusForm from "./forms/BonusForm";
 import GuideIntroductionForm from "./forms/GuideIntroductionForm";
 import GuideSummonerSpellsForm from "./forms/GuideSpellsForm";
+import { ItemSelectionProvider } from "./forms/items-form/context/item-selection.provider";
+import ItemsForm, { ItemsBlockDto } from "./forms/items-form/ItemsForm";
 import GuideMainRunesForm from "./forms/MainRunesForm";
 import GuideSecondaryRunesForm from "./forms/SecondaryRunesForm";
 import ThreatsForm from "./forms/ThreatsForm";
@@ -27,6 +29,10 @@ import ThreatsForm from "./forms/ThreatsForm";
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>
 
 const resolver = zodResolver(createGuideSchema)
+
+export interface ItemDetailsWithId extends ItemDetails {
+  id: string
+}
 
 export default function CreateGuide({ navigation }: Props) {
   const { version } = usePatchVersion()
@@ -70,6 +76,9 @@ export default function CreateGuide({ navigation }: Props) {
 
   const [runes, setRunes] = useState<RunesReforgedDataDragon[]>([])
   const [runesMap, setRunesMap] = useState<Record<string, RunesReforgedDataDragon>>({})
+
+  const [items, setItems] = useState<ItemDetailsWithId[]>([])
+  const [itemsMap, setItemsMap] = useState<ItemsDataDragon['data']>({})
 
   const [showItemsSelectionModal, setShowItemsSelectionModal] = useState(false)
 
@@ -163,10 +172,19 @@ export default function CreateGuide({ navigation }: Props) {
       setRunesMap(runesMap)
     }
 
+    async function loadItems() {
+      const response = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/pt_BR/item.json`)
+      const json = await response.json() as ItemsDataDragon
+      const itemsWithId = Object.keys(json.data).map((key) => ({ ...json.data[key], id: key }))
+      setItems(itemsWithId)
+      setItemsMap(json.data)
+    }
+
     async function init() {
       await loadChampionList()
       await loadSummonerSpells()
       await loadRunesReforged()
+      await loadItems()
     }
 
     setLoading(true)
@@ -263,9 +281,14 @@ export default function CreateGuide({ navigation }: Props) {
                 <BonusForm />
               </StepperItem>
               <StepperItem title="Sexto Step">
-                <ThreatsForm championList={championList} />
+                <ItemSelectionProvider>
+                  <ItemsForm items={items} itemsMap={itemsMap} />
+                </ItemSelectionProvider>
               </StepperItem>
               <StepperItem title="Sétimo Step">
+                <ThreatsForm championList={championList} />
+              </StepperItem>
+              <StepperItem title="Oitavo Step">
                 {championData && <GuideAbilitiesProgressionForm championData={championData} />}
               </StepperItem>
             </Stepper>

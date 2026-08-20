@@ -78,9 +78,9 @@ const itemArraySchema = z.object({
 })
 
 const itemSchema = z.object({
-  itemRollName: z.string({ error: 'formato do campo é inválido' }),
-  itemArray: z.array(itemArraySchema),
-  description: z.string({ error: 'formato do campo é inválido' }),
+  itemRollName: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  itemArray: z.array(itemArraySchema).min(1, { error: 'Campo obrigatório' }),
+  description: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
 })
 
 export enum SLOT_BONUS {
@@ -144,7 +144,7 @@ export const createGuideSchemaShape = z.object({
 
   // Items
   itemsBlock: z.array(itemSchema),
-  itemsDescription: z.string({ error: 'formato do campo é inválido' }),
+  itemsDescription: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
 
   // Abilities Progression
   abilitiesProgression: abilitiesProgressionSchema,

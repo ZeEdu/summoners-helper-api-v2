@@ -2,10 +2,10 @@ import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Icon, TextInput, useTheme } from "react-native-paper";
 
-import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
-import { ItemDetails } from "../../../../../dtos/item.dto";
-import { useItemSelectionContext } from "../context/item-selection.provider";
+import FormFieldErrors from "../../../../../../components/forms/FormFieldErrors";
+import { ItemDetails } from "../../../../../../dtos/item.dto";
 import ArrayItem from "./Item";
+import { useItemSelectionContext } from "./context/useItemSelectionContext";
 
 type ItemArrayFieldProps = {
   id: string;
