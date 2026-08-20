@@ -1,17 +1,16 @@
-import { ReactNode } from "react";
 import { View } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, ButtonProps } from "react-native-paper";
 import { useStepperContext } from "./context";
 
 type Props = {
   customPreviousButtonText?: string;
-  customNextButtonText?: string;
-  customNextButton?: () => ReactNode
+  nextButtonText?: string;
+  customNextButton?: ButtonProps
 }
 
 export default function StepperFooter({
   customPreviousButtonText,
-  customNextButtonText,
+  nextButtonText,
   customNextButton
 }: Props) {
   const stepperContext = useStepperContext()
@@ -28,7 +27,9 @@ export default function StepperFooter({
         {customPreviousButtonText || 'Passo anterior'}
       </Button>
       {customNextButton ? (
-        customNextButton()
+        <Button {...customNextButton}>
+          {customNextButton.children}
+        </Button>
       ) : (
         <Button
           mode="contained"
@@ -38,7 +39,7 @@ export default function StepperFooter({
             stepperContext.nextStep()
           }}
         >
-          {customNextButtonText || 'Próximo passo'}
+          {nextButtonText || 'Próximo passo'}
         </Button>
       )
       }

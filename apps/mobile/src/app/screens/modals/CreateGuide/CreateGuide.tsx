@@ -7,6 +7,8 @@ import { Button, Text } from "react-native-paper";
 
 import { StyledView } from "@org/ui";
 
+import { Stepper, StepperItem } from "../../../../components/stepper";
+import { StepperProvider } from "../../../../components/stepper/context";
 import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
 import { ChampionDataDragon, ChampionsDataDragon, ChampionsDataDragonDetails, ChampionsDataDragonDetailsSolo } from "../../../../dtos/champion.dto";
 import { RunesReforgedDataDragon } from "../../../../dtos/runes-reforged.dto";
@@ -21,8 +23,6 @@ import GuideSummonerSpellsForm from "./forms/GuideSpellsForm";
 import GuideMainRunesForm from "./forms/MainRunesForm";
 import GuideSecondaryRunesForm from "./forms/SecondaryRunesForm";
 import ThreatsForm from "./forms/ThreatsForm";
-import { Stepper, StepperItem } from "../../../../components/stepper";
-import { StepperProvider } from "../../../../components/stepper/context";
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>
 
@@ -216,7 +216,7 @@ export default function CreateGuide({ navigation }: Props) {
     </Text>
   </StyledView>
 
-  if (loading || !version || !championData) {
+  if (loading || !version) {
     return (
       <Loading />
     )
@@ -263,10 +263,10 @@ export default function CreateGuide({ navigation }: Props) {
                 <BonusForm />
               </StepperItem>
               <StepperItem title="Sexto Step">
-                <ThreatsForm />
+                <ThreatsForm championList={championList} />
               </StepperItem>
               <StepperItem title="Sétimo Step">
-                <GuideAbilitiesProgressionForm championData={championData} />
+                {championData && <GuideAbilitiesProgressionForm championData={championData} />}
               </StepperItem>
             </Stepper>
           </StepperProvider>

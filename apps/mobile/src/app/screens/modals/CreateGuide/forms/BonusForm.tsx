@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormContext } from "react-hook-form";
 import { View } from "react-native";
-import { Button } from "react-native-paper";
 import z from "zod";
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
 import AppInputController from "../../../../../components/forms/AppInputController";
@@ -77,18 +76,6 @@ export default function BonusForm() {
     stepperContext.nextStep()
   }
 
-  const CustomNextButton = () => {
-    return (
-      <Button
-        mode="contained"
-        onPress={handleSubmit(onSubmit)}
-        style={{ flex: 1 }}
-      >
-        Próximo passo
-      </Button>
-    )
-  }
-
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
@@ -131,7 +118,12 @@ export default function BonusForm() {
         <FormFieldErrors fieldError={errors.bonusSlotThree} />
       </View>
 
-      <StepperFooter customNextButton={CustomNextButton} />
+      <StepperFooter customNextButton={{
+        children: 'Próximo passo',
+        mode: "contained",
+        onPress: handleSubmit(onSubmit),
+        style: { flex: 1 }
+      }} />
     </View>
   )
 }
