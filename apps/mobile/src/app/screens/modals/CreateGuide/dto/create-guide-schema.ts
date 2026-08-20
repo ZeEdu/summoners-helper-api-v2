@@ -150,11 +150,11 @@ export const createGuideSchemaShape = z.object({
   abilitiesProgression: abilitiesProgressionSchema,
   abilitiesProgressionDescription: z.string({ error: 'formato do campo é inválido' }),
 
-  threatsDescription: z.string({ error: 'formato do campo é inválido' }),
+  threatsDescription: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
   threats: z.array(
     z.object({
-      threat: z.string({ error: 'formato do campo é inválido' }),
-      description: z.string({ error: 'formato do campo é inválido' })
+      threat: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+      description: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' })
     })
   ),
   createdAt: z.string({ error: 'formato do campo é inválido' })
