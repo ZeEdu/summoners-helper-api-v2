@@ -1,15 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Card, MD3Theme, Searchbar, Surface, Text, useTheme } from "react-native-paper";
 import z from "zod";
 
 import { StepperFooter } from "../../../../../../components/stepper";
+import { useStepperContext } from "../../../../../../components/stepper/context";
 import { usePatchVersion } from "../../../../../../contexts/patchVersion/usePatchVersion";
 import { ItemDetails } from "../../../../../../dtos/item.dto";
 import { ItemDetailsWithId } from "../../CreateGuide";
-import { createGuideSchemaShape } from "../../dto/create-guide-schema";
+import { CreateGuideDto, createGuideSchemaShape } from "../../dto/create-guide-schema";
 import ItemArrayField from "./ItemArrayFields";
 import { useItemSelectionContext } from "./context/useItemSelectionContext";
 
@@ -30,10 +31,11 @@ type ItemsFormProps = {
 }
 
 export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
+  const mainFormContext = useFormContext<CreateGuideDto>()
+  const stepperContext = useStepperContext()
+  const { version } = usePatchVersion()
   const theme = useTheme()
   const styles = makeStyles(theme)
-
-  const { version } = usePatchVersion()
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchList, setSearchList] = useState<ItemDetailsWithId[]>([])
@@ -46,7 +48,8 @@ export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
   const { append, remove, fields } = useFieldArray({ control, name: 'itemsBlock' })
 
   const onSubmit = (values: ItemsBlockDto) => {
-    console.log({ values });
+    mainFormContext.setValues(values)
+    stepperContext.nextStep()
   }
 
   const addNewBlock = () => {

@@ -21,7 +21,7 @@ import BonusForm from "./forms/BonusForm";
 import GuideIntroductionForm from "./forms/GuideIntroductionForm";
 import GuideSummonerSpellsForm from "./forms/GuideSpellsForm";
 import { ItemSelectionProvider } from "./forms/items-form/context/item-selection.provider";
-import ItemsForm, { ItemsBlockDto } from "./forms/items-form/ItemsForm";
+import ItemsForm from "./forms/items-form/ItemsForm";
 import GuideMainRunesForm from "./forms/MainRunesForm";
 import GuideSecondaryRunesForm from "./forms/SecondaryRunesForm";
 import ThreatsForm from "./forms/ThreatsForm";
@@ -79,8 +79,6 @@ export default function CreateGuide({ navigation }: Props) {
 
   const [items, setItems] = useState<ItemDetailsWithId[]>([])
   const [itemsMap, setItemsMap] = useState<ItemsDataDragon['data']>({})
-
-  const [showItemsSelectionModal, setShowItemsSelectionModal] = useState(false)
 
   const onSubmit = (value: CreateGuideDto) => {
     console.log({ value });
@@ -216,14 +214,6 @@ export default function CreateGuide({ navigation }: Props) {
       threat: '',
       description: ''
     })
-  }
-
-  const handleCloseItemsSelectionModal = (value?: ItemsBlockDto) => {
-    setShowItemsSelectionModal(false)
-
-    if (value) {
-      methods.setValue('itemsBlock', value.itemsBlock)
-    }
   }
 
   const Loading = () => <StyledView>
