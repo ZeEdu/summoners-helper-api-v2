@@ -1,11 +1,12 @@
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { Controller, FieldError, useFieldArray, useFormContext } from "react-hook-form";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Icon, TextInput, useTheme } from "react-native-paper";
 
 import FormFieldErrors from "../../../../../../components/forms/FormFieldErrors";
 import { ItemDetails } from "../../../../../../dtos/item.dto";
-import ArrayItem from "./Item";
 import { useItemSelectionContext } from "./context/useItemSelectionContext";
+import ArrayItem from "./Item";
+import { ItemsBlockDto } from "./ItemsForm";
 
 type ItemArrayFieldProps = {
   id: string;
@@ -15,22 +16,48 @@ type ItemArrayFieldProps = {
   }
 }
 
+type FormField = Record<"id", string> & {
+  disabled?: boolean;
+  itemId: string
+}
+
+type ItemType = 'add' | 'item'
+
+type ListItem = { type: ItemType, itemId?: string }
+
 export default function ItemArrayField({ id, index }: ItemArrayFieldProps) {
   const theme = useTheme()
 
-  const { control, formState: { errors } } = useFormContext()
+  const { control, formState: { errors } } = useFormContext<ItemsBlockDto>()
   const itemSelectionContext = useItemSelectionContext()
 
   const {
-    fields: childrens,
-    append: appendChild,
-    remove: removeChild
+    fields,
+    append,
+    remove
   } = useFieldArray({
     name: `itemsBlock.${index}.itemArray`
   })
 
+  const itemList: ListItem[] = [
+    ...fields.map((field) => ({
+      type: 'item',
+      itemId: (field as FormField).itemId
+    } as ListItem)),
+    { type: 'add' }
+  ]
+
   const handleAppend = (value: any) => {
-    appendChild({ itemId: value })
+    append({ itemId: value })
+  }
+
+  const getItemArrayError = (index: number) => {
+    const error = errors?.itemsBlock?.[index]?.itemArray
+    if (error) {
+      return error as FieldError
+    }
+
+    return undefined
   }
 
   return (
@@ -48,31 +75,29 @@ export default function ItemArrayField({ id, index }: ItemArrayFieldProps) {
             />
           }}
         />
-        <FormFieldErrors fieldError={(errors as any).itemsBlock?.[index]?.itemRollName} />
+        <FormFieldErrors fieldError={errors.itemsBlock?.[index]?.itemRollName} />
         <FlatList
-          data={[...childrens, { showAddMoreButton: true }]}
+          data={itemList}
           horizontal={true}
           contentContainerStyle={styles.listContentContainer}
           renderItem={({ item }) => {
-            const forceCasting = item as any
-
-            if (forceCasting.showAddMoreButton) {
-              return (
-                <Pressable
-                  onPress={() => {
-                    itemSelectionContext.setShowItemSearcher(true)
-                    itemSelectionContext.setAppendFunction(() => handleAppend)
-                  }}
-                >
-                  <Icon source='plus' size={48} color={theme.colors.onPrimaryContainer}></Icon>
-                </Pressable>
-              )
+            if (item.itemId) {
+              return <ArrayItem key={index} index={index} itemId={item.itemId} removeItem={remove} />
             }
 
-            return <ArrayItem key={index} index={index} itemId={forceCasting.itemId} removeItem={removeChild} />
+            return (
+              <Pressable
+                onPress={() => {
+                  itemSelectionContext.setShowItemSearcher(true)
+                  itemSelectionContext.setAppendFunction(() => handleAppend)
+                }}
+              >
+                <Icon source='plus' size={48} color={theme.colors.onPrimaryContainer}></Icon>
+              </Pressable>
+            )
           }}
         />
-        <FormFieldErrors fieldError={(errors as any).itemsBlock?.[index]?.itemArray} />
+        <FormFieldErrors fieldError={getItemArrayError(index)} />
 
         <Controller
           control={control}
@@ -87,7 +112,7 @@ export default function ItemArrayField({ id, index }: ItemArrayFieldProps) {
             />
           }}
         />
-        <FormFieldErrors fieldError={(errors as any).itemsBlock?.[index]?.description} />
+        <FormFieldErrors fieldError={errors.itemsBlock?.[index]?.description} />
       </View>
     </Pressable>
   )

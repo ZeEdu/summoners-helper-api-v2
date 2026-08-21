@@ -73,11 +73,11 @@ export const abilitiesProgressionSchema = z.object({
   l18: enumAbilitiesOption,
 })
 
-const itemArraySchema = z.object({
+export const itemArraySchema = z.object({
   itemId: z.string({ error: 'formato do campo é inválido' }),
 })
 
-const itemSchema = z.object({
+export const itemSchema = z.object({
   itemRollName: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
   itemArray: z.array(itemArraySchema).min(1, { error: 'Campo obrigatório' }),
   description: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
