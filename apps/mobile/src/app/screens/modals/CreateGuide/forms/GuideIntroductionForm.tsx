@@ -1,18 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useFormContext, useFormState } from "react-hook-form"
+import { useForm, useFormContext } from "react-hook-form"
+import { StyleSheet, View } from "react-native"
 import z from "zod"
 
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController"
 import AppInputController from "../../../../../components/forms/AppInputController"
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors"
 
-import { useEffect } from "react"
-import { View } from "react-native"
-import { Button } from "react-native-paper"
 import { useStepperContext } from "../../../../../components/stepper/context"
-import StepperFooter from "../../../../../components/stepper/StepperFooter"
+import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter"
 import { ChampionsDataDragonDetails } from "../../../../../dtos/champion.dto"
-import { CreateGuideDto, createGuideSchemaShape } from "../dto/create-guide-schema"
+import { CreateGuideDto, createGuideSchema } from "../dto/create-guide-schema"
 
 enum ROLES {
   JUNGLE = 'JUNGLE',
@@ -53,7 +51,7 @@ const ROLE_OPTIONS: { value: string, label: string }[] = [
   }
 ]
 
-const GuideIntroductionSchema = createGuideSchemaShape.pick({
+const GuideIntroductionSchema = createGuideSchema.pick({
   introduction: true,
   title: true,
   champion: true,
@@ -75,44 +73,19 @@ export default function GuideIntroductionForm({ championList }: GuideIntroductio
   const {
     control,
     handleSubmit,
-    formState: { errors }, getValues
-  } = useForm<GuideIntroductionDto>({
-    resolver,
-    defaultValues: {
-      introduction: '',
-      title: '',
-      champion: '',
-      role: '',
-    }
-  })
-  const { isValid } = useFormState({ control })
-
-  useEffect(() => {
-
-  }, [isValid]);
+    formState: { errors }
+  } = useForm<GuideIntroductionDto>({ resolver })
 
   const onSubmit = (formValues: GuideIntroductionDto) => {
-    // Setar o valor no formulário principal
-    mainFormContext.setValues(formValues)
     // Ir para o próximo step
     stepperContext.nextStep()
-  }
-
-  const CustomNextButton = () => {
-    return (
-      <Button
-        mode="contained"
-        onPress={handleSubmit(onSubmit)}
-        style={{ flex: 1 }}
-      >
-        Próximo passo
-      </Button>
-    )
+    // Setar o valor no formulário principal
+    mainFormContext.setValues(formValues)
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
+    <View style={styles.container}>
+      <View style={styles.content}>
         <AppInputController
           control={control}
           name={"title"}
@@ -152,14 +125,22 @@ export default function GuideIntroductionForm({ championList }: GuideIntroductio
         />
         <FormFieldErrors fieldError={errors.role} />
       </View>
-      <Button onPress={() => {
-        const champion = getValues().champion
-        console.log({ champion });
-      }}>
-        Pegar valor
-      </Button>
-
-      <StepperFooter customNextButton={CustomNextButton} />
+      <StepperFooter
+        customNextButton={
+          buildCustomButtonProps({
+            onPress: handleSubmit(onSubmit)
+          })
+        }
+      />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  content: {
+    flex: 1
+  }
+})

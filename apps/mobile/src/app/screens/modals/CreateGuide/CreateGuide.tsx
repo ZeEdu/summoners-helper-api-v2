@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
-import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { Dimensions, StyleSheet } from "react-native";
 import { Button, Text } from "react-native-paper";
 
@@ -10,7 +10,12 @@ import { StyledView } from "@org/ui";
 import { Stepper, StepperItem } from "../../../../components/stepper";
 import { StepperProvider } from "../../../../components/stepper/context";
 import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
-import { ChampionDataDragon, ChampionsDataDragon, ChampionsDataDragonDetails, ChampionsDataDragonDetailsSolo } from "../../../../dtos/champion.dto";
+import {
+  ChampionDataDragon,
+  ChampionsDataDragon,
+  ChampionsDataDragonDetails,
+  ChampionsDataDragonDetailsSolo
+} from "../../../../dtos/champion.dto";
 import { ItemDetails, ItemsDataDragon } from "../../../../dtos/item.dto";
 import { RunesReforgedDataDragon } from "../../../../dtos/runes-reforged.dto";
 import { SummonerSpell, SummonerSpellDataDragon } from "../../../../dtos/spell.dto";
@@ -40,35 +45,7 @@ export default function CreateGuide({ navigation }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const methods = useForm<CreateGuideDto>({
-    resolver,
-    defaultValues: {
-      patchVersion: version, // Valor travado
-      createdAt: new Date().toDateString(),
-      champion: 'Ahri' // Define um valor padrão para facilitar os testes
-    }
-  })
-
-  // const { control, handleSubmit, formState: { errors }, getValues, setValue, setValues } = useForm<CreateGuideDto>({
-  //   resolver,
-  //   defaultValues: {
-  //     patchVersion: version, // Valor travado
-  //     createdAt: new Date().toDateString(),
-
-  //     spellsDescription: '',
-  //     firstSpell: '',
-  //     secondSpell: '',
-
-  //     bonusDescription: '',
-  //     bonusSlotOne: '',
-  //     bonusSlotThree: '',
-  //     bonusSlotTwo: '',
-
-  //     threats: [],
-  //   }
-  // })
-
-  const { fields, append, remove } = useFieldArray({ control: methods.control, name: 'threats' })
+  const methods = useForm<CreateGuideDto>({ resolver })
 
   const [championList, setChampionList] = useState<ChampionsDataDragonDetails[]>([])
   const [championData, setChampionData] = useState<ChampionsDataDragonDetailsSolo | undefined>(undefined)
@@ -89,30 +66,10 @@ export default function CreateGuide({ navigation }: Props) {
     name: 'champion'
   })
 
-  const primaryRune = useWatch({
-    control: methods.control,
-    name: 'primaryRune'
-  })
-
   const secondaryRune = useWatch({
     control: methods.control,
     name: 'secondaryRune'
   })
-
-  // const watchPrimaryRune = useWatch({
-  //   control,
-  //   name: 'runes.primaryRune'
-  // })
-
-  // const watchSecondaryRune = useWatch({
-  //   control,
-  //   name: 'runes.secondaryRune'
-  // })
-
-  // const watchSecondaryRuneSlots = useWatch({
-  //   control,
-  //   name: ['runes.secondarySlots.first', 'runes.secondarySlots.second', 'runes.secondarySlots.third']
-  // })
 
   const { height } = Dimensions.get("window")
 
@@ -124,6 +81,8 @@ export default function CreateGuide({ navigation }: Props) {
     }
 
     if (watchChampion) {
+      console.log({ watchChampion });
+
       setLoading(true)
       getChampionData(watchChampion)
         .catch(() => {
@@ -196,25 +155,21 @@ export default function CreateGuide({ navigation }: Props) {
   }, [])
 
   useEffect(() => {
-    methods.setValue('champion', 'Ahri')
-  }, [championList]) // TODO: Tirar isso daqui depois
-
-  useEffect(() => {
     // Use `setOptions` to update the button that we previously specified
     // Now the button includes an `onPress` handler to update the count
-    navigation.setOptions({
-      headerRight: () => (
-        <Button mode="contained" style={style.headerButton} onPress={methods.handleSubmit(onSubmit)}>Salvar</Button>
-      ),
-    });
+    navigation
+      .setOptions({
+        headerRight: () => (
+          <Button
+            mode="contained"
+            style={style.headerButton}
+            onPress={methods.handleSubmit(onSubmit)}
+          >
+            Salvar
+          </Button>
+        ),
+      });
   }, [navigation]);
-
-  const appendThreat = () => {
-    append({
-      threat: '',
-      description: ''
-    })
-  }
 
   const Loading = () => <StyledView>
     <Text
@@ -288,273 +243,6 @@ export default function CreateGuide({ navigation }: Props) {
     </StyledView>
   )
 }
-
-// return (
-//   <>
-//     <StyledView style={style.container}>
-//       <ScrollView>
-//         <AppInputController
-//           control={control}
-//           name={"title"}
-//           inputOptions={{
-//             label: 'Titulo',
-//             placeholder: 'Titulo'
-//           }}
-//         />
-//         <FormFieldErrors fieldError={errors.title} />
-
-//         <AppInputController
-//           control={control}
-//           name={"introduction"}
-//           inputOptions={{
-//             label: 'Introdução',
-//             placeholder: 'Introdução',
-//             multiline: true
-//           }}
-//         />
-//         <FormFieldErrors fieldError={errors.introduction} />
-
-//         <AppSelectController
-//           control={control}
-//           title={'Selecione um campeão'}
-//           options={championList.map(({ id, name }) => ({ value: id, label: name }))}
-//           placeholder={'Selecione um campeão'}
-//           name={'champion'}
-//         />
-//         <FormFieldErrors fieldError={errors.champion} />
-
-//         <AppSelectController
-//           control={control}
-//           title={'Selecione um role'}
-//           options={ROLE_OPTIONS}
-//           placeholder={'Selecione um role'}
-//           name={'role'}
-//         />
-//         <FormFieldErrors fieldError={errors.role} />
-
-//         <AppSelectController
-//           control={control}
-//           title={'Selecione uma magia'}
-//           options={summonerSpells.map(({ id, name }) => ({ value: id, label: name }))}
-//           placeholder={'Selecione uma magia'}
-//           name={'firstSpell'}
-//         />
-//         <FormFieldErrors fieldError={errors.firstSpell} />
-
-//         <AppSelectController
-//           control={control}
-//           title={'Selecione uma segunda magia'}
-//           options={summonerSpells.map(({ id, name }) => ({ value: id, label: name }))}
-//           placeholder={'Selecione uma segunda magia'}
-//           name={'secondSpell'}
-//         />
-//         <FormFieldErrors fieldError={errors.secondSpell} />
-
-//         <AppInputController
-//           control={control}
-//           name={'bonusDescription'}
-//           inputOptions={{
-//             label: 'Descrição dos bonus',
-//             placeholder: 'Descreva os bonus',
-//             multiline: true
-//           }}
-//         />
-//         <FormFieldErrors fieldError={errors.bonusDescription} />
-
-//         <AppSelectController
-//           control={control}
-//           title={'Selecione um bonus'}
-//           options={slotOne}
-//           placeholder={'Selecione um bonus'}
-//           name={'bonusSlotOne'}
-//         />
-//         <FormFieldErrors fieldError={errors.bonusSlotOne} />
-
-//         <AppSelectController
-//           control={control}
-//           title={'Selecione um segundo bonus'}
-//           options={slotTwo}
-//           placeholder={'Selecione um segundo bonus'}
-//           name={'bonusSlotTwo'}
-//         />
-//         <FormFieldErrors fieldError={errors.bonusSlotTwo} />
-
-//         <AppSelectController
-//           control={control}
-//           title={'Selecione um terceiro bonus'}
-//           options={slotThree}
-//           placeholder={'Selecione um terceiro bonus'}
-//           name={'bonusSlotThree'}
-//         />
-//         <FormFieldErrors fieldError={errors.bonusSlotThree} />
-
-//         <AppInputController
-//           control={control}
-//           name={"threatsDescription"}
-//           inputOptions={{
-//             label: 'Ameaças',
-//             placeholder: 'Ameaças',
-//             multiline: true
-//           }}
-//         />
-//         <FormFieldErrors fieldError={errors.threatsDescription} />
-
-//         {fields.map((field, index) => {
-//           return (
-//             <View style={style.fieldContainer}>
-//               <AppSelectController
-//                 key={`${field.id}.threat`}
-//                 control={control}
-//                 title={'Selecione uma ameaça'}
-//                 options={championList.map(({ id, name }) => ({ value: id, label: name }))}
-//                 placeholder={'Selecione uma ameaça'}
-//                 name={`threats.${index}.threat`}
-//               />
-//               <FormFieldErrors fieldError={errors.threats?.[index]?.threat} />
-
-//               <AppInputController
-//                 key={`${field.id}.description`}
-//                 control={control}
-//                 name={`threats.${index}.description`}
-//                 inputOptions={{
-//                   label: 'Descrição da ameaça',
-//                   placeholder: 'Descrição da ameaça',
-//                   multiline: true
-//                 }}
-//               />
-//               <FormFieldErrors fieldError={errors.threats?.[index]?.description} />
-
-//               <StyledButton onPress={() => { remove(index) }}>Remover ameaça</StyledButton>
-//             </View>
-//           )
-//         })}
-
-//         <StyledButton onPress={appendThreat}>Adicionar ameaça</StyledButton>
-
-//         <AppSelectController
-//           control={control}
-//           title={'Caminho Principal'}
-//           options={buildMainRunesOptions()}
-//           placeholder={'Selecione um caminho'}
-//           name={`runes.primaryRune`}
-//         />
-//         <FormFieldErrors fieldError={errors.runes?.primaryRune} />
-
-//         {
-//           (!!watchPrimaryRune) && (
-//             <>
-//               <AppSelectController
-//                 control={control}
-//                 title={'Primeira Runa'}
-//                 options={buildFirstRunesOptions('first')}
-//                 placeholder={'Selecione a primeira runa'}
-//                 name={`runes.primarySlots.first`}
-//               />
-//               <FormFieldErrors fieldError={errors.runes?.primarySlots?.first} />
-
-//               <AppSelectController
-//                 control={control}
-//                 title={'Segunda Runa'}
-//                 options={buildFirstRunesOptions('second')}
-//                 placeholder={'Selecione a segunda runa'}
-//                 name={`runes.primarySlots.second`}
-//               />
-//               <FormFieldErrors fieldError={errors.runes?.primarySlots?.second} />
-
-//               <AppSelectController
-//                 control={control}
-//                 title={'Terceira Runa'}
-//                 options={buildFirstRunesOptions('third')}
-//                 placeholder={'Selecione a terceira runa'}
-//                 name={`runes.primarySlots.third`}
-//               />
-//               <FormFieldErrors fieldError={errors.runes?.primarySlots?.third} />
-
-//               <AppSelectController
-//                 control={control}
-//                 title={'Quarta Runa'}
-//                 options={buildFirstRunesOptions('forth')}
-//                 placeholder={'Selecione a quarta runa'}
-//                 name={`runes.primarySlots.fourth`}
-//               />
-//               <FormFieldErrors fieldError={errors.runes?.primarySlots?.fourth} />
-//             </>
-//           )
-//         }
-
-//         <AppSelectController
-//           control={control}
-//           title={'Caminho Secundario'}
-//           options={buildSecondaryRunesOptions()}
-//           placeholder={'Selecione um caminho secundario'}
-//           name={`runes.secondaryRune`}
-//         />
-//         <FormFieldErrors fieldError={errors.runes?.secondaryRune} />
-
-//         {
-//           (!!watchSecondaryRune) && (
-//             <>
-//               <AppSelectController
-//                 control={control}
-//                 title={'Primeira Runa Secondaria'}
-//                 options={watchSecondaryRuneSlots && buildSecondaryRunesSlotOptions('first')}
-//                 placeholder={'Selecione a primeira runa secundária'}
-//                 name={`runes.secondarySlots.first`}
-//               />
-//               <FormFieldErrors fieldError={errors.runes?.secondarySlots?.first} />
-
-
-//               <AppSelectController
-//                 control={control}
-//                 title={'Segunda Runa Secondaria'}
-//                 options={watchSecondaryRuneSlots && buildSecondaryRunesSlotOptions('second')}
-//                 placeholder={'Selecione a segunda runa secundária'}
-//                 name={`runes.secondarySlots.second`}
-//               />
-//               <FormFieldErrors fieldError={errors.runes?.secondarySlots?.second} />
-
-
-//               <AppSelectController
-//                 control={control}
-//                 title={'Terceira Runa Secondaria'}
-//                 options={watchSecondaryRuneSlots && buildSecondaryRunesSlotOptions('third')}
-//                 placeholder={'Selecione a terceira runa secundária'}
-//                 name={`runes.secondarySlots.third`}
-//               />
-//               <FormFieldErrors fieldError={errors.runes?.secondarySlots?.third} />
-
-//             </>
-//           )
-//         }
-
-//         {championData && (
-//           <List.Item
-//             title={'Progressão de Habilidades'}
-//             onPress={() => {
-//               setShowAbilitiesProgressionModal(true)
-//             }}
-//             right={(props) => {
-//               return <List.Icon {...props} icon='chevron-right' />
-//             }}
-//           />
-//         )}
-
-//         <List.Item
-//           title={'Seleção de itens'}
-//           onPress={() => {
-//             setShowItemsSelectionModal(true)
-//           }}
-//           right={(props) => {
-//             return <List.Icon {...props} icon='chevron-right' />
-//           }}
-//         />
-//       </ScrollView>
-//       {championData && <AbilitiesProgressionField visible={showAbilitiesProgressionModal} closeModal={handleCloseAbilitiesProgressionModal} championId={championData.id} abilities={championData.spells} />}
-//       <ItemsSelectionModal visible={showItemsSelectionModal} closeModal={handleCloseItemsSelectionModal} />
-//     </StyledView>
-//   </>
-// )
-// }
 
 export const style = StyleSheet.create({
   headerButton: {

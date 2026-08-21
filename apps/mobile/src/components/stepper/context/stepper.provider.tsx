@@ -2,7 +2,7 @@ import { PropsWithChildren, useState } from "react"
 import { StepperContext } from "./stepper.context"
 
 export const StepperProvider = ({ children }: PropsWithChildren) => {
-  const [stepperIndex, setStepperIndex] = useState(5)
+  const [stepperIndex, setStepperIndex] = useState(0)
   const [disableNextButton, setDisableNextButton] = useState(false)
   const [disablePreviousButton, setDisablePreviousButton] = useState(false)
 

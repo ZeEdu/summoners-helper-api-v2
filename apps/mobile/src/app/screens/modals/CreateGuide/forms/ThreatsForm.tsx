@@ -10,11 +10,12 @@ import AppInputController from "../../../../../components/forms/AppInputControll
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { StepperFooter } from "../../../../../components/stepper";
 import { useStepperContext } from "../../../../../components/stepper/context";
+import { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
 import { ChampionsDataDragonDetails } from "../../../../../dtos/champion.dto";
 import { style } from "../CreateGuide";
-import { CreateGuideDto, createGuideSchemaShape } from "../dto/create-guide-schema";
+import { CreateGuideDto, guideSchemaShape } from "../dto/create-guide-schema";
 
-const ThreatsSchema = createGuideSchemaShape.pick({
+const ThreatsSchema = guideSchemaShape.pick({
   threats: true,
   threatsDescription: true
 })
@@ -43,8 +44,8 @@ export default function ThreatsForm({ championList }: ThreatsProps) {
   }
 
   const onSubmit = (formValues: any) => {
-    mainFormContext.setValues(formValues)
     stepperContext.nextStep()
+    mainFormContext.setValues(formValues)
   }
 
   const getErrorFromIndex = (index: number) => {
@@ -103,12 +104,11 @@ export default function ThreatsForm({ championList }: ThreatsProps) {
         </StyledButton>
       </View>
       <StepperFooter
-        customNextButton={{
-          children: 'Próximo passo',
-          mode: "contained",
-          onPress: handleSubmit(onSubmit),
-          style: styles.footerButton
-        }}
+        customNextButton={
+          buildCustomButtonProps({
+            onPress: handleSubmit(onSubmit)
+          })
+        }
       />
     </View>
   )
@@ -118,6 +118,5 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flex: 1 },
   form: { flex: 1, gap: 16 },
-  footerButton: { flex: 1 },
   addThreat: { marginBottom: 16 }
 })

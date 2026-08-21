@@ -8,15 +8,16 @@ import z from "zod";
 import AppInputController from "../../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../../components/forms/FormFieldErrors";
 import { StepperFooter } from "../../../../../../components/stepper";
+import { buildCustomButtonProps } from "../../../../../../components/stepper/StepperFooter";
 import { useStepperContext } from "../../../../../../components/stepper/context";
 import { usePatchVersion } from "../../../../../../contexts/patchVersion/usePatchVersion";
 import { ItemDetails } from "../../../../../../dtos/item.dto";
 import { ItemDetailsWithId } from "../../CreateGuide";
-import { CreateGuideDto, createGuideSchemaShape } from "../../dto/create-guide-schema";
+import { CreateGuideDto, guideSchemaShape } from "../../dto/create-guide-schema";
 import ItemArrayField from "./ItemArrayFields";
 import { useItemSelectionContext } from "./context/useItemSelectionContext";
 
-const ItensBlockSchema = createGuideSchemaShape.pick({
+const ItensBlockSchema = guideSchemaShape.pick({
   itemsBlock: true,
   itemsDescription: true
 })
@@ -51,8 +52,8 @@ export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
   const { append, remove, fields } = useFieldArray({ control, name: 'itemsBlock' })
 
   const onSubmit = (values: ItemsBlockDto) => {
-    mainFormContext.setValues(values)
     stepperContext.nextStep()
+    mainFormContext.setValues(values)
   }
 
   const addNewBlock = () => {
@@ -178,12 +179,11 @@ export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
         ) : null}
       </View>
       <StepperFooter
-        customNextButton={{
-          children: 'Próximo passo',
-          mode: "contained",
-          onPress: handleSubmit(onSubmit),
-          style: styles.footerButton
-        }}
+        customNextButton={
+          buildCustomButtonProps({
+            onPress: handleSubmit(onSubmit),
+          })
+        }
       />
     </View>
   )
@@ -229,9 +229,6 @@ const makeStyles = ({ roundness }: MD3Theme) => {
     surface: {
       borderRadius: roundness,
       marginBottom: 8
-    },
-    footerButton: {
-      flex: 1
     }
   })
 }

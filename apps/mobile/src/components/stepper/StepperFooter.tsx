@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, ButtonProps } from "react-native-paper";
 import { useStepperContext } from "./context";
 
@@ -6,6 +6,25 @@ type Props = {
   customPreviousButtonText?: string;
   nextButtonText?: string;
   customNextButton?: ButtonProps
+}
+
+type ButtonPropsWithOptionalChildren = Omit<ButtonProps, 'children'> & {
+  children?: React.ReactNode
+}
+
+const styles = StyleSheet.create({
+  footerButton: {
+    flex: 1
+  }
+})
+
+export const buildCustomButtonProps = (buttonProps: ButtonPropsWithOptionalChildren): ButtonProps => {
+  return {
+    children: 'Próximo passo',
+    mode: "contained",
+    style: styles.footerButton,
+    ...buttonProps,
+  }
 }
 
 export default function StepperFooter({

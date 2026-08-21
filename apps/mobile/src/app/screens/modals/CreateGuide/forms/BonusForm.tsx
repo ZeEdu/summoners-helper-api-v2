@@ -1,13 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormContext } from "react-hook-form";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import z from "zod";
+
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
-import StepperFooter from "../../../../../components/stepper/StepperFooter";
-import { CreateGuideDto, createGuideSchemaShape, SLOT_BONUS, SLOT_BONUS_LABELS } from "../dto/create-guide-schema";
+import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
+import { CreateGuideDto, createGuideSchema, SLOT_BONUS, SLOT_BONUS_LABELS } from "../dto/create-guide-schema";
 
 const slotOne = [
   {
@@ -54,7 +55,7 @@ const slotThree = [
   },
 ];
 
-export const BonusSchema = createGuideSchemaShape.pick({
+export const BonusSchema = createGuideSchema.pick({
   bonusDescription: true,
   bonusSlotOne: true,
   bonusSlotTwo: true,
@@ -77,8 +78,8 @@ export default function BonusForm() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
+    <View style={styles.container}>
+      <View style={styles.content}>
         <AppInputController
           control={control}
           name={'bonusDescription'}
@@ -118,12 +119,20 @@ export default function BonusForm() {
         <FormFieldErrors fieldError={errors.bonusSlotThree} />
       </View>
 
-      <StepperFooter customNextButton={{
-        children: 'Próximo passo',
-        mode: "contained",
-        onPress: handleSubmit(onSubmit),
-        style: { flex: 1 }
-      }} />
+      <StepperFooter
+        customNextButton={
+          buildCustomButtonProps({
+            onPress: handleSubmit(onSubmit),
+          })}
+      />
     </View>
   )
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  content: {
+    flex: 1
+  }
+})

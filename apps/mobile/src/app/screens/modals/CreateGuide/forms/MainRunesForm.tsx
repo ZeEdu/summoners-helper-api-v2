@@ -1,18 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm, useFormContext, useWatch } from "react-hook-form";
-import { View } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
 import z from "zod";
+
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
-import StepperFooter from "../../../../../components/stepper/StepperFooter";
+import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
 import { RunesReforgedDataDragon } from "../../../../../dtos/runes-reforged.dto";
-import { CreateGuideDto, createGuideSchemaShape } from "../dto/create-guide-schema";
+import { CreateGuideDto, createGuideSchema } from "../dto/create-guide-schema";
 
-export const mainRuneSchema = createGuideSchemaShape.pick({
+export const mainRuneSchema = createGuideSchema.pick({
   primaryRune: true,
   primarySlots: true,
   primaryRuneDescription: true
@@ -30,7 +30,6 @@ const resolver = zodResolver(mainRuneSchema)
 
 export default function GuideMainRunesForm({ runes, runesMap, secondaryRune }: Props) {
   const mainFormContext = useFormContext<CreateGuideDto>()
-
   const stepperContext = useStepperContext()
 
   const {
@@ -39,18 +38,7 @@ export default function GuideMainRunesForm({ runes, runesMap, secondaryRune }: P
     formState: { errors },
     getValues,
     setValues
-  } = useForm<MainRuneDto>({
-    resolver, defaultValues: {
-      primaryRune: "8100",
-      primarySlots: {
-        first: "8112",
-        second: "8126",
-        third: "8136",
-        fourth: "8135"
-      },
-      primaryRuneDescription: "asddasdasd",
-    }
-  })
+  } = useForm<MainRuneDto>({ resolver })
 
   const primaryRune = useWatch<MainRuneDto>({
     control,
@@ -86,20 +74,8 @@ export default function GuideMainRunesForm({ runes, runesMap, secondaryRune }: P
   }
 
   const onSubmit = (formValues: MainRuneDto) => {
-    mainFormContext.setValues(formValues)
     stepperContext.nextStep()
-  }
-
-  const CustomNextButton = () => {
-    return (
-      <Button
-        mode="contained"
-        style={{ flex: 1 }}
-        onPress={handleSubmit(onSubmit)}
-      >
-        Próximo passo
-      </Button>
-    )
+    mainFormContext.setValues(formValues)
   }
 
   useEffect(() => {
@@ -114,8 +90,8 @@ export default function GuideMainRunesForm({ runes, runesMap, secondaryRune }: P
   }, [primaryRune])
 
   return (
-    <View>
-      <View>
+    <View style={styles.container}>
+      <View style={styles.content}>
         <AppSelectController
           control={control}
           title={'Caminho Principal'}
@@ -176,12 +152,22 @@ export default function GuideMainRunesForm({ runes, runesMap, secondaryRune }: P
             </>
           )
         }
-        <Button onPress={() => {
-          const values = getValues()
-          console.log({ values });
-        }}>Pegar valores do formulário</Button>
       </View>
-      <StepperFooter customNextButton={CustomNextButton} />
+      <StepperFooter
+        customNextButton={
+          buildCustomButtonProps({
+            onPress: handleSubmit(onSubmit)
+          })}
+      />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  content: {
+    flex: 1
+  }
+})

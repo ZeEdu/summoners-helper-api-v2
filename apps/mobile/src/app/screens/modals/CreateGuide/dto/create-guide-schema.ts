@@ -103,8 +103,10 @@ export enum SLOT_BONUS_LABELS {
   TENACITY = '15% Tenacity/Slow Resist',
 }
 
-export const createGuideSchemaShape = z.object({
+export const guideSchemaShape = z.object({
   patchVersion: z.string({ error: 'formato do campo é inválido' }),
+  createdAt: z.string({ error: 'formato do campo é inválido' }),
+  createdBy: z.string({ error: 'formato do campo é inválido' }),
 
   title: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
   introduction: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
@@ -156,10 +158,13 @@ export const createGuideSchemaShape = z.object({
       threat: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
       description: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' })
     })
-  ),
-  createdAt: z.string({ error: 'formato do campo é inválido' })
+  )
 })
 
-export const createGuideSchema = createGuideSchemaShape satisfies z.ZodType<IGuide>
+export const createGuideSchema = guideSchemaShape.omit({
+  patchVersion: true,
+  createdAt: true,
+  createdBy: true
+})
 
 export type CreateGuideDto = z.infer<typeof createGuideSchema>

@@ -1,18 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm, useFormContext, useWatch } from "react-hook-form";
-import { View } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
 import z from "zod";
+
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
-import StepperFooter from "../../../../../components/stepper/StepperFooter";
+import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
 import { RunesReforgedDataDragon } from "../../../../../dtos/runes-reforged.dto";
-import { CreateGuideDto, createGuideSchemaShape } from "../dto/create-guide-schema";
+import { CreateGuideDto, createGuideSchema } from "../dto/create-guide-schema";
 
-export const secondaryRuneSchema = createGuideSchemaShape.pick({
+export const secondaryRuneSchema = createGuideSchema.pick({
   secondaryRune: true,
   secondarySlots: true,
   secondaryRuneDescription: true
@@ -77,22 +77,9 @@ export default function GuideSecondaryRunesForm({ runes, runesMap }: Props) {
       )
   }
 
-
   const onSubmit = (formValues: SecondaryRuneDto) => {
-    mainFormContext.setValues(formValues)
     stepperContext.nextStep()
-  }
-
-  const CustomNextButton = () => {
-    return (
-      <Button
-        mode="contained"
-        style={{ flex: 1 }}
-        onPress={handleSubmit(onSubmit)}
-      >
-        Próximo passo
-      </Button>
-    )
+    mainFormContext.setValues(formValues)
   }
 
   useEffect(() => {
@@ -106,8 +93,8 @@ export default function GuideSecondaryRunesForm({ runes, runesMap }: Props) {
   }, [secondaryRune])
 
   return (
-    <View>
-      <View>
+    <View style={styles.container}>
+      <View style={styles.content}>
         <AppSelectController
           control={control}
           title={'Caminho Principal'}
@@ -160,7 +147,22 @@ export default function GuideSecondaryRunesForm({ runes, runesMap }: Props) {
           )
         }
       </View>
-      <StepperFooter customNextButton={CustomNextButton} />
+      <StepperFooter
+        customNextButton={
+          buildCustomButtonProps({
+            onPress: handleSubmit(onSubmit),
+          })
+        }
+      />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  content: {
+    flex: 1
+  }
+})
