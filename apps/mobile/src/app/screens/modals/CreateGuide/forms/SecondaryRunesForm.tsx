@@ -9,8 +9,9 @@ import AppInputController from "../../../../../components/forms/AppInputControll
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
 import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import { RunesReforgedDataDragon } from "../../../../../dtos/runes-reforged.dto";
-import { CreateGuideDto, createGuideSchema } from "../dto/create-guide-schema";
+import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
+import Error from "../../../feedback/Error";
+import { CreateGuideFormDto, createGuideSchema } from "../dto/create-guide-schema";
 
 export const secondaryRuneSchema = createGuideSchema.pick({
   secondaryRune: true,
@@ -20,15 +21,20 @@ export const secondaryRuneSchema = createGuideSchema.pick({
 
 export type SecondaryRuneDto = z.infer<typeof secondaryRuneSchema>
 
-type Props = {
-  runes: RunesReforgedDataDragon[],
-  runesMap: Record<string, RunesReforgedDataDragon>,
-}
-
 const resolver = zodResolver(secondaryRuneSchema)
 
-export default function GuideSecondaryRunesForm({ runes, runesMap }: Props) {
-  const mainFormContext = useFormContext<CreateGuideDto>()
+export default function GuideSecondaryRunesForm() {
+  const useDataDragon = useDataDragonContext()
+  if (!useDataDragon.dataDragon || !useDataDragon.dataDragonMaps) {
+    return (
+      <Error />
+    )
+  }
+
+  const runeList = useDataDragon.dataDragon.runes
+  const runeMap = useDataDragon.dataDragonMaps.runes
+
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
   const stepperContext = useStepperContext()
 
   const { control, handleSubmit, formState: { errors }, getValues, setValues } = useForm<SecondaryRuneDto>({ resolver })
@@ -44,7 +50,7 @@ export default function GuideSecondaryRunesForm({ runes, runesMap }: Props) {
   })
 
   const buildSecondaryRunePathOptions = () => {
-    return runes
+    return runeList
       .filter((rune) => rune.id.toString() !== mainFormContext.getValues('primaryRune'))
       .map(({ id, name }) => ({ value: id.toString(), label: name }))
   }
@@ -55,7 +61,7 @@ export default function GuideSecondaryRunesForm({ runes, runesMap }: Props) {
       return []
     }
 
-    const { slots } = runesMap[currentSecondaryRunes]
+    const { slots } = runeMap[currentSecondaryRunes]
     const runes = [...slots[1].runes, ...slots[2].runes, ...slots[3].runes]
 
     return runes
@@ -78,8 +84,8 @@ export default function GuideSecondaryRunesForm({ runes, runesMap }: Props) {
   }
 
   const onSubmit = (formValues: SecondaryRuneDto) => {
+    mainFormContext.setValues(formValues, { shouldValidate: true })
     stepperContext.nextStep()
-    mainFormContext.setValues(formValues)
   }
 
   useEffect(() => {

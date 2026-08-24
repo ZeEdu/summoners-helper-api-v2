@@ -10,10 +10,11 @@ import FormFieldErrors from "../../../../../../components/forms/FormFieldErrors"
 import { StepperFooter } from "../../../../../../components/stepper";
 import { buildCustomButtonProps } from "../../../../../../components/stepper/StepperFooter";
 import { useStepperContext } from "../../../../../../components/stepper/context";
+import { ItemDetailsWithId } from "../../../../../../contexts/data-dragon/data-dragon.context";
+import useDataDragonContext from "../../../../../../contexts/data-dragon/useDataDragonContext";
 import { usePatchVersion } from "../../../../../../contexts/patchVersion/usePatchVersion";
-import { ItemDetails } from "../../../../../../dtos/item.dto";
-import { ItemDetailsWithId } from "../../CreateGuide";
-import { CreateGuideDto, guideSchemaShape } from "../../dto/create-guide-schema";
+import Error from "../../../../feedback/Error";
+import { CreateGuideFormDto, guideSchemaShape } from "../../dto/create-guide-schema";
 import ItemArrayField from "./ItemArrayFields";
 import { useItemSelectionContext } from "./context/useItemSelectionContext";
 
@@ -26,15 +27,17 @@ export type ItemsBlockDto = z.infer<typeof ItensBlockSchema>
 
 const resolver = zodResolver(ItensBlockSchema)
 
-type ItemsFormProps = {
-  items: ItemDetailsWithId[];
-  itemsMap: {
-    [key: string]: ItemDetails;
+export default function ItemsForm() {
+  const useDataDragon = useDataDragonContext()
+  if (!useDataDragon.dataDragon) {
+    return (
+      <Error />
+    )
   }
-}
 
-export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
-  const mainFormContext = useFormContext<CreateGuideDto>()
+  const itemList = useDataDragon.dataDragon.items
+
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
   const stepperContext = useStepperContext()
 
   const { version } = usePatchVersion()
@@ -52,8 +55,8 @@ export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
   const { append, remove, fields } = useFieldArray({ control, name: 'itemsBlock' })
 
   const onSubmit = (values: ItemsBlockDto) => {
+    mainFormContext.setValues(values, { shouldValidate: true })
     stepperContext.nextStep()
-    mainFormContext.setValues(values)
   }
 
   const addNewBlock = () => {
@@ -70,7 +73,7 @@ export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
       return
     }
     // TODO: Expandir as regras de match
-    const matchedItems = items.filter(({ name }) => name.toLocaleLowerCase().includes(searchQuery.toLowerCase()))
+    const matchedItems = itemList.filter(({ name }) => name.toLocaleLowerCase().includes(searchQuery.toLowerCase()))
     if (matchedItems.length) {
       setSearchList(matchedItems)
     } else {
@@ -104,19 +107,21 @@ export default function ItemsForm({ items, itemsMap }: ItemsFormProps) {
           <FormProvider {...methods}>
             <View style={styles.formContainer}>
               {fields.map((field, index) => {
-                return <View key={field.id}>
-                  <ItemArrayField id={field.id} index={index} itemsMap={itemsMap} />
-                  <View style={styles.removeBlockButtonContainer}>
-                    <Button
-                      mode="contained"
-                      style={styles.removeBlockButton}
-                      onPress={() => {
-                        removeBlock(index)
-                      }}>
-                      Remover bloco
-                    </Button>
+                return (
+                  <View key={field.id}>
+                    <ItemArrayField id={field.id} index={index} />
+                    <View style={styles.removeBlockButtonContainer}>
+                      <Button
+                        mode="contained"
+                        style={styles.removeBlockButton}
+                        onPress={() => {
+                          removeBlock(index)
+                        }}>
+                        Remover bloco
+                      </Button>
+                    </View>
                   </View>
-                </View>
+                )
               })}
             </View>
           </FormProvider>

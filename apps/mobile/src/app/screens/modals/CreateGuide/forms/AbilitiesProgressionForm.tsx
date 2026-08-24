@@ -2,15 +2,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm, useFormContext } from "react-hook-form";
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, MD3Theme, Text, useTheme } from "react-native-paper";
+import { MD3Theme, Text, useTheme } from "react-native-paper";
 import z from "zod";
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
 import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
-import { ChampionsDataDragonDetailsSolo } from "../../../../../dtos/champion.dto";
-import { CreateGuideDto, guideSchemaShape, keyFromLvlsBuilder, LvlKey, lvlsArrayBuilder } from "../dto/create-guide-schema";
+import useChampionData from "../../../../../hooks/useChampion";
+import Error from "../../../feedback/Error";
+import Loading from "../../../feedback/Loading";
+import { CreateGuideFormDto, guideSchemaShape, keyFromLvlsBuilder, LvlKey, lvlsArrayBuilder } from "../dto/create-guide-schema";
 
 export const abilitiesProgressionSchema = guideSchemaShape.pick({
   abilitiesProgression: true,
@@ -18,10 +20,6 @@ export const abilitiesProgressionSchema = guideSchemaShape.pick({
 })
 
 export type AbilitiesProgressionDto = z.infer<typeof abilitiesProgressionSchema>
-
-type Props = {
-  championData: ChampionsDataDragonDetailsSolo,
-}
 
 const resolver = zodResolver(abilitiesProgressionSchema)
 
@@ -48,13 +46,29 @@ const indexToAbilityOption = {
   3: AbilityOption.D,
 }
 
-export default function GuideAbilitiesProgressionForm({ championData }: Props) {
+const NoChampionSelected = () => {
+  return (
+    <View>
+      <Text>
+        Nenhum campeão selecionado
+      </Text>
+    </View>
+  )
+}
+
+type Props = {
+  champion: string
+}
+
+export default function GuideAbilitiesProgressionForm({ champion }: Props) {
+  const { championData, loading, error } = useChampionData(champion)
+
   const theme = useTheme()
   const styles = makeStyles(theme)
 
   const { version } = usePatchVersion()
 
-  const mainFormContext = useFormContext<CreateGuideDto>()
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
   const stepperContext = useStepperContext()
 
   const {
@@ -90,21 +104,21 @@ export default function GuideAbilitiesProgressionForm({ championData }: Props) {
     }
   })
 
-  const onSubmit = (formValues: AbilitiesProgressionDto) => {
-    stepperContext.nextStep()
-    mainFormContext.setValues(formValues)
+  if (loading) {
+    return <Loading />
   }
 
-  const CustomNextButton = () => {
-    return (
-      <Button
-        mode="contained"
-        style={{ flex: 1 }}
-        onPress={handleSubmit(onSubmit)}
-      >
-        Próximo passo
-      </Button>
-    )
+  if (error) {
+    return <Error />
+  }
+
+  if (!championData) {
+    return <NoChampionSelected />
+  }
+
+  const onSubmit = (formValues: AbilitiesProgressionDto) => {
+    mainFormContext.setValues(formValues, { shouldValidate: true })
+    stepperContext.nextStep()
   }
 
   const setFieldOnDraft = (key: LvlKey, index: number) => {
@@ -123,9 +137,7 @@ export default function GuideAbilitiesProgressionForm({ championData }: Props) {
 
   const isSelected = (levelKey: LvlKey, index: number) => {
     const value = indexToAbilityOption[index as KeymapIndexType]
-    const abilitiesProgression = getValues('abilitiesProgression')
-
-    return abilitiesProgression[levelKey] === value
+    return getValues('abilitiesProgression')[levelKey] === value
   }
 
   return (
@@ -163,7 +175,9 @@ export default function GuideAbilitiesProgressionForm({ championData }: Props) {
         }
       </View>
       <ScrollView>
-        <View style={styles.levelSelectionContainer}>
+        <View
+          style={styles.levelSelectionContainer}
+        >
           {championData.spells.map((_, index) => {
             return (
               <FlatList

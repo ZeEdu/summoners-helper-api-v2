@@ -3,7 +3,6 @@ import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Icon, TextInput, useTheme } from "react-native-paper";
 
 import FormFieldErrors from "../../../../../../components/forms/FormFieldErrors";
-import { ItemDetails } from "../../../../../../dtos/item.dto";
 import { useItemSelectionContext } from "./context/useItemSelectionContext";
 import ArrayItem from "./Item";
 import { ItemsBlockDto } from "./ItemsForm";
@@ -11,9 +10,6 @@ import { ItemsBlockDto } from "./ItemsForm";
 type ItemArrayFieldProps = {
   id: string;
   index: number;
-  itemsMap: {
-    [key: string]: ItemDetails;
-  }
 }
 
 type FormField = Record<"id", string> & {

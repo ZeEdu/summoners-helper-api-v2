@@ -10,10 +10,22 @@ const Stack = createNativeStackNavigator<ModalStackParamList>();
 export default function ModalsNavigator() {
   return (
     <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
-      <Stack.Screen name="BindRiotAccount" component={BindRiotAccount} />
-      <Stack.Screen name="CreateGuide" component={CreateGuide} options={{
-        headerRight: () => <Button mode='contained' style={style.headerButton}>Salvar</Button>,
-      }} />
+      <Stack.Screen
+        name="BindRiotAccount"
+        component={BindRiotAccount}
+      />
+      <Stack.Screen
+        name="CreateGuide"
+        component={CreateGuide}
+        options={{
+          headerRight: () => (<Button
+            mode='contained'
+            style={style.headerButton}
+          >
+            Salvar
+          </Button>),
+        }}
+      />
     </Stack.Navigator>
   );
 }

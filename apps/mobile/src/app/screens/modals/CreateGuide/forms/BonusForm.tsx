@@ -8,7 +8,7 @@ import AppInputController from "../../../../../components/forms/AppInputControll
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
 import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import { CreateGuideDto, createGuideSchema, SLOT_BONUS, SLOT_BONUS_LABELS } from "../dto/create-guide-schema";
+import { CreateGuideFormDto, createGuideSchema, SLOT_BONUS, SLOT_BONUS_LABELS } from "../dto/create-guide-schema";
 
 const slotOne = [
   {
@@ -67,13 +67,13 @@ export type BonusDto = z.infer<typeof BonusSchema>
 const resolver = zodResolver(BonusSchema)
 
 export default function BonusForm() {
-  const mainFormContext = useFormContext<CreateGuideDto>()
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
   const stepperContext = useStepperContext()
 
   const { control, formState: { errors }, handleSubmit } = useForm<BonusDto>({ resolver })
 
   const onSubmit = (formValues: BonusDto) => {
-    mainFormContext.setValues(formValues)
+    mainFormContext.setValues(formValues, { shouldValidate: true })
     stepperContext.nextStep()
   }
 

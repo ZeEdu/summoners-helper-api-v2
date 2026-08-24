@@ -1,6 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
 
 import { useAuthContext } from '../../contexts/auth/useAuth';
+import useDataDragonContext from '../../contexts/data-dragon/useDataDragonContext';
+import Error from '../screens/feedback/Error';
+import Loading from '../screens/feedback/Loading';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import ModalsNavigator from './ModalsNavigator';
@@ -10,7 +14,23 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const authContext = useAuthContext();
-  // Deve buscar o JSON atualizado do DataDragon
+  const useDataDragon = useDataDragonContext()
+
+  if (useDataDragon.error) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='Error' component={Error}></Stack.Screen>
+      </Stack.Navigator>
+    )
+  }
+
+  if (useDataDragon.loading) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='Loading' component={Loading}></Stack.Screen>
+      </Stack.Navigator>
+    )
+  }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>{

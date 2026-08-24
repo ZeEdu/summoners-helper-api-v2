@@ -8,8 +8,9 @@ import AppInputController from "../../../../../components/forms/AppInputControll
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
 import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import { SummonerSpell } from "../../../../../dtos/spell.dto";
-import { CreateGuideDto, createGuideSchema } from "../dto/create-guide-schema";
+import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
+import Error from "../../../feedback/Error";
+import { CreateGuideFormDto, createGuideSchema } from "../dto/create-guide-schema";
 
 const GuideSummonerSpellsSchema = createGuideSchema.pick({
   firstSpell: true,
@@ -30,19 +31,27 @@ export type GuideSummonerSpellsDto = z.infer<typeof GuideSummonerSpellsSchema>
 
 const resolver = zodResolver(GuideSummonerSpellsSchema)
 
-type GuideIntroductionFormProp = {
-  summonerSpells: SummonerSpell[]
-}
+export default function GuideSummonerSpellsForm() {
+  console.log('Entrou no segundo step');
 
-export default function GuideSummonerSpellsForm({ summonerSpells }: GuideIntroductionFormProp) {
-  const mainFormContext = useFormContext<CreateGuideDto>()
+
+  const useDataDragon = useDataDragonContext()
+  if (!useDataDragon.dataDragon) {
+    return (
+      <Error />
+    )
+  }
+
+  const spells = useDataDragon.dataDragon.spells
+
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
   const stepperContext = useStepperContext()
 
   const { control, handleSubmit, formState: { errors }, getValues } = useForm<GuideSummonerSpellsDto>({ resolver })
 
   const onSubmit = (formValues: GuideSummonerSpellsDto) => {
+    mainFormContext.setValues(formValues, { shouldValidate: true })
     stepperContext.nextStep()
-    mainFormContext.setValues(formValues)
   }
 
   const watchSpells = useWatch({
@@ -53,7 +62,7 @@ export default function GuideSummonerSpellsForm({ summonerSpells }: GuideIntrodu
   const buildFirstSpellOptions = () => {
     const secondSpellValue = getValues('secondSpell')
 
-    return summonerSpells
+    return spells
       .filter(({ id }) => secondSpellValue !== id)
       .map(({ id, name }) => ({ value: id, label: name }))
   }
@@ -61,7 +70,7 @@ export default function GuideSummonerSpellsForm({ summonerSpells }: GuideIntrodu
   const buildSecondSpellOptions = () => {
     const firstSpellValue = getValues('firstSpell')
 
-    return summonerSpells
+    return spells
       .filter(({ id }) => firstSpellValue !== id)
       .map(({ id, name }) => ({ value: id, label: name }))
   }

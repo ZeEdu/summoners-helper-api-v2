@@ -9,11 +9,11 @@ import AppSelectController from "../../../../../components/forms/app-select-cont
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { StepperFooter } from "../../../../../components/stepper";
-import { useStepperContext } from "../../../../../components/stepper/context";
 import { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import { ChampionsDataDragonDetails } from "../../../../../dtos/champion.dto";
+import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
+import Error from "../../../feedback/Error";
 import { style } from "../CreateGuide";
-import { CreateGuideDto, guideSchemaShape } from "../dto/create-guide-schema";
+import { CreateGuideFormDto, guideSchemaShape } from "../dto/create-guide-schema";
 
 const ThreatsSchema = guideSchemaShape.pick({
   threats: true,
@@ -24,16 +24,19 @@ type ThreatsDto = z.infer<typeof ThreatsSchema>
 
 const resolver = zodResolver(ThreatsSchema)
 
-type ThreatsProps = {
-  championList: ChampionsDataDragonDetails[]
-}
+export default function ThreatsForm() {
+  const useDataDragon = useDataDragonContext()
+  if (!useDataDragon.dataDragon) {
+    return (
+      <Error />
+    )
+  }
 
-export default function ThreatsForm({ championList }: ThreatsProps) {
-  const mainFormContext = useFormContext<CreateGuideDto>()
-  const stepperContext = useStepperContext()
+  const championList = useDataDragon.dataDragon.champions
 
-  const { control, handleSubmit } = useForm<ThreatsDto>({ resolver })
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
 
+  const { control, handleSubmit, formState: { errors } } = useForm<ThreatsDto>({ resolver })
   const { fields, append, remove } = useFieldArray({ control, name: 'threats' })
 
   const appendThreat = () => {
@@ -43,18 +46,29 @@ export default function ThreatsForm({ championList }: ThreatsProps) {
     })
   }
 
-  const onSubmit = (formValues: any) => {
-    stepperContext.nextStep()
-    mainFormContext.setValues(formValues)
+  const onSubmit = (formValues: ThreatsDto) => {
+    mainFormContext.setValues(formValues, { shouldValidate: true })
   }
 
   const getErrorFromIndex = (index: number) => {
-    return mainFormContext.formState.errors.threats?.[index]
+    return errors.threats?.[index]
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.form}>
+        <View>
+          <AppInputController
+            control={control}
+            name={`threatsDescription`}
+            inputOptions={{
+              label: 'Descrição das ameaças',
+              placeholder: 'Descrição da ameaças',
+              multiline: true
+            }}
+          />
+          <FormFieldErrors fieldError={errors.threatsDescription} />
+        </View>
         <View style={styles.scroll}>
           <ScrollView>
             <FlatList
@@ -66,7 +80,7 @@ export default function ThreatsForm({ championList }: ThreatsProps) {
                   >
                     <AppSelectController
                       key={`${index}.threat`}
-                      control={mainFormContext.control}
+                      control={control}
                       title={'Selecione uma ameaça'}
                       options={championList.map(({ id, name }) => ({ value: id, label: name }))}
                       placeholder={'Selecione uma ameaça'}
@@ -76,7 +90,7 @@ export default function ThreatsForm({ championList }: ThreatsProps) {
 
                     <AppInputController
                       key={`${index}.description`}
-                      control={mainFormContext.control}
+                      control={control}
                       name={`threats.${index}.description`}
                       inputOptions={{
                         label: 'Descrição da ameaça',
@@ -106,7 +120,7 @@ export default function ThreatsForm({ championList }: ThreatsProps) {
       <StepperFooter
         customNextButton={
           buildCustomButtonProps({
-            onPress: handleSubmit(onSubmit)
+            onPress: handleSubmit(onSubmit),
           })
         }
       />

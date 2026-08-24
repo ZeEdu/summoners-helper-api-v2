@@ -9,8 +9,9 @@ import FormFieldErrors from "../../../../../components/forms/FormFieldErrors"
 
 import { useStepperContext } from "../../../../../components/stepper/context"
 import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter"
-import { ChampionsDataDragonDetails } from "../../../../../dtos/champion.dto"
-import { CreateGuideDto, createGuideSchema } from "../dto/create-guide-schema"
+import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext"
+import Error from "../../../feedback/Error"
+import { CreateGuideFormDto, createGuideSchema } from "../dto/create-guide-schema"
 
 enum ROLES {
   JUNGLE = 'JUNGLE',
@@ -62,12 +63,15 @@ export type GuideIntroductionDto = z.infer<typeof GuideIntroductionSchema>
 
 const resolver = zodResolver(GuideIntroductionSchema)
 
-type GuideIntroductionFormProp = {
-  championList: ChampionsDataDragonDetails[],
-}
+export default function GuideIntroductionForm() {
+  const useDataDragon = useDataDragonContext()
+  if (!useDataDragon.dataDragon) {
+    return (
+      <Error />
+    )
+  }
 
-export default function GuideIntroductionForm({ championList }: GuideIntroductionFormProp) {
-  const mainFormContext = useFormContext<CreateGuideDto>()
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
   const stepperContext = useStepperContext()
 
   const {
@@ -77,10 +81,10 @@ export default function GuideIntroductionForm({ championList }: GuideIntroductio
   } = useForm<GuideIntroductionDto>({ resolver })
 
   const onSubmit = (formValues: GuideIntroductionDto) => {
+    // Setar o valor no formulário principal
+    mainFormContext.setValues(formValues, { shouldValidate: true })
     // Ir para o próximo step
     stepperContext.nextStep()
-    // Setar o valor no formulário principal
-    mainFormContext.setValues(formValues)
   }
 
   return (
@@ -110,7 +114,7 @@ export default function GuideIntroductionForm({ championList }: GuideIntroductio
         <AppSelectController
           control={control}
           title={'Selecione um campeão'}
-          options={championList.map(({ id, name }) => ({ value: id, label: name }))}
+          options={useDataDragon.dataDragon.champions.map(({ id, name }) => ({ value: id, label: name }))}
           placeholder={'Selecione um campeão'}
           name={'champion'}
         />

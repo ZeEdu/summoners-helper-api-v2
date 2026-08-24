@@ -3,7 +3,9 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 export const Stacks = {
   Main: 'Main',
   Auth: 'Auth',
-  Modals: 'Modals'
+  Modals: 'Modals',
+  Loading: 'Loading',
+  Error: 'Error'
 } as const
 
 export const Routes = {
@@ -22,6 +24,8 @@ export type RootStackParamList = {
   [Stacks.Main]: NavigatorScreenParams<MainTabsParamList>;
   [Stacks.Auth]: NavigatorScreenParams<AuthStackParamList>;
   [Stacks.Modals]: NavigatorScreenParams<ModalStackParamList>;
+  [Stacks.Loading]: undefined;
+  [Stacks.Error]: undefined
 };
 
 export type MainTabsParamList = {

@@ -161,10 +161,12 @@ export const guideSchemaShape = z.object({
   )
 })
 
+export type CreateGuideDto = z.infer<typeof guideSchemaShape>
+
 export const createGuideSchema = guideSchemaShape.omit({
   patchVersion: true,
   createdAt: true,
   createdBy: true
 })
 
-export type CreateGuideDto = z.infer<typeof createGuideSchema>
+export type CreateGuideFormDto = z.infer<typeof createGuideSchema>

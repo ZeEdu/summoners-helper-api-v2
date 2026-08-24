@@ -1,26 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { Dimensions, StyleSheet } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button } from "react-native-paper";
 
 import { StyledView } from "@org/ui";
 
 import { Stepper, StepperItem } from "../../../../components/stepper";
 import { StepperProvider } from "../../../../components/stepper/context";
+import { useAuthContext } from "../../../../contexts/auth/useAuth";
 import { usePatchVersion } from "../../../../contexts/patchVersion/usePatchVersion";
-import {
-  ChampionDataDragon,
-  ChampionsDataDragon,
-  ChampionsDataDragonDetails,
-  ChampionsDataDragonDetailsSolo
-} from "../../../../dtos/champion.dto";
-import { ItemDetails, ItemsDataDragon } from "../../../../dtos/item.dto";
-import { RunesReforgedDataDragon } from "../../../../dtos/runes-reforged.dto";
-import { SummonerSpell, SummonerSpellDataDragon } from "../../../../dtos/spell.dto";
+import { ApiService } from "../../../../services/api/api.service";
 import { ModalStackParamList } from "../../../navigation/types";
-import { CreateGuideDto, createGuideSchema } from "./dto/create-guide-schema";
+import { AbilityOption, CreateGuideDto, CreateGuideFormDto, createGuideSchema } from "./dto/create-guide-schema";
 import GuideAbilitiesProgressionForm from "./forms/AbilitiesProgressionForm";
 import BonusForm from "./forms/BonusForm";
 import GuideIntroductionForm from "./forms/GuideIntroductionForm";
@@ -35,30 +28,104 @@ type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>
 
 const resolver = zodResolver(createGuideSchema)
 
-export interface ItemDetailsWithId extends ItemDetails {
-  id: string
-}
-
 export default function CreateGuide({ navigation }: Props) {
-  const { version } = usePatchVersion()
+  const useAuth = useAuthContext()
+  const usePatch = usePatchVersion()
+  const methods = useForm<CreateGuideFormDto>({
+    resolver
+  })
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | undefined>(undefined)
+  const onSubmit = async (value: CreateGuideFormDto) => {
+    const createGuideDto: CreateGuideDto = {
+      ...value,
+      patchVersion: usePatch.version!,
+      createdBy: useAuth.user!._id!.toString(),
+      createdAt: new Date().toString()
+    }
 
-  const methods = useForm<CreateGuideDto>({ resolver })
+    ApiService.Guides.create(createGuideDto)
+      .then((response) => {
+        console.log({ response });
+      })
+      .catch((err) => {
+        console.log({ err });
+      })
+      .finally(() => {
+        console.log('finally');
+      })
 
-  const [championList, setChampionList] = useState<ChampionsDataDragonDetails[]>([])
-  const [championData, setChampionData] = useState<ChampionsDataDragonDetailsSolo | undefined>(undefined)
-  const [summonerSpells, setSummonerSpells] = useState<SummonerSpell[]>([])
-
-  const [runes, setRunes] = useState<RunesReforgedDataDragon[]>([])
-  const [runesMap, setRunesMap] = useState<Record<string, RunesReforgedDataDragon>>({})
-
-  const [items, setItems] = useState<ItemDetailsWithId[]>([])
-  const [itemsMap, setItemsMap] = useState<ItemsDataDragon['data']>({})
-
-  const onSubmit = (value: CreateGuideDto) => {
     console.log({ value });
+  }
+
+  const setValuesOnForm = () => {
+    methods.setValues({
+      "title": "asdasd",
+      "introduction": "asdasd",
+      "champion": "Aatrox",
+      "role": "MID_LANE",
+      "bonusSlotOne": "ADAPTIVE",
+      "bonusSlotTwo": "ADAPTIVE",
+      "bonusSlotThree": "BASE_HEALTH",
+      "bonusDescription": "asdasd",
+      "primaryRune": "8100",
+      "primarySlots": {
+        "first": "8112",
+        "second": "8126",
+        "third": "8137",
+        "fourth": "8105"
+      },
+      "primaryRuneDescription": "asdasdasd",
+      "secondaryRune": "8300",
+      "secondarySlots": {
+        "first": "8304",
+        "second": "8306",
+        "third": "8321"
+      },
+      "secondaryRuneDescription": "asdasdasd",
+      "firstSpell": "SummonerBarrier",
+      "secondSpell": "SummonerBoost",
+      "spellsDescription": "asdasda",
+      "itemsBlock": [
+        {
+          "itemRollName": "asdasdasdasd",
+          "itemArray": [
+            {
+              "itemId": "1001"
+            }
+          ],
+          "description": "adasdasd"
+        }
+      ],
+      "itemsDescription": "asdasdasd",
+      "abilitiesProgression": {
+        "l1": AbilityOption.A,
+        "l2": AbilityOption.A,
+        "l3": AbilityOption.A,
+        "l4": AbilityOption.A,
+        "l5": AbilityOption.A,
+        "l6": AbilityOption.A,
+        "l7": AbilityOption.A,
+        "l8": AbilityOption.A,
+        "l9": AbilityOption.A,
+        "l10": AbilityOption.A,
+        "l11": AbilityOption.A,
+        "l12": AbilityOption.A,
+        "l13": AbilityOption.A,
+        "l14": AbilityOption.A,
+        "l15": AbilityOption.A,
+        "l16": AbilityOption.A,
+        "l17": AbilityOption.A,
+        "l18": AbilityOption.A,
+      },
+      "abilitiesProgressionDescription": "asdasdas",
+      "threatsDescription": "asdasdasd",
+      "threats": [
+        {
+          "threat": "Akali",
+          "description": "asdasdasd"
+        }
+      ]
+    }, { shouldValidate: true })
   }
 
   const watchChampion = useWatch({
@@ -73,128 +140,45 @@ export default function CreateGuide({ navigation }: Props) {
 
   const { height } = Dimensions.get("window")
 
-  useEffect(() => {
-    async function getChampionData(championName: string) {
-      const response = await fetch(`https://ddragon.leagueoflegends.com/cdn/12.6.1/data/pt_BR/champion/${championName}.json`)
-      const json = await response.json() as ChampionDataDragon
-      setChampionData(json.data[championName])
-    }
-
-    if (watchChampion) {
-      console.log({ watchChampion });
-
-      setLoading(true)
-      getChampionData(watchChampion)
-        .catch(() => {
-          setError('Não foi possível carregar os dados do campeão')
-        })
-        .finally(() => {
-          setLoading(false)
-        })
-
-    } else {
-      setChampionData(undefined)
-    }
-    // Carregar dados do campeão
-  }, [watchChampion])
-
   // Carregar todos os dados
   useEffect(() => {
-    // TODO: Puxar tudo isso num serviço chamado no startup da aplicação
-    async function loadChampionList() {
-      const response = await fetch('https://ddragon.leagueoflegends.com/cdn/12.6.1/data/pt_BR/champion.json')
-      const json = await response.json() as ChampionsDataDragon
-      const championsData = json.data
-      setChampionList(Object.values(championsData))
-    }
+    console.log('[navigation, methods.formState]');
 
-    async function loadSummonerSpells() {
-      const response = await fetch('https://ddragon.leagueoflegends.com/cdn/12.6.1/data/pt_BR/summoner.json')
-      const json = await response.json() as SummonerSpellDataDragon
-      const spells = Object.values(json.data)
-      setSummonerSpells(spells)
-    }
-
-    async function loadRunesReforged() {
-      const response = await fetch('https://ddragon.leagueoflegends.com/cdn/12.6.1/data/pt_BR/runesReforged.json')
-      const json = await response.json() as RunesReforgedDataDragon[]
-      setRunes(json)
-
-      const runesMap = json
-        .reduce(
-          (previousValue: Record<string, RunesReforgedDataDragon>, currentValue: RunesReforgedDataDragon) =>
-            ({ ...previousValue, [currentValue.id.toString()]: currentValue }), {} as Record<string, RunesReforgedDataDragon>
-        )
-
-      setRunesMap(runesMap)
-    }
-
-    async function loadItems() {
-      const response = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/pt_BR/item.json`)
-      const json = await response.json() as ItemsDataDragon
-      const itemsWithId = Object.keys(json.data).map((key) => ({ ...json.data[key], id: key }))
-      setItems(itemsWithId)
-      setItemsMap(json.data)
-    }
-
-    async function init() {
-      await loadChampionList()
-      await loadSummonerSpells()
-      await loadRunesReforged()
-      await loadItems()
-    }
-
-    setLoading(true)
-    init()
-      .catch(() => {
-        setError('Um erro ocorreu')
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [])
-
-  useEffect(() => {
     // Use `setOptions` to update the button that we previously specified
     // Now the button includes an `onPress` handler to update the count
     navigation
       .setOptions({
         headerRight: () => (
-          <Button
-            mode="contained"
-            style={style.headerButton}
-            onPress={methods.handleSubmit(onSubmit)}
-          >
-            Salvar
-          </Button>
+          <>
+            <Button
+              mode="contained"
+              style={style.headerButton}
+              onPress={setValuesOnForm}
+            >
+              Set values
+            </Button>
+            <Button
+              mode="contained"
+              style={style.headerButton}
+              disabled={!methods.formState.isValid}
+              onPress={methods.handleSubmit(onSubmit)}
+            >
+              Salvar
+            </Button>
+          </>
         ),
       });
-  }, [navigation]);
+  }, [navigation, methods.formState]);
 
-  const Loading = () => <StyledView>
-    <Text
-      variant="headlineLarge"
-    >
-      Carregando
-    </Text>
-  </StyledView>
-
-  if (loading || !version) {
-    return (
-      <Loading />
-    )
-  }
-
-  if (error) {
-    return (
-      <StyledView>
-        <Text
-          variant="headlineLarge"
-        >
-          {error}
-        </Text>
-      </StyledView>
-    )
+  const formPageIndexes = {
+    introduction: 0,
+    spells: 1,
+    mainRunes: 2,
+    secondaryRune: 3,
+    bonus: 4,
+    items: 5,
+    abilitiesProgression: 6,
+    threats: 7,
   }
 
   return (
@@ -204,37 +188,30 @@ export default function CreateGuide({ navigation }: Props) {
           <StepperProvider>
             <Stepper>
               <StepperItem title="Primeiro Step">
-                <GuideIntroductionForm championList={championList} />
+                <GuideIntroductionForm />
               </StepperItem>
               <StepperItem title="Segundo Step">
-                <GuideSummonerSpellsForm summonerSpells={summonerSpells} />
+                <GuideSummonerSpellsForm />
               </StepperItem>
               <StepperItem title="Terceiro Step">
-                <GuideMainRunesForm
-                  runes={runes}
-                  runesMap={runesMap}
-                  secondaryRune={secondaryRune}
-                />
+                <GuideMainRunesForm secondaryRune={secondaryRune} />
               </StepperItem>
               <StepperItem title="Quarto Step">
-                <GuideSecondaryRunesForm
-                  runes={runes}
-                  runesMap={runesMap}
-                />
+                <GuideSecondaryRunesForm />
               </StepperItem>
               <StepperItem title="Quinto Step">
                 <BonusForm />
               </StepperItem>
               <StepperItem title="Sexto Step">
                 <ItemSelectionProvider>
-                  <ItemsForm items={items} itemsMap={itemsMap} />
+                  <ItemsForm />
                 </ItemSelectionProvider>
               </StepperItem>
               <StepperItem title="Sétimo Step">
-                <ThreatsForm championList={championList} />
+                <GuideAbilitiesProgressionForm champion={watchChampion} />
               </StepperItem>
               <StepperItem title="Oitavo Step">
-                {championData && <GuideAbilitiesProgressionForm championData={championData} />}
+                <ThreatsForm />
               </StepperItem>
             </Stepper>
           </StepperProvider>
