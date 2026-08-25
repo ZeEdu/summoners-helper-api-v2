@@ -6,14 +6,16 @@ import {
 } from '../../pagination/pagination.dto';
 import { Model, QueryFilter, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Guide, GuideDocument, IGuide } from '../schema/guide.schema';
+import { Guide, GuideDocument } from '../schema/guide.schema';
 import { CreateGuideDto } from '../dto/guide/create-guide.dto';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
-import { IUser } from '@org/contracts';
+import { IGuide, IUser } from '@org/contracts';
 
 @Injectable()
 export class GuidesService {
-  constructor(@InjectModel(Guide.name) private guideModel: Model<GuideDocument>) { }
+  constructor(
+    @InjectModel(Guide.name) private guideModel: Model<GuideDocument>,
+  ) {}
 
   async getGuides(filter?: QueryFilter<Guide>, pagination?: PaginationDto) {
     const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};

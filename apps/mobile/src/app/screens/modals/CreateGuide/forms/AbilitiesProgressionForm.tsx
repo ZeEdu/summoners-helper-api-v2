@@ -1,9 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm, useFormContext } from "react-hook-form";
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { MD3Theme, Text, useTheme } from "react-native-paper";
 import z from "zod";
+
+import { CreateGuideDto, CreateGuideSchema } from "@org/contracts";
+
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
@@ -12,9 +14,9 @@ import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVe
 import useChampionData from "../../../../../hooks/useChampion";
 import Error from "../../../feedback/Error";
 import Loading from "../../../feedback/Loading";
-import { CreateGuideFormDto, guideSchemaShape, keyFromLvlsBuilder, LvlKey, lvlsArrayBuilder } from "../dto/create-guide-schema";
+import { keyFromLvlsBuilder, LvlKey, lvlsArrayBuilder } from "./utils";
 
-export const abilitiesProgressionSchema = guideSchemaShape.pick({
+export const abilitiesProgressionSchema = CreateGuideSchema.pick({
   abilitiesProgression: true,
   abilitiesProgressionDescription: true,
 })
@@ -68,7 +70,7 @@ export default function GuideAbilitiesProgressionForm({ champion }: Props) {
 
   const { version } = usePatchVersion()
 
-  const mainFormContext = useFormContext<CreateGuideFormDto>()
+  const mainFormContext = useFormContext<CreateGuideDto>()
   const stepperContext = useStepperContext()
 
   const {

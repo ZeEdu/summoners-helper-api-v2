@@ -1,6 +1,5 @@
-import { UpdateUserProfileDto } from "@org/contracts";
+import { CreateGuideDto, UpdateUserProfileDto } from "@org/contracts";
 
-import { CreateGuideDto } from "../../app/screens/modals/CreateGuide/dto/create-guide-schema";
 import { customFetch } from '../../utils/customFetch/customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { API_CONSTANTS } from './api.constants';

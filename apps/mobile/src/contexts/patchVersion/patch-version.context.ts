@@ -1,7 +1,9 @@
-import { createContext } from "react"
+import { createContext } from 'react';
 
 export type PatchVersionType = {
-  version: string | undefined
-}
+  version: string;
+};
 
-export const PatchVersionContext = createContext<PatchVersionType | undefined>(undefined)
+export const PatchVersionContext = createContext<PatchVersionType | undefined>(
+  undefined,
+);

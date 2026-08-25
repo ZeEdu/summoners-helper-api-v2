@@ -3,12 +3,13 @@ import { useForm, useFormContext } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import z from "zod";
 
+import { CreateGuideDto, CreateGuideSchema, SLOT_BONUS, SLOT_BONUS_LABELS } from "@org/contracts";
+
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
 import AppInputController from "../../../../../components/forms/AppInputController";
 import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
 import { useStepperContext } from "../../../../../components/stepper/context";
 import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import { CreateGuideFormDto, createGuideSchema, SLOT_BONUS, SLOT_BONUS_LABELS } from "../dto/create-guide-schema";
 
 const slotOne = [
   {
@@ -55,7 +56,7 @@ const slotThree = [
   },
 ];
 
-export const BonusSchema = createGuideSchema.pick({
+export const BonusSchema = CreateGuideSchema.pick({
   bonusDescription: true,
   bonusSlotOne: true,
   bonusSlotTwo: true,
@@ -67,7 +68,7 @@ export type BonusDto = z.infer<typeof BonusSchema>
 const resolver = zodResolver(BonusSchema)
 
 export default function BonusForm() {
-  const mainFormContext = useFormContext<CreateGuideFormDto>()
+  const mainFormContext = useFormContext<CreateGuideDto>()
   const stepperContext = useStepperContext()
 
   const { control, formState: { errors }, handleSubmit } = useForm<BonusDto>({ resolver })

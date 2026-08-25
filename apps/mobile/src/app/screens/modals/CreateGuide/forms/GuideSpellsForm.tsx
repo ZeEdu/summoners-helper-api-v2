@@ -1,79 +1,76 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
-import z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useFormContext, useWatch } from 'react-hook-form';
+import { StyleSheet, View } from 'react-native';
+import z from 'zod';
 
-import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
-import AppInputController from "../../../../../components/forms/AppInputController";
-import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
-import { useStepperContext } from "../../../../../components/stepper/context";
-import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
-import Error from "../../../feedback/Error";
-import { CreateGuideFormDto, createGuideSchema } from "../dto/create-guide-schema";
+import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
 
-const GuideSummonerSpellsSchema = createGuideSchema.pick({
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
+import AppInputController from '../../../../../components/forms/AppInputController';
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { useStepperContext } from '../../../../../components/stepper/context';
+import StepperFooter, {
+  buildCustomButtonProps,
+} from '../../../../../components/stepper/StepperFooter';
+import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+
+const GuideSummonerSpellsSchema = CreateGuideSchema.pick({
   firstSpell: true,
   secondSpell: true,
-  spellsDescription: true
-})
-  .superRefine(({ firstSpell, secondSpell }, ctx) => {
-    if (firstSpell === secondSpell) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Você não pode selecionar a mesma magia',
-        path: ['secondSpell']
-      })
-    }
-  })
+  spellsDescription: true,
+}).superRefine(({ firstSpell, secondSpell }, ctx) => {
+  if (firstSpell === secondSpell) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Você não pode selecionar a mesma magia',
+      path: ['secondSpell'],
+    });
+  }
+});
 
-export type GuideSummonerSpellsDto = z.infer<typeof GuideSummonerSpellsSchema>
+export type GuideSummonerSpellsDto = z.infer<typeof GuideSummonerSpellsSchema>;
 
-const resolver = zodResolver(GuideSummonerSpellsSchema)
+const resolver = zodResolver(GuideSummonerSpellsSchema);
 
 export default function GuideSummonerSpellsForm() {
-  console.log('Entrou no segundo step');
+  const useDataDragon = useDataDragonContext();
+  const spellsList = useDataDragon.dataDragon?.spells || [];
 
+  const mainFormContext = useFormContext<CreateGuideDto>();
+  const stepperContext = useStepperContext();
 
-  const useDataDragon = useDataDragonContext()
-  if (!useDataDragon.dataDragon) {
-    return (
-      <Error />
-    )
-  }
-
-  const spells = useDataDragon.dataDragon.spells
-
-  const mainFormContext = useFormContext<CreateGuideFormDto>()
-  const stepperContext = useStepperContext()
-
-  const { control, handleSubmit, formState: { errors }, getValues } = useForm<GuideSummonerSpellsDto>({ resolver })
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm<GuideSummonerSpellsDto>({ resolver });
 
   const onSubmit = (formValues: GuideSummonerSpellsDto) => {
-    mainFormContext.setValues(formValues, { shouldValidate: true })
-    stepperContext.nextStep()
-  }
+    mainFormContext.setValues(formValues, { shouldValidate: true });
+    stepperContext.nextStep();
+  };
 
   const watchSpells = useWatch({
     control,
-    name: ['firstSpell', 'secondSpell']
-  })
+    name: ['firstSpell', 'secondSpell'],
+  });
 
   const buildFirstSpellOptions = () => {
-    const secondSpellValue = getValues('secondSpell')
+    const secondSpellValue = getValues('secondSpell');
 
-    return spells
+    return spellsList
       .filter(({ id }) => secondSpellValue !== id)
-      .map(({ id, name }) => ({ value: id, label: name }))
-  }
+      .map(({ id, name }) => ({ value: id, label: name }));
+  };
 
   const buildSecondSpellOptions = () => {
-    const firstSpellValue = getValues('firstSpell')
+    const firstSpellValue = getValues('firstSpell');
 
-    return spells
+    return spellsList
       .filter(({ id }) => firstSpellValue !== id)
-      .map(({ id, name }) => ({ value: id, label: name }))
-  }
+      .map(({ id, name }) => ({ value: id, label: name }));
+  };
 
   return (
     <View style={styles.container}>
@@ -97,37 +94,35 @@ export default function GuideSummonerSpellsForm() {
               name={'secondSpell'}
             />
             <FormFieldErrors fieldError={errors.secondSpell} />
-          </>)
-        }
+          </>
+        )}
 
         <AppInputController
           control={control}
-          name={"spellsDescription"}
+          name={'spellsDescription'}
           inputOptions={{
             label: 'Descrição das magias',
             placeholder: 'Descreva o uso das magias',
-            multiline: true
+            multiline: true,
           }}
         />
         <FormFieldErrors fieldError={errors.spellsDescription} />
       </View>
 
       <StepperFooter
-        customNextButton={
-          buildCustomButtonProps({
-            onPress: handleSubmit(onSubmit)
-          })
-        }
+        customNextButton={buildCustomButtonProps({
+          onPress: handleSubmit(onSubmit),
+        })}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   content: {
-    flex: 1
-  }
-})
+    flex: 1,
+  },
+});

@@ -1,91 +1,92 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
-import z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { useForm, useFormContext, useWatch } from 'react-hook-form';
+import { StyleSheet, View } from 'react-native';
+import z from 'zod';
 
-import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
-import AppInputController from "../../../../../components/forms/AppInputController";
-import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
-import { useStepperContext } from "../../../../../components/stepper/context";
-import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
-import Error from "../../../feedback/Error";
-import { CreateGuideFormDto, createGuideSchema } from "../dto/create-guide-schema";
+import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
 
-export const mainRuneSchema = createGuideSchema.pick({
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
+import AppInputController from '../../../../../components/forms/AppInputController';
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { useStepperContext } from '../../../../../components/stepper/context';
+import StepperFooter, {
+  buildCustomButtonProps,
+} from '../../../../../components/stepper/StepperFooter';
+import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+
+export const mainRuneSchema = CreateGuideSchema.pick({
   primaryRune: true,
   primarySlots: true,
-  primaryRuneDescription: true
-})
+  primaryRuneDescription: true,
+});
 
-export type MainRuneDto = z.infer<typeof mainRuneSchema>
+export type MainRuneDto = z.infer<typeof mainRuneSchema>;
 
-const resolver = zodResolver(mainRuneSchema)
+const resolver = zodResolver(mainRuneSchema);
 
 type Props = {
-  secondaryRune: string
-}
+  secondaryRune: string;
+};
 
 export default function GuideMainRunesForm({ secondaryRune }: Props) {
-  const useDataDragon = useDataDragonContext()
-  if (!useDataDragon.dataDragon || !useDataDragon.dataDragonMaps) {
-    return (
-      <Error />
-    )
-  }
+  const useDataDragon = useDataDragonContext();
 
-  const runeList = useDataDragon.dataDragon.runes
-  const runeMap = useDataDragon.dataDragonMaps.runes
-
-  const mainFormContext = useFormContext<CreateGuideFormDto>()
-  const stepperContext = useStepperContext()
+  const mainFormContext = useFormContext<CreateGuideDto>();
+  const stepperContext = useStepperContext();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     getValues,
-    setValues
-  } = useForm<MainRuneDto>({ resolver })
+    setValues,
+  } = useForm<MainRuneDto>({ resolver });
 
   const primaryRune = useWatch<MainRuneDto>({
     control,
-    name: 'primaryRune'
-  })
+    name: 'primaryRune',
+  });
+
+  const runeList = useDataDragon.dataDragon?.runes || [];
+  const runeMap = useDataDragon.dataDragonMaps?.runes || {};
 
   const buildMainRunesOptions = () => {
     return runeList
       .filter((rune) => rune.id.toString() !== secondaryRune)
-      .map(({ id, name }) => ({ value: id.toString(), label: name }))
-  }
+      .map(({ id, name }) => ({ value: id.toString(), label: name }));
+  };
 
-  const buildFirstRunesOptions = (slot: 'first' | 'second' | 'third' | 'forth') => {
-    const currentPrimaryRunes = getValues('primaryRune')
+  const buildFirstRunesOptions = (
+    slot: 'first' | 'second' | 'third' | 'forth',
+  ) => {
+    const currentPrimaryRunes = getValues('primaryRune');
     if (!currentPrimaryRunes) {
-      return []
+      return [];
     }
 
-    let index: number
+    let index: number;
     if (slot === 'first') {
-      index = 0
+      index = 0;
     } else if (slot === 'second') {
-      index = 1
+      index = 1;
     } else if (slot === 'third') {
-      index = 2
+      index = 2;
     } else {
-      index = 3
+      index = 3;
     }
 
-    const { slots } = runeMap[currentPrimaryRunes]
-    return slots[index].runes
-      .map(({ id, name }) => ({ value: id.toString(), label: name }))
-  }
+    const { slots } = runeMap[currentPrimaryRunes];
+    return slots[index].runes.map(({ id, name }) => ({
+      value: id.toString(),
+      label: name,
+    }));
+  };
 
   const onSubmit = (formValues: MainRuneDto) => {
-    mainFormContext.setValues(formValues, { shouldValidate: true })
-    stepperContext.nextStep()
-  }
+    mainFormContext.setValues(formValues, { shouldValidate: true });
+    stepperContext.nextStep();
+  };
 
   useEffect(() => {
     setValues({
@@ -94,9 +95,9 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
         second: '',
         third: '',
         fourth: '',
-      }
-    })
-  }, [primaryRune])
+      },
+    });
+  }, [primaryRune]);
 
   return (
     <View style={styles.container}>
@@ -109,74 +110,71 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
           name={`primaryRune`}
         />
         <FormFieldErrors fieldError={errors.primaryRune} />
-        {
-          (!!primaryRune) && (
-            <>
-              <AppSelectController
-                control={control}
-                title={'Primeira Runa'}
-                options={buildFirstRunesOptions('first')}
-                placeholder={'Selecione a primeira runa'}
-                name={`primarySlots.first`}
-              />
-              <FormFieldErrors fieldError={errors.primarySlots?.first} />
+        {!!primaryRune && (
+          <>
+            <AppSelectController
+              control={control}
+              title={'Primeira Runa'}
+              options={buildFirstRunesOptions('first')}
+              placeholder={'Selecione a primeira runa'}
+              name={`primarySlots.first`}
+            />
+            <FormFieldErrors fieldError={errors.primarySlots?.first} />
 
-              <AppSelectController
-                control={control}
-                title={'Segunda Runa'}
-                options={buildFirstRunesOptions('second')}
-                placeholder={'Selecione a segunda runa'}
-                name={`primarySlots.second`}
-              />
-              <FormFieldErrors fieldError={errors.primarySlots?.second} />
+            <AppSelectController
+              control={control}
+              title={'Segunda Runa'}
+              options={buildFirstRunesOptions('second')}
+              placeholder={'Selecione a segunda runa'}
+              name={`primarySlots.second`}
+            />
+            <FormFieldErrors fieldError={errors.primarySlots?.second} />
 
-              <AppSelectController
-                control={control}
-                title={'Terceira Runa'}
-                options={buildFirstRunesOptions('third')}
-                placeholder={'Selecione a terceira runa'}
-                name={`primarySlots.third`}
-              />
-              <FormFieldErrors fieldError={errors.primarySlots?.third} />
+            <AppSelectController
+              control={control}
+              title={'Terceira Runa'}
+              options={buildFirstRunesOptions('third')}
+              placeholder={'Selecione a terceira runa'}
+              name={`primarySlots.third`}
+            />
+            <FormFieldErrors fieldError={errors.primarySlots?.third} />
 
-              <AppSelectController
-                control={control}
-                title={'Quarta Runa'}
-                options={buildFirstRunesOptions('forth')}
-                placeholder={'Selecione a quarta runa'}
-                name={`primarySlots.fourth`}
-              />
-              <FormFieldErrors fieldError={errors.primarySlots?.fourth} />
+            <AppSelectController
+              control={control}
+              title={'Quarta Runa'}
+              options={buildFirstRunesOptions('forth')}
+              placeholder={'Selecione a quarta runa'}
+              name={`primarySlots.fourth`}
+            />
+            <FormFieldErrors fieldError={errors.primarySlots?.fourth} />
 
-              <AppInputController
-                control={control}
-                name={'primaryRuneDescription'}
-                inputOptions={{
-                  label: 'Descrição da runas',
-                  placeholder: 'Descrição da runas',
-                  multiline: true
-                }}
-              />
-              <FormFieldErrors fieldError={errors.primaryRuneDescription} />
-            </>
-          )
-        }
+            <AppInputController
+              control={control}
+              name={'primaryRuneDescription'}
+              inputOptions={{
+                label: 'Descrição da runas',
+                placeholder: 'Descrição da runas',
+                multiline: true,
+              }}
+            />
+            <FormFieldErrors fieldError={errors.primaryRuneDescription} />
+          </>
+        )}
       </View>
       <StepperFooter
-        customNextButton={
-          buildCustomButtonProps({
-            onPress: handleSubmit(onSubmit)
-          })}
+        customNextButton={buildCustomButtonProps({
+          onPress: handleSubmit(onSubmit),
+        })}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   content: {
-    flex: 1
-  }
-})
+    flex: 1,
+  },
+});

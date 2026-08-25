@@ -1,58 +1,58 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm, useFormContext } from "react-hook-form";
-import { FlatList, ScrollView, StyleSheet, View } from "react-native";
-import z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
+import z from 'zod';
 
-import { StyledButton } from "@org/ui";
+import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
+import { StyledButton } from '@org/ui';
 
-import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
-import AppInputController from "../../../../../components/forms/AppInputController";
-import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
-import { StepperFooter } from "../../../../../components/stepper";
-import { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
-import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
-import Error from "../../../feedback/Error";
-import { style } from "../CreateGuide";
-import { CreateGuideFormDto, guideSchemaShape } from "../dto/create-guide-schema";
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
+import AppInputController from '../../../../../components/forms/AppInputController';
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { StepperFooter } from '../../../../../components/stepper';
+import { buildCustomButtonProps } from '../../../../../components/stepper/StepperFooter';
+import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import { style } from '../CreateGuide';
 
-const ThreatsSchema = guideSchemaShape.pick({
+const ThreatsSchema = CreateGuideSchema.pick({
   threats: true,
-  threatsDescription: true
-})
+  threatsDescription: true,
+});
 
-type ThreatsDto = z.infer<typeof ThreatsSchema>
+type ThreatsDto = z.infer<typeof ThreatsSchema>;
 
-const resolver = zodResolver(ThreatsSchema)
+const resolver = zodResolver(ThreatsSchema);
 
 export default function ThreatsForm() {
-  const useDataDragon = useDataDragonContext()
-  if (!useDataDragon.dataDragon) {
-    return (
-      <Error />
-    )
-  }
+  const useDataDragon = useDataDragonContext();
+  const mainFormContext = useFormContext<CreateGuideDto>();
 
-  const championList = useDataDragon.dataDragon.champions
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ThreatsDto>({ resolver });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'threats',
+  });
 
-  const mainFormContext = useFormContext<CreateGuideFormDto>()
-
-  const { control, handleSubmit, formState: { errors } } = useForm<ThreatsDto>({ resolver })
-  const { fields, append, remove } = useFieldArray({ control, name: 'threats' })
+  const championList = useDataDragon.dataDragon?.champions || [];
 
   const appendThreat = () => {
     append({
       threat: '',
-      description: ''
-    })
-  }
+      description: '',
+    });
+  };
 
   const onSubmit = (formValues: ThreatsDto) => {
-    mainFormContext.setValues(formValues, { shouldValidate: true })
-  }
+    mainFormContext.setValues(formValues, { shouldValidate: true });
+  };
 
   const getErrorFromIndex = (index: number) => {
-    return errors.threats?.[index]
-  }
+    return errors.threats?.[index];
+  };
 
   return (
     <View style={styles.container}>
@@ -64,7 +64,7 @@ export default function ThreatsForm() {
             inputOptions={{
               label: 'Descrição das ameaças',
               placeholder: 'Descrição da ameaças',
-              multiline: true
+              multiline: true,
             }}
           />
           <FormFieldErrors fieldError={errors.threatsDescription} />
@@ -75,18 +75,21 @@ export default function ThreatsForm() {
               data={fields}
               renderItem={({ index }) => {
                 return (
-                  <View
-                    style={style.fieldContainer}
-                  >
+                  <View style={style.fieldContainer}>
                     <AppSelectController
                       key={`${index}.threat`}
                       control={control}
                       title={'Selecione uma ameaça'}
-                      options={championList.map(({ id, name }) => ({ value: id, label: name }))}
+                      options={championList.map(({ id, name }) => ({
+                        value: id,
+                        label: name,
+                      }))}
                       placeholder={'Selecione uma ameaça'}
                       name={`threats.${index}.threat`}
                     />
-                    <FormFieldErrors fieldError={getErrorFromIndex(index)?.threat} />
+                    <FormFieldErrors
+                      fieldError={getErrorFromIndex(index)?.threat}
+                    />
 
                     <AppInputController
                       key={`${index}.description`}
@@ -95,42 +98,42 @@ export default function ThreatsForm() {
                       inputOptions={{
                         label: 'Descrição da ameaça',
                         placeholder: 'Descrição da ameaça',
-                        multiline: true
+                        multiline: true,
                       }}
                     />
-                    <FormFieldErrors fieldError={getErrorFromIndex(index)?.description} />
+                    <FormFieldErrors
+                      fieldError={getErrorFromIndex(index)?.description}
+                    />
 
                     <StyledButton
-                      onPress={() => { remove(index) }}
+                      onPress={() => {
+                        remove(index);
+                      }}
                     >
                       Remover ameaça
                     </StyledButton>
                   </View>
-                )
-              }} />
+                );
+              }}
+            />
           </ScrollView>
         </View>
-        <StyledButton
-          style={styles.addThreat}
-          onPress={appendThreat}
-        >
+        <StyledButton style={styles.addThreat} onPress={appendThreat}>
           Adicionar ameaça
         </StyledButton>
       </View>
       <StepperFooter
-        customNextButton={
-          buildCustomButtonProps({
-            onPress: handleSubmit(onSubmit),
-          })
-        }
+        customNextButton={buildCustomButtonProps({
+          onPress: handleSubmit(onSubmit),
+        })}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flex: 1 },
   form: { flex: 1, gap: 16 },
-  addThreat: { marginBottom: 16 }
-})
+  addThreat: { marginBottom: 16 },
+});

@@ -1,12 +1,9 @@
 import z from 'zod';
 
-import { IGuide } from '../../schema/guide.schema';
-import { runeSchema } from './runes.dto';
-import { itemSchema } from './item.dto';
-import { abilitiesProgressionSchema } from './abilities-progression.dto';
-import { threatSchema } from './threat.dto';
+import { IGuide } from '@org/contracts';
 
-import { objectIdSchema } from '../../../dtos/custom-schemas';
+import { abilitiesProgressionSchema } from './abilities-progression.dto';
+import { itemSchema } from './item.dto';
 
 type OmittedFields = '_id' | 'createdBy' | 'createdAt'
 
@@ -16,20 +13,39 @@ interface ICreateGuideDto extends Omit<IGuide, OmittedFields> {
 }
 
 export const createGuideSchema = z.object({
-  title: z.string({ error: 'formato do campo é inválido' }),
-  createdBy: objectIdSchema,
-  introduction: z.string({ error: 'formato do campo é inválido' }),
+  // Intro
+  title: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  introduction: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  champion: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  role: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+
   patchVersion: z.string({ error: 'formato do campo é inválido' }),
-  champion: z.string({ error: 'formato do campo é inválido' }),
-  role: z.string({ error: 'formato do campo é inválido' }),
-  runes: runeSchema,
-  runesDescription: z.string({ error: 'formato do campo é inválido' }),
+  createdAt: z.string({ error: 'formato do campo é inválido' }),
+  createdBy: z.string({ error: 'formato do campo é inválido' }),
 
   // Bonus
-  bonusSlotOne: z.string({ error: 'formato do campo é inválido' }),
-  bonusSlotTwo: z.string({ error: 'formato do campo é inválido' }),
-  bonusSlotThree: z.string({ error: 'formato do campo é inválido' }),
-  bonusDescription: z.string({ error: 'formato do campo é inválido' }),
+  bonusSlotOne: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  bonusSlotTwo: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  bonusSlotThree: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  bonusDescription: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+
+  // Runes
+  primaryRune: z.string({ error: 'formato do campo é inválido' }),
+  primarySlots: z.object({
+    first: z.string({ error: 'formato do campo é inválido' }),
+    second: z.string({ error: 'formato do campo é inválido' }),
+    third: z.string({ error: 'formato do campo é inválido' }),
+    fourth: z.string({ error: 'formato do campo é inválido' }),
+  }),
+  primaryRuneDescription: z.string({ error: 'formato do campo é inválido' }),
+
+  secondaryRune: z.string({ error: 'formato do campo é inválido' }),
+  secondarySlots: z.object({
+    first: z.string({ error: 'formato do campo é inválido' }),
+    second: z.string({ error: 'formato do campo é inválido' }),
+    third: z.string({ error: 'formato do campo é inválido' }),
+  }),
+  secondaryRuneDescription: z.string({ error: 'formato do campo é inválido' }),
 
   // Spells
   firstSpell: z.string({ error: 'formato do campo é inválido' }),
@@ -38,15 +54,20 @@ export const createGuideSchema = z.object({
 
   // Items
   itemsBlock: z.array(itemSchema),
-  itemsDescription: z.string({ error: 'formato do campo é inválido' }),
+  itemsDescription: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
 
   // Abilities Progression
   abilitiesProgression: abilitiesProgressionSchema,
   abilitiesProgressionDescription: z.string({ error: 'formato do campo é inválido' }),
 
-  threatsDescription: z.string({ error: 'formato do campo é inválido' }),
-  threats: z.array(threatSchema),
-  createdAt: z.string({ error: 'formato do campo é inválido' })
+  // Threats
+  threatsDescription: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+  threats: z.array(
+    z.object({
+      threat: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' }),
+      description: z.string({ error: 'formato do campo é inválido' }).min(1, { error: 'Campo obrigatório' })
+    })
+  )
 }) satisfies z.ZodType<ICreateGuideDto>
 
 

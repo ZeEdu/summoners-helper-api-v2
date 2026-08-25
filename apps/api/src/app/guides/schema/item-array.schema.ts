@@ -1,9 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export interface IItemArray {
-  id: string;
-  description: string;
-}
+import { IItemArray } from '@org/contracts';
 
 @Schema()
 export class ItemArray implements IItemArray {

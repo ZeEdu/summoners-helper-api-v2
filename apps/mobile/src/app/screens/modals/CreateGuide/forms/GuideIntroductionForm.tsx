@@ -1,35 +1,26 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useFormContext } from "react-hook-form"
-import { StyleSheet, View } from "react-native"
-import z from "zod"
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useFormContext } from 'react-hook-form';
+import { StyleSheet, View } from 'react-native';
+import z from 'zod';
 
-import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController"
-import AppInputController from "../../../../../components/forms/AppInputController"
-import FormFieldErrors from "../../../../../components/forms/FormFieldErrors"
+import {
+  CreateGuideDto,
+  CreateGuideSchema,
+  ROLES,
+  ROLES_LABEL,
+} from '@org/contracts';
 
-import { useStepperContext } from "../../../../../components/stepper/context"
-import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter"
-import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext"
-import Error from "../../../feedback/Error"
-import { CreateGuideFormDto, createGuideSchema } from "../dto/create-guide-schema"
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
+import AppInputController from '../../../../../components/forms/AppInputController';
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 
-enum ROLES {
-  JUNGLE = 'JUNGLE',
-  TOP_LANE = 'TOP_LANE',
-  MID_LANE = 'MID_LANE',
-  ADC = 'ADC',
-  SUPPORT = 'SUPPORT'
-}
+import { useStepperContext } from '../../../../../components/stepper/context';
+import StepperFooter, {
+  buildCustomButtonProps,
+} from '../../../../../components/stepper/StepperFooter';
+import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
 
-enum ROLES_LABEL {
-  JUNGLE = 'Jungle',
-  TOP_LANE = 'Top Lane',
-  MID_LANE = 'Mid Lane',
-  ADC = 'ADC',
-  SUPPORT = 'Support'
-}
-
-const ROLE_OPTIONS: { value: string, label: string }[] = [
+const ROLE_OPTIONS: { value: string; label: string }[] = [
   {
     value: ROLES.JUNGLE,
     label: ROLES_LABEL.JUNGLE,
@@ -49,64 +40,61 @@ const ROLE_OPTIONS: { value: string, label: string }[] = [
   {
     value: ROLES.SUPPORT,
     label: ROLES_LABEL.SUPPORT,
-  }
-]
+  },
+];
 
-const GuideIntroductionSchema = createGuideSchema.pick({
+const GuideIntroductionSchema = CreateGuideSchema.pick({
   introduction: true,
   title: true,
   champion: true,
-  role: true
-})
+  role: true,
+});
 
-export type GuideIntroductionDto = z.infer<typeof GuideIntroductionSchema>
+export type GuideIntroductionDto = z.infer<typeof GuideIntroductionSchema>;
 
-const resolver = zodResolver(GuideIntroductionSchema)
+const resolver = zodResolver(GuideIntroductionSchema);
 
 export default function GuideIntroductionForm() {
-  const useDataDragon = useDataDragonContext()
-  if (!useDataDragon.dataDragon) {
-    return (
-      <Error />
-    )
-  }
+  const useDataDragon = useDataDragonContext();
 
-  const mainFormContext = useFormContext<CreateGuideFormDto>()
-  const stepperContext = useStepperContext()
+  const mainFormContext = useFormContext<CreateGuideDto>();
+  const stepperContext = useStepperContext();
 
   const {
     control,
     handleSubmit,
-    formState: { errors }
-  } = useForm<GuideIntroductionDto>({ resolver })
+    formState: { errors },
+  } = useForm<GuideIntroductionDto>({ resolver });
 
   const onSubmit = (formValues: GuideIntroductionDto) => {
     // Setar o valor no formulário principal
-    mainFormContext.setValues(formValues, { shouldValidate: true })
+    mainFormContext.setValues(formValues, { shouldValidate: true });
     // Ir para o próximo step
-    stepperContext.nextStep()
-  }
+    stepperContext.nextStep();
+  };
+
+  const championList = useDataDragon.dataDragon?.champions || [];
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <AppInputController
           control={control}
-          name={"title"}
+          name={'title'}
           inputOptions={{
             label: 'Titulo',
-            placeholder: 'Titulo'
+            placeholder: 'Titulo',
           }}
         />
         <FormFieldErrors fieldError={errors.title} />
 
         <AppInputController
           control={control}
-          name={"introduction"}
+          name={'introduction'}
           inputOptions={{
             label: 'Introdução',
             placeholder: 'Introdução',
-            multiline: true
+            multiline: true,
           }}
         />
         <FormFieldErrors fieldError={errors.introduction} />
@@ -114,7 +102,10 @@ export default function GuideIntroductionForm() {
         <AppSelectController
           control={control}
           title={'Selecione um campeão'}
-          options={useDataDragon.dataDragon.champions.map(({ id, name }) => ({ value: id, label: name }))}
+          options={championList.map(({ id, name }) => ({
+            value: id,
+            label: name,
+          }))}
           placeholder={'Selecione um campeão'}
           name={'champion'}
         />
@@ -130,21 +121,19 @@ export default function GuideIntroductionForm() {
         <FormFieldErrors fieldError={errors.role} />
       </View>
       <StepperFooter
-        customNextButton={
-          buildCustomButtonProps({
-            onPress: handleSubmit(onSubmit)
-          })
-        }
+        customNextButton={buildCustomButtonProps({
+          onPress: handleSubmit(onSubmit),
+        })}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   content: {
-    flex: 1
-  }
-})
+    flex: 1,
+  },
+});
