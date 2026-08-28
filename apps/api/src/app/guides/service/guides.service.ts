@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, QueryFilter, QueryOptions } from 'mongoose';
+
 import {
+  CreateGuideDto,
   DEFAULT_LIMIT,
   DEFAULT_OFFSET,
+  IGuide,
+  IUser,
   PaginationDto,
-} from '../../pagination/pagination.dto';
-import { Model, QueryFilter, QueryOptions } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { Guide, GuideDocument } from '../schema/guide.schema';
-import { CreateGuideDto } from '../dto/guide/create-guide.dto';
+} from '@org/contracts';
+
 import { PatchGuideDto } from '../dto/patch-guide.dto';
-import { IGuide, IUser } from '@org/contracts';
+import { Guide, GuideDocument } from '../schema/guide.schema';
 
 @Injectable()
 export class GuidesService {
@@ -18,15 +21,17 @@ export class GuidesService {
   ) {}
 
   async getGuides(filter?: QueryFilter<Guide>, pagination?: PaginationDto) {
-    const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};
+    const limit = pagination?.limit || DEFAULT_LIMIT;
+    const offset = pagination?.offset || DEFAULT_OFFSET;
+
     filter = filter || {};
 
     const count = await this.guideModel.countDocuments(filter);
     const guides = await this.guideModel
       .find(filter)
       .limit(limit)
-      .skip(offset)
-      .lean<IUser[]>();
+      .skip(offset * 10)
+      .lean<IGuide[]>();
 
     return { guides, count };
   }

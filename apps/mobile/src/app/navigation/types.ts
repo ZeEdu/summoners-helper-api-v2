@@ -1,5 +1,7 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
 
+import { IGuide } from "@org/contracts";
+
 export const Stacks = {
   Main: 'Main',
   Auth: 'Auth',
@@ -41,5 +43,5 @@ export type AuthStackParamList = {
 
 export type ModalStackParamList = {
   [Routes.BindRiotAccount]: undefined;
-  [Routes.CreateGuide]: { guideId?: string };
+  [Routes.CreateGuide]: { guide?: IGuide };
 };

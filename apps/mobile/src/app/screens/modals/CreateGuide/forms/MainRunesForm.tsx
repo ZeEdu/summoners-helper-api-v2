@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
 import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import z from 'zod';
 
-import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 
+import { useEffect } from 'react';
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
@@ -15,7 +15,7 @@ import StepperFooter, {
 } from '../../../../../components/stepper/StepperFooter';
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
 
-export const mainRuneSchema = CreateGuideSchema.pick({
+export const mainRuneSchema = CreateGuideFormSchema.pick({
   primaryRune: true,
   primarySlots: true,
   primaryRuneDescription: true,
@@ -32,8 +32,15 @@ type Props = {
 export default function GuideMainRunesForm({ secondaryRune }: Props) {
   const useDataDragon = useDataDragonContext();
 
-  const mainFormContext = useFormContext<CreateGuideDto>();
+  const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
+
+  const defaultValues: MainRuneDto = {
+    primaryRune: mainFormContext.getValues('primaryRune'),
+    primarySlots: mainFormContext.getValues('primarySlots'),
+    primaryRuneDescription: mainFormContext.getValues('primaryRuneDescription'),
+  }
+  console.log({ defaultValues });
 
   const {
     control,
@@ -41,7 +48,7 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
     formState: { errors },
     getValues,
     setValues,
-  } = useForm<MainRuneDto>({ resolver });
+  } = useForm<MainRuneDto>({ resolver, defaultValues });
 
   const primaryRune = useWatch<MainRuneDto>({
     control,
@@ -89,6 +96,10 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
   };
 
   useEffect(() => {
+    if (primaryRune === defaultValues.primaryRune) {
+      return
+    }
+
     setValues({
       primarySlots: {
         first: '',

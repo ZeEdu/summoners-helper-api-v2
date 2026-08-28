@@ -3,7 +3,7 @@ import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import z from 'zod';
 
-import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../../components/forms/AppInputController';
@@ -14,7 +14,7 @@ import StepperFooter, {
 } from '../../../../../components/stepper/StepperFooter';
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
 
-const GuideSummonerSpellsSchema = CreateGuideSchema.pick({
+const GuideSummonerSpellsSchema = CreateGuideFormSchema.pick({
   firstSpell: true,
   secondSpell: true,
   spellsDescription: true,
@@ -36,15 +36,23 @@ export default function GuideSummonerSpellsForm() {
   const useDataDragon = useDataDragonContext();
   const spellsList = useDataDragon.dataDragon?.spells || [];
 
-  const mainFormContext = useFormContext<CreateGuideDto>();
+  const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
+
+  const defaultValues: GuideSummonerSpellsDto = {
+    firstSpell: mainFormContext.getValues('firstSpell'),
+    secondSpell: mainFormContext.getValues('secondSpell'),
+    spellsDescription: mainFormContext.getValues('spellsDescription'),
+  }
+
+  console.log({ defaultValues });
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     getValues,
-  } = useForm<GuideSummonerSpellsDto>({ resolver });
+  } = useForm<GuideSummonerSpellsDto>({ resolver, defaultValues });
 
   const onSubmit = (formValues: GuideSummonerSpellsDto) => {
     mainFormContext.setValues(formValues, { shouldValidate: true });

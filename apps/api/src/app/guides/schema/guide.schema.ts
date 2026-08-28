@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
 import { IGuide, IRuneSlots } from '@org/contracts';
 
-import { AbilitiesProgression, AbilitiesProgressionSchema } from './abilities-progression.schema';
-import { Items, ItemSchema } from './item.schema';
+import {
+  AbilitiesProgression,
+  AbilitiesProgressionSchema,
+} from './abilities-progression.schema';
+import { Items, ItemsSchema } from './items.schema';
 import { RuneSlots } from './rune-slot.schema';
 import { Threat, ThreatSchema } from './threat.schema';
 
@@ -27,13 +30,13 @@ export class Guide implements IGuide {
   @Prop({ type: String, required: true })
   patchVersion: string;
 
-  @Prop({ type: Date })
+  @Prop({ type: Date, required: true })
   createdAt: Date;
 
   @Prop({ type: Date })
   updatedAt?: Date;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
   createdBy: Types.ObjectId;
 
   @Prop({ type: String, required: true })
@@ -80,21 +83,21 @@ export class Guide implements IGuide {
   @Prop({ type: String, required: true })
   abilitiesProgressionDescription: string;
 
-  @Prop({ type: AbilitiesProgressionSchema }) // TODO Garantir que isso funciona
+  @Prop({ type: AbilitiesProgressionSchema, required: true }) // TODO Garantir que isso funciona
   abilitiesProgression: AbilitiesProgression;
 
   // Items
   @Prop({ type: String, required: true })
   itemsDescription: string;
 
-  @Prop([{ type: ItemSchema }])
-  itemsBlock: Items[];
+  @Prop([{ type: ItemsSchema, required: true }])
+  items: Items[];
 
   // Threats
   @Prop({ type: String, required: true })
   threatsDescription: string;
 
-  @Prop([{ type: ThreatSchema }])
+  @Prop([{ type: ThreatSchema, required: true }])
   threats: Threat[];
 }
 
@@ -115,7 +118,7 @@ export const CAN_UPDATE_FIELDS = [
   'firstSpell',
   'secondSpell',
   'spellsDescription',
-  'itemsBlock',
+  'items',
   'itemsDescription',
   'abilitiesProgressionDescription',
   'title',

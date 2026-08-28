@@ -25,10 +25,16 @@ export type DataDragonMaps = {
 export type DataDragonContextType = {
   loading: boolean;
   error: string | undefined;
-  dataDragon: DataDragon | undefined;
-  dataDragonMaps: DataDragonMaps | undefined;
+  dataDragon: DataDragon;
+  dataDragonMaps: DataDragonMaps;
 
   reload: () => void
+
+  getChampion: (id: string) => ChampionsDataDragonDetails
+  getSpell: (id: string) => SummonerSpell
+  getRune: (id: string) => RunesReforgedDataDragon
+  getItem: (id: string) => ItemDetails
+
 }
 
 export const DataDragonContext = createContext<DataDragonContextType | undefined>(undefined)

@@ -1,15 +1,22 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFormContext } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
-import z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useFormContext } from 'react-hook-form';
+import { StyleSheet, View } from 'react-native';
+import z from 'zod';
 
-import { CreateGuideDto, CreateGuideSchema, SLOT_BONUS, SLOT_BONUS_LABELS } from "@org/contracts";
+import {
+  CreateGuideFormDto,
+  CreateGuideFormSchema,
+  SLOT_BONUS,
+  SLOT_BONUS_LABELS,
+} from '@org/contracts';
 
-import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController";
-import AppInputController from "../../../../../components/forms/AppInputController";
-import FormFieldErrors from "../../../../../components/forms/FormFieldErrors";
-import { useStepperContext } from "../../../../../components/stepper/context";
-import StepperFooter, { buildCustomButtonProps } from "../../../../../components/stepper/StepperFooter";
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
+import AppInputController from '../../../../../components/forms/AppInputController';
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { useStepperContext } from '../../../../../components/stepper/context';
+import StepperFooter, {
+  buildCustomButtonProps,
+} from '../../../../../components/stepper/StepperFooter';
 
 const slotOne = [
   {
@@ -56,27 +63,38 @@ const slotThree = [
   },
 ];
 
-export const BonusSchema = CreateGuideSchema.pick({
+export const BonusSchema = CreateGuideFormSchema.pick({
   bonusDescription: true,
   bonusSlotOne: true,
   bonusSlotTwo: true,
-  bonusSlotThree: true
-})
+  bonusSlotThree: true,
+});
 
-export type BonusDto = z.infer<typeof BonusSchema>
+export type BonusDto = z.infer<typeof BonusSchema>;
 
-const resolver = zodResolver(BonusSchema)
+const resolver = zodResolver(BonusSchema);
 
 export default function BonusForm() {
-  const mainFormContext = useFormContext<CreateGuideDto>()
-  const stepperContext = useStepperContext()
+  const mainFormContext = useFormContext<CreateGuideFormDto>();
+  const stepperContext = useStepperContext();
 
-  const { control, formState: { errors }, handleSubmit } = useForm<BonusDto>({ resolver })
+  const defaultValues: BonusDto = {
+    bonusSlotOne: mainFormContext.getValues('bonusSlotOne'),
+    bonusSlotTwo: mainFormContext.getValues('bonusSlotTwo'),
+    bonusSlotThree: mainFormContext.getValues('bonusSlotThree'),
+    bonusDescription: mainFormContext.getValues('bonusDescription'),
+  }
+
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<BonusDto>({ resolver, defaultValues });
 
   const onSubmit = (formValues: BonusDto) => {
-    mainFormContext.setValues(formValues, { shouldValidate: true })
-    stepperContext.nextStep()
-  }
+    mainFormContext.setValues(formValues, { shouldValidate: true });
+    stepperContext.nextStep();
+  };
 
   return (
     <View style={styles.container}>
@@ -87,7 +105,7 @@ export default function BonusForm() {
           inputOptions={{
             label: 'Descrição dos bonus',
             placeholder: 'Descreva os bonus',
-            multiline: true
+            multiline: true,
           }}
         />
         <FormFieldErrors fieldError={errors.bonusDescription} />
@@ -121,19 +139,18 @@ export default function BonusForm() {
       </View>
 
       <StepperFooter
-        customNextButton={
-          buildCustomButtonProps({
-            onPress: handleSubmit(onSubmit),
-          })}
+        customNextButton={buildCustomButtonProps({
+          onPress: handleSubmit(onSubmit),
+        })}
       />
     </View>
-  )
+  );
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   content: {
-    flex: 1
-  }
-})
+    flex: 1,
+  },
+});

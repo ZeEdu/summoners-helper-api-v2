@@ -2,10 +2,10 @@ import z from 'zod';
 
 import { GuideSchemaShape } from './guide.dto';
 
-export const CreateGuideSchema = GuideSchemaShape.omit({
+export const CreateGuideFormSchema = GuideSchemaShape.omit({
   patchVersion: true,
   createdAt: true,
   createdBy: true,
 });
 
-export type CreateGuideDto = z.infer<typeof CreateGuideSchema>;
+export type CreateGuideFormDto = z.infer<typeof CreateGuideFormSchema>;

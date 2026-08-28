@@ -1,14 +1,14 @@
-import { Types } from "mongoose";
-import { AbilityOption } from "../enums";
+import { Types } from 'mongoose';
+import { AbilityOption } from '../enums';
 
-export interface IItemArray {
-  id: string;
-  description: string;
+export interface IItemList {
+  itemId: string
 }
 
 export interface IItems {
-  itemRollName: string;
-  itemArray: IItemArray[];
+  rowName: string;
+  items: IItemList[];
+  description: string;
 }
 
 export interface IRuneSlots {
@@ -47,8 +47,12 @@ export interface IThreat {
 export interface IGuide {
   // Intro
   _id: Types.ObjectId;
+  // _id: string;
+
   title: string;
   createdBy: Types.ObjectId;
+  // createdBy: string;
+
   introduction: string;
   patchVersion: string;
 
@@ -79,7 +83,7 @@ export interface IGuide {
   spellsDescription: string;
 
   // Items
-  itemsBlock: IItems[];
+  items: IItems[];
   itemsDescription: string;
 
   // Abilities Progression

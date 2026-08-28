@@ -18,7 +18,7 @@ import {
 } from 'react-native-paper';
 import z from 'zod';
 
-import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 
 import AppInputController from '../../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../../components/forms/FormFieldErrors';
@@ -31,7 +31,7 @@ import { usePatchVersion } from '../../../../../../contexts/patchVersion/usePatc
 import ItemsField from './ItemsFields';
 import { useItemSelectionContext } from './context/useItemSelectionContext';
 
-const ItemsSchema = CreateGuideSchema.pick({
+const ItemsSchema = CreateGuideFormSchema.pick({
   items: true,
   itemsDescription: true,
 });
@@ -42,7 +42,7 @@ const resolver = zodResolver(ItemsSchema);
 
 export default function ItemsForm() {
   const useDataDragon = useDataDragonContext();
-  const mainFormContext = useFormContext<CreateGuideDto>();
+  const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
 
   const { version } = usePatchVersion();
@@ -54,12 +54,18 @@ export default function ItemsForm() {
 
   const itemSelectionContext = useItemSelectionContext();
 
-  const methods = useForm<ItemsDto>({ resolver });
+  const defaultValues: ItemsDto = {
+    items: mainFormContext.getValues('items'),
+    itemsDescription: mainFormContext.getValues('itemsDescription'),
+  };
+
+  const methods = useForm<ItemsDto>({ resolver, defaultValues });
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = methods;
   const { append, remove, fields } = useFieldArray({
     control,
@@ -98,8 +104,14 @@ export default function ItemsForm() {
     }
   }, [searchQuery]);
 
+  const checkForm = () => {
+    const arrayValues = getValues();
+    console.log({ arrayValues });
+  };
+
   return (
     <View style={styles.container}>
+      <Button onPress={checkForm}>Checar formulário</Button>
       <View style={styles.content}>
         <View>
           <AppInputController

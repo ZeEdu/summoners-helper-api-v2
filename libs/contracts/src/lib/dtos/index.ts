@@ -3,5 +3,5 @@ export * from './login-user.dto'
 export * from './update-user-profile.dto'
 export * from './update-user.dto'
 
-export * from './guide/index'
-
+export * from './guide'
+export * from './pagination'

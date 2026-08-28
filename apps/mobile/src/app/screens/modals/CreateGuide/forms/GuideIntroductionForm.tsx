@@ -4,8 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import z from 'zod';
 
 import {
-  CreateGuideDto,
-  CreateGuideSchema,
+  CreateGuideFormDto,
+  CreateGuideFormSchema,
   ROLES,
   ROLES_LABEL,
 } from '@org/contracts';
@@ -43,7 +43,7 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
   },
 ];
 
-const GuideIntroductionSchema = CreateGuideSchema.pick({
+const GuideIntroductionSchema = CreateGuideFormSchema.pick({
   introduction: true,
   title: true,
   champion: true,
@@ -57,14 +57,21 @@ const resolver = zodResolver(GuideIntroductionSchema);
 export default function GuideIntroductionForm() {
   const useDataDragon = useDataDragonContext();
 
-  const mainFormContext = useFormContext<CreateGuideDto>();
+  const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
+
+  const defaultValues: GuideIntroductionDto = {
+    title: mainFormContext.getValues('title'),
+    introduction: mainFormContext.getValues('introduction'),
+    champion: mainFormContext.getValues('champion'),
+    role: mainFormContext.getValues('role'),
+  }
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<GuideIntroductionDto>({ resolver });
+  } = useForm<GuideIntroductionDto>({ resolver, defaultValues });
 
   const onSubmit = (formValues: GuideIntroductionDto) => {
     // Setar o valor no formulário principal

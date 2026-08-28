@@ -67,8 +67,8 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const [dataDragon, setDataDragon] = useState<DataDragon | undefined>(undefined)
-  const [dataDragonMaps, setDataDragonMaps] = useState<DataDragonMaps | undefined>(undefined)
+  const [dataDragon, setDataDragon] = useState<DataDragon>({ champions: [], items: [], runes: [], spells: [] })
+  const [dataDragonMaps, setDataDragonMaps] = useState<DataDragonMaps>({ champions: {}, items: {}, runes: {}, spells: {} })
 
   const loadData = () => {
     if (!version) {
@@ -106,11 +106,38 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
     loadData()
   }
 
+  const getChampion = (id: string) => {
+    return dataDragonMaps.champions[id]
+  }
+
+  const getSpell = (id: string) => {
+    return dataDragonMaps.spells[id]
+  }
+
+  const getRune = (id: string) => {
+    return dataDragonMaps.runes[id]
+  }
+
+  const getItem = (id: string) => {
+    return dataDragonMaps.items[id]
+  }
+
   useEffect(() => {
     loadData()
   }, [version])
 
-  const value: DataDragonContextType = { loading, error, dataDragon, dataDragonMaps, reload }
+  const value: DataDragonContextType = {
+    loading,
+    error,
+    dataDragon,
+    dataDragonMaps,
+    reload,
+    getChampion,
+    getSpell,
+    getRune,
+    getItem
+
+  }
 
   return (
     <DataDragonContext.Provider value={value}>

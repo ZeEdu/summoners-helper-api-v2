@@ -36,21 +36,21 @@ export default function ItemsField({ id, index }: ItemsFieldProps) {
   const itemSelectionContext = useItemSelectionContext();
 
   const { fields, append, remove } = useFieldArray({
-    name: `itemsBlock.${index}.items`,
+    control,
+    name: `items.${index}.itemsList`,
   });
 
   const itemList: ListItem[] = [
     ...fields.map(
-      (field) =>
-        ({
-          type: 'item',
-          itemId: (field as FormField).itemId,
-        }) as ListItem,
+      (field) => ({
+        type: 'item',
+        itemId: (field as FormField).itemId,
+      }) as ListItem,
     ),
     { type: 'add' },
   ];
 
-  const handleAppend = (value: any) => {
+  const handleAppend = (value: string) => {
     append({ itemId: value });
   };
 

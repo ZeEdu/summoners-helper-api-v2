@@ -3,7 +3,7 @@ import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
 import z from 'zod';
 
-import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 import { StyledButton } from '@org/ui';
 
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
@@ -14,7 +14,7 @@ import { buildCustomButtonProps } from '../../../../../components/stepper/Steppe
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
 import { style } from '../CreateGuide';
 
-const ThreatsSchema = CreateGuideSchema.pick({
+const ThreatsSchema = CreateGuideFormSchema.pick({
   threats: true,
   threatsDescription: true,
 });
@@ -25,13 +25,19 @@ const resolver = zodResolver(ThreatsSchema);
 
 export default function ThreatsForm() {
   const useDataDragon = useDataDragonContext();
-  const mainFormContext = useFormContext<CreateGuideDto>();
+  const mainFormContext = useFormContext<CreateGuideFormDto>();
+
+  const defaultValues: ThreatsDto = {
+    threatsDescription: mainFormContext.getValues('threatsDescription'),
+    threats: mainFormContext.getValues('threats'),
+  }
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<ThreatsDto>({ resolver });
+  } = useForm<ThreatsDto>({ resolver, defaultValues });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'threats',

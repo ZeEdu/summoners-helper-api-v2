@@ -2,11 +2,16 @@ import { AppModule } from '../app.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 import { BadRequestException, INestApplication } from '@nestjs/common';
-import { CreateUserDto, createUserSchema } from '@org/contracts';
+import {
+  AbilityOption,
+  CreateGuideFormDto,
+  CreateGuideFormSchema,
+  CreateUserDto,
+  createUserSchema,
+} from '@org/contracts';
 import { ZodValidationPipe } from './zod-validation.pipe';
 import z from 'zod';
-import { CreateGuideDto, createGuideSchema } from '../guides/dto/guide/create-guide.dto';
-import { AbilityOption } from '../guides/schema/abilities-progression.schema';
+
 import mongoose from 'mongoose';
 
 interface ValidationErrorResponse {
@@ -36,11 +41,11 @@ describe('zod validation pipe', () => {
 
   describe('required field', () => {
     it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema)
+      const validationPipe = new ZodValidationPipe(createUserSchema);
       const createUser: Partial<CreateUserDto> = {
         email: faker.internet.email(),
         password: faker.internet.password({ prefix: '1!Ab' }),
-      }
+      };
 
       let exception: BadRequestException;
 
@@ -59,16 +64,16 @@ describe('zod validation pipe', () => {
         message: 'Formato inválido',
         code: 'invalid_type',
       });
-    })
-  })
+    });
+  });
   describe('incorrect type', () => {
     it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema)
+      const validationPipe = new ZodValidationPipe(createUserSchema);
       const createUser = {
         email: faker.internet.email(),
         password: faker.internet.password({ prefix: '1!Ab' }),
-        username: 123123123
-      }
+        username: 123123123,
+      };
 
       let exception: BadRequestException;
 
@@ -87,16 +92,16 @@ describe('zod validation pipe', () => {
         message: 'Formato inválido',
         code: 'invalid_type',
       });
-    })
-  })
+    });
+  });
   describe('short string', () => {
     it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema)
+      const validationPipe = new ZodValidationPipe(createUserSchema);
       const createUser = {
         email: faker.internet.email(),
         password: '1!Ab',
-        username: faker.internet.userName()
-      }
+        username: faker.internet.userName(),
+      };
 
       let exception: BadRequestException;
 
@@ -115,28 +120,27 @@ describe('zod validation pipe', () => {
         message: 'A senha deve ter no mínimo 8 caracteres',
         code: 'too_small',
       });
-    })
-  })
+    });
+  });
   describe('below min value', () => {
     it('should throw error', () => {
       interface ICart {
-        quantity: number,
-        productId: string
+        quantity: number;
+        productId: string;
       }
 
       const cartSchema = z.object({
         quantity: z.number().min(2, { error: 'Below minimun value' }),
-        productId: z.string()
-
+        productId: z.string(),
       }) satisfies z.ZodType<ICart>;
 
-      type CartDto = z.infer<typeof cartSchema>
+      type CartDto = z.infer<typeof cartSchema>;
 
-      const validationPipe = new ZodValidationPipe(cartSchema)
+      const validationPipe = new ZodValidationPipe(cartSchema);
       const cart: CartDto = {
         productId: faker.string.uuid(),
-        quantity: 1
-      }
+        quantity: 1,
+      };
 
       let exception: BadRequestException;
 
@@ -154,35 +158,35 @@ describe('zod validation pipe', () => {
         message: 'Below minimun value',
         code: 'too_small',
       });
-    })
-  })
+    });
+  });
   describe('invalid enum', () => {
     it('should throw error', () => {
       enum Color {
         Red,
-        Blue
+        Blue,
       }
 
       interface ICart {
-        quantity: number,
-        productId: string
-        color: Color
+        quantity: number;
+        productId: string;
+        color: Color;
       }
 
       const cartSchema = z.object({
         quantity: z.number().min(2, { error: 'Below minimun value' }),
         productId: z.string(),
-        color: z.enum(Color, { error: 'Invalid color' })
+        color: z.enum(Color, { error: 'Invalid color' }),
       }) satisfies z.ZodType<ICart>;
 
-      type CartDto = z.infer<typeof cartSchema>
+      type CartDto = z.infer<typeof cartSchema>;
 
-      const validationPipe = new ZodValidationPipe(cartSchema)
+      const validationPipe = new ZodValidationPipe(cartSchema);
       const cart = {
         productId: faker.string.uuid(),
         quantity: 3,
-        color: 'Yellow'
-      }
+        color: 'Yellow',
+      };
 
       let exception: BadRequestException;
 
@@ -200,16 +204,16 @@ describe('zod validation pipe', () => {
         message: 'Invalid color',
         code: 'invalid_value',
       });
-    })
-  })
+    });
+  });
   describe('invalid email', () => {
     it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema)
+      const validationPipe = new ZodValidationPipe(createUserSchema);
       const createUser: Partial<CreateUserDto> = {
         email: faker.string.alpha(10),
         password: faker.internet.password({ prefix: '1!Ab' }),
-        username: faker.internet.userName()
-      }
+        username: faker.internet.userName(),
+      };
 
       let exception: BadRequestException;
 
@@ -228,44 +232,50 @@ describe('zod validation pipe', () => {
         message: 'Email deve ser válido',
         code: 'invalid_format',
       });
-    })
-  })
+    });
+  });
   describe('invalid ObjectId', () => {
     it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createGuideSchema)
-      const createGuide: CreateGuideDto = {
-        title: '',
-        createdBy: '',
-        introduction: '',
-        patchVersion: '',
-        champion: '',
-        role: '',
-        runes: {
-          primaryRune: '1',
-          primarySlots: {
-            first: '1',
-            second: '1',
-            third: '1',
-            fourth: '1',
-          },
-          secondaryRune: '1',
-          secondarySlots: {
-            first: '1',
-            second: '1',
-            third: '1',
-            fourth: '1',
-          }
+      const validationPipe = new ZodValidationPipe(CreateGuideFormSchema);
+      const createGuide: CreateGuideFormDto = {
+        title: 'Segundo',
+        introduction: 'asdasd',
+        champion: 'Aatrox',
+        role: 'TOP_LANE',
+        bonusSlotOne: 'ADAPTIVE',
+        bonusSlotTwo: 'ADAPTIVE',
+        bonusSlotThree: 'BASE_HEALTH',
+        bonusDescription: 'asdasd',
+        primaryRune: '8100',
+        primarySlots: {
+          first: '8112',
+          second: '8126',
+          third: '8137',
+          fourth: '8105',
         },
-        runesDescription: '',
-        bonusSlotOne: '',
-        bonusSlotTwo: '',
-        bonusSlotThree: '',
-        bonusDescription: '',
-        firstSpell: '',
-        secondSpell: '',
-        spellsDescription: '',
-        itemsBlock: [],
-        itemsDescription: '',
+        primaryRuneDescription: 'asdasdasd',
+        secondaryRune: '8300',
+        secondarySlots: {
+          first: '8304',
+          second: '8306',
+          third: '8321',
+        },
+        secondaryRuneDescription: 'asdasdasd',
+        firstSpell: 'SummonerBarrier',
+        secondSpell: 'SummonerBoost',
+        spellsDescription: 'asdasda',
+        items: [
+          {
+            rowName: 'asdasdasdasd',
+            itemsList: [
+              {
+                itemId: '1001',
+              },
+            ],
+            description: 'adasdasd',
+          },
+        ],
+        itemsDescription: 'asdasdasd',
         abilitiesProgression: {
           l1: AbilityOption.A,
           l2: AbilityOption.A,
@@ -286,11 +296,15 @@ describe('zod validation pipe', () => {
           l17: AbilityOption.A,
           l18: AbilityOption.A,
         },
-        abilitiesProgressionDescription: '',
-        threatsDescription: '',
-        threats: [],
-        createdAt: ''
-      }
+        abilitiesProgressionDescription: 'asdasdas',
+        threatsDescription: 'asdasdasd',
+        threats: [
+          {
+            threat: 'Akali',
+            description: 'asdasdasd',
+          },
+        ],
+      };
 
       let exception: BadRequestException;
 
@@ -309,11 +323,11 @@ describe('zod validation pipe', () => {
         message: 'ObjectId inválido',
         code: 'custom',
       });
-    })
-  })
+    });
+  });
   describe('Invalid array', () => {
     it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createGuideSchema)
+      const validationPipe = new ZodValidationPipe(CreateGuideFormSchema);
       const createGuide = {
         title: '',
         createdBy: new mongoose.Types.ObjectId().toString(),
@@ -335,7 +349,7 @@ describe('zod validation pipe', () => {
             second: '1',
             third: '1',
             fourth: '1',
-          }
+          },
         },
         runesDescription: '',
         bonusSlotOne: '',
@@ -370,8 +384,8 @@ describe('zod validation pipe', () => {
         abilitiesProgressionDescription: '',
         threatsDescription: '',
         threats: [{}],
-        createdAt: ''
-      }
+        createdAt: '',
+      };
 
       let exception: BadRequestException;
 
@@ -396,10 +410,10 @@ describe('zod validation pipe', () => {
         message: 'formato do campo é inválido',
         code: 'invalid_type',
       });
-    })
-  })
+    });
+  });
   describe('Invalid nest object', () => {
-    const validationPipe = new ZodValidationPipe(createGuideSchema)
+    const validationPipe = new ZodValidationPipe(CreateGuideFormSchema);
     const createGuide = {
       title: '',
       createdBy: new mongoose.Types.ObjectId().toString(),
@@ -421,7 +435,7 @@ describe('zod validation pipe', () => {
           second: '1',
           third: '1',
           fourth: '1',
-        }
+        },
       },
       runesDescription: '',
       bonusSlotOne: '',
@@ -456,8 +470,8 @@ describe('zod validation pipe', () => {
       abilitiesProgressionDescription: '',
       threatsDescription: '',
       threats: [],
-      createdAt: ''
-    }
+      createdAt: '',
+    };
 
     let exception: BadRequestException;
 
@@ -476,5 +490,5 @@ describe('zod validation pipe', () => {
       message: `Valor invalido. Deve ser um dos seguintes valores: ${AbilityOption.A},${AbilityOption.B},${AbilityOption.C} ou ${AbilityOption.D}`,
       code: 'invalid_value',
     });
-  })
+  });
 });

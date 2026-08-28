@@ -1,14 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Dimensions, StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, Portal, Snackbar } from 'react-native-paper';
 
 import {
   AbilityOption,
-  CreateGuideDto,
-  CreateGuideSchema,
+  CreateGuideFormDto,
+  CreateGuideFormSchema
 } from '@org/contracts';
 import { StyledView } from '@org/ui';
 
@@ -19,6 +19,7 @@ import { ModalStackParamList } from '../../../navigation/types';
 import GuideAbilitiesProgressionForm from './forms/AbilitiesProgressionForm';
 import BonusForm from './forms/BonusForm';
 import GuideIntroductionForm from './forms/GuideIntroductionForm';
+import GuideFormReview from './forms/GuideReview';
 import GuideSummonerSpellsForm from './forms/GuideSpellsForm';
 import { ItemSelectionProvider } from './forms/items-form/context/item-selection.provider';
 import ItemsForm from './forms/items-form/ItemsForm';
@@ -28,93 +29,122 @@ import ThreatsForm from './forms/ThreatsForm';
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>;
 
-const resolver = zodResolver(CreateGuideSchema);
+const resolver = zodResolver(CreateGuideFormSchema);
 
-export default function CreateGuide({ navigation }: Props) {
-  const methods = useForm<CreateGuideDto>({
+const createRequest = (value: CreateGuideFormDto, guideId?: string,) => {
+  if (guideId) {
+    return ApiService.Guides.patch(guideId, value)
+  }
+
+  return ApiService.Guides.create(value)
+}
+
+export default function CreateGuide({ navigation, route }: Props) {
+  const [showSnack, setShowSnack] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const defaultValues = route.params.guide ?? {}
+
+  const methods = useForm<CreateGuideFormDto>({
     resolver,
+    defaultValues
   });
 
-  const onSubmit = async (value: CreateGuideDto) => {
-    ApiService.Guides.create(value)
-      .then((response) => {
-        console.log({ response });
-      })
-      .catch((err) => {
-        console.log({ err });
-      })
-      .finally(() => {
-        console.log('finally');
-      });
+  const goBack = () => {
+    navigation.goBack();
+  };
+
+  const onSubmit = async (value: CreateGuideFormDto) => {
+    setShowSnack(false);
+    setError('');
+    setLoading(true);
+
+    const guideId = route.params.guide?._id.toString()
 
     console.log({ value });
+
+    createRequest(value, guideId)
+      .catch((err) => {
+        console.log({ err });
+
+        setError('Salvamento falhou. Tente novamente.');
+      })
+      .finally(() => {
+        setLoading(false);
+        setShowSnack(true);
+      });
   };
 
   const setValuesOnForm = () => {
     methods.setValues(
       {
-        title: 'asdasd',
-        introduction: 'asdasd',
-        champion: 'Aatrox',
-        role: 'MID_LANE',
-        bonusSlotOne: 'ADAPTIVE',
-        bonusSlotTwo: 'ADAPTIVE',
-        bonusSlotThree: 'BASE_HEALTH',
-        bonusDescription: 'asdasd',
-        primaryRune: '8100',
-        primarySlots: {
-          first: '8112',
-          second: '8126',
-          third: '8137',
-          fourth: '8105',
+        "title": "Segundo",
+        "introduction": "asdasd",
+        "champion": "Aatrox",
+        "role": "TOP_LANE",
+        "bonusSlotOne": "ADAPTIVE",
+        "bonusSlotTwo": "ADAPTIVE",
+        "bonusSlotThree": "BASE_HEALTH",
+        "bonusDescription": "asdasd",
+        "primaryRune": "8100",
+        "primarySlots": {
+          "first": "8112",
+          "second": "8126",
+          "third": "8137",
+          "fourth": "8105"
         },
-        primaryRuneDescription: 'asdasdasd',
-        secondaryRune: '8300',
-        secondarySlots: {
-          first: '8304',
-          second: '8306',
-          third: '8321',
+        "primaryRuneDescription": "asdasdasd",
+        "secondaryRune": "8300",
+        "secondarySlots": {
+          "first": "8304",
+          "second": "8306",
+          "third": "8321"
         },
-        secondaryRuneDescription: 'asdasdasd',
-        firstSpell: 'SummonerBarrier',
-        secondSpell: 'SummonerBoost',
-        spellsDescription: 'asdasda',
-        items: [
+        "secondaryRuneDescription": "asdasdasd",
+        "firstSpell": "SummonerBarrier",
+        "secondSpell": "SummonerBoost",
+        "spellsDescription": "asdasda",
+        "items": [
           {
-            rowName: 'asdasdasdasd',
-            itemsList: ['1001'],
-            description: 'adasdasd',
-          },
+            "rowName": "asdasdasdasd",
+            "itemsList": [
+              {
+                "itemId": "1001"
+              }
+            ],
+            "description": "adasdasd"
+          }
         ],
-        itemsDescription: 'asdasdasd',
-        abilitiesProgression: {
-          l1: AbilityOption.A,
-          l2: AbilityOption.A,
-          l3: AbilityOption.A,
-          l4: AbilityOption.A,
-          l5: AbilityOption.A,
-          l6: AbilityOption.A,
-          l7: AbilityOption.A,
-          l8: AbilityOption.A,
-          l9: AbilityOption.A,
-          l10: AbilityOption.A,
-          l11: AbilityOption.A,
-          l12: AbilityOption.A,
-          l13: AbilityOption.A,
-          l14: AbilityOption.A,
-          l15: AbilityOption.A,
-          l16: AbilityOption.A,
-          l17: AbilityOption.A,
-          l18: AbilityOption.A,
+        "itemsDescription": "asdasdasd",
+        "abilitiesProgression": {
+          "l1": AbilityOption.A,
+          "l2": AbilityOption.A,
+          "l3": AbilityOption.A,
+          "l4": AbilityOption.A,
+          "l5": AbilityOption.A,
+          "l6": AbilityOption.A,
+          "l7": AbilityOption.A,
+          "l8": AbilityOption.A,
+          "l9": AbilityOption.A,
+          "l10": AbilityOption.A,
+          "l11": AbilityOption.A,
+          "l12": AbilityOption.A,
+          "l13": AbilityOption.A,
+          "l14": AbilityOption.A,
+          "l15": AbilityOption.A,
+          "l16": AbilityOption.A,
+          "l17": AbilityOption.A,
+          "l18": AbilityOption.A,
         },
-        abilitiesProgressionDescription: 'asdasdas',
-        threatsDescription: 'asdasdasd',
-        threats: [
+        "abilitiesProgressionDescription": "asdasdas",
+        "threatsDescription": "asdasdasd",
+        "threats": [
           {
-            threat: 'Akali',
-            description: 'asdasdasd',
-          },
-        ],
+            "threat": "Akali",
+            "description": "asdasdasd"
+          }
+        ]
       },
       { shouldValidate: true },
     );
@@ -132,12 +162,9 @@ export default function CreateGuide({ navigation }: Props) {
 
   const { height } = Dimensions.get('window');
 
-  // Carregar todos os dados
   useEffect(() => {
-    console.log('[navigation, methods.formState]');
+    const disableButton = !methods.formState.isValid || loading;
 
-    // Use `setOptions` to update the button that we previously specified
-    // Now the button includes an `onPress` handler to update the count
     navigation.setOptions({
       headerRight: () => (
         <>
@@ -151,53 +178,80 @@ export default function CreateGuide({ navigation }: Props) {
           <Button
             mode="contained"
             style={style.headerButton}
-            disabled={!methods.formState.isValid}
+            disabled={disableButton}
             onPress={methods.handleSubmit(onSubmit)}
           >
-            Salvar
+            {loading ? 'Salvando...' : 'Salvar'}
           </Button>
         </>
       ),
     });
-  }, [navigation, methods.formState]);
+  }, [navigation, methods.formState, loading]);
+
+  const checkFormValues = () => {
+    const currentValues = methods.getValues()
+    console.log({ currentValues });
+  }
 
   return (
-    <StyledView style={{ ...style.container, height: height }}>
-      {
-        <FormProvider {...methods}>
-          <StepperProvider>
-            <Stepper>
-              <StepperItem title="Primeiro Step">
-                <GuideIntroductionForm />
-              </StepperItem>
-              <StepperItem title="Segundo Step">
-                <GuideSummonerSpellsForm />
-              </StepperItem>
-              <StepperItem title="Terceiro Step">
-                <GuideMainRunesForm secondaryRune={secondaryRune} />
-              </StepperItem>
-              <StepperItem title="Quarto Step">
-                <GuideSecondaryRunesForm />
-              </StepperItem>
-              <StepperItem title="Quinto Step">
-                <BonusForm />
-              </StepperItem>
-              <StepperItem title="Sexto Step">
-                <ItemSelectionProvider>
-                  <ItemsForm />
-                </ItemSelectionProvider>
-              </StepperItem>
-              <StepperItem title="Sétimo Step">
-                <GuideAbilitiesProgressionForm champion={watchChampion} />
-              </StepperItem>
-              <StepperItem title="Oitavo Step">
-                <ThreatsForm />
-              </StepperItem>
-            </Stepper>
-          </StepperProvider>
-        </FormProvider>
-      }
-    </StyledView>
+    <>
+      <StyledView style={{ ...style.container, height: height }}>
+        {
+          <FormProvider {...methods}>
+            <StepperProvider>
+              <Stepper>
+                <StepperItem title="GuideIntroductionForm">
+                  <GuideIntroductionForm />
+                </StepperItem>
+                <StepperItem title="GuideSummonerSpellsForm">
+                  <GuideSummonerSpellsForm />
+                </StepperItem>
+                <StepperItem title="GuideMainRunesForm">
+                  <GuideMainRunesForm secondaryRune={secondaryRune} />
+                </StepperItem>
+                <StepperItem title="GuideSecondaryRunesForm">
+                  <GuideSecondaryRunesForm />
+                </StepperItem>
+                <StepperItem title="BonusForm">
+                  <BonusForm />
+                </StepperItem>
+                <StepperItem title="ItemsForm">
+                  <ItemSelectionProvider>
+                    <ItemsForm />
+                  </ItemSelectionProvider>
+                </StepperItem>
+                <StepperItem title="GuideAbilitiesProgressionForm">
+                  <GuideAbilitiesProgressionForm champion={watchChampion} />
+                </StepperItem>
+                <StepperItem title="ThreatsForm">
+                  <ThreatsForm />
+                </StepperItem>
+                <StepperItem title="Revisão">
+                  <GuideFormReview />
+                </StepperItem>
+              </Stepper>
+            </StepperProvider>
+          </FormProvider>
+        }
+      </StyledView>
+      <Portal>
+        <Snackbar
+          visible={showSnack}
+          onDismiss={() => {
+            setShowSnack(false);
+            // goBack(); // Apenas quando tiver sucesso
+          }}
+          action={{
+            label: 'Fechar',
+            onPress: () => {
+              setShowSnack(false);
+            },
+          }}
+        >
+          {error ? error : 'Salvo com sucesso!'}
+        </Snackbar>
+      </Portal>
+    </>
   );
 }
 

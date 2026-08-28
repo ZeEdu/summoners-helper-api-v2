@@ -4,7 +4,7 @@ import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import z from 'zod';
 
-import { CreateGuideDto, CreateGuideSchema } from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../../components/forms/AppInputController';
@@ -15,7 +15,7 @@ import StepperFooter, {
 } from '../../../../../components/stepper/StepperFooter';
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
 
-export const secondaryRuneSchema = CreateGuideSchema.pick({
+export const secondaryRuneSchema = CreateGuideFormSchema.pick({
   secondaryRune: true,
   secondarySlots: true,
   secondaryRuneDescription: true,
@@ -27,8 +27,14 @@ const resolver = zodResolver(secondaryRuneSchema);
 
 export default function GuideSecondaryRunesForm() {
   const useDataDragon = useDataDragonContext();
-  const mainFormContext = useFormContext<CreateGuideDto>();
+  const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
+
+  const defaultValues: SecondaryRuneDto = {
+    secondaryRune: mainFormContext.getValues('secondaryRune'),
+    secondarySlots: mainFormContext.getValues('secondarySlots'),
+    secondaryRuneDescription: mainFormContext.getValues('secondaryRuneDescription'),
+  }
 
   const {
     control,
@@ -36,7 +42,7 @@ export default function GuideSecondaryRunesForm() {
     formState: { errors },
     getValues,
     setValues,
-  } = useForm<SecondaryRuneDto>({ resolver });
+  } = useForm<SecondaryRuneDto>({ resolver, defaultValues });
 
   const secondaryRune = useWatch<SecondaryRuneDto>({
     control,
@@ -101,6 +107,10 @@ export default function GuideSecondaryRunesForm() {
   };
 
   useEffect(() => {
+    if (secondaryRune === defaultValues.secondaryRune) {
+      return
+    }
+
     setValues({
       secondarySlots: {
         first: '',

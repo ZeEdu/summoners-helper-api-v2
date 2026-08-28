@@ -16,15 +16,15 @@ import { LocalGuard } from '../../guards/local.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
-import { isProduction } from '../../utils';
 import { CreateUserDto, createUserSchema, IUser } from '@org/contracts';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
+import { Utils } from '../../utils';
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Post('web/register')
   @Public()
@@ -80,7 +80,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     response.clearCookie('refresh_token', {
-      path: isProduction ? '/auth/refresh' : '/',
+      path: Utils.isProduction ? '/auth/refresh' : '/',
     });
     await this.authService.logout(user._id.toString());
   }
@@ -123,10 +123,10 @@ export class AuthController {
   private setRefreshToken(response: Response, token: string) {
     response.cookie('refresh_token', token, {
       httpOnly: true,
-      secure: isProduction,
+      secure: Utils.isProduction,
       sameSite: 'strict',
       maxAge: SEVEN_DAYS,
-      path: isProduction ? '/auth/refresh' : '/',
+      path: Utils.isProduction ? '/auth/refresh' : '/',
     });
   }
 }

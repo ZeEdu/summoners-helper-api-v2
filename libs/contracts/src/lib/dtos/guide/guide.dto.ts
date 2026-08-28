@@ -28,16 +28,16 @@ export const abilitiesProgressionSchema = z.object({
 });
 
 // TODO: TENTAR SE LIVRAR DISSO DAQUI E FAZER APENAS UM ARRAY DE STRING
-// export const itemSchema = z.object({
-//   itemId: z.string({ error: 'formato do campo é inválido' }),
-// });
+export const itemSchema = z.object({
+  itemId: z.string({ error: 'formato do campo é inválido' }),
+});
 
 export const itemsSchema = z.object({
   rowName: z
     .string({ error: 'formato do campo é inválido' })
     .min(1, { error: 'Campo obrigatório' }),
   itemsList: z
-    .array(z.string({ error: 'formato do campo é inválido' }))
+    .array(itemSchema)
     .min(1, { error: 'Campo obrigatório' }),
   description: z
     .string({ error: 'formato do campo é inválido' })
@@ -138,3 +138,5 @@ export const GuideSchemaShape = z.object({
     }),
   ),
 });
+
+export type CreateGuideDto = z.infer<typeof GuideSchemaShape>;
