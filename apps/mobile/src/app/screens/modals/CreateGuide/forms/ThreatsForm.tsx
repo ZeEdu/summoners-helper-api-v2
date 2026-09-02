@@ -19,7 +19,7 @@ const ThreatsSchema = CreateGuideFormSchema.pick({
   threatsDescription: true,
 });
 
-type ThreatsDto = z.infer<typeof ThreatsSchema>;
+export type ThreatsDto = z.infer<typeof ThreatsSchema>;
 
 const resolver = zodResolver(ThreatsSchema);
 

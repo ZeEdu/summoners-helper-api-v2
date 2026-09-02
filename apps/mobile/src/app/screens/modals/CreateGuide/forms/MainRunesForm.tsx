@@ -40,7 +40,6 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
     primarySlots: mainFormContext.getValues('primarySlots'),
     primaryRuneDescription: mainFormContext.getValues('primaryRuneDescription'),
   }
-  console.log({ defaultValues });
 
   const {
     control,

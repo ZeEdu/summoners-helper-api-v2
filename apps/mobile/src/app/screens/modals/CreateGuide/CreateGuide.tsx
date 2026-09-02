@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Dimensions, StyleSheet } from 'react-native';
-import { Button, Portal, Snackbar } from 'react-native-paper';
+import { Portal, Snackbar } from 'react-native-paper';
 
 import {
-  AbilityOption,
   CreateGuideFormDto,
   CreateGuideFormSchema
 } from '@org/contracts';
@@ -19,13 +18,13 @@ import { ModalStackParamList } from '../../../navigation/types';
 import GuideAbilitiesProgressionForm from './forms/AbilitiesProgressionForm';
 import BonusForm from './forms/BonusForm';
 import GuideIntroductionForm from './forms/GuideIntroductionForm';
-import GuideFormReview from './forms/GuideReview';
 import GuideSummonerSpellsForm from './forms/GuideSpellsForm';
 import { ItemSelectionProvider } from './forms/items-form/context/item-selection.provider';
 import ItemsForm from './forms/items-form/ItemsForm';
 import GuideMainRunesForm from './forms/MainRunesForm';
 import GuideSecondaryRunesForm from './forms/SecondaryRunesForm';
 import ThreatsForm from './forms/ThreatsForm';
+import GuideViewer from './guide-viewer/GuideViewer';
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>;
 
@@ -51,10 +50,6 @@ export default function CreateGuide({ navigation, route }: Props) {
     defaultValues
   });
 
-  const goBack = () => {
-    navigation.goBack();
-  };
-
   const onSubmit = async (value: CreateGuideFormDto) => {
     setShowSnack(false);
     setError('');
@@ -62,92 +57,14 @@ export default function CreateGuide({ navigation, route }: Props) {
 
     const guideId = route.params.guide?._id.toString()
 
-    console.log({ value });
-
     createRequest(value, guideId)
       .catch((err) => {
-        console.log({ err });
-
         setError('Salvamento falhou. Tente novamente.');
       })
       .finally(() => {
         setLoading(false);
         setShowSnack(true);
       });
-  };
-
-  const setValuesOnForm = () => {
-    methods.setValues(
-      {
-        "title": "Segundo",
-        "introduction": "asdasd",
-        "champion": "Aatrox",
-        "role": "TOP_LANE",
-        "bonusSlotOne": "ADAPTIVE",
-        "bonusSlotTwo": "ADAPTIVE",
-        "bonusSlotThree": "BASE_HEALTH",
-        "bonusDescription": "asdasd",
-        "primaryRune": "8100",
-        "primarySlots": {
-          "first": "8112",
-          "second": "8126",
-          "third": "8137",
-          "fourth": "8105"
-        },
-        "primaryRuneDescription": "asdasdasd",
-        "secondaryRune": "8300",
-        "secondarySlots": {
-          "first": "8304",
-          "second": "8306",
-          "third": "8321"
-        },
-        "secondaryRuneDescription": "asdasdasd",
-        "firstSpell": "SummonerBarrier",
-        "secondSpell": "SummonerBoost",
-        "spellsDescription": "asdasda",
-        "items": [
-          {
-            "rowName": "asdasdasdasd",
-            "itemsList": [
-              {
-                "itemId": "1001"
-              }
-            ],
-            "description": "adasdasd"
-          }
-        ],
-        "itemsDescription": "asdasdasd",
-        "abilitiesProgression": {
-          "l1": AbilityOption.A,
-          "l2": AbilityOption.A,
-          "l3": AbilityOption.A,
-          "l4": AbilityOption.A,
-          "l5": AbilityOption.A,
-          "l6": AbilityOption.A,
-          "l7": AbilityOption.A,
-          "l8": AbilityOption.A,
-          "l9": AbilityOption.A,
-          "l10": AbilityOption.A,
-          "l11": AbilityOption.A,
-          "l12": AbilityOption.A,
-          "l13": AbilityOption.A,
-          "l14": AbilityOption.A,
-          "l15": AbilityOption.A,
-          "l16": AbilityOption.A,
-          "l17": AbilityOption.A,
-          "l18": AbilityOption.A,
-        },
-        "abilitiesProgressionDescription": "asdasdas",
-        "threatsDescription": "asdasdasd",
-        "threats": [
-          {
-            "threat": "Akali",
-            "description": "asdasdasd"
-          }
-        ]
-      },
-      { shouldValidate: true },
-    );
   };
 
   const watchChampion = useWatch({
@@ -161,37 +78,6 @@ export default function CreateGuide({ navigation, route }: Props) {
   });
 
   const { height } = Dimensions.get('window');
-
-  useEffect(() => {
-    const disableButton = !methods.formState.isValid || loading;
-
-    navigation.setOptions({
-      headerRight: () => (
-        <>
-          <Button
-            mode="contained"
-            style={style.headerButton}
-            onPress={setValuesOnForm}
-          >
-            Set values
-          </Button>
-          <Button
-            mode="contained"
-            style={style.headerButton}
-            disabled={disableButton}
-            onPress={methods.handleSubmit(onSubmit)}
-          >
-            {loading ? 'Salvando...' : 'Salvar'}
-          </Button>
-        </>
-      ),
-    });
-  }, [navigation, methods.formState, loading]);
-
-  const checkFormValues = () => {
-    const currentValues = methods.getValues()
-    console.log({ currentValues });
-  }
 
   return (
     <>
@@ -227,7 +113,7 @@ export default function CreateGuide({ navigation, route }: Props) {
                   <ThreatsForm />
                 </StepperItem>
                 <StepperItem title="Revisão">
-                  <GuideFormReview />
+                  <GuideViewer handleConfirm={methods.handleSubmit(onSubmit)} />
                 </StepperItem>
               </Stepper>
             </StepperProvider>
@@ -239,7 +125,10 @@ export default function CreateGuide({ navigation, route }: Props) {
           visible={showSnack}
           onDismiss={() => {
             setShowSnack(false);
-            // goBack(); // Apenas quando tiver sucesso
+            if (!error) {
+              navigation.goBack();
+            }
+
           }}
           action={{
             label: 'Fechar',

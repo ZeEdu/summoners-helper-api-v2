@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect, useState } from "react";
-import { RunesReforgedDataDragon } from "../../dtos/runes-reforged.dto";
+import { RunesReforgedDataDragon, RunesReforgedSlots } from "../../dtos/runes-reforged.dto";
 import { SummonerSpell } from "../../dtos/spell.dto";
 import { ApiService } from "../../services/api/api.service";
 import { usePatchVersion } from "../patchVersion/usePatchVersion";
@@ -38,6 +38,19 @@ async function loadRunesReforged(version: string) {
   return { list: json, map }
 }
 
+function loadRunesSlots(runes: RunesReforgedDataDragon[]) {
+  const list = runes
+    .reduce(
+      (previousValue, currentValue) => [...previousValue, ...currentValue.slots.map(slot => slot.runes).flat()]
+      , [] as RunesReforgedSlots[])
+
+  const map = list.reduce((previousValue, currentValue) => {
+    return { ...previousValue, [currentValue.id.toString()]: currentValue }
+  }, {} as Record<string, RunesReforgedSlots>)
+
+  return { list, map }
+}
+
 async function loadItems(version: string) {
   const json = await ApiService.DataDragon.items(version)
 
@@ -51,12 +64,14 @@ async function init(version: string) {
   const champions = await loadChampionList(version)
   const spells = await loadSummonerSpells(version)
   const runes = await loadRunesReforged(version)
+  const runesSlots = loadRunesSlots(runes.list)
   const items = await loadItems(version)
 
   return {
     champions,
     spells,
     runes,
+    runesSlots,
     items
   }
 }
@@ -67,8 +82,8 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const [dataDragon, setDataDragon] = useState<DataDragon>({ champions: [], items: [], runes: [], spells: [] })
-  const [dataDragonMaps, setDataDragonMaps] = useState<DataDragonMaps>({ champions: {}, items: {}, runes: {}, spells: {} })
+  const [dataDragon, setDataDragon] = useState<DataDragon>({ champions: [], items: [], runes: [], runeSlots: [], spells: [] })
+  const [dataDragonMaps, setDataDragonMaps] = useState<DataDragonMaps>({ champions: {}, items: {}, runes: {}, runeSlots: {}, spells: {} })
 
   const loadData = () => {
     if (!version) {
@@ -78,11 +93,14 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
     setLoading(true)
     setError(undefined)
     init(version)
-      .then(({ champions, spells, runes, items }) => {
+      .then(({ champions, spells, runes, runesSlots, items }) => {
+        console.log({ runesSlots });
+
         setDataDragon({
           champions: champions.list,
           spells: spells.list,
           runes: runes.list,
+          runeSlots: runesSlots.list,
           items: items.list
         })
 
@@ -90,6 +108,7 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
           champions: champions.map,
           spells: spells.map,
           runes: runes.map,
+          runeSlots: runesSlots.map,
           items: items.map
         })
       })
@@ -108,6 +127,10 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
 
   const getChampion = (id: string) => {
     return dataDragonMaps.champions[id]
+  }
+
+  const getRuneSlots = (id: string) => {
+    return dataDragonMaps.runeSlots[id]
   }
 
   const getSpell = (id: string) => {
@@ -135,8 +158,8 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
     getChampion,
     getSpell,
     getRune,
+    getRuneSlots,
     getItem
-
   }
 
   return (

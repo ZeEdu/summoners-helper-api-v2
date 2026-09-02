@@ -36,14 +36,14 @@ export type AbilitiesProgressionDto = z.infer<
 
 const resolver = zodResolver(abilitiesProgressionSchema);
 
-const keymapIndex = {
+export const keymapIndex = {
   0: 'q',
   1: 'w',
   2: 'e',
   3: 'r',
 };
 
-type KeymapIndexType = keyof typeof keymapIndex;
+export type KeymapIndexType = keyof typeof keymapIndex;
 
 enum AbilityOption {
   A = 'a',
@@ -52,7 +52,7 @@ enum AbilityOption {
   D = 'd',
 }
 
-const indexToAbilityOption = {
+export const indexToAbilityOption = {
   0: AbilityOption.A,
   1: AbilityOption.B,
   2: AbilityOption.C,

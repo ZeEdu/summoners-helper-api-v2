@@ -34,6 +34,10 @@ export default function SelectModal({ title, options, value, onChange, dismiss, 
       return newValue;
     }
 
+    if (toggleValue === oldValue) {
+      return undefined
+    }
+
     return toggleValue;
   }
 

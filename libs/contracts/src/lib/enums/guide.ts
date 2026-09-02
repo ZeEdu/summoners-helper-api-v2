@@ -22,21 +22,39 @@ export enum AbilityOption {
 }
 
 export enum SLOT_BONUS {
-  ADAPTIVE = 'ADAPTIVE',
-  ATTACK_SPEED = 'ATTACK_SPEED',
-  HASTE = 'HASTE',
-  MOVEMENT_SPEED = 'MOVEMENT_SPEED',
-  BONUS_HEALTH = 'BONUS_HEALTH',
-  BASE_HEALTH = 'BASE_HEALTH',
-  TENACITY = 'TENACITY',
+  ADAPTIVE_FORCE = 'AdaptiveForce',
+  ADAPTIVE_FORCE_SCALING = 'AdaptiveForceScaling',
+  ARMOR = 'Armor',
+  ATTACK_SPEED = 'AttackSpeed',
+  CDR_SCALING = 'CDRScaling',
+  HEALTH = 'HealthPlus',
+  HEALTH_SCALING = 'HealthScaling',
+  HASTE = 'MagicRes',
+  MOVEMENT_SPEED = 'MovementSpeed',
+  TENACITY = 'Tenacity',
+
+  AdaptiveForce = 'ADAPTIVE_FORCE',
+  AdaptiveForceScaling = 'ADAPTIVE_FORCE_SCALING',
+  Armor = 'ARMOR',
+  AttackSpeed = 'ATTACK_SPEED',
+  CDRScaling = 'CDR_SCALING',
+  HealthPlus = 'HEALTH',
+  HealthScaling = 'HEALTH_SCALING',
+  MagicRes = 'HASTE',
+  MovementSpeed = 'MOVEMENT_SPEED',
+  Tenacity = 'TENACITY',
 }
 
+
 export enum SLOT_BONUS_LABELS {
-  ADAPTIVE = '9 Adaptive',
-  ATTACK_SPEED = '10% Attack Speed',
-  HASTE = '8 Ability Haste',
-  MOVEMENT_SPEED = '2.5% Movement Speed',
-  BONUS_HEALTH = '10 - 180 Bonus Health',
-  BASE_HEALTH = '65 Base Health',
-  TENACITY = '15% Tenacity/Slow Resist',
+  ADAPTIVE_FORCE = 'Força Adaptativa',
+  ADAPTIVE_FORCE_SCALING = 'Força Adaptativa por nível',
+  ARMOR = 'Armadura',
+  ATTACK_SPEED = 'Velocidade de Ataque',
+  CDR_SCALING = 'Aceleração de Habilidade por nível',
+  HEALTH = 'Vida',
+  HEALTH_SCALING = 'Vida por nível',
+  HASTE = 'Aceleração de Habilidade',
+  MOVEMENT_SPEED = 'Velocidade de Movimento',
+  TENACITY = 'Tenacidade',
 }
