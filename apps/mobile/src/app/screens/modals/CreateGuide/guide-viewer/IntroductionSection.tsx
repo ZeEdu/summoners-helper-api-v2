@@ -3,12 +3,16 @@ import { Avatar, List, Text } from "react-native-paper"
 
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion"
 import useChampionData from "../../../../../hooks/useChampion"
+import DataDragonService from "../../../../../services/data-dragon/data-dragon.service"
 import { GuideIntroductionDto } from "../forms/GuideIntroductionForm"
+import { SectionProps } from "./sections.types"
 
-export default function IntroductionSection({ guideIntroduction }: { guideIntroduction: GuideIntroductionDto }) {
+type IntroductionSectionProps = SectionProps & { guideIntroduction: GuideIntroductionDto }
+
+export default function IntroductionSection({ guideIntroduction, hideTitle = false }: IntroductionSectionProps) {
   const usePatch = usePatchVersion()
   const { championData, error, loading } = useChampionData(guideIntroduction.champion)
-  const uri = getTileEndpoint(guideIntroduction.champion, usePatch.version)
+  const uri = DataDragonService.champion(guideIntroduction.champion, usePatch.version)
 
   return (
     <View>
@@ -29,11 +33,15 @@ export default function IntroductionSection({ guideIntroduction }: { guideIntrod
       {
         !!championData && (
           <List.Section>
-            <List.Subheader>
-              <Text variant='headlineSmall'>
-                Informações Gerais
-              </Text>
-            </List.Subheader>
+            {
+              !hideTitle ? (
+                <List.Subheader>
+                  <Text variant='headlineSmall'>
+                    Informações Gerais
+                  </Text>
+                </List.Subheader>
+              ) : undefined
+            }
             <List.Item title={'Título'} description={guideIntroduction.title} />
             <List.Item title={'Introdução'} description={guideIntroduction.introduction} />
             <List.Item title={'Campeão'} description={championData.name} right={() => <Avatar.Image style={{ backgroundColor: 'transparent' }} source={{ uri }} size={48} />} />
@@ -43,8 +51,4 @@ export default function IntroductionSection({ guideIntroduction }: { guideIntrod
       }
     </View>
   )
-}
-
-function getTileEndpoint(championName: string, patchVersion: string) {
-  return `https://ddragon.leagueoflegends.com/cdn/${patchVersion}/img/champion/${championName}.png`;
 }

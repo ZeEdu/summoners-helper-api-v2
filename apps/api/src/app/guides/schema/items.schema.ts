@@ -10,7 +10,7 @@ export class Items implements IItems {
   rowName: string;
 
   @Prop([{ type: ItemList, required: true }])
-  items: ItemList[];
+  itemsList: ItemList[];
 
   @Prop({ type: String, required: true })
   description: string;

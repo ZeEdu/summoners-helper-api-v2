@@ -4,15 +4,23 @@ import { Avatar, List, Text } from "react-native-paper";
 import { SLOT_BONUS_LABELS } from "@org/contracts";
 
 import { BonusDto } from "../forms/BonusForm";
+import { SectionProps } from "./sections.types";
 
-export default function BonusSection({ bonus }: { bonus: BonusDto }) {
+type BonusSectionProps = SectionProps & { bonus: BonusDto }
+
+export default function BonusSection({ bonus, hideTitle = false }: BonusSectionProps) {
   return (
     <List.Section>
-      <List.Subheader>
-        <Text variant='headlineSmall'>
-          Bonus
-        </Text>
-      </List.Subheader>
+      {
+        !hideTitle ? (
+          <List.Subheader>
+            <Text variant='headlineSmall'>
+              Bonus
+
+            </Text>
+          </List.Subheader>
+        ) : undefined
+      }
 
       <List.Item title={'Descrição'} description={bonus.bonusDescription} />
       <BonusItem bonus={bonus.bonusSlotOne} title={'Primeiro Bonus'} />

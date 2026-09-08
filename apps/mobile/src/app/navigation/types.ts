@@ -13,13 +13,14 @@ export const Stacks = {
 export const Routes = {
   Home: 'Home',
   Profile: 'Profile',
-  MyBuilds: 'MyBuilds',
+  MyGuides: 'MyGuides',
 
   Login: 'Login',
   Register: 'Register',
 
   BindRiotAccount: 'BindRiotAccount',
-  CreateGuide: 'CreateGuide'
+  CreateGuide: 'CreateGuide',
+  ViewGuide: 'ViewGuide'
 } as const
 
 export type RootStackParamList = {
@@ -33,7 +34,7 @@ export type RootStackParamList = {
 export type MainTabsParamList = {
   [Routes.Home]: undefined;
   [Routes.Profile]: { userId: string };
-  [Routes.MyBuilds]: undefined,
+  [Routes.MyGuides]: undefined,
 };
 
 export type AuthStackParamList = {
@@ -44,4 +45,5 @@ export type AuthStackParamList = {
 export type ModalStackParamList = {
   [Routes.BindRiotAccount]: undefined;
   [Routes.CreateGuide]: { guide?: IGuide };
+  [Routes.ViewGuide]: { guide: IGuide };
 };

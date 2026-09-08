@@ -50,7 +50,8 @@
     "@gorhom/bottom-sheet": "*",
     "zod": "*",
     "@react-native-clipboard/clipboard": "*",
-    "react-native-reanimated": "*"
+    "react-native-reanimated": "*",
+    "react-native-gesture-handler": "*"
   },
   "devDependencies": {}
 }

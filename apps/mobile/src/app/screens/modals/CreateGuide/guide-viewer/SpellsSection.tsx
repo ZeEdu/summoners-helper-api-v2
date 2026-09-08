@@ -3,15 +3,25 @@ import { Avatar, List, Text } from "react-native-paper";
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import { GuideSummonerSpellsDto } from "../forms/GuideSpellsForm";
+import { SectionProps } from "./sections.types";
 
-export default function SpellsSection({ guideSummonerSpells }: { guideSummonerSpells: GuideSummonerSpellsDto }) {
+type SpellsSectionProps = SectionProps & { guideSummonerSpells: GuideSummonerSpellsDto }
+
+export default function SpellsSection({
+  guideSummonerSpells,
+  hideTitle = false }: SpellsSectionProps
+) {
   return (
     <List.Section>
-      <List.Subheader>
-        <Text variant='headlineSmall'>
-          Magias
-        </Text>
-      </List.Subheader>
+      {
+        !hideTitle ? (
+          <List.Subheader>
+            <Text variant='headlineSmall'>
+              Magias
+            </Text>
+          </List.Subheader>
+        ) : undefined
+      }
       <SpellItem spellId={guideSummonerSpells.firstSpell} />
       <SpellItem spellId={guideSummonerSpells.secondSpell} />
       <List.Item title={'Descrição'} description={guideSummonerSpells.spellsDescription} />

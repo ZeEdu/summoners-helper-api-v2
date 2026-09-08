@@ -3,15 +3,22 @@ import { Avatar, List, Text } from "react-native-paper";
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
 import { MainRuneDto } from "../forms/MainRunesForm";
 import { SecondaryRuneDto } from "../forms/SecondaryRunesForm";
+import { SectionProps } from "./sections.types";
 
-export default function RunesSection({ mainRune, secondaryRune }: { mainRune: MainRuneDto, secondaryRune: SecondaryRuneDto }) {
+type RunesSectionProps = SectionProps & { mainRune: MainRuneDto, secondaryRune: SecondaryRuneDto }
+
+export default function RunesSection({ mainRune, secondaryRune, hideTitle = false }: RunesSectionProps) {
   return (
     <List.Section>
-      <List.Subheader>
-        <Text variant='headlineSmall'>
-          Runas
-        </Text>
-      </List.Subheader>
+      {
+        !hideTitle ? (
+          <List.Subheader>
+            <Text variant='headlineSmall'>
+              Runas
+            </Text>
+          </List.Subheader>
+        ) : undefined
+      }
 
       <RuneItem title='Caminho principal' runeId={mainRune.primaryRune} />
       <RuneSlotItem title='Primeira Runa' runeSlotId={mainRune.primarySlots.first} />

@@ -3,15 +3,25 @@ import { Avatar, List, Text } from "react-native-paper";
 
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
+import Utils from "../../../../../utils/utils";
 import { ItemsDto } from "../forms/items-form/ItemsForm";
+import { SectionProps } from "./sections.types";
 
-export default function ItemsSection({ items }: { items: ItemsDto }) {
+type ItemsSectionProps = SectionProps & { items: ItemsDto }
+
+export default function ItemsSection({ items, hideTitle = false }: ItemsSectionProps) {
   return (
     <List.Section>
       <List.Subheader>
-        <Text variant='headlineSmall'>
-          Itens
-        </Text>
+        {
+          !hideTitle ? (
+            <List.Subheader>
+              <Text variant='headlineSmall'>
+                Itens
+              </Text>
+            </List.Subheader>
+          ) : undefined
+        }
       </List.Subheader>
       <ItemsRow items={items.items} />
     </List.Section>
@@ -23,15 +33,8 @@ function ItemsSectionItem({ itemId }: { itemId: string }) {
   const usePatch = usePatchVersion()
 
   const item = useDataDragon.getItem(itemId)
-
   const uri = `https://ddragon.leagueoflegends.com/cdn/${usePatch.version}/img/item/${item.image.full}`;
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(
-    item.description,
-    'text/html',
-  );
-  const parsedDescription = doc.body.textContent || '';
+  const parsedDescription = Utils.cleanDOMElements(item.description)
 
   return (
     <List.Item

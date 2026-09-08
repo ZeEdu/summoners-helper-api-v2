@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Dimensions, StyleSheet } from 'react-native';
-import { Portal, Snackbar } from 'react-native-paper';
+import { Button, Portal, Snackbar } from 'react-native-paper';
 
 import {
+  AbilityOption,
   CreateGuideFormDto,
   CreateGuideFormSchema
 } from '@org/contracts';
@@ -24,7 +25,7 @@ import ItemsForm from './forms/items-form/ItemsForm';
 import GuideMainRunesForm from './forms/MainRunesForm';
 import GuideSecondaryRunesForm from './forms/SecondaryRunesForm';
 import ThreatsForm from './forms/ThreatsForm';
-import GuideViewer from './guide-viewer/GuideViewer';
+import ReviewGuide from './guide-viewer/ReviewGuide';
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>;
 
@@ -51,6 +52,8 @@ export default function CreateGuide({ navigation, route }: Props) {
   });
 
   const onSubmit = async (value: CreateGuideFormDto) => {
+    if (loading) return
+
     setShowSnack(false);
     setError('');
     setLoading(true);
@@ -79,6 +82,103 @@ export default function CreateGuide({ navigation, route }: Props) {
 
   const { height } = Dimensions.get('window');
 
+  const setValuesOnForm = () => {
+    methods.setValues(
+      {
+        "title": "Segundo",
+        "introduction": "asdasd",
+        "champion": "Aatrox",
+        "role": "TOP_LANE",
+        "bonusSlotOne": "ADAPTIVE",
+        "bonusSlotTwo": "ADAPTIVE",
+        "bonusSlotThree": "BASE_HEALTH",
+        "bonusDescription": "asdasd",
+        "primaryRune": "8100",
+        "primarySlots": {
+          "first": "8112",
+          "second": "8126",
+          "third": "8137",
+          "fourth": "8105"
+        },
+        "primaryRuneDescription": "asdasdasd",
+        "secondaryRune": "8300",
+        "secondarySlots": {
+          "first": "8304",
+          "second": "8306",
+          "third": "8321"
+        },
+        "secondaryRuneDescription": "asdasdasd",
+        "firstSpell": "SummonerBarrier",
+        "secondSpell": "SummonerBoost",
+        "spellsDescription": "asdasda",
+        "items": [
+          {
+            "rowName": "asdasdasdasd",
+            "itemsList": [
+              {
+                "itemId": "1001"
+              }
+            ],
+            "description": "adasdasd"
+          }
+        ],
+        "itemsDescription": "asdasdasd",
+        "abilitiesProgression": {
+          "l1": AbilityOption.A,
+          "l2": AbilityOption.A,
+          "l3": AbilityOption.A,
+          "l4": AbilityOption.A,
+          "l5": AbilityOption.A,
+          "l6": AbilityOption.A,
+          "l7": AbilityOption.A,
+          "l8": AbilityOption.A,
+          "l9": AbilityOption.A,
+          "l10": AbilityOption.A,
+          "l11": AbilityOption.A,
+          "l12": AbilityOption.A,
+          "l13": AbilityOption.A,
+          "l14": AbilityOption.A,
+          "l15": AbilityOption.A,
+          "l16": AbilityOption.A,
+          "l17": AbilityOption.A,
+          "l18": AbilityOption.A,
+        },
+        "abilitiesProgressionDescription": "asdasdas",
+        "threatsDescription": "asdasdasd",
+        "threats": [
+          {
+            "threat": "Akali",
+            "description": "asdasdasd"
+          }
+        ]
+      },
+      { shouldValidate: true },
+    );
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <>
+          <Button
+            mode="contained"
+            style={style.headerButton}
+            onPress={setValuesOnForm}
+          >
+            Set values
+          </Button>
+          <Button
+            mode="contained"
+            style={style.headerButton}
+            onPress={methods.handleSubmit(onSubmit)}
+          >
+            {loading ? 'Salvando...' : 'Salvar'}
+          </Button>
+        </>
+      ),
+    });
+  }, [navigation, methods.formState, loading]);
+
   return (
     <>
       <StyledView style={{ ...style.container, height: height }}>
@@ -86,34 +186,34 @@ export default function CreateGuide({ navigation, route }: Props) {
           <FormProvider {...methods}>
             <StepperProvider>
               <Stepper>
-                <StepperItem title="GuideIntroductionForm">
+                <StepperItem title="Introdução">
                   <GuideIntroductionForm />
                 </StepperItem>
-                <StepperItem title="GuideSummonerSpellsForm">
+                <StepperItem title="Magias">
                   <GuideSummonerSpellsForm />
                 </StepperItem>
-                <StepperItem title="GuideMainRunesForm">
+                <StepperItem title="Runas Principais">
                   <GuideMainRunesForm secondaryRune={secondaryRune} />
                 </StepperItem>
-                <StepperItem title="GuideSecondaryRunesForm">
+                <StepperItem title="Runas Secondárias">
                   <GuideSecondaryRunesForm />
                 </StepperItem>
-                <StepperItem title="BonusForm">
+                <StepperItem title="Bonus">
                   <BonusForm />
                 </StepperItem>
-                <StepperItem title="ItemsForm">
+                <StepperItem title="Itens">
                   <ItemSelectionProvider>
                     <ItemsForm />
                   </ItemSelectionProvider>
                 </StepperItem>
-                <StepperItem title="GuideAbilitiesProgressionForm">
+                <StepperItem title="Progressão de Habilidades">
                   <GuideAbilitiesProgressionForm champion={watchChampion} />
                 </StepperItem>
-                <StepperItem title="ThreatsForm">
+                <StepperItem title="Ameaças">
                   <ThreatsForm />
                 </StepperItem>
                 <StepperItem title="Revisão">
-                  <GuideViewer handleConfirm={methods.handleSubmit(onSubmit)} />
+                  <ReviewGuide handleConfirm={methods.handleSubmit(onSubmit)} />
                 </StepperItem>
               </Stepper>
             </StepperProvider>
@@ -151,9 +251,5 @@ export const style = StyleSheet.create({
   container: {
     marginHorizontal: 16,
     flex: 1,
-  },
-  fieldContainer: {
-    display: 'flex',
-    gap: 8,
-  },
+  }
 });

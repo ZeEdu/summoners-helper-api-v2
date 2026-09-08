@@ -6,20 +6,19 @@ import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDra
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import DataDragonService from "../../../../../services/data-dragon/data-dragon.service";
 
-// É possível passar a função de navegação para este componente, sem ter a necessidade de coloca-lo na navegação do app
 type GuideListItemProps = {
   guide: IGuide,
   editGuide: (guide: IGuide) => void
+  viewGuide: (guide: IGuide) => void
 }
 
-export default function GuideListItem({ guide, editGuide }: GuideListItemProps) {
+export default function GuideListItem({ guide, editGuide, viewGuide }: GuideListItemProps) {
   const [showMenu, setShowMenu] = useState(false)
 
   const theme = useTheme();
   const patchVersion = usePatchVersion()
   const dataDragonContext = useDataDragonContext();
   const champion = dataDragonContext.getChampion(guide.champion)
-
 
   const openMenu = () => {
     setShowMenu(true)
@@ -29,16 +28,22 @@ export default function GuideListItem({ guide, editGuide }: GuideListItemProps) 
     setShowMenu(false)
   }
 
-
   const edit = () => {
     hideMenu()
     editGuide(guide)
   }
 
+  const view = () => {
+    hideMenu()
+    viewGuide(guide)
+  }
+
   return (
-    <Pressable style={({ pressed }) => {
-      return { backgroundColor: pressed ? theme.colors.inversePrimary : 'transparent' }
-    }}>
+    <Pressable
+      onPress={view}
+      style={({ pressed }) => {
+        return { backgroundColor: pressed ? theme.colors.inversePrimary : 'transparent' }
+      }}>
       <Card.Title
         key={guide._id.toString()}
         title={guide.title}
@@ -56,6 +61,7 @@ export default function GuideListItem({ guide, editGuide }: GuideListItemProps) 
               onDismiss={hideMenu}
               anchor={<IconButton icon={'dots-vertical'} onPress={openMenu} />}
             >
+              <Menu.Item title={'Visualizar'} onPress={view} />
               <Menu.Item title={'Editar guia'} onPress={edit} />
             </Menu>
           )

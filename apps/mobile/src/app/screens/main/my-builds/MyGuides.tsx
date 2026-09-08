@@ -1,14 +1,14 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Button, FAB, MD3Theme, Text, useTheme } from 'react-native-paper';
 
+import { GuidePaginationDto, IGuide, ROLES, ROLES_LABEL } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
-import { GuidePaginationDto, IGuide, ROLES, ROLES_LABEL } from '@org/contracts';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import AppSelectController from '../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../components/forms/AppInputController';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
@@ -18,13 +18,9 @@ import { MainTabsParamList, RootStackParamList } from '../../../navigation/types
 import GuideListItem from './guide-list-item/GuideListItem';
 
 export type MyBuildsProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabsParamList, 'MyBuilds'>,
+  BottomTabScreenProps<MainTabsParamList, 'MyGuides'>,
   NativeStackScreenProps<RootStackParamList>
 >;
-
-function getTileEndpoint(championName: string) {
-  return `https://ddragon.leagueoflegends.com/cdn/16.13.1/img/champion/${championName}.png`;
-}
 
 const ROLE_OPTIONS: { value: string; label: string }[] = [
   {
@@ -49,8 +45,7 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
   },
 ];
 
-
-export default function MyBuilds({ navigation }: MyBuildsProps) {
+export default function MyGuides({ navigation }: MyBuildsProps) {
   const authContext = useAuthContext();
   const dataDragonContext = useDataDragonContext();
 
@@ -75,6 +70,7 @@ export default function MyBuilds({ navigation }: MyBuildsProps) {
   });
 
   const handleCreateGuide = () => {
+    // Só navega para a próxima tela se tiver os dados vinculados da RIOT
     navigation.navigate('Modals', {
       screen: 'CreateGuide',
       params: {},
@@ -128,6 +124,22 @@ export default function MyBuilds({ navigation }: MyBuildsProps) {
   }
 
   const championList = dataDragonContext.dataDragon?.champions || [];
+
+  const editGuide = (guide: IGuide) => {
+    navigation
+      .navigate('Modals', {
+        screen: 'CreateGuide',
+        params: { guide },
+      });
+  }
+
+  const viewGuide = (guide: IGuide) => {
+    navigation
+      .navigate('Modals', {
+        screen: 'ViewGuide',
+        params: { guide },
+      });
+  }
 
   return (
     <>
@@ -210,16 +222,13 @@ export default function MyBuilds({ navigation }: MyBuildsProps) {
 
                   return null
                 }}
-                renderItem={({ item: guide }) => {
-                  const editGuideNavigation = (guide: IGuide) => {
-                    navigation.navigate('Modals', {
-                      screen: 'CreateGuide',
-                      params: { guide },
-                    });
-
-                  }
-                  return <GuideListItem guide={guide} editGuide={editGuideNavigation} />
-                }}
+                renderItem={({ item: guide }) => (
+                  <GuideListItem
+                    guide={guide}
+                    editGuide={editGuide}
+                    viewGuide={viewGuide}
+                  />
+                )}
               />
             ) : (
               <View>

@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from 'react-native-paper';
 
 import Home from '../screens/main/home/Home';
-import MyBuilds from '../screens/main/my-builds/MyBuilds';
+import MyGuides from '../screens/main/my-builds/MyGuides';
 import Profile from '../screens/main/profile/Profile';
 import { MainTabsParamList, Routes } from './types';
 
@@ -24,8 +24,8 @@ const TABS: TabsType[] = [
     icon: 'home'
   },
   {
-    name: Routes.MyBuilds,
-    component: MyBuilds,
+    name: Routes.MyGuides,
+    component: MyGuides,
     title: 'Minhas builds',
     icon: 'list'
   },

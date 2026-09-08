@@ -12,7 +12,6 @@ import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 import { StepperFooter } from '../../../../../components/stepper';
 import { buildCustomButtonProps } from '../../../../../components/stepper/StepperFooter';
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
-import { style } from '../CreateGuide';
 
 const ThreatsSchema = CreateGuideFormSchema.pick({
   threats: true,
@@ -81,7 +80,7 @@ export default function ThreatsForm() {
               data={fields}
               renderItem={({ index }) => {
                 return (
-                  <View style={style.fieldContainer}>
+                  <View style={styles.fieldContainer}>
                     <AppSelectController
                       key={`${index}.threat`}
                       control={control}
@@ -142,4 +141,8 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   form: { flex: 1, gap: 16 },
   addThreat: { marginBottom: 16 },
+  fieldContainer: {
+    display: 'flex',
+    gap: 8,
+  }
 });

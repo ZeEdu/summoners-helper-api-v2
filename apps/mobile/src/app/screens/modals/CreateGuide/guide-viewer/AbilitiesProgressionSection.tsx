@@ -5,14 +5,18 @@ import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVe
 import useChampionData from "../../../../../hooks/useChampion"
 import { AbilitiesProgressionDto, indexToAbilityOption, keymapIndex, KeymapIndexType } from "../forms/AbilitiesProgressionForm"
 import { keyFromLvlsBuilder, LvlKey, lvlsArrayBuilder } from "../forms/utils"
+import { SectionProps } from "./sections.types"
+
+type AbilitiesProgressionSectionProps = SectionProps & {
+  champion: string,
+  abilitiesProgression: AbilitiesProgressionDto
+}
 
 export default function AbilitiesProgressionSection({
   champion,
-  abilitiesProgression
-}: {
-  champion: string,
-  abilitiesProgression: AbilitiesProgressionDto
-}) {
+  abilitiesProgression,
+  hideTitle = false
+}: AbilitiesProgressionSectionProps) {
   const usePatch = usePatchVersion()
   const theme = useTheme()
   const styles = makeStyles(theme)
@@ -26,11 +30,16 @@ export default function AbilitiesProgressionSection({
 
   return (
     <List.Section>
-      <List.Subheader>
-        <Text variant='headlineSmall'>
-          Progressão de abilidades
-        </Text>
-      </List.Subheader>
+      {
+        !hideTitle ? (
+          <List.Subheader>
+            <Text variant='headlineSmall'>
+              Progressão de abilidades
+            </Text>
+          </List.Subheader>
+        ) : undefined
+      }
+
       <List.Item title='Descrição' description={abilitiesProgression.abilitiesProgressionDescription} />
       <View style={styles.headerContainer}>
         {

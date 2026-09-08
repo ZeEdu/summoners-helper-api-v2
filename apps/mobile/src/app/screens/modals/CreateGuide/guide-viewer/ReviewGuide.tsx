@@ -26,7 +26,7 @@ type GuideViewerProps = {
   handleConfirm?: () => void
 }
 
-export default function GuideViewer({ handleConfirm }: GuideViewerProps) {
+export default function ReviewGuide({ handleConfirm }: GuideViewerProps) {
   const mainFormContext = useFormContext<CreateGuideFormDto>();
 
   const guideIntroduction: GuideIntroductionDto = {

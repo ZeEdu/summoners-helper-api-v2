@@ -28,6 +28,7 @@ import { useStepperContext } from '../../../../../../components/stepper/context'
 import { ItemDetailsWithId } from '../../../../../../contexts/data-dragon/data-dragon.context';
 import useDataDragonContext from '../../../../../../contexts/data-dragon/useDataDragonContext';
 import { usePatchVersion } from '../../../../../../contexts/patchVersion/usePatchVersion';
+import Utils from '../../../../../../utils/utils';
 import ItemsField from './ItemsFields';
 import { useItemSelectionContext } from './context/useItemSelectionContext';
 
@@ -165,13 +166,7 @@ export default function ItemsForm() {
                     renderItem={({ item }) => {
                       const { name, image, description, id } = item;
 
-                      const parser = new DOMParser();
-                      const doc = parser.parseFromString(
-                        description,
-                        'text/html',
-                      );
-                      const parsedDescription = doc.body.textContent || '';
-
+                      const parsedDescription = Utils.cleanDOMElements(description)
                       const itemImageUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/img/item/${image.full}`;
 
                       return (

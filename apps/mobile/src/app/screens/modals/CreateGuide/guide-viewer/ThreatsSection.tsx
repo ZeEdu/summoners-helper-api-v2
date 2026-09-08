@@ -4,14 +4,25 @@ import { Avatar, List, Text } from "react-native-paper";
 
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import useChampionData from "../../../../../hooks/useChampion";
+import DataDragonService from "../../../../../services/data-dragon/data-dragon.service";
 import { ThreatsDto } from "../forms/ThreatsForm";
+import { SectionProps } from "./sections.types";
 
-export default function ThreatsSection({ threats }: { threats: ThreatsDto }) {
+type ThreatsSection = SectionProps & { threats: ThreatsDto }
+
+export default function ThreatsSection({ threats, hideTitle = false }: ThreatsSection) {
   return (
     <List.Section>
-      <List.Subheader>
-        Ameaças
-      </List.Subheader>
+      {
+        !hideTitle ? (
+          <List.Subheader>
+            <Text variant='headlineSmall'>
+              Ameaças
+            </Text>
+          </List.Subheader>
+        ) : undefined
+      }
+
       <List.Item title={'Descrição das ameaças'} description={threats.threatsDescription} />
       {
         threats.threats
@@ -30,7 +41,7 @@ function ThreatsSectionRow({ champion, description }: {
   const usePatch = usePatchVersion()
   const { championData, error, loading } = useChampionData(champion)
 
-  const uri = getTileEndpoint(champion, usePatch.version)
+  const uri = DataDragonService.champion(champion, usePatch.version)
   return (
     <View>
       {
@@ -58,8 +69,4 @@ function ThreatsSectionRow({ champion, description }: {
       }
     </View>
   )
-}
-
-function getTileEndpoint(championName: string, patchVersion: string) {
-  return `https://ddragon.leagueoflegends.com/cdn/${patchVersion}/img/champion/${championName}.png`;
 }

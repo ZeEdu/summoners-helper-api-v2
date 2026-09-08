@@ -7,7 +7,7 @@ export interface IItemList {
 
 export interface IItems {
   rowName: string;
-  items: IItemList[];
+  itemsList: IItemList[];
   description: string;
 }
 
