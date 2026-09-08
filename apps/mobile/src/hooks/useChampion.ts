@@ -8,7 +8,7 @@ export default function useChampionData(championId: string) {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    if (championId) {
+    const getChampion = () => {
       setLoading(true)
       setError(false)
 
@@ -23,6 +23,10 @@ export default function useChampionData(championId: string) {
         .finally(() => {
           setLoading(false)
         })
+
+    }
+    if (championId) {
+      getChampion()
     }
   }, [championId])
 

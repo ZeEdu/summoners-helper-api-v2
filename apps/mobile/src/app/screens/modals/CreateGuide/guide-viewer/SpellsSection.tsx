@@ -1,5 +1,6 @@
 import { Avatar, List, Text } from "react-native-paper";
 
+import FadeInView from "../../../../../components/animated/FadeInView";
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import { GuideSummonerSpellsDto } from "../forms/GuideSpellsForm";
@@ -12,20 +13,23 @@ export default function SpellsSection({
   hideTitle = false }: SpellsSectionProps
 ) {
   return (
-    <List.Section>
-      {
-        !hideTitle ? (
-          <List.Subheader>
-            <Text variant='headlineSmall'>
-              Magias
-            </Text>
-          </List.Subheader>
-        ) : undefined
-      }
-      <SpellItem spellId={guideSummonerSpells.firstSpell} />
-      <SpellItem spellId={guideSummonerSpells.secondSpell} />
-      <List.Item title={'Descrição'} description={guideSummonerSpells.spellsDescription} />
-    </List.Section>
+    <FadeInView>
+      <List.Section>
+        {
+          !hideTitle ? (
+            <List.Subheader>
+              <Text variant='headlineSmall'>
+                Magias
+              </Text>
+            </List.Subheader>
+          ) : undefined
+        }
+        <SpellItem spellId={guideSummonerSpells.firstSpell} />
+        <SpellItem spellId={guideSummonerSpells.secondSpell} />
+        <List.Item title={'Descrição'} description={guideSummonerSpells.spellsDescription} />
+      </List.Section>
+    </FadeInView>
+
   )
 }
 

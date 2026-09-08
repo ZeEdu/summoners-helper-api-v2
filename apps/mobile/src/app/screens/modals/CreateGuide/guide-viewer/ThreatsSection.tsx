@@ -2,6 +2,9 @@ import React from "react";
 import { View } from "react-native";
 import { Avatar, List, Text } from "react-native-paper";
 
+import FadeInView from "../../../../../components/animated/FadeInView";
+import Error from "../../../../../components/Error";
+import LoadingIndicator from "../../../../../components/LoadingIndicator";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import useChampionData from "../../../../../hooks/useChampion";
 import DataDragonService from "../../../../../services/data-dragon/data-dragon.service";
@@ -12,25 +15,28 @@ type ThreatsSection = SectionProps & { threats: ThreatsDto }
 
 export default function ThreatsSection({ threats, hideTitle = false }: ThreatsSection) {
   return (
-    <List.Section>
-      {
-        !hideTitle ? (
-          <List.Subheader>
-            <Text variant='headlineSmall'>
-              Ameaças
-            </Text>
-          </List.Subheader>
-        ) : undefined
-      }
+    <FadeInView>
+      <List.Section>
+        {
+          !hideTitle ? (
+            <List.Subheader>
+              <Text variant='headlineSmall'>
+                Ameaças
+              </Text>
+            </List.Subheader>
+          ) : undefined
+        }
 
-      <List.Item title={'Descrição das ameaças'} description={threats.threatsDescription} />
-      {
-        threats.threats
-          .map(({ description, threat }) => (
-            <ThreatsSectionRow champion={threat} description={description} />
-          ))
-      }
-    </List.Section>
+        <List.Item title={'Descrição das ameaças'} description={threats.threatsDescription} />
+        {
+          threats.threats
+            .map(({ description, threat }) => (
+              <ThreatsSectionRow champion={threat} description={description} />
+            ))
+        }
+      </List.Section>
+    </FadeInView>
+
   )
 }
 
@@ -45,26 +51,22 @@ function ThreatsSectionRow({ champion, description }: {
   return (
     <View>
       {
-        loading && (
-          <View>
-            <Text>Carregando</Text>
-          </View>
-        )
+        loading && <LoadingIndicator />
       }
 
-      {Boolean(error) && (
-        <View>
-          <Text>Um erro ocorreu no ao carregar os dados </Text>
-        </View>
-      )}
+      {
+        Boolean(error) && <Error />
+      }
 
       {
         !!championData && (
-          <List.Item
-            title={championData.name}
-            description={description}
-            right={() => <Avatar.Image style={{ backgroundColor: 'transparent' }} source={{ uri }} size={48} />}
-          />
+          <FadeInView>
+            <List.Item
+              title={championData.name}
+              description={description}
+              right={() => <Avatar.Image style={{ backgroundColor: 'transparent' }} source={{ uri }} size={48} />}
+            />
+          </FadeInView>
         )
       }
     </View>

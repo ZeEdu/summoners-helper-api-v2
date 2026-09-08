@@ -1,6 +1,9 @@
 import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native"
 import { List, MD3Theme, Text, useTheme } from "react-native-paper"
 
+import FadeInView from "../../../../../components/animated/FadeInView"
+import Error from "../../../../../components/Error"
+import LoadingIndicator from "../../../../../components/LoadingIndicator"
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion"
 import useChampionData from "../../../../../hooks/useChampion"
 import { AbilitiesProgressionDto, indexToAbilityOption, keymapIndex, KeymapIndexType } from "../forms/AbilitiesProgressionForm"
@@ -29,99 +32,95 @@ export default function AbilitiesProgressionSection({
   };
 
   return (
-    <List.Section>
+    <View>
       {
-        !hideTitle ? (
-          <List.Subheader>
-            <Text variant='headlineSmall'>
-              Progressão de abilidades
-            </Text>
-          </List.Subheader>
-        ) : undefined
+        loading && <LoadingIndicator />
       }
 
-      <List.Item title='Descrição' description={abilitiesProgression.abilitiesProgressionDescription} />
-      <View style={styles.headerContainer}>
-        {
-          loading && (
-            <View>
-              <Text>Carregando</Text>
-            </View>
-          )
-        }
+      {
+        Boolean(error) && <Error />
+      }
 
-        {Boolean(error) && (
-          <View>
-            <Text>Um erro ocorreu no ao carregar os dados </Text>
-          </View>
-        )}
-        {!!championData ? (
-          <View style={{ flex: 1 }}>
-            <View style={styles.headerContainer}>
-              {championData.spells.map((ability, index) => {
-                const keymap = keymapIndex[index as KeymapIndexType];
-                const uri = `https://ddragon.leagueoflegends.com/cdn/${usePatch.version}/img/spell/${championData.id}${keymap.toUpperCase()}.png`;
+      {
+        !!championData && (
+          <FadeInView>
+            <List.Section>
+              {
+                !hideTitle ? (
+                  <List.Subheader>
+                    <Text variant='headlineSmall'>
+                      Progressão de abilidades
+                    </Text>
+                  </List.Subheader>
+                ) : undefined
+              }
 
-                return (
-                  <View key={ability.id} style={styles.headerColumnsContainer}>
-                    <Image style={styles.headerImage} source={{ uri }} />
-                    <Text style={styles.headerTitle}>{ability.name}</Text>
+              <List.Item title='Descrição' description={abilitiesProgression.abilitiesProgressionDescription} />
+              <View style={styles.flexDirectionRow}>
+                <View style={styles.flexOne}>
+                  <View style={styles.flexDirectionRow}>
+                    {championData.spells.map((ability, index) => {
+                      const keymap = keymapIndex[index as KeymapIndexType];
+                      const uri = `https://ddragon.leagueoflegends.com/cdn/${usePatch.version}/img/spell/${championData.id}${keymap.toUpperCase()}.png`;
+
+                      return (
+                        <View key={ability.id} style={styles.headerColumnsContainer}>
+                          <Image style={styles.headerImage} source={{ uri }} />
+                          <Text style={styles.headerTitle}>{ability.name}</Text>
+                        </View>
+                      );
+                    })}
                   </View>
-                );
-              })}
-            </View>
-            <ScrollView>
-              <View style={styles.levelSelectionContainer}>
-                {championData.spells.map((_, index) => {
-                  return (
-                    <FlatList
-                      data={lvlsArrayBuilder()}
-                      keyExtractor={(level) => level.toString()}
-                      style={styles.list}
-                      renderItem={({ item: level }) => {
+                  <ScrollView>
+                    <View style={styles.levelSelectionContainer}>
+                      {championData.spells.map((_, index) => {
                         return (
-                          <View
-                            style={[
-                              styles.listItemContainer,
-                              {
-                                backgroundColor: isSelected(
-                                  keyFromLvlsBuilder(level),
-                                  index,
-                                )
-                                  ? theme.colors.onPrimaryContainer
-                                  : theme.colors.onPrimary,
-                              },
-                            ]}
-                          >
-                            <Text
-                              style={[
-                                styles.listItemText,
-                                {
-                                  color: isSelected(keyFromLvlsBuilder(level), index)
-                                    ? theme.colors.onPrimary
-                                    : theme.colors.onPrimaryContainer,
-                                },
-                              ]}
-                            >
-                              {level}
-                            </Text>
-                          </View>
+                          <FlatList
+                            data={lvlsArrayBuilder()}
+                            keyExtractor={(level) => level.toString()}
+                            style={styles.list}
+                            renderItem={({ item: level }) => {
+                              return (
+                                <View
+                                  style={[
+                                    styles.listItemContainer,
+                                    {
+                                      backgroundColor: isSelected(
+                                        keyFromLvlsBuilder(level),
+                                        index,
+                                      )
+                                        ? theme.colors.onPrimaryContainer
+                                        : theme.colors.onPrimary,
+                                    },
+                                  ]}
+                                >
+                                  <Text
+                                    style={[
+                                      styles.listItemText,
+                                      {
+                                        color: isSelected(keyFromLvlsBuilder(level), index)
+                                          ? theme.colors.onPrimary
+                                          : theme.colors.onPrimaryContainer,
+                                      },
+                                    ]}
+                                  >
+                                    {level}
+                                  </Text>
+                                </View>
+                              );
+                            }}
+                          />
                         );
-                      }}
-                    />
-                  );
-                })}
+                      })}
+                    </View>
+                  </ScrollView>
+                </View>
               </View>
-            </ScrollView>
-          </View>
-
-        ) : (
-          <View>
-            <Text>Nenhum campeão foi encontrado </Text>
-          </View>
-        )}
-      </View>
-    </List.Section>
+            </List.Section>
+          </FadeInView>
+        )
+      }
+    </View>
   )
 }
 
@@ -132,7 +131,10 @@ const makeStyles = ({ roundness }: MD3Theme) => {
       gap: 12,
       marginTop: 16,
     },
-    headerContainer: {
+    flexOne: {
+      flex: 1
+    },
+    flexDirectionRow: {
       flexDirection: 'row',
     },
     headerColumnsContainer: {

@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { Avatar, List, Text } from "react-native-paper";
 
+import FadeInView from "../../../../../components/animated/FadeInView";
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import Utils from "../../../../../utils/utils";
@@ -11,20 +12,22 @@ type ItemsSectionProps = SectionProps & { items: ItemsDto }
 
 export default function ItemsSection({ items, hideTitle = false }: ItemsSectionProps) {
   return (
-    <List.Section>
-      <List.Subheader>
-        {
-          !hideTitle ? (
-            <List.Subheader>
-              <Text variant='headlineSmall'>
-                Itens
-              </Text>
-            </List.Subheader>
-          ) : undefined
-        }
-      </List.Subheader>
-      <ItemsRow items={items.items} />
-    </List.Section>
+    <FadeInView>
+      <List.Section>
+        <List.Subheader>
+          {
+            !hideTitle ? (
+              <List.Subheader>
+                <Text variant='headlineSmall'>
+                  Itens
+                </Text>
+              </List.Subheader>
+            ) : undefined
+          }
+        </List.Subheader>
+        <ItemsRow items={items.items} />
+      </List.Section>
+    </FadeInView>
   )
 }
 
@@ -55,7 +58,9 @@ function ItemsRow({ items }: {
           .map(({ rowName, itemsList, description }) => (
             <List.Section>
               <List.Subheader>
-                {rowName}
+                <Text>
+                  {rowName}
+                </Text>
               </List.Subheader>
               {
                 itemsList

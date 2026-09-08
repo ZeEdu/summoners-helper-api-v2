@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ModalStackParamList } from "../../../../navigation/types";
 
 import { StyledView } from "@org/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { List } from "react-native-paper";
 import { AbilitiesProgressionDto } from "../forms/AbilitiesProgressionForm";
@@ -25,7 +25,7 @@ import ThreatsSection from "./ThreatsSection";
 
 type Props = NativeStackScreenProps<ModalStackParamList, 'ViewGuide'>
 
-export default function ViewGuide({ route }: Props) {
+export default function ViewGuide({ route, navigation }: Props) {
   const { guide } = route.params
 
   const [visible, setVisible] = useState(true)
@@ -81,6 +81,12 @@ export default function ViewGuide({ route }: Props) {
   }
 
   const { height } = Dimensions.get('window');
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: guideIntroduction.title
+    });
+  }, [navigation]);
 
   return (
     <StyledView style={{ height, flex: 1 }}>

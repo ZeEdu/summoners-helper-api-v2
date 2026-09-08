@@ -51,7 +51,8 @@
     "zod": "*",
     "@react-native-clipboard/clipboard": "*",
     "react-native-reanimated": "*",
-    "react-native-gesture-handler": "*"
+    "react-native-gesture-handler": "*",
+    "react-native-reanimated-skeleton": "*"
   },
   "devDependencies": {}
 }

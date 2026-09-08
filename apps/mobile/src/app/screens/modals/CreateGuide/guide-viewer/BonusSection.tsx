@@ -3,6 +3,7 @@ import { Avatar, List, Text } from "react-native-paper";
 
 import { SLOT_BONUS_LABELS } from "@org/contracts";
 
+import FadeInView from "../../../../../components/animated/FadeInView";
 import { BonusDto } from "../forms/BonusForm";
 import { SectionProps } from "./sections.types";
 
@@ -10,23 +11,25 @@ type BonusSectionProps = SectionProps & { bonus: BonusDto }
 
 export default function BonusSection({ bonus, hideTitle = false }: BonusSectionProps) {
   return (
-    <List.Section>
-      {
-        !hideTitle ? (
-          <List.Subheader>
-            <Text variant='headlineSmall'>
-              Bonus
+    <FadeInView>
+      <List.Section>
+        {
+          !hideTitle ? (
+            <List.Subheader>
+              <Text variant='headlineSmall'>
+                Bonus
 
-            </Text>
-          </List.Subheader>
-        ) : undefined
-      }
+              </Text>
+            </List.Subheader>
+          ) : undefined
+        }
 
-      <List.Item title={'Descrição'} description={bonus.bonusDescription} />
-      <BonusItem bonus={bonus.bonusSlotOne} title={'Primeiro Bonus'} />
-      <BonusItem bonus={bonus.bonusSlotTwo} title={'Segundo Bonus'} />
-      <BonusItem bonus={bonus.bonusSlotThree} title={'Terceiro Bonus'} />
-    </List.Section>
+        <List.Item title={'Descrição'} description={bonus.bonusDescription} />
+        <BonusItem bonus={bonus.bonusSlotOne} title={'Primeiro Bonus'} />
+        <BonusItem bonus={bonus.bonusSlotTwo} title={'Segundo Bonus'} />
+        <BonusItem bonus={bonus.bonusSlotThree} title={'Terceiro Bonus'} />
+      </List.Section>
+    </FadeInView>
   )
 }
 
