@@ -1,32 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-export enum AbilityOption {
-  A = 'a',
-  B = 'b',
-  C = 'c',
-  D = 'd',
-}
-
-export interface IAbilitiesProgression {
-  l1: AbilityOption;
-  l2: AbilityOption;
-  l3: AbilityOption;
-  l4: AbilityOption;
-  l5: AbilityOption;
-  l6: AbilityOption;
-  l7: AbilityOption;
-  l8: AbilityOption;
-  l9: AbilityOption;
-  l10: AbilityOption;
-  l11: AbilityOption;
-  l12: AbilityOption;
-  l13: AbilityOption;
-  l14: AbilityOption;
-  l15: AbilityOption;
-  l16: AbilityOption;
-  l17: AbilityOption;
-  l18: AbilityOption;
-}
+import { AbilityOption, IAbilitiesProgression } from '@org/contracts';
 
 @Schema()
 export class AbilitiesProgression implements IAbilitiesProgression {

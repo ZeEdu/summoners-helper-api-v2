@@ -4,23 +4,17 @@ import { Model, QueryFilter, QueryOptions } from 'mongoose';
 
 import {
   CreateUserDto,
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
   IUser,
+  PaginationDto,
   RIOT_SERVERS,
   UpdateUserDto,
   UpdateUserProfileDto
 } from '@org/contracts';
-import {
-  DEFAULT_LIMIT,
-  DEFAULT_OFFSET,
-  PaginationDto,
-} from '../../pagination/pagination.dto';
+
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import {
-  IUserWithPassword,
-  IUserWithPuuid,
-  SENSIBLE_FIELDS,
-  User,
-} from '../schema/user.schema';
+import { IUserWithPassword, IUserWithPuuid, SENSIBLE_FIELDS, User } from '../schema/user.schema';
 
 @Injectable()
 export class UsersService {

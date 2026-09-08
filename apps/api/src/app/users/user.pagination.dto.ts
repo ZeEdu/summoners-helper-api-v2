@@ -1,14 +1,14 @@
 import { QueryFilter } from 'mongoose';
 import z from 'zod';
 
-import { paginationSchema } from '../pagination/pagination.dto';
 import { User } from './schema/user.schema';
+import { paginationSchema } from '@org/contracts';
 
 export const userPaginationSchema = paginationSchema.safeExtend({
-  username: z.string({ error: '' })
-})
+  username: z.string({ error: '' }),
+});
 
-export type UserPaginationDto = z.infer<typeof userPaginationSchema>
+export type UserPaginationDto = z.infer<typeof userPaginationSchema>;
 
 export const createUserPaginationFilter = (
   query: UserPaginationDto,

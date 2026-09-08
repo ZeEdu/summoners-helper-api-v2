@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { RIOT_SERVERS } from '@org/contracts';
 
-import { isTest } from '../../utils';
+import { Utils } from '../../utils';
 
 @Injectable()
 export class RiotApiUtilsService {
@@ -20,7 +20,7 @@ export class RiotApiUtilsService {
 
   buildGetSummonerURL(puuid: string, server: RIOT_SERVERS) {
     const url = `https://${server}.${this.summonersBaseURL}/by-puuid/${puuid}`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}?api_key=${this.apiKey}`;
@@ -28,7 +28,7 @@ export class RiotApiUtilsService {
 
   buildGetAccountByRiotIdURL(gameName: string, tagLine: string) {
     const url = `${this.accountBaseURL}/by-riot-id/${gameName}/${tagLine}`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}?api_key=${this.apiKey}`;
@@ -36,7 +36,7 @@ export class RiotApiUtilsService {
 
   buildGetRankedStatsURL(puuid: string, server: RIOT_SERVERS) {
     const url = `https://${server}.${this.leagueBaseURL}/entries/by-puuid/${puuid}`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}?api_key=${this.apiKey}`;
@@ -44,7 +44,7 @@ export class RiotApiUtilsService {
 
   buildGetLastFiveMatchesURL(puuid: string) {
     const url = `${this.matchBaseURL}/by-puuid/${puuid}/ids?start=0&count=5`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}&api_key=${this.apiKey}`;
@@ -52,7 +52,7 @@ export class RiotApiUtilsService {
 
   buildGetMatchDetailsURL(matchId: string) {
     const url = `${this.matchBaseURL}/${matchId}`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}?api_key=${this.apiKey}`;
@@ -60,7 +60,7 @@ export class RiotApiUtilsService {
 
   buildGetChampionMasteryURL(puuid: string, server: RIOT_SERVERS) {
     const url = `https://${server}.${this.championMasteryBaseURL}/by-puuid/${puuid}`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}?api_key=${this.apiKey}`;
@@ -72,7 +72,7 @@ export class RiotApiUtilsService {
     server: RIOT_SERVERS,
   ) {
     const url = `https://${server}.${this.championMasteryBaseURL}/by-puuid/${puuid}/by-champion/${championId}`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}?api_key=${this.apiKey}`;
@@ -84,7 +84,7 @@ export class RiotApiUtilsService {
     server: RIOT_SERVERS,
   ) {
     const url = `https://${server}.${this.championMasteryBaseURL}/by-puuid/${puuid}?count=${count}`;
-    if (isTest) {
+    if (Utils.isTest) {
       return url;
     }
     return `${url}&api_key=${this.apiKey}`;

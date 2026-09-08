@@ -20,7 +20,10 @@ export function StyledText(props: React.ComponentProps<typeof Text>) {
 
 export function StyledView({ children, style }: StyledProp) {
   const theme = useTheme()
-  return <View style={{ backgroundColor: theme.colors.background, ...style }}>
-    {children}
-  </View>
+
+  return (
+    <View style={{ backgroundColor: theme.colors.background, ...style }}>
+      {children}
+    </View>
+  )
 }

@@ -1,28 +1,31 @@
-import z from 'zod';
+import { GuidePaginationDto } from '@org/contracts';
 import { QueryFilter } from 'mongoose';
-
-import { paginationSchema } from '../../pagination/pagination.dto';
 import { Guide } from '../schema/guide.schema';
 
-export const guidesPaginationSchema = paginationSchema.safeExtend({
-  title: z.string({ error: 'O campo deve ser uma string' }).optional(),
-  createdBy: z.string({ error: 'O campo deve ser uma string' }).optional()
-})
+const createFilter = (query: GuidePaginationDto): QueryFilter<Guide> => {
+  console.log({ query });
 
-export type GuidePaginationDto = z.infer<typeof guidesPaginationSchema>
-
-export const createGuidesPaginationFilter = (
-  query: GuidePaginationDto,
-): QueryFilter<Guide> => {
   const filter: QueryFilter<Guide> = {};
 
   if (query.createdBy) {
-    filter.createdBy = query.createdBy.toString();
+    filter.createdBy = query.createdBy;
   }
 
   if (query.title) {
     filter.title = { $regex: query.title, $options: 'i' };
   }
 
+  if (query.champion) {
+    filter.champion = query.champion;
+  }
+
+  if (query.role) {
+    filter.role = query.role;
+  }
+
   return filter;
+};
+
+export const GuidesPagination = {
+  createFilter,
 };

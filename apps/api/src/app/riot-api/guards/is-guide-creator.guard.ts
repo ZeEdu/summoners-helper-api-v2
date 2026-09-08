@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
-import { Guide } from '../../guides/schema/guide.schema';
+import { Request } from 'express';
 import { Model } from 'mongoose';
+import { Observable } from 'rxjs';
+import { Guide } from '../../guides/schema/guide.schema';
 import { IUserWithPuuid } from '../../users/schema/user.schema';
 
 @Injectable()
@@ -16,12 +16,11 @@ export class IsGuideCreatorGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const { guideId } = request.params;
     const { _id } = request.user as IUserWithPuuid;
+    const filter = {
+      _id: guideId,
+      createdBy: _id,
+    };
 
-    return this.guideModel
-      .findOne({
-        _id: guideId,
-        createdBy: _id,
-      })
-      .then((guide) => !!guide);
+    return this.guideModel.findOne(filter).then((guide) => !!guide);
   }
 }

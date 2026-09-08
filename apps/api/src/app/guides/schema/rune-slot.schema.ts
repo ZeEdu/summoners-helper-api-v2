@@ -1,11 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export interface IRuneSlots {
-  first: string;
-  second: string;
-  third: string;
-  fourth?: string;
-}
+import { IRuneSlots } from '@org/contracts';
 
 @Schema()
 export class RuneSlots implements IRuneSlots {

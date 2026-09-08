@@ -13,15 +13,18 @@ export default function FormFieldErrors({ fieldError }: { fieldError: FieldError
   const styles = makeStyles(theme)
 
   return (
-    <View>
-      <StyledText style={styles.text}>{fieldError.message}</StyledText>
+    <View style={styles.container}>
+      <StyledText style={styles.text}>* {fieldError.message}</StyledText>
     </View>
   )
 }
 
 const makeStyles = ({ colors, fonts }: MD3Theme) => {
-
   return StyleSheet.create({
+    container: {
+      margin: 8,
+      marginLeft: 0
+    },
     text: {
       color: colors.error
     }

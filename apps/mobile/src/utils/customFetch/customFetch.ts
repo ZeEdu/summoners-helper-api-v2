@@ -1,7 +1,9 @@
 import { Platform } from "react-native";
 import { AuthEvents } from "../../auth-events";
-import { ApiService } from "../../services/api/api.service";
+import { API_CONSTANTS } from "../../services/api/api.constants";
 import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
+
+import Utils from "../utils";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Tipos
@@ -145,7 +147,7 @@ const getOrCreateRefresh = (): Promise<{ accessToken: string }> => {
 const doRefreshToken = async (): Promise<{ accessToken: string }> => {
   let response: Response;
   try {
-    response = await ApiService.Auth.refreshToken();
+    response = await refreshTokenRequest();
   } catch (err) {
     await AuthTokenStorageService.delete();
     AuthEvents.emitSessionExpired();
@@ -264,3 +266,35 @@ const handleRefreshToken = async <T>(
     isRetryAfterRefresh: true,
   });
 };
+
+const refreshTokenRequest = async () => {
+  const url = `${API_CONSTANTS.API_URL}/auth/${Utils.isWeb ? 'web' : 'mobile'}/refresh`;
+
+  const tokens = await AuthTokenStorageService.get();
+
+  if (!Utils.isWeb && !tokens.refreshToken) {
+    throw new Error('Token not found');
+  }
+
+  const init: RequestInit = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  };
+
+  if (Utils.isWeb) {
+    init.credentials = 'include'
+  } else {
+    init.body = JSON.stringify({ refreshToken: tokens.refreshToken })
+  }
+
+  const response = await fetch(url, init);
+  if (!response.ok) {
+    await AuthTokenStorageService.delete();
+    throw new Error('Failed to refresh token');
+  }
+
+  return response;
+}

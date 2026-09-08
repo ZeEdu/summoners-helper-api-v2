@@ -145,17 +145,21 @@ export default function BindRiotAccount({ navigation }: Props) {
 
           <AppInputController
             control={control}
-            name="gameName"
-            label="Nome no jogo"
-            placeholder="Seu nome no jogo"
+            name="gameName" inputOptions={{
+              label: "Nome no jogo",
+              placeholder: "Seu nome no jogo"
+            }}
           />
           <FormFieldErrors fieldError={errors.gameName} />
 
           <AppInputController
             control={control}
             name="tagLine"
-            label="Tag line"
-            placeholder="Sua tag line"
+            inputOptions={{
+              label: "Tag line",
+              placeholder: "Sua tag line"
+            }}
+
           />
           <FormFieldErrors fieldError={errors.tagLine} />
         </View>
