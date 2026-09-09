@@ -1,24 +1,23 @@
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, View } from "react-native";
-import { Button, Card, Chip, Text, useTheme } from "react-native-paper";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Button, MD3Theme, Text, useTheme } from "react-native-paper";
 
 
 import { GuidePaginationDto, IGuide } from "@org/contracts";
 
 import FadeInView from "../../../../../components/animated/FadeInView";
 import Error from "../../../../../components/Error";
+import GuideCard from "../../../../../components/GuideCard";
 import LoadingIndicator from "../../../../../components/LoadingIndicator";
-import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import { ApiService } from "../../../../../services/api/api.service";
-import DataDragonService from "../../../../../services/data-dragon/data-dragon.service";
 
 type RecentBuildsProps = {
   navigateToGuide: (guide: IGuide) => void
 }
 
 export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
-  const usePatch = usePatchVersion()
   const theme = useTheme()
+  const styles = makeStyle(theme)
 
   const [guides, setGuides] = useState<IGuide[]>([])
   const [loading, setLoading] = useState(false)
@@ -69,17 +68,13 @@ export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
+    <View style={styles.container}>
+      <View style={styles.title}>
         <Text variant="displaySmall">
           Guias Recentes
         </Text>
       </View>
-      <View style={{
-        flex: 1,
-        paddingVertical: 8,
-        borderRadius: theme.roundness
-      }}>
+      <View style={styles.body}>
         {
           loading && <LoadingIndicator />
         }
@@ -96,9 +91,9 @@ export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
 
         {
           guides.length ? (
-            <FadeInView style={{ flex: 1 }}>
+            <FadeInView style={styles.fadeInView}>
               <FlatList
-                contentContainerStyle={{ rowGap: 8, paddingHorizontal: 16 }}
+                contentContainerStyle={styles.flatListContainer}
                 data={guides}
                 ListFooterComponent={() => {
                   return (
@@ -111,31 +106,13 @@ export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
                 }}
                 renderItem={({ item: guide }) => {
                   return (
-                    <Card onPress={() => {
-                      navigateToGuide(guide)
-                    }}>
-                      <Card.Title
-                        title={guide.title}
-                        left={() => {
-                          const uri = DataDragonService.championThumbnail(guide.champion, usePatch.version)
-                          return <Image style={{ width: 48, height: 48 }} source={{ uri }} />
-                        }} />
-                      <Card.Content>
-                        <Text variant='bodyMedium' numberOfLines={3}>
-                          {guide.introduction}
-                        </Text>
-                        <View
-                          style={{ flexDirection: "row", gap: 8, marginTop: 8 }}
-                        >
-                          <Chip>{guide.champion}</Chip>
-                          <Chip>{guide.patchVersion}</Chip>
-                        </View>
-                      </Card.Content>
-                    </Card>
+                    <GuideCard
+                      onPress={() => navigateToGuide(guide)}
+                      guide={guide}
+                    />
                   )
                 }}
               />
-
             </FadeInView>
           ) : null
         }
@@ -144,8 +121,34 @@ export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
   )
 }
 
-const styles = StyleSheet.create({
-  flexOne: {
-    flex: 1
-  }
-})
+const makeStyle = ({ roundness }: MD3Theme) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1
+    },
+    title: {
+      marginHorizontal: 16,
+      marginBottom: 16
+    },
+    body: {
+      flex: 1,
+      paddingVertical: 8,
+      borderRadius: roundness
+    },
+    fadeInView: {
+      flex: 1
+    },
+    flatListContainer: {
+      rowGap: 8, paddingHorizontal: 16
+    },
+    cardTitleImage: {
+      width: 48,
+      height: 48
+    },
+    chipRow: {
+      flexDirection: "row",
+      gap: 8,
+      marginTop: 8
+    },
+  })
+}
