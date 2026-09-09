@@ -4,45 +4,38 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StyleSheet, View } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
 
-import { StyledButton, StyledText } from '@org/ui';
+import { IGuide } from '@org/contracts';
+import { StyledView } from '@org/ui';
 
-import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import { useThemeContext } from '../../../../providers/theme.provider';
-import { MainTabsParamList, RootStackParamList } from '../../../navigation/types';
+import { HomeStackParamList, RootStackParamList } from '../../../navigation/types';
+import RecentBuilds from './recent-guides/RecentGuides';
+import QuickSearchbar from './searchbar/QuickSearchbar';
 
 export type HomeProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabsParamList, 'Home'>,
+  BottomTabScreenProps<HomeStackParamList, 'Home'>,
   NativeStackScreenProps<RootStackParamList>
 >
 
-export default function Home(props: HomeProps) {
-  const authContext = useAuthContext();
-  const themeContext = useThemeContext()
+export default function Home({ navigation }: HomeProps) {
   const theme = useTheme()
+  const styles = makeStyles(theme)
 
-  const handleLogout = () => {
-    authContext.logout();
-  };
-
-  const toggleTheme = () => {
-    themeContext.toggleTheme()
+  const navigateToGuide = (guide: IGuide) => {
+    navigation.navigate('Modals', {
+      screen: 'ViewGuide',
+      params: { guide },
+    });
   }
 
-  const style = makeStyles(theme)
-
   return (
-    <View style={style.container}>
-      <View>
-        <StyledText>Email: {authContext?.user?.email}</StyledText>
-        <StyledText>Username: {authContext?.user?.username}</StyledText>
+    <StyledView style={styles.container}>
+      <View style={styles.searchbarWrapper}>
+        <QuickSearchbar navigateToGuide={navigateToGuide} />
       </View>
-      <View style={style.buttonsWrapper}>
-        <StyledButton onPress={toggleTheme}>Trocar tema</StyledButton>
+      <View style={styles.recentBuildsWrapper}>
+        <RecentBuilds navigateToGuide={navigateToGuide} />
       </View>
-      <View style={style.buttonsWrapper}>
-        <StyledButton onPress={handleLogout}>Deslogar</StyledButton>
-      </View>
-    </View>
+    </StyledView>
   );
 }
 
@@ -50,15 +43,13 @@ const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
       backgroundColor: colors.background
     },
-    buttonsWrapper: {
-      display: 'flex',
-      flexDirection: 'row',
-      gap: 5,
+    searchbarWrapper: {
+      margin: 16
     },
-    buttons: {},
+    recentBuildsWrapper: {
+      flex: 1
+    },
   })
 }

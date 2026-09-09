@@ -4,6 +4,8 @@ import { IGuide } from "@org/contracts";
 
 export const Stacks = {
   Main: 'Main',
+  Home: 'Home',
+  Search: 'Search',
   Auth: 'Auth',
   Modals: 'Modals',
   Loading: 'Loading',
@@ -32,10 +34,15 @@ export type RootStackParamList = {
 };
 
 export type MainTabsParamList = {
-  [Routes.Home]: undefined;
+  [Routes.Home]: NavigatorScreenParams<HomeStackParamList>;
   [Routes.Profile]: { userId: string };
   [Routes.MyGuides]: undefined,
 };
+
+export type HomeStackParamList = {
+  [Stacks.Home]: undefined
+  [Stacks.Search]: undefined
+}
 
 export type AuthStackParamList = {
   [Routes.Register]: undefined;

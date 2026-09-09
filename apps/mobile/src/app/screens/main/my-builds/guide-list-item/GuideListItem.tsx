@@ -51,7 +51,7 @@ export default function GuideListItem({ guide, editGuide, viewGuide }: GuideList
         left={() => (
           <Image
             style={styles.imageProportions}
-            source={{ uri: DataDragonService.champion(guide.champion, patchVersion.version) }}
+            source={{ uri: DataDragonService.championThumbnail(guide.champion, patchVersion.version) }}
           />
         )}
         right={() => {

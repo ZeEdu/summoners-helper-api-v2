@@ -70,7 +70,7 @@ export default function MyGuides({ navigation }: MyBuildsProps) {
   });
 
   const handleCreateGuide = () => {
-    // Só navega para a próxima tela se tiver os dados vinculados da RIOT
+    // TODO: Só navega para a próxima tela se tiver os dados vinculados da RIOT
     navigation.navigate('Modals', {
       screen: 'CreateGuide',
       params: {},
@@ -209,6 +209,7 @@ export default function MyGuides({ navigation }: MyBuildsProps) {
             (
               <FlatList
                 data={builds}
+                keyExtractor={(item) => item._id.toString()}
                 ListFooterComponent={() => {
                   if (hasMore) {
                     return (
