@@ -1,12 +1,15 @@
 import React, { useRef, useState } from "react"
 import { FlatList, StyleSheet, View } from "react-native"
-import { MD3Theme, Portal, Searchbar, Surface, Text, useTheme } from "react-native-paper"
-import { IGuide } from "../../../../../../../../libs/contracts/src"
-import FadeInView from "../../../../../components/animated/FadeInView"
+import { Button, MD3Theme, Portal, Searchbar, Surface, Text, useTheme } from "react-native-paper"
+
+import { IGuide } from "@org/contracts"
+import QuickSearchCard from "./QuickSearchCard"
+
+import { useNavigation } from "@react-navigation/native"
+import { clear } from "console"
 import Error from "../../../../../components/Error"
 import LoadingIndicator from "../../../../../components/LoadingIndicator"
 import useQuickSearch from "../../../../../hooks/useQuickSearch"
-import QuickSearchCard from "./QuickSearchCard"
 
 type QuickSearchbarProps = {
   navigateToGuide: (guide: IGuide) => void
@@ -16,8 +19,9 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
   const theme = useTheme()
   const styles = makeStyles(theme)
   const [searchQuery, setSearchQuery] = useState('')
+  const navigation = useNavigation()
 
-  const { guides, loading, error } = useQuickSearch(searchQuery)
+  const { guides, loading, error, reset } = useQuickSearch(searchQuery)
 
   const anchorRef = useRef<View>(null);
 
@@ -45,19 +49,29 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
 
   return (
     <View>
-      <View
-        ref={anchorRef}
-        onLayout={updateAnchor}
-      >
-        <Searchbar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onFocus={updateAnchor}
-          placeholder='Busque por um guia'
-          onClearIconPress={() => {
-            setSearchQuery('')
-          }}
-        />
+      <View>
+        <View ref={anchorRef}
+          onLayout={updateAnchor}>
+          <Searchbar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onFocus={updateAnchor}
+            placeholder='Busque por um guia'
+            onClearIconPress={clear}
+          />
+        </View>
+        <View style={{ alignItems: 'flex-end', paddingVertical: 4 }}>
+          <Button icon='cog' onPress={() => {
+            navigation.navigate('MainTabs', {
+              screen: 'Home',
+              params: {
+                screen: 'Search'
+              }
+            })
+          }}>
+            Busca avançada
+          </Button>
+        </View>
       </View>
       <Portal>
         <View
@@ -75,23 +89,24 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
 
             {
               guides.length ? (
-                <Surface
-                  style={
-                    styles.listSurface}
-                >
-                  <FadeInView>
-                    <FlatList
-                      contentContainerStyle={styles.contentContainerStyle}
-                      data={guides}
-                      renderItem={({ item: guide }) => {
-                        return <QuickSearchCard
-                          guide={guide}
-                          navigateToGuide={navigateToGuide}
-                          key={guide._id.toString()}
-                        />
-                      }}
-                    />
-                  </FadeInView>
+                <Surface style={styles.listSurface}>
+                  <FlatList
+                    contentContainerStyle={styles.contentContainerStyle}
+                    data={guides}
+                    renderItem={({ item: guide }) => {
+                      const navigateToGuideAndClearList = (guide: IGuide) => {
+                        navigateToGuide(guide)
+                        reset()
+                        setSearchQuery('')
+                      }
+
+                      return <QuickSearchCard
+                        navigateToGuide={navigateToGuideAndClearList}
+                        guide={guide}
+                        key={guide._id.toString()}
+                      />
+                    }}
+                  />
                 </Surface>
               ) : (
                 Boolean(searchQuery) ? (
@@ -106,8 +121,8 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
             }
           </View>
         </View>
-      </Portal>
-    </View>
+      </Portal >
+    </View >
   )
 }
 

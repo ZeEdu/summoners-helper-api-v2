@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Dimensions, StyleSheet } from 'react-native';
@@ -8,14 +7,15 @@ import { Button, Portal, Snackbar } from 'react-native-paper';
 import {
   AbilityOption,
   CreateGuideFormDto,
-  CreateGuideFormSchema
+  CreateGuideFormSchema,
+  IGuide
 } from '@org/contracts';
 import { StyledView } from '@org/ui';
 
+import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { Stepper, StepperItem } from '../../../../components/stepper';
 import { StepperProvider } from '../../../../components/stepper/context';
 import { ApiService } from '../../../../services/api/api.service';
-import { ModalStackParamList } from '../../../navigation/types';
 import GuideAbilitiesProgressionForm from './forms/AbilitiesProgressionForm';
 import BonusForm from './forms/BonusForm';
 import GuideIntroductionForm from './forms/GuideIntroductionForm';
@@ -27,8 +27,6 @@ import GuideSecondaryRunesForm from './forms/SecondaryRunesForm';
 import ThreatsForm from './forms/ThreatsForm';
 import ReviewGuide from './guide-viewer/ReviewGuide';
 
-type Props = NativeStackScreenProps<ModalStackParamList, 'CreateGuide'>;
-
 const resolver = zodResolver(CreateGuideFormSchema);
 
 const createRequest = (value: CreateGuideFormDto, guideId?: string,) => {
@@ -39,10 +37,16 @@ const createRequest = (value: CreateGuideFormDto, guideId?: string,) => {
   return ApiService.Guides.create(value)
 }
 
-export default function CreateGuide({ navigation, route }: Props) {
+type Props = StaticScreenProps<{
+  guide?: IGuide
+}>
+
+export default function CreateGuide({ route }: Props) {
   const [showSnack, setShowSnack] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const navigation = useNavigation()
 
   const defaultValues = route.params.guide ?? {}
 

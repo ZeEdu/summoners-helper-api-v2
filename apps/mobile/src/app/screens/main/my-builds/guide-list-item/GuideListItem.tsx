@@ -1,10 +1,7 @@
 import { IGuide } from "@org/contracts";
 import { useState } from "react";
-import { Image, Pressable, StyleSheet } from "react-native";
-import { Card, IconButton, Menu, useTheme } from "react-native-paper";
-import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
-import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
-import DataDragonService from "../../../../../services/data-dragon/data-dragon.service";
+import { IconButton, Menu } from "react-native-paper";
+import GuideCard from "../../../../../components/GuideCard";
 
 type GuideListItemProps = {
   guide: IGuide,
@@ -14,11 +11,6 @@ type GuideListItemProps = {
 
 export default function GuideListItem({ guide, editGuide, viewGuide }: GuideListItemProps) {
   const [showMenu, setShowMenu] = useState(false)
-
-  const theme = useTheme();
-  const patchVersion = usePatchVersion()
-  const dataDragonContext = useDataDragonContext();
-  const champion = dataDragonContext.getChampion(guide.champion)
 
   const openMenu = () => {
     setShowMenu(true)
@@ -39,41 +31,18 @@ export default function GuideListItem({ guide, editGuide, viewGuide }: GuideList
   }
 
   return (
-    <Pressable
+    <GuideCard
       onPress={view}
-      style={({ pressed }) => {
-        return { backgroundColor: pressed ? theme.colors.inversePrimary : 'transparent' }
-      }}>
-      <Card.Title
-        key={guide._id.toString()}
-        title={guide.title}
-        subtitle={`Campeão: ${champion?.name}. Patch: ${guide.patchVersion}.`}
-        left={() => (
-          <Image
-            style={styles.imageProportions}
-            source={{ uri: DataDragonService.championThumbnail(guide.champion, patchVersion.version) }}
-          />
-        )}
-        right={() => {
-          return (
-            <Menu
-              visible={showMenu}
-              onDismiss={hideMenu}
-              anchor={<IconButton icon={'dots-vertical'} onPress={openMenu} />}
-            >
-              <Menu.Item title={'Visualizar'} onPress={view} />
-              <Menu.Item title={'Editar guia'} onPress={edit} />
-            </Menu>
-          )
-        }}
-      />
-    </Pressable>
+      guide={guide}
+      cardTitleRight={() => {
+        return <Menu
+          visible={showMenu}
+          onDismiss={hideMenu}
+          anchor={<IconButton icon={'dots-vertical'} onPress={openMenu} />}
+        >
+          <Menu.Item title={'Visualizar'} onPress={view} />
+          <Menu.Item title={'Editar guia'} onPress={edit} />
+        </Menu>
+      }} />
   )
 }
-
-const styles = StyleSheet.create({
-  imageProportions: {
-    width: 48,
-    height: 48,
-  }
-})

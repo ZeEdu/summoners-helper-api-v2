@@ -3,16 +3,18 @@ import { Card, Chip, Text } from "react-native-paper"
 
 import { IGuide } from "@org/contracts"
 
+import { ReactNode } from "react"
 import { usePatchVersion } from "../contexts/patchVersion/usePatchVersion"
 import DataDragonService from "../services/data-dragon/data-dragon.service"
 
 
 type GuideCardProps = {
   onPress: () => void,
-  guide: IGuide
+  guide: IGuide,
+  cardTitleRight?: () => ReactNode
 }
 
-export default function GuideCard({ guide, onPress }: GuideCardProps) {
+export default function GuideCard({ guide, onPress, cardTitleRight }: GuideCardProps) {
   const usePatch = usePatchVersion()
 
   return (
@@ -22,7 +24,9 @@ export default function GuideCard({ guide, onPress }: GuideCardProps) {
         left={() => {
           const uri = DataDragonService.championThumbnail(guide.champion, usePatch.version)
           return <Image style={styles.cardTitleImage} source={{ uri }} />
-        }} />
+        }}
+        right={cardTitleRight}
+      />
       <Card.Content>
         <Text variant='bodyMedium' numberOfLines={3}>
           {guide.introduction}

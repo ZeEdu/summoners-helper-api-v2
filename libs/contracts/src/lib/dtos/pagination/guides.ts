@@ -10,6 +10,4 @@ export const guidesPaginationSchema = paginationSchema.safeExtend({
   patchVersion: z.string({ error: 'O campo deve ser uma string' }).optional(),
 });
 
-// 
-
 export type GuidePaginationDto = z.infer<typeof guidesPaginationSchema>;

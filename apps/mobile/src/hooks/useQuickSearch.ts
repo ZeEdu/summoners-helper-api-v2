@@ -2,6 +2,7 @@ import { IGuide } from "@org/contracts"
 import { useEffect, useState } from "react"
 import { ApiService } from "../services/api/api.service"
 
+// TODO: Melhorar a lógica do reset, para algo mais elegante
 export default function useQuickSearch(searchTerm: string) {
   const [guides, setGuides] = useState<IGuide[]>([])
   const [loading, setLoading] = useState(false)
@@ -11,6 +12,10 @@ export default function useQuickSearch(searchTerm: string) {
 
   const clear = () => {
     setGuides([])
+  }
+
+  const reset = () => {
+    setDebouncedInput('')
   }
 
   useEffect(() => {
@@ -49,5 +54,5 @@ export default function useQuickSearch(searchTerm: string) {
     }
   }, [debouncedInput])
 
-  return { guides, loading, error }
+  return { guides, loading, error, reset }
 }

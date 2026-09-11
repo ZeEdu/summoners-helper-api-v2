@@ -1,6 +1,3 @@
-import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FlatList, StyleSheet, View } from 'react-native';
@@ -9,18 +6,13 @@ import { Button, FAB, MD3Theme, Text, useTheme } from 'react-native-paper';
 import { GuidePaginationDto, IGuide, ROLES, ROLES_LABEL } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
+import { useNavigation } from '@react-navigation/native';
 import AppSelectController from '../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../components/forms/AppInputController';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useDataDragonContext from '../../../../contexts/data-dragon/useDataDragonContext';
 import { ApiService } from '../../../../services/api/api.service';
-import { MainTabsParamList, RootStackParamList } from '../../../navigation/types';
 import GuideListItem from './guide-list-item/GuideListItem';
-
-export type MyBuildsProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabsParamList, 'MyGuides'>,
-  NativeStackScreenProps<RootStackParamList>
->;
 
 const ROLE_OPTIONS: { value: string; label: string }[] = [
   {
@@ -45,9 +37,10 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
   },
 ];
 
-export default function MyGuides({ navigation }: MyBuildsProps) {
+export default function MyGuides() {
   const authContext = useAuthContext();
   const dataDragonContext = useDataDragonContext();
+  const navigation = useNavigation()
 
   const theme = useTheme();
   const style = makeStyles(theme);
@@ -71,10 +64,7 @@ export default function MyGuides({ navigation }: MyBuildsProps) {
 
   const handleCreateGuide = () => {
     // TODO: Só navega para a próxima tela se tiver os dados vinculados da RIOT
-    navigation.navigate('Modals', {
-      screen: 'CreateGuide',
-      params: {},
-    });
+    navigation.navigate('CreateGuide', {});
   };
 
   const getBuilds = async () => {
@@ -126,19 +116,11 @@ export default function MyGuides({ navigation }: MyBuildsProps) {
   const championList = dataDragonContext.dataDragon?.champions || [];
 
   const editGuide = (guide: IGuide) => {
-    navigation
-      .navigate('Modals', {
-        screen: 'CreateGuide',
-        params: { guide },
-      });
+    navigation.navigate('CreateGuide', { guide });
   }
 
   const viewGuide = (guide: IGuide) => {
-    navigation
-      .navigate('Modals', {
-        screen: 'ViewGuide',
-        params: { guide },
-      });
+    navigation.navigate('ViewGuide', { guide });
   }
 
   return (
@@ -208,8 +190,13 @@ export default function MyGuides({ navigation }: MyBuildsProps) {
           builds.length ?
             (
               <FlatList
+                style={{ paddingBottom: 8 }}
                 data={builds}
                 keyExtractor={(item) => item._id.toString()}
+                contentContainerStyle={{
+                  paddingHorizontal: 16,
+                  rowGap: 8
+                }}
                 ListFooterComponent={() => {
                   if (hasMore) {
                     return (

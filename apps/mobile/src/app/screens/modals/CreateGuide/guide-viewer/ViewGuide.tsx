@@ -1,7 +1,5 @@
 
 
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ModalStackParamList } from "../../../../navigation/types";
 
 import { StyledView } from "@org/ui";
 import { useEffect, useState } from "react";
@@ -23,12 +21,18 @@ import RunesSection from "./RunesSection";
 import SpellsSection from "./SpellsSection";
 import ThreatsSection from "./ThreatsSection";
 
-type Props = NativeStackScreenProps<ModalStackParamList, 'ViewGuide'>
+import { IGuide } from "@org/contracts";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
-export default function ViewGuide({ route, navigation }: Props) {
+type Props = StaticScreenProps<{
+  guide: IGuide
+}>
+
+export default function ViewGuide({ route }: Props) {
   const { guide } = route.params
 
   const [visible, setVisible] = useState(true)
+  const navigation = useNavigation()
 
   const guideIntroduction: GuideIntroductionDto = {
     title: guide.title,

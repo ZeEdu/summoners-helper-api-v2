@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { Button, MD3Theme, Text, useTheme } from "react-native-paper";
+import { Button, MD3Theme, useTheme } from "react-native-paper";
 
 
 import { GuidePaginationDto, IGuide } from "@org/contracts";
 
+import { useNavigation } from "@react-navigation/native";
 import FadeInView from "../../../../../components/animated/FadeInView";
 import Error from "../../../../../components/Error";
 import GuideCard from "../../../../../components/GuideCard";
 import LoadingIndicator from "../../../../../components/LoadingIndicator";
 import { ApiService } from "../../../../../services/api/api.service";
 
-type RecentBuildsProps = {
-  navigateToGuide: (guide: IGuide) => void
-}
-
-export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
+export default function RecentGuidesList() {
   const theme = useTheme()
   const styles = makeStyle(theme)
+  const navigation = useNavigation()
 
   const [guides, setGuides] = useState<IGuide[]>([])
   const [loading, setLoading] = useState(false)
@@ -69,16 +67,10 @@ export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.title}>
-        <Text variant="displaySmall">
-          Guias Recentes
-        </Text>
-      </View>
       <View style={styles.body}>
         {
           loading && <LoadingIndicator />
         }
-
         {
           Boolean(error) ? (
             <Error>
@@ -107,7 +99,9 @@ export default function RecentBuilds({ navigateToGuide }: RecentBuildsProps) {
                 renderItem={({ item: guide }) => {
                   return (
                     <GuideCard
-                      onPress={() => navigateToGuide(guide)}
+                      onPress={() => {
+                        navigation.navigate("ViewGuide", { guide })
+                      }}
                       guide={guide}
                     />
                   )
@@ -126,29 +120,15 @@ const makeStyle = ({ roundness }: MD3Theme) => {
     container: {
       flex: 1
     },
-    title: {
-      marginHorizontal: 16,
-      marginBottom: 16
-    },
     body: {
       flex: 1,
-      paddingVertical: 8,
       borderRadius: roundness
     },
     fadeInView: {
       flex: 1
     },
     flatListContainer: {
-      rowGap: 8, paddingHorizontal: 16
-    },
-    cardTitleImage: {
-      width: 48,
-      height: 48
-    },
-    chipRow: {
-      flexDirection: "row",
-      gap: 8,
-      marginTop: 8
-    },
+      rowGap: 8,
+    }
   })
 }
