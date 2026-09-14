@@ -1,12 +1,11 @@
+import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View } from 'react-native';
 import { MD3Theme, Text, useTheme } from 'react-native-paper';
 
+import { IGuide } from '@org/contracts';
 import { StyledView } from '@org/ui';
 
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { IGuide } from '../../../../../../../libs/contracts/src';
-import RecentGuidesList from './recent-guides/RecentGuidesList';
+import RecentGuidesList from './RecentGuidesList';
 import QuickSearchbar from './searchbar/QuickSearchbar';
 
 export default function RecentGuides() {

@@ -1,11 +1,10 @@
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Button, MD3Theme, useTheme } from "react-native-paper";
 
-
 import { GuidePaginationDto, IGuide } from "@org/contracts";
 
-import { useNavigation } from "@react-navigation/native";
 import FadeInView from "../../../../../components/animated/FadeInView";
 import Error from "../../../../../components/Error";
 import GuideCard from "../../../../../components/GuideCard";

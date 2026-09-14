@@ -1,15 +1,14 @@
+import { useNavigation } from "@react-navigation/native"
 import React, { useRef, useState } from "react"
 import { FlatList, StyleSheet, View } from "react-native"
 import { Button, MD3Theme, Portal, Searchbar, Surface, Text, useTheme } from "react-native-paper"
 
 import { IGuide } from "@org/contracts"
-import QuickSearchCard from "./QuickSearchCard"
 
-import { useNavigation } from "@react-navigation/native"
-import { clear } from "console"
-import Error from "../../../../../components/Error"
-import LoadingIndicator from "../../../../../components/LoadingIndicator"
-import useQuickSearch from "../../../../../hooks/useQuickSearch"
+import Error from "../../../../../../components/Error"
+import LoadingIndicator from "../../../../../../components/LoadingIndicator"
+import useGuideQuickSearch from "../../../../../../hooks/useQuickSearch"
+import QuickSearchCard from "./QuickSearchCard"
 
 type QuickSearchbarProps = {
   navigateToGuide: (guide: IGuide) => void
@@ -21,7 +20,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
   const [searchQuery, setSearchQuery] = useState('')
   const navigation = useNavigation()
 
-  const { guides, loading, error, reset } = useQuickSearch(searchQuery)
+  const { guides, loading, error, reset } = useGuideQuickSearch(searchQuery)
 
   const anchorRef = useRef<View>(null);
 
@@ -31,6 +30,11 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
     width: 0,
     height: 0,
   });
+
+  const clear = () => {
+    reset()
+    setSearchQuery('')
+  }
 
   const updateAnchor = () => {
     anchorRef.current?.measureInWindow((x, y, width, height) => {
@@ -96,8 +100,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
                     renderItem={({ item: guide }) => {
                       const navigateToGuideAndClearList = (guide: IGuide) => {
                         navigateToGuide(guide)
-                        reset()
-                        setSearchQuery('')
+                        clear()
                       }
 
                       return <QuickSearchCard
