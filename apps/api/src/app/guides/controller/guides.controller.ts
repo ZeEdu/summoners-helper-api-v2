@@ -31,7 +31,7 @@ import { PatchGuideDto } from '../dto/patch-guide.dto';
 @Controller('guides')
 @UseGuards(JwtGuard, HasRiotInfoGuard)
 export class GuidesController {
-  constructor(private guidesService: GuidesService) { }
+  constructor(private guidesService: GuidesService) {}
 
   @Get('')
   getGuides(
@@ -40,7 +40,10 @@ export class GuidesController {
   ) {
     const { offset, limit } = pagination;
     const filter = GuidesPagination.createFilter(pagination);
-    return this.guidesService.getGuides(filter, { offset, limit });
+    return this.guidesService.getGuides(filter, {
+      offset,
+      limit,
+    });
   }
 
   @Get(':guideId')
@@ -72,10 +75,14 @@ export class GuidesController {
     @Param('guideId') guideId: string,
     @Body() patchGuide: Partial<PatchGuideDto>,
   ) {
-    const updatedAt = new Date().toISOString()
+    const updatedAt = new Date().toISOString();
     const patchVersion = await Utils.getPatchVersion();
 
-    return this.guidesService.patchGuide(guideId, { ...patchGuide, updatedAt, patchVersion });
+    return this.guidesService.patchGuide(guideId, {
+      ...patchGuide,
+      updatedAt,
+      patchVersion,
+    });
   }
 
   @Delete(':guideId')

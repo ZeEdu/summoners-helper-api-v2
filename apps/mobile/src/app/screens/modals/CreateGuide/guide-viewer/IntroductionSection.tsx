@@ -15,7 +15,7 @@ type IntroductionSectionProps = SectionProps & { guideIntroduction: GuideIntrodu
 export default function IntroductionSection({ guideIntroduction, hideTitle = false }: IntroductionSectionProps) {
   const usePatch = usePatchVersion()
   const { championData, error, loading } = useChampionData(guideIntroduction.champion)
-  const uri = DataDragonService.champion(guideIntroduction.champion, usePatch.version)
+  const uri = DataDragonService.championThumbnail(guideIntroduction.champion, usePatch.version)
 
   return (
     <View>

@@ -4,7 +4,6 @@ import { Guide } from '../schema/guide.schema';
 
 const createFilter = (query: GuidePaginationDto): QueryFilter<Guide> => {
   console.log({ query });
-
   const filter: QueryFilter<Guide> = {};
 
   if (query.createdBy) {
@@ -22,6 +21,12 @@ const createFilter = (query: GuidePaginationDto): QueryFilter<Guide> => {
   if (query.role) {
     filter.role = query.role;
   }
+
+  if (query.patchVersion) {
+    filter.patchVersion = query.patchVersion;
+  }
+
+  console.log({ filter });
 
   return filter;
 };

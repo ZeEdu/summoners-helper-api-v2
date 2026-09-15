@@ -1,8 +1,17 @@
-import { UpdateUserProfileDto } from "@org/contracts";
+import { IUser, UpdateUserProfileDto, UsersPaginationDto } from "@org/contracts";
 
 import { customFetch } from '../../utils/customFetch/customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { API_CONSTANTS } from './api.constants';
+
+const buildQueryStringFromDto = (query: Record<string, any | undefined>) => {
+  return Object.entries(query)
+    .filter(
+      ([_, value]) => value !== undefined && value !== null && value !== '',
+    )
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+};
 
 const ENDPOINT = 'users';
 
@@ -64,6 +73,29 @@ export const Users = {
     console.log({ init });
 
     return customFetch(url, init)
+  },
+
+  quickSearch: async (guidePagination: UsersPaginationDto) => {
+    const queryParams = buildQueryStringFromDto(guidePagination);
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}?${queryParams}`;
+
+    const tokens = await AuthTokenStorageService.get();
+    if (!tokens.accessToken) {
+      throw new Error('Tokens not found');
+    }
+
+    const init: RequestInit = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    return customFetch<{
+      count: number;
+      users: IUser[];
+    }>(url, init);
   }
 };
 

@@ -47,7 +47,7 @@ function ThreatsSectionRow({ champion, description }: {
   const usePatch = usePatchVersion()
   const { championData, error, loading } = useChampionData(champion)
 
-  const uri = DataDragonService.champion(champion, usePatch.version)
+  const uri = DataDragonService.championThumbnail(champion, usePatch.version)
   return (
     <View>
       {

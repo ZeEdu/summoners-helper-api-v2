@@ -3,8 +3,13 @@ import React from 'react';
 import AuthProvider from '../contexts/auth/auth.provider';
 import DataDragonProvider from '../contexts/data-dragon/data-dragon.provider';
 import PatchVersionProvider from '../contexts/patchVersion/patch-version.provider';
-import ThemeProvider from '../providers/theme.provider';
-import RootNavigator from './navigation/RootNavigator';
+import ThemeProvider, { useThemeContext } from '../providers/theme.provider';
+import { Navigation } from './navigation/Navigation';
+
+function AppNavigation() {
+  const { navigationTheme } = useThemeContext()
+  return <Navigation theme={navigationTheme} />
+}
 
 export const App = () => {
   return (
@@ -12,7 +17,7 @@ export const App = () => {
       <DataDragonProvider>
         <ThemeProvider>
           <AuthProvider>
-            <RootNavigator />
+            <AppNavigation />
           </AuthProvider>
         </ThemeProvider>
       </DataDragonProvider>

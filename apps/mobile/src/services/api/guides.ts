@@ -8,10 +8,12 @@ const ENDPOINT = 'guides';
 
 const buildQueryStringFromDto = (query: Record<string, any | undefined>) => {
   return Object.entries(query)
-    .filter(([_, value]) => value !== undefined && value !== null && value !== '')
+    .filter(
+      ([_, value]) => value !== undefined && value !== null && value !== '',
+    )
     .map(([key, value]) => `${key}=${value}`)
     .join('&');
-}
+};
 
 export const Guides = {
   create: async (createGuideDto: CreateGuideFormDto): Promise<IGuide> => {
@@ -35,7 +37,10 @@ export const Guides = {
     return customFetch<IGuide>(url, init);
   },
 
-  patch: async (guideId: string, createGuideDto: CreateGuideFormDto): Promise<IGuide> => {
+  patch: async (
+    guideId: string,
+    createGuideDto: CreateGuideFormDto,
+  ): Promise<IGuide> => {
     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/${guideId}`;
 
     const tokens = await AuthTokenStorageService.get();
@@ -59,8 +64,7 @@ export const Guides = {
   get: async (
     guidePagination: GuidePaginationDto,
   ): Promise<{ guides: IGuide[]; count: number }> => {
-    const queryParams = buildQueryStringFromDto(guidePagination)
-    console.log({ queryParams });
+    const queryParams = buildQueryStringFromDto(guidePagination);
     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}?${queryParams}`;
 
     const tokens = await AuthTokenStorageService.get();

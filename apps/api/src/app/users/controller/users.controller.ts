@@ -1,16 +1,12 @@
 import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
-import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
+import { IUser, UpdateUserProfileDto, updateUserProfileSchema, UsersPaginationDto, usersPaginationSchema } from '@org/contracts';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 import { IUserWithPuuid } from '../schema/user.schema';
 import { UsersService } from '../service/users.service';
-import {
-  createUserPaginationFilter,
-  UserPaginationDto,
-  userPaginationSchema,
-} from '../user.pagination.dto';
+import UserPagination from '../user.pagination.dto';
 
 @Controller('users')
 @UseGuards(JwtGuard)
@@ -19,13 +15,14 @@ export class UsersController {
 
   @Get()
   async getAllUsers(
-    @Query(new ZodValidationPipe(userPaginationSchema))
-    pagination: UserPaginationDto,
+    @Query(new ZodValidationPipe(usersPaginationSchema))
+    pagination: UsersPaginationDto,
   ): Promise<{
     count: number;
     users: IUser[];
   }> {
-    const filter = createUserPaginationFilter(pagination);
+    const filter = UserPagination.filter(pagination);
+
     const { offset, limit } = pagination;
     return this.usersService.getAllUsers(filter, { offset, limit });
   }
@@ -57,4 +54,19 @@ export class UsersController {
   async getLastFiveMatches(@CurrentUser() user: IUserWithPuuid) {
     return this.usersService.getLastFiveMatches(user);
   }
+
+  @Get()
+  async getUserQuickSearch(
+    @Query(new ZodValidationPipe(usersPaginationSchema))
+    pagination: UsersPaginationDto,
+  ): Promise<{
+    count: number;
+    users: IUser[];
+  }> {
+    const filter = UserPagination.quickSearch(pagination);
+
+    const { offset, limit } = pagination;
+    return this.usersService.getAllUsers(filter, { offset, limit });
+  }
+
 }

@@ -51,7 +51,7 @@ export default function AppSelectController<T extends FieldValues>({ control, na
 
           return (
             <>
-              <TouchableRipple onPress={open} >
+              <TouchableRipple onPress={open}>
                 <TextInput
                   mode="outlined"
                   style={style.input}

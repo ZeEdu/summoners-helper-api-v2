@@ -1,6 +1,7 @@
 import {
-  NavigationContainer, DarkTheme as NavigationDarkTheme,
-  DefaultTheme as NavigationDefaultTheme
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+  Theme
 } from '@react-navigation/native';
 import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from "react";
 import { adaptNavigationTheme, MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
@@ -14,7 +15,8 @@ const { LightTheme: NavigationAdaptedLightTheme, DarkTheme: NavigationAdaptedDar
 
 type ThemeContextType = {
   toggleTheme: () => void,
-  isThemeDark: boolean
+  isThemeDark: boolean,
+  navigationTheme: Theme
 }
 
 const ThemeContext = createContext({
@@ -35,14 +37,12 @@ export default function ThemeProvider({ children }: PropsWithChildren) {
     });
   }, []);
 
-  const preferences = useMemo(() => ({ toggleTheme, isThemeDark }), [toggleTheme, isThemeDark])
+  const preferences = useMemo(() => ({ toggleTheme, isThemeDark, navigationTheme }), [toggleTheme, isThemeDark, navigationTheme])
 
   return (
     <ThemeContext.Provider value={preferences}>
       <PaperProvider theme={paperTheme}>
-        <NavigationContainer theme={navigationTheme}>
-          {children}
-        </NavigationContainer>
+        {children}
       </PaperProvider>
     </ThemeContext.Provider>
   )
