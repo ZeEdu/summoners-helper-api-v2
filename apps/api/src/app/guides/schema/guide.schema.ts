@@ -99,6 +99,9 @@ export class Guide implements IGuide {
 
   @Prop([{ type: ThreatSchema, required: true }])
   threats: Threat[];
+
+  @Prop({ type: Boolean })
+  blocked?: boolean;
 }
 
 export const GuideSchema = SchemaFactory.createForClass(Guide);

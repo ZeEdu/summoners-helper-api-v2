@@ -1,24 +1,17 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { CompositeScreenProps } from "@react-navigation/native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from 'react';
 import { StyleSheet, View } from "react-native";
 import { Button, Dialog, List, Portal, Snackbar, Text, useTheme } from "react-native-paper";
 
+import { RIOT_SERVERS_LABEL } from '@org/contracts';
 import { StyledButton, StyledView } from "@org/ui";
 
-import { useState } from 'react';
-import { RIOT_SERVERS_LABEL } from '../../../../../../../libs/contracts/src';
 import { useAuthContext } from "../../../../contexts/auth/useAuth";
-import { MainTabsParamList, RootStackParamList } from "../../../navigation/types";
 
-export type ProfileProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabsParamList, 'Profile'>,
-  NativeStackScreenProps<RootStackParamList>
->
-
-export default function Profile({ navigation }: ProfileProps) {
+export default function Profile() {
   const theme = useTheme()
+  const navigation = useNavigation()
   const authContext = useAuthContext()
   const styles = makeStyle()
 
@@ -29,7 +22,7 @@ export default function Profile({ navigation }: ProfileProps) {
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false)
 
   const handleAccountBindind = () => {
-    navigation.navigate('Modals', { screen: 'BindRiotAccount' })
+    navigation.navigate('BindRiotAccount')
   }
 
   const copyEmail = () => {
@@ -39,7 +32,7 @@ export default function Profile({ navigation }: ProfileProps) {
   }
 
   const handleChangeRiotAccount = () => {
-    navigation.navigate('Modals', { screen: 'BindRiotAccount' })
+    navigation.navigate('BindRiotAccount')
   }
 
   const handleLogOut = async () => {

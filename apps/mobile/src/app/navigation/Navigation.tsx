@@ -14,6 +14,7 @@ import Profile from '../screens/main/profile/Profile';
 import BindRiotAccount from '../screens/modals/BindRiotAccount';
 import CreateGuide from '../screens/modals/CreateGuide/CreateGuide';
 import ViewGuide from '../screens/modals/CreateGuide/guide-viewer/ViewGuide';
+import ReportGuide from '../screens/modals/ReportGuide';
 
 const HomeStack = createNativeStackNavigator({
   screens: {
@@ -65,12 +66,17 @@ const RootStack = createNativeStackNavigator({
     AuthenticatedModals: {
       if: useIsAuthenticated,
       screens: {
-        BindRiotAccount,
+        BindRiotAccount: {
+          screen: BindRiotAccount
+        },
         CreateGuide: {
           screen: CreateGuide
         },
         ViewGuide: {
           screen: ViewGuide
+        },
+        ReportGuide: {
+          screen: ReportGuide
         }
       },
       screenOptions: {
@@ -80,8 +86,12 @@ const RootStack = createNativeStackNavigator({
     NotAuthenticated: {
       if: useIsNotAuthenticated,
       screens: {
-        Login,
-        Register
+        Login: {
+          screen: Login
+        },
+        Register: {
+          screen: Register
+        }
       }
     }
   },

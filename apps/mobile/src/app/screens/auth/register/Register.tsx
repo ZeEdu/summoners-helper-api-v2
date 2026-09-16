@@ -1,6 +1,5 @@
 import { faker } from '@faker-js/faker';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Alert, StyleSheet, View } from 'react-native';
@@ -12,13 +11,10 @@ import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
 import AppInputController from '../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import { AuthStackParamList } from '../../../navigation/types';
 
 const resolver = zodResolver(createUserSchema);
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>
-
-export default function Register(props: Props) {
+export default function Register() {
   const authContext = useAuthContext();
 
   const {
@@ -61,27 +57,33 @@ export default function Register(props: Props) {
     <View style={style.block}>
       <AppInputController
         name="email"
-        label="Email:"
+        inputOptions={{
+          label: "Email",
+          placeholder: "Seu Email"
+        }}
         control={control}
-        placeholder="Seu Email"
       />
       <FormFieldErrors fieldError={errors.email} />
       <ApiFieldErrors apiErrors={apiErrors?.email} />
 
       <AppInputController
-        name="username"
-        label="Username:"
         control={control}
-        placeholder="Seu nome de usuário"
+        name="username"
+        inputOptions={{
+          label: "Username",
+          placeholder: "Seu nome de usuário"
+        }}
       />
       <FormFieldErrors fieldError={errors.username} />
       <ApiFieldErrors apiErrors={apiErrors?.username} />
 
       <AppInputController
         name="password"
-        label="Password:"
         control={control}
-        placeholder="Sua senha"
+        inputOptions={{
+          label: "Password",
+          placeholder: ""
+        }}
       />
       <FormFieldErrors fieldError={errors.password} />
       <ApiFieldErrors apiErrors={apiErrors?.password} />

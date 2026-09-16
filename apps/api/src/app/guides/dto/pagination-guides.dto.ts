@@ -3,7 +3,6 @@ import { QueryFilter } from 'mongoose';
 import { Guide } from '../schema/guide.schema';
 
 const createFilter = (query: GuidePaginationDto): QueryFilter<Guide> => {
-  console.log({ query });
   const filter: QueryFilter<Guide> = {};
 
   if (query.createdBy) {
@@ -25,8 +24,6 @@ const createFilter = (query: GuidePaginationDto): QueryFilter<Guide> => {
   if (query.patchVersion) {
     filter.patchVersion = query.patchVersion;
   }
-
-  console.log({ filter });
 
   return filter;
 };

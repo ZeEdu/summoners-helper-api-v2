@@ -1,10 +1,7 @@
-
-
-
 import { StyledView } from "@org/ui";
 import { useEffect, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
-import { List } from "react-native-paper";
+import { IconButton, List, Menu } from "react-native-paper";
 import { AbilitiesProgressionDto } from "../forms/AbilitiesProgressionForm";
 import { BonusDto } from "../forms/BonusForm";
 import { GuideIntroductionDto } from "../forms/GuideIntroductionForm";
@@ -23,16 +20,27 @@ import ThreatsSection from "./ThreatsSection";
 
 import { IGuide } from "@org/contracts";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { useAuthContext } from "../../../../../contexts/auth/useAuth";
 
 type Props = StaticScreenProps<{
   guide: IGuide
 }>
 
 export default function ViewGuide({ route }: Props) {
+  const { user } = useAuthContext()
   const { guide } = route.params
 
-  const [visible, setVisible] = useState(true)
+  const [showMenu, setShowMenu] = useState(false)
+  const [expandedAccordion, setExpandedAccordion] = useState(true)
   const navigation = useNavigation()
+
+  const openMenu = () => {
+    setShowMenu(true)
+  }
+
+  const closeMenu = () => {
+    setShowMenu(false)
+  }
 
   const guideIntroduction: GuideIntroductionDto = {
     title: guide.title,
@@ -86,11 +94,47 @@ export default function ViewGuide({ route }: Props) {
 
   const { height } = Dimensions.get('window');
 
+  const isGuideCreator = guide.createdBy.toString() === user?._id.toString()
+
+  const menuItems: { onPress: () => void, title: string, id: string }[] = []
+
+  // TODO: retornar para !isGuideCreator quando terminar
+  if (isGuideCreator) {
+    menuItems.push({
+      onPress: () => {
+        closeMenu()
+        navigation.navigate('ReportGuide', { guide })
+      },
+      title: 'Denunciar guia',
+      id: 'report-guide'
+    })
+  }
+
   useEffect(() => {
-    navigation.setOptions({
-      title: guideIntroduction.title
-    });
-  }, [navigation]);
+    const navigationOptions: any = {
+      title: guideIntroduction.title,
+    }
+
+    if (menuItems.length > 0) {
+      navigationOptions.headerRight = () => (
+        <Menu
+          visible={showMenu}
+          onDismiss={closeMenu}
+          anchor={<IconButton onPress={openMenu} icon={'dots-vertical'} size={24} />}>
+          {
+            menuItems
+              .map(({ id, ...props }) => <Menu.Item {...props} key={id} />)
+          }
+        </Menu>
+      )
+    }
+
+    navigation.setOptions(navigationOptions);
+  }, [navigation, showMenu]);
+
+  setTimeout(() => {
+    navigation.navigate('ReportGuide', { guide })
+  }, 1_000);
 
   return (
     <StyledView style={{ height, flex: 1 }}>
@@ -98,9 +142,9 @@ export default function ViewGuide({ route }: Props) {
         <List.Accordion
           title={'Introdução'}
           id={'1'}
-          expanded={visible}
+          expanded={expandedAccordion}
           onPress={() => {
-            setVisible((oldValue) => !oldValue)
+            setExpandedAccordion((oldValue) => !oldValue)
           }}>
           <IntroductionSection hideTitle={true} guideIntroduction={guideIntroduction} />
         </List.Accordion>

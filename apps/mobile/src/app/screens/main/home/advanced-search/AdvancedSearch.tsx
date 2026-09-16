@@ -72,7 +72,7 @@ export default function Search() {
 
   const defaultQuery: FilterInputDto = { offset: 0 };
 
-  const { control, reset, handleSubmit, getValues, resetField, formState: { isValid, errors } } = useForm<
+  const { control, reset, handleSubmit, getValues, resetField } = useForm<
     FilterInputDto,
     unknown,
     FilterOutputDto

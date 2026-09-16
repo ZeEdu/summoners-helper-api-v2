@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { GuidesService } from './service/guides.service';
-import { GuidesController } from './controller/guides.controller';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GuidesController } from './controller/guides.controller';
 import { Guide, GuideSchema } from './schema/guide.schema';
+import { GuidesService } from './service/guides.service';
 
 @Module({
   providers: [GuidesService],
@@ -11,4 +11,4 @@ import { Guide, GuideSchema } from './schema/guide.schema';
     MongooseModule.forFeature([{ name: Guide.name, schema: GuideSchema }]),
   ],
 })
-export class GuidesModule {}
+export class GuidesModule { }

@@ -31,7 +31,7 @@ import { PatchGuideDto } from '../dto/patch-guide.dto';
 @Controller('guides')
 @UseGuards(JwtGuard, HasRiotInfoGuard)
 export class GuidesController {
-  constructor(private guidesService: GuidesService) {}
+  constructor(private guidesService: GuidesService) { }
 
   @Get('')
   getGuides(
@@ -40,7 +40,7 @@ export class GuidesController {
   ) {
     const { offset, limit } = pagination;
     const filter = GuidesPagination.createFilter(pagination);
-    return this.guidesService.getGuides(filter, {
+    return this.guidesService.get(filter, {
       offset,
       limit,
     });
@@ -48,7 +48,7 @@ export class GuidesController {
 
   @Get(':guideId')
   getGuide(@Param('guideId') guideId: string) {
-    return this.guidesService.getGuideById(guideId);
+    return this.guidesService.getById(guideId);
   }
 
   @Post('')
@@ -61,7 +61,7 @@ export class GuidesController {
     const createdBy = user._id.toString();
     const patchVersion = await Utils.getPatchVersion();
 
-    return this.guidesService.createGuide({
+    return this.guidesService.create({
       ...body,
       createdAt,
       createdBy,
@@ -78,7 +78,7 @@ export class GuidesController {
     const updatedAt = new Date().toISOString();
     const patchVersion = await Utils.getPatchVersion();
 
-    return this.guidesService.patchGuide(guideId, {
+    return this.guidesService.patch(guideId, {
       ...patchGuide,
       updatedAt,
       patchVersion,
@@ -89,5 +89,11 @@ export class GuidesController {
   @UseGuards(IsGuideCreatorGuard)
   deleteGuide(@Param('guideId') guideId: string) {
     return this.guidesService.deleteGuide(guideId);
+  }
+
+  @Patch(':guideId')
+  // @UseGuards(IsAdmin)
+  block(@Param('guideId') guideId: string) {
+    return this.guidesService.block(guideId)
   }
 }

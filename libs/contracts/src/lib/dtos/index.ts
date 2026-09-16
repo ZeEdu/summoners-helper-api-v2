@@ -4,5 +4,6 @@ export * from './update-user-profile.dto'
 export * from './update-user.dto'
 
 export * from './guide'
+export * from './guide-report'
 export * from './pagination'
 

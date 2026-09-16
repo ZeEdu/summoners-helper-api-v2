@@ -18,13 +18,15 @@ import { Guide, GuideDocument } from '../schema/guide.schema';
 export class GuidesService {
   constructor(
     @InjectModel(Guide.name) private guideModel: Model<GuideDocument>,
-  ) {}
+  ) { }
 
-  async getGuides(filter?: QueryFilter<Guide>, pagination?: PaginationDto) {
+  async get(filter?: QueryFilter<Guide>, pagination?: PaginationDto) {
     const limit = pagination?.limit || DEFAULT_LIMIT;
     const offset = pagination?.offset || DEFAULT_OFFSET;
 
     filter = filter || {};
+
+    filter.blocked = { $ne: true } // TODO: Não gosto dessa solução, é a mesma que alguns plugin do mongoose utilizam, no entanto, não gosto do $ne
 
     const count = await this.guideModel.countDocuments(filter);
     const guides = await this.guideModel
@@ -36,15 +38,15 @@ export class GuidesService {
     return { guides, count };
   }
 
-  getGuideById(guideId: string) {
+  getById(guideId: string) {
     return this.guideModel.findById(guideId).lean<IUser[]>();
   }
 
-  createGuide(guide: CreateGuideDto) {
+  create(guide: CreateGuideDto) {
     return this.guideModel.create(guide);
   }
 
-  patchGuide(
+  patch(
     guideId: string,
     guide: Partial<PatchGuideDto>,
     queryOptions?: QueryOptions<Guide>,
@@ -61,5 +63,19 @@ export class GuidesService {
 
   deleteGuide(guideId: string) {
     return this.guideModel.deleteOne({ _id: guideId });
+  }
+
+  block(guideId: string) {
+    // Tem que notificar:
+    // O criador do guia
+    // Aqueles que fizeram a denuncia
+
+    return this.guideModel.updateOne({
+      _id: guideId,
+    }, {
+      blocked: true
+    })
+
+
   }
 }

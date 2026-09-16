@@ -92,4 +92,6 @@ export interface IGuide {
 
   threatsDescription: string;
   threats: IThreat[];
+
+  blocked?: boolean;
 }

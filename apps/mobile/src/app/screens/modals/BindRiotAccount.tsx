@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
@@ -8,12 +7,12 @@ import { Snackbar } from 'react-native-paper';
 import { RIOT_SERVERS, RIOT_SERVERS_LABEL, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
+import { useNavigation } from '@react-navigation/native';
 import AppSelectController from '../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import { ApiService } from '../../../services/api/api.service';
-import { ModalStackParamList } from '../../navigation/types';
 
 const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
   {
@@ -80,10 +79,9 @@ const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
 
 const resolver = zodResolver(updateUserProfileSchema);
 
-type Props = NativeStackScreenProps<ModalStackParamList, 'BindRiotAccount'>
-
-export default function BindRiotAccount({ navigation }: Props) {
+export default function BindRiotAccount() {
   const authContext = useAuthContext()
+  const navigation = useNavigation()
 
   const defaultServerValue = RIOT_SERVERS.na1
   const {
