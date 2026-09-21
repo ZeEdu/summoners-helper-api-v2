@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import { AbilityOption } from '../enums';
+import { IUser } from '../types';
 
 export interface IItemList {
   itemId: string
@@ -50,7 +51,7 @@ export interface IGuide {
   // _id: string;
 
   title: string;
-  createdBy: Types.ObjectId;
+  createdBy: Types.ObjectId | IUser;
   // createdBy: string;
 
   introduction: string;

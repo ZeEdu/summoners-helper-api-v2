@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 
 import { AuthenticatedRequest } from '../../types';
 
-
 @Injectable()
 export class HasRiotInfoGuard implements CanActivate {
   canActivate(
