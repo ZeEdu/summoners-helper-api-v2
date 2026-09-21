@@ -13,6 +13,7 @@ import { Response } from 'express';
 import { CreateUserDto, createUserSchema, UserDto } from '@org/contracts';
 import { Public } from '../../decorators/public.decorator';
 import { CurrentUser } from '../../decorators/user.decorator';
+import { IsAdminGuard } from '../../guards/is-admin.guard';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { LocalGuard } from '../../guards/local.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
@@ -49,6 +50,18 @@ export class AuthController {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     };
+  }
+
+  @Post('admin/login')
+  @UseGuards(LocalGuard, IsAdminGuard)
+  async adminLogin(
+    @CurrentUser() user: UserDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{ accessToken: string }> {
+    const tokens = await this.authService.login(user);
+    this.setRefreshToken(response, tokens.refreshToken);
+
+    return { accessToken: tokens.accessToken };
   }
 
   @Post('web/login')

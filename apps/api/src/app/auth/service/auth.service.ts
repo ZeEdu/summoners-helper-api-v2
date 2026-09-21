@@ -41,6 +41,21 @@ export class AuthService {
     return result;
   }
 
+  async validateSystemAdmin(email: string) {
+    const user = await this.usersService.findOneByEmail(email)
+    if (!user) {
+      throw new UnauthorizedException(
+        this.i18n.t('auth.errors.validate.unauthorized'),
+      );
+    }
+
+    if (!user.isSystemAdmin) {
+      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.unauthorized'));
+    }
+
+    return user
+  }
+
   async login(
     user: UserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
