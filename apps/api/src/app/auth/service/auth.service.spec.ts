@@ -1,26 +1,27 @@
-import { CreateUserDto } from '@org/contracts';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
-import { UsersService } from '../../users/service/users.service';
-import { User, UserSchema } from '../../users/schema/user.schema';
-import { Model, Types } from 'mongoose';
 import { faker } from '@faker-js/faker';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as argon2 from 'argon2';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Model, Types } from 'mongoose';
+import { I18nModule, I18nService } from 'nestjs-i18n';
 
-import { TestMockUtils } from '../../test.mock.utils';
-import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import { CreateUserDto } from '@org/contracts';
+
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+import { I18N } from '../../i18n.config';
 import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
-import { I18nModule, I18nService } from 'nestjs-i18n';
-import { I18N } from '../../i18n.config';
-import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import { TestMockUtils } from '../../test.mock.utils';
+import { User, UserSchema } from '../../users/schema/user.schema';
+import { UsersService } from '../../users/service/users.service';
+import { AuthService } from './auth.service';
 
 let mongodb: MongoMemoryServer;
 
@@ -76,7 +77,7 @@ describe('AuthService', () => {
 
       const result = await service.validateUser(user.email, password);
       expect(result).toBeDefined();
-      expect(result).toHaveProperty('_id');
+      expect(result).toHaveProperty('id');
       expect(result).toHaveProperty('username');
       expect(result).toHaveProperty('email');
       expect(result).not.toHaveProperty('password');

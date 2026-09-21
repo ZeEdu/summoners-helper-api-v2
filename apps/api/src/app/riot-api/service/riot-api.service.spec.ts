@@ -1,25 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { RiotApiService } from './riot-api.service';
 import { faker } from '@faker-js/faker';
-import { RiotApiUtilsService } from './riot-api.utils.service';
 import { ConfigModule } from '@nestjs/config';
-import nock from 'nock';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../../users/schema/user.schema';
-import {
-  RiotApiErrorLogger,
-  RiotApiErrorLoggerSchema,
-} from '../schema/riot-api-error-logger.schema';
+import { Test, TestingModule } from '@nestjs/testing';
+import { RIOT_SERVERS } from '@org/contracts';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { RiotApiModule } from '../riot-api.module';
+import { I18nModule, I18nService } from 'nestjs-i18n';
+import nock from 'nock';
 import {
   IExpectedRiotApiService,
   RiotApiFixtures,
 } from '../../__fixtures__/riot-api.fixtures';
-import { I18nModule, I18nService } from 'nestjs-i18n';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { I18N } from '../../i18n.config';
-import { RIOT_SERVERS } from '@org/contracts';
+import { User, UserSchema } from '../../users/schema/user.schema';
+import { RiotApiModule } from '../riot-api.module';
+import {
+  RiotApiErrorLogger,
+  RiotApiErrorLoggerSchema,
+} from '../schema/riot-api-error-logger.schema';
+import { RiotApiService } from './riot-api.service';
+import { RiotApiUtilsService } from './riot-api.utils.service';
 
 let mongodb: MongoMemoryServer;
 
@@ -132,7 +132,7 @@ describe('RiotApiService', () => {
         const puuid = faker.string.alphanumeric(78);
         const url = utilService.buildGetChampionMasteryURL(
           puuid,
-          RIOT_SERVERS.BR1,
+          RIOT_SERVERS.br1,
         );
         const scope = nock(url)
           .get(() => true)
@@ -141,13 +141,13 @@ describe('RiotApiService', () => {
         const spy = jest.spyOn(service, 'getChampionsMasteries');
         const result = await service.getChampionsMasteries(
           puuid,
-          RIOT_SERVERS.BR1,
+          RIOT_SERVERS.br1,
         );
 
         expect(result).toEqual(
           buildExpectedRiotApiService.getChampionsMasteries,
         );
-        expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
+        expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.br1);
 
         scope.done();
       });
@@ -158,7 +158,7 @@ describe('RiotApiService', () => {
         const puuid = faker.string.alphanumeric(78);
         const url = utilService.buildGetChampionMasteryURL(
           puuid,
-          RIOT_SERVERS.BR1,
+          RIOT_SERVERS.br1,
         );
 
         const scope = nock(url)
@@ -174,7 +174,7 @@ describe('RiotApiService', () => {
           'riot-api.errors.serviceUnavailableException',
         );
         await expect(
-          service.getChampionsMasteries(puuid, RIOT_SERVERS.BR1),
+          service.getChampionsMasteries(puuid, RIOT_SERVERS.br1),
         ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
@@ -187,7 +187,7 @@ describe('RiotApiService', () => {
       const url = utilService.buildGetChampionMasteryByChampionURL(
         puuid,
         championId,
-        RIOT_SERVERS.BR1,
+        RIOT_SERVERS.br1,
       );
       const scope = nock(url)
         .get(() => true)
@@ -197,13 +197,13 @@ describe('RiotApiService', () => {
       const result = await service.getChampionsMasteriesByChampion(
         puuid,
         championId,
-        RIOT_SERVERS.BR1,
+        RIOT_SERVERS.br1,
       );
 
       expect(result).toEqual(
         buildExpectedRiotApiService.getChampionsMasteriesByChampion,
       );
-      expect(spy).toHaveBeenCalledWith(puuid, championId, RIOT_SERVERS.BR1);
+      expect(spy).toHaveBeenCalledWith(puuid, championId, RIOT_SERVERS.br1);
 
       scope.done();
     });
@@ -213,7 +213,7 @@ describe('RiotApiService', () => {
         const url = utilService.buildGetChampionMasteryByChampionURL(
           puuid,
           championId,
-          RIOT_SERVERS.BR1,
+          RIOT_SERVERS.br1,
         );
 
         const scope = nock(url)
@@ -232,7 +232,7 @@ describe('RiotApiService', () => {
           service.getChampionsMasteriesByChampion(
             puuid,
             championId,
-            RIOT_SERVERS.BR1,
+            RIOT_SERVERS.br1,
           ),
         ).rejects.toThrow(expectedErrorMessage);
 
@@ -247,7 +247,7 @@ describe('RiotApiService', () => {
       const url = utilService.buildGetChampionMasteryByTopURL(
         puuid,
         count,
-        RIOT_SERVERS.BR1,
+        RIOT_SERVERS.br1,
       );
       const scope = nock(url)
         .get(() => true)
@@ -257,13 +257,13 @@ describe('RiotApiService', () => {
       const result = await service.getChampionsMasteriesByTop(
         puuid,
         count,
-        RIOT_SERVERS.BR1,
+        RIOT_SERVERS.br1,
       );
 
       expect(result).toEqual(
         buildExpectedRiotApiService.getChampionsMasteriesByTop,
       );
-      expect(spy).toHaveBeenCalledWith(puuid, count, RIOT_SERVERS.BR1);
+      expect(spy).toHaveBeenCalledWith(puuid, count, RIOT_SERVERS.br1);
 
       scope.done();
     });
@@ -275,7 +275,7 @@ describe('RiotApiService', () => {
         const url = utilService.buildGetChampionMasteryByTopURL(
           puuid,
           count,
-          RIOT_SERVERS.BR1,
+          RIOT_SERVERS.br1,
         );
         const scope = nock(url)
           .get(() => true)
@@ -291,7 +291,7 @@ describe('RiotApiService', () => {
         );
 
         await expect(
-          service.getChampionsMasteriesByTop(puuid, count, RIOT_SERVERS.BR1),
+          service.getChampionsMasteriesByTop(puuid, count, RIOT_SERVERS.br1),
         ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
@@ -301,16 +301,16 @@ describe('RiotApiService', () => {
   describe('getRankedStatus', () => {
     it('should get ranked status', async () => {
       const puuid = faker.string.alphanumeric(78);
-      const url = utilService.buildGetRankedStatsURL(puuid, RIOT_SERVERS.BR1);
+      const url = utilService.buildGetRankedStatsURL(puuid, RIOT_SERVERS.br1);
       const scope = nock(url)
         .get(() => true)
         .reply(200, RiotApiFixtures.mocked.api.getRankedStatus);
 
       const spy = jest.spyOn(service, 'getRankedStatus');
-      const result = await service.getRankedStatus(puuid, RIOT_SERVERS.BR1);
+      const result = await service.getRankedStatus(puuid, RIOT_SERVERS.br1);
 
       expect(result).toEqual(buildExpectedRiotApiService.getRankedStatus);
-      expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
+      expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.br1);
 
       scope.done();
     });
@@ -319,7 +319,7 @@ describe('RiotApiService', () => {
       it('should get a error when entry is not found', async () => {
         const puuid = faker.string.alphanumeric(78);
 
-        const url = utilService.buildGetRankedStatsURL(puuid, RIOT_SERVERS.BR1);
+        const url = utilService.buildGetRankedStatsURL(puuid, RIOT_SERVERS.br1);
         const scope = nock(url)
           .get(() => true)
           .reply(404, {
@@ -334,7 +334,7 @@ describe('RiotApiService', () => {
         );
 
         await expect(
-          service.getRankedStatus(puuid, RIOT_SERVERS.BR1),
+          service.getRankedStatus(puuid, RIOT_SERVERS.br1),
         ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();
@@ -410,16 +410,16 @@ describe('RiotApiService', () => {
   describe('getSummoner', () => {
     it('should get summoner', async () => {
       const puuid = faker.string.alphanumeric(78);
-      const url = utilService.buildGetSummonerURL(puuid, RIOT_SERVERS.BR1);
+      const url = utilService.buildGetSummonerURL(puuid, RIOT_SERVERS.br1);
       const scope = nock(url)
         .get(() => true)
         .reply(200, RiotApiFixtures.mocked.api.getSummoner);
 
       const spy = jest.spyOn(service, 'getSummoner');
-      const result = await service.getSummoner(puuid, RIOT_SERVERS.BR1);
+      const result = await service.getSummoner(puuid, RIOT_SERVERS.br1);
 
       expect(result).toEqual(buildExpectedRiotApiService.getSummoner);
-      expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.BR1);
+      expect(spy).toHaveBeenCalledWith(puuid, RIOT_SERVERS.br1);
 
       scope.done();
     });
@@ -428,7 +428,7 @@ describe('RiotApiService', () => {
       it('should get a error when entry is not found', async () => {
         const puuid = faker.string.alphanumeric(78);
 
-        const url = utilService.buildGetSummonerURL(puuid, RIOT_SERVERS.BR1);
+        const url = utilService.buildGetSummonerURL(puuid, RIOT_SERVERS.br1);
         const scope = nock(url)
           .get(() => true)
           .reply(404, {
@@ -442,7 +442,7 @@ describe('RiotApiService', () => {
           'riot-api.errors.serviceUnavailableException',
         );
         await expect(
-          service.getSummoner(puuid, RIOT_SERVERS.BR1),
+          service.getSummoner(puuid, RIOT_SERVERS.br1),
         ).rejects.toThrow(expectedErrorMessage);
 
         scope.done();

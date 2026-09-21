@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+
 import { IUser, RIOT_SERVERS } from '@org/contracts';
 
 export type IUserWithPassword = IUser & { password: string };
@@ -26,7 +27,7 @@ export class User implements IUser {
   @Prop({ select: false })
   puuid: string;
 
-  @Prop()
+  @Prop({})
   gameName: string;
 
   @Prop()
@@ -34,6 +35,9 @@ export class User implements IUser {
 
   @Prop({ type: String, enum: RIOT_SERVERS })
   server: RIOT_SERVERS;
+
+  @Prop({ type: Boolean, default: false })
+  isSystemAdmin?: boolean
 }
 
 export const SENSIBLE_FIELDS = ['password', 'refreshToken'];

@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../app.module';
-import { RiotApiService } from '../riot-api/service/riot-api.service';
-import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
-import { RiotApiFixtures } from '../__fixtures__/riot-api.fixtures';
-import { Model } from 'mongoose';
-import { User } from '../users/schema/user.schema';
-import { getModelToken } from '@nestjs/mongoose';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import cookieParser from 'cookie-parser';
 import { faker } from '@faker-js/faker';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import cookieParser from 'cookie-parser';
+import { Model } from 'mongoose';
 import request = require('supertest');
+
+import { AbilityOption, CreateGuideDto, CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+
+import { RiotApiFixtures } from '../__fixtures__/riot-api.fixtures';
+import { AppModule } from '../app.module';
+import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
+import { RiotApiService } from '../riot-api/service/riot-api.service';
+import { User } from '../users/schema/user.schema';
 import { Guide, GuideDocument } from './schema/guide.schema';
-import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
-import { AbilityOption } from './schema/abilities-progression.schema';
-import { CreateGuideDto } from './dto/guide/create-guide.dto';
 
 describe('Guides (e2e)', () => {
   let app: INestApplication;
@@ -30,25 +30,6 @@ describe('Guides (e2e)', () => {
     champion: 'Ahri',
     role: 'Mid',
 
-    // Runes
-    runes: {
-      primaryRune: '8100', // Dominação (Domination)
-      primarySlots: {
-        first: '8112', // Eletrocutar (Electrocute) - keystone
-        second: '8143', // Impacto Repentino (Sudden Impact)
-        third: '8138', // Coleção de Olhos (Eyeball Collection)
-        fourth: '8106', // Caçador Supremo (Ultimate Hunter)
-      },
-      secondaryRune: '8200', // Feitiçaria (Sorcery)
-      secondarySlots: {
-        first: '8226', // Cinto de Mana (Manaflow Band)
-        second: '8210', // Transcendência (Transcendence)
-        third: '8237', // Chamuscar (Scorch)
-      },
-    },
-
-    runesDescription: 'Dominação como árvore primária garante dano explosivo, enquanto Feitiçaria complementa o poder mágico e sustain.',
-
     // Bonus
     bonusSlotOne: '5008',
     bonusSlotTwo: '5008',
@@ -61,24 +42,6 @@ describe('Guides (e2e)', () => {
     spellsDescription: 'Chama garante segurança e potencial de kill, enquanto Teleporte ajuda no controle de mapa e trocas de rota.',
 
     // Items
-    itemsBlock: [
-      {
-        itemRollName: 'Build Padrão',
-        itemArray: [
-          { id: '3157', description: 'Zhonyas Hourglass - defesa e follow-up' },
-          {
-            id: '3089',
-            description: 'Chapéu do Arcanjo Rabadon - amplificação de dano',
-          },
-        ],
-      },
-      {
-        itemRollName: 'Build Contra Tanques',
-        itemArray: [
-          { id: '3116', description: 'Cetro do Vazio - penetração mágica' },
-        ],
-      },
-    ],
     itemsDescription: 'A build padrão foca em burst e segurança, enquanto a build alternativa aumenta a penetração mágica contra times com muita resistência.',
 
     // Abilities Progression
@@ -115,7 +78,35 @@ describe('Guides (e2e)', () => {
       },
     ],
     threatsDescription: 'lorem ipsum',
-    createdAt: '2026-01-01'
+    createdAt: '2026-01-01',
+
+
+    "primaryRune": "8100",
+    "primarySlots": {
+      "first": "8112",
+      "second": "8126",
+      "third": "8137",
+      "fourth": "8105"
+    },
+    "primaryRuneDescription": "asdasdasd",
+    "secondaryRune": "8300",
+    "secondarySlots": {
+      "first": "8304",
+      "second": "8306",
+      "third": "8321"
+    },
+    "secondaryRuneDescription": "asdasdasd",
+    "items": [
+      {
+        "rowName": "asdasdasdasd",
+        "itemsList": [
+          {
+            "itemId": "1001"
+          }
+        ],
+        "description": "adasdasd"
+      }
+    ],
   };
 
   beforeAll(async () => {
@@ -160,7 +151,7 @@ describe('Guides (e2e)', () => {
       puuid: faker.string.alphanumeric(78),
       tagLine: faker.string.alphanumeric(5),
       gameName: faker.internet.userName(),
-      server: RIOT_SERVERS.BR1,
+      server: RIOT_SERVERS.br1,
     };
 
     const updatedUser = await userModel

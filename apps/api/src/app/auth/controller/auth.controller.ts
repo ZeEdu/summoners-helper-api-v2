@@ -10,21 +10,21 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { AuthService } from '../service/auth.service';
+import { CreateUserDto, createUserSchema, UserDto } from '@org/contracts';
 import { Public } from '../../decorators/public.decorator';
-import { LocalGuard } from '../../guards/local.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
+import { LocalGuard } from '../../guards/local.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
-import { CreateUserDto, createUserSchema, IUser } from '@org/contracts';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { Utils } from '../../utils';
+import { AuthService } from '../service/auth.service';
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('web/register')
   @Public()
@@ -54,7 +54,7 @@ export class AuthController {
   @Post('web/login')
   @UseGuards(LocalGuard)
   async webLogin(
-    @CurrentUser() user: IUser,
+    @CurrentUser() user: UserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
     const tokens = await this.authService.login(user);
@@ -66,7 +66,7 @@ export class AuthController {
   @Post('mobile/login')
   @UseGuards(LocalGuard)
   async mobileLogin(
-    @CurrentUser() user: IUser,
+    @CurrentUser() user: UserDto,
   ): Promise<{ accessToken: string }> {
     const tokens = await this.authService.login(user);
     return { ...tokens };
@@ -76,24 +76,24 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(
-    @CurrentUser() user: IUser,
+    @CurrentUser() user: UserDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     response.clearCookie('refresh_token', {
       path: Utils.isProduction ? '/auth/refresh' : '/',
     });
-    await this.authService.logout(user._id.toString());
+    await this.authService.logout(user.id);
   }
 
   @UseGuards(RefreshTokenGuard)
   @Post('web/refresh')
   async webRefreshToken(
-    @CurrentUser() user: IUser,
+    @CurrentUser() user: UserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{
     accessToken: string;
   }> {
-    const userId = user._id.toString();
+    const userId = user.id;
     const refreshToken = user.refreshToken;
     if (!refreshToken) {
       throw new UnauthorizedException('Token necessário não informado');
@@ -107,10 +107,10 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @Post('mobile/refresh')
-  async mobileRefreshToken(@CurrentUser() user: IUser): Promise<{
+  async mobileRefreshToken(@CurrentUser() user: UserDto): Promise<{
     accessToken: string;
   }> {
-    const userId = user._id.toString();
+    const userId = user.id;
     const refreshToken = user.refreshToken;
     if (!refreshToken) {
       throw new UnauthorizedException('Token necessário não informado');

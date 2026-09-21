@@ -1,19 +1,21 @@
-import { IUserWithPuuid } from '../users/schema/user.schema';
+import { Injectable } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
+
+import { UserDtoWithPuuid } from '@org/contracts';
+
 import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface';
 import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface';
 import { Match } from '../riot-api/interfaces/match.interface';
 import { Summoner } from '../riot-api/interfaces/summoner.interface';
-import { ChampionsLookup } from './lookups/champions.lookup';
-import { SummonersSpellLookup } from './lookups/summoner-spell.lookup';
-import { RunesLookup } from './lookups/runes-reforged.lookup';
-import { ItemsLookup } from './lookups/items.lookup';
-import { Injectable } from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
 import { IChampionMasteryResponse } from '../riot-api/service/riot-api.service';
+import { ChampionsLookup } from './lookups/champions.lookup';
+import { ItemsLookup } from './lookups/items.lookup';
+import { RunesLookup } from './lookups/runes-reforged.lookup';
+import { SummonersSpellLookup } from './lookups/summoner-spell.lookup';
 
 @Injectable()
 export class DataDragonTransformerService {
-  constructor(private i18n: I18nService) {}
+  constructor(private i18n: I18nService) { }
 
   transformChampionsMastery(
     championMastery: ChampionMastery,
@@ -46,7 +48,7 @@ export class DataDragonTransformerService {
   }
   transformMatchInfo(
     match: Match,
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
   ): {
     gameDuration: number;
     gameMode;

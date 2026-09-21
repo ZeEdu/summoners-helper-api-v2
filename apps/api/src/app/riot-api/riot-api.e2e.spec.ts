@@ -1,23 +1,23 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-import cookieParser = require('cookie-parser');
-import { User, UserDocument } from '../users/schema/user.schema';
-import { AppModule } from '../app.module';
 import { faker } from '@faker-js/faker';
-import request = require('supertest');
-import { RiotApiService } from './service/riot-api.service';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+import { Model } from 'mongoose';
 import {
   IExpectedRiotApiService,
   RiotApiFixtures,
 } from '../__fixtures__/riot-api.fixtures';
+import { AppModule } from '../app.module';
 import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
-import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+import { User, UserDocument } from '../users/schema/user.schema';
+import { RiotApiService } from './service/riot-api.service';
+import cookieParser = require('cookie-parser');
+import request = require('supertest');
 
 describe('Riot API (e2e)', () => {
   let app: INestApplication;
-  let userModel: Model<User>;
+  let userModel: Model<UserDocument>;
   let buildExpectedRiotApiService: IExpectedRiotApiService;
 
   beforeAll(async () => {
@@ -72,7 +72,7 @@ describe('Riot API (e2e)', () => {
       puuid: faker.string.alphanumeric(78),
       tagLine: faker.string.alphanumeric(5),
       gameName: faker.internet.userName(),
-      server: RIOT_SERVERS.BR1,
+      server: RIOT_SERVERS.br1,
     };
 
     const updatedUser = await userModel

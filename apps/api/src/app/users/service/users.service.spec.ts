@@ -1,16 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { User } from '../schema/user.schema';
-import { Model, QueryFilter, Types } from 'mongoose';
-import { getModelToken } from '@nestjs/mongoose';
 import { faker } from '@faker-js/faker';
-import { TestMockUtils } from '../../test.mock.utils';
-import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Model, QueryFilter, Types } from 'mongoose';
+import { I18nService } from 'nestjs-i18n';
+
+import { CreateUserDto, DEFAULT_LIMIT, DEFAULT_OFFSET, IUser, RIOT_SERVERS, UpdateUserDto } from '@org/contracts';
+
 import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
-import { I18nService } from 'nestjs-i18n';
-import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
-import { DEFAULT_LIMIT, DEFAULT_OFFSET } from '../../pagination/pagination.dto';
+import ResponseMappers from '../../response-mappers';
+import { RiotApiService } from '../../riot-api/service/riot-api.service';
+import { TestMockUtils } from '../../test.mock.utils';
+import { IUserWithPassword, IUserWithPuuid, User } from '../schema/user.schema';
+import { UsersService } from './users.service';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -25,10 +27,7 @@ describe('UsersService', () => {
   };
 
   const mockSavedDoc = {
-    ...mockedUserFields,
-    toJSON: jest.fn().mockReturnValue({
-      ...mockedUserFields,
-    }),
+    ...mockedUserFields
   };
   const mockDetailModel = jest.fn().mockImplementation(() => ({
     save: jest.fn().mockReturnValue(mockSavedDoc),
@@ -82,7 +81,7 @@ describe('UsersService', () => {
       const wrongEmail = faker.internet.email();
       const result = await service.findOneByEmail(wrongEmail);
 
-      expect(result).toBeNull();
+      expect(result).toBeUndefined();
       expect(model.findOne).toHaveBeenCalledWith({ email: wrongEmail });
     });
     it('should return a user', async () => {
@@ -91,6 +90,7 @@ describe('UsersService', () => {
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
+        isSystemAdmin: false
       };
 
       const mockLean = jest.fn().mockReturnValue(mockedUser);
@@ -99,18 +99,19 @@ describe('UsersService', () => {
 
       const result = await service.findOneByEmail(mockedUser.email);
 
-      expect(result).toEqual(mockedUser);
+      expect(result).toEqual(ResponseMappers.user(mockedUser));
       expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
     });
   });
 
   describe('findOneByEmailWithPassword', () => {
     it('should return a user with password', async () => {
-      const mockedUser: IUser = {
+      const mockedUser: IUserWithPassword = {
         _id: new Types.ObjectId(),
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
+        isSystemAdmin: false
       };
 
       const mockLean = jest.fn().mockReturnValue(mockedUser);
@@ -120,7 +121,7 @@ describe('UsersService', () => {
 
       const result = await service.findOneByEmailWithPassword(mockedUser.email);
 
-      expect(result).toEqual(mockedUser);
+      expect(result).toEqual(ResponseMappers.userWithPassword(mockedUser));
       expect(result?.password).toBeDefined();
       expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
     });
@@ -128,7 +129,7 @@ describe('UsersService', () => {
 
   describe('findOneByEmailWithPuuid', () => {
     it('should return a user with a puuid', async () => {
-      const mockedUser: IUser = {
+      const mockedUser: IUserWithPuuid = {
         _id: new Types.ObjectId(),
         username: faker.internet.userName(),
         email: faker.internet.email(),
@@ -136,7 +137,8 @@ describe('UsersService', () => {
         puuid: faker.string.alphanumeric(78),
         gameName: faker.internet.userName(),
         tagLine: faker.string.alphanumeric(5),
-        server: RIOT_SERVERS.BR1,
+        server: RIOT_SERVERS.br1,
+        isSystemAdmin: false
       };
 
       const mockLean = jest.fn().mockReturnValue(mockedUser);
@@ -146,7 +148,7 @@ describe('UsersService', () => {
 
       const result = await service.findOneByEmailWithPuuid(mockedUser.email);
 
-      expect(result).toEqual(mockedUser);
+      expect(result).toEqual(ResponseMappers.userWithPuuid(mockedUser));
       expect(result?.puuid).toBeDefined();
       expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
     });
@@ -161,7 +163,7 @@ describe('UsersService', () => {
       const wrongUsername = faker.internet.userName();
       const result = await service.findOneByUsername(wrongUsername);
 
-      expect(result).toBeNull();
+      expect(result).toBeUndefined();
       expect(model.findOne).toHaveBeenCalledWith({ username: wrongUsername });
     });
     it('should return a user', async () => {
@@ -178,7 +180,7 @@ describe('UsersService', () => {
 
       const result = await service.findOneByUsername(mockedUser.username);
 
-      expect(result).toEqual(mockedUser);
+      expect(result).toEqual(ResponseMappers.user(mockedUser));
       expect(model.findOne).toHaveBeenCalledWith({
         username: mockedUser.username,
       });
@@ -194,7 +196,7 @@ describe('UsersService', () => {
       const wrongObjectId = new Types.ObjectId().toString();
       const result = await service.findOneById(wrongObjectId);
 
-      expect(result).toBeNull();
+      expect(result).toBeUndefined();
       expect(model.findById).toHaveBeenCalledWith(wrongObjectId);
     });
     it('should return a user', async () => {
@@ -212,7 +214,7 @@ describe('UsersService', () => {
       const userId = mockedUser._id.toString();
       const result = await service.findOneById(userId);
 
-      expect(result).toEqual(mockedUser);
+      expect(result).toEqual(ResponseMappers.user(mockedUser));
       expect(model.findById).toHaveBeenCalledWith(userId);
     });
   });
@@ -226,30 +228,30 @@ describe('UsersService', () => {
       };
 
       const result = await service.create(mockedUser);
+
       expect(model).toHaveBeenCalledWith(mockedUser);
-      expect(mockSavedDoc.toJSON).toHaveBeenCalled();
-      expect(result).toEqual(mockedUserFields);
+      expect(result).toEqual(ResponseMappers.user(mockedUserFields));
     });
   });
 
   describe('update', () => {
     it('should update user', async () => {
-      const userId = new Types.ObjectId().toString();
-      const updatedUserInfo: CreateUserDto = {
+      const userObjectId = new Types.ObjectId()
+      const userId = userObjectId.toString();
+      const updatedUserInfo: UpdateUserDto = {
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
       };
 
-      const expectedUpdatedUser = { ...updatedUserInfo, _id: userId };
-
-      const mockLean = jest.fn().mockReturnValue(expectedUpdatedUser);
+      const mockLean = jest.fn().mockReturnValue({ ...updatedUserInfo, _id: userObjectId });
       const mockFindByIdAndUpdate = jest
         .fn()
         .mockReturnValue({ lean: mockLean });
       model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate);
 
       const result = await service.update(userId, updatedUserInfo);
+
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
         userId,
         updatedUserInfo,
@@ -257,7 +259,10 @@ describe('UsersService', () => {
           returnDocument: 'after',
         },
       );
-      expect(result).toEqual(expectedUpdatedUser);
+
+      const expectedResult = ResponseMappers.user({ ...updatedUserInfo, _id: userObjectId } as IUser)
+
+      expect(result).toEqual(expectedResult);
     });
   });
 
@@ -366,11 +371,13 @@ describe('UsersService', () => {
     it('should update user with riot account data', async () => {
       const tagLine = faker.string.alphanumeric(5);
       const gameName = faker.internet.userName();
-      const server = RIOT_SERVERS.BR1;
+      const server = RIOT_SERVERS.br1;
       const puuid = faker.string.alphanumeric(78);
 
+      const userId = new Types.ObjectId()
+
       const mockedUser: IUser = {
-        _id: new Types.ObjectId(),
+        _id: userId,
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
@@ -379,12 +386,12 @@ describe('UsersService', () => {
         puuid,
       };
 
-      const mockLean = jest.fn().mockReturnValue({
-        mockedUser,
-      });
+      const mockLean = jest.fn().mockReturnValue(mockedUser);
+
       const mockFindByIdAndUpdate = jest
         .fn()
         .mockReturnValue({ lean: mockLean });
+
       model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate);
 
       const mockedGetAccountByRiotId = jest.fn().mockResolvedValue({
@@ -392,6 +399,7 @@ describe('UsersService', () => {
         gameName,
         puuid,
       });
+
       riotApiService.getAccountByRiotId.mockImplementationOnce(
         mockedGetAccountByRiotId,
       );

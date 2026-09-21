@@ -1,10 +1,11 @@
 import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
-import { IUser, UpdateUserProfileDto, updateUserProfileSchema, UsersPaginationDto, usersPaginationSchema } from '@org/contracts';
+
+import { IUser, UpdateUserProfileDto, updateUserProfileSchema, UserDto, UserDtoWithPuuid, UsersPaginationDto, usersPaginationSchema } from '@org/contracts';
+
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUserWithPuuid } from '../schema/user.schema';
 import { UsersService } from '../service/users.service';
 import UserPagination from '../user.pagination.dto';
 
@@ -19,7 +20,7 @@ export class UsersController {
     pagination: UsersPaginationDto,
   ): Promise<{
     count: number;
-    users: IUser[];
+    users: UserDto[];
   }> {
     const filter = UserPagination.filter(pagination);
 
@@ -28,7 +29,7 @@ export class UsersController {
   }
 
   @Get('me')
-  async getMe(@CurrentUser() user: IUser): Promise<IUserWithPuuid | null> {
+  async getMe(@CurrentUser() user: IUser) {
     return this.usersService.findOneByIdWithPuuid(user._id.toString());
   }
 
@@ -43,15 +44,16 @@ export class UsersController {
     return {}
   }
 
+  // TODO: Corrigir o uso do IUserWithPuuid. Sempre que deixar o service, vai estar como IUserDto
   @Get('top-masteries')
   @UseGuards(HasRiotInfoGuard)
-  async getTopMasteries(@CurrentUser() user: IUserWithPuuid) {
+  async getTopMasteries(@CurrentUser() user: UserDtoWithPuuid) {
     return this.usersService.getTopMasteries(user, 5);
   }
 
   @Get('last-five-matches')
   @UseGuards(HasRiotInfoGuard)
-  async getLastFiveMatches(@CurrentUser() user: IUserWithPuuid) {
+  async getLastFiveMatches(@CurrentUser() user: UserDtoWithPuuid) {
     return this.usersService.getLastFiveMatches(user);
   }
 
@@ -61,12 +63,11 @@ export class UsersController {
     pagination: UsersPaginationDto,
   ): Promise<{
     count: number;
-    users: IUser[];
+    users: UserDto[];
   }> {
     const filter = UserPagination.quickSearch(pagination);
 
     const { offset, limit } = pagination;
     return this.usersService.getAllUsers(filter, { offset, limit });
   }
-
 }

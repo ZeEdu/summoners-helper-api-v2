@@ -1,27 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { faker } from '@faker-js/faker';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Model } from 'mongoose';
 
-import { RIOT_SERVERS } from '@org/contracts';
+import { AbilityOption, CreateGuideDto, GuidePaginationDto, RIOT_SERVERS, UserDtoWithPuuid } from '@org/contracts';
 
-import { GuidesController } from './guides.controller';
+import ResponseMappers from '../../response-mappers';
 import { User, UserSchema } from '../../users/schema/user.schema';
 import { Guide, GuideDocument, GuideSchema } from '../schema/guide.schema';
 import { GuidesService } from '../service/guides.service';
-import { GuidePaginationDto } from '../dto/pagination-guides.dto';
-import { AbilityOption } from '../schema/abilities-progression.schema';
-import { CreateGuideDto } from '../dto/guide/create-guide.dto';
+import { GuidesController } from './guides.controller';
 
 let mongodb: MongoMemoryServer;
 
 describe('GuidesController', () => {
   let controller: GuidesController;
   let userModel: Model<User>;
-  let guideModel: Model<Guide>;
+  let guideModel: Model<GuideDocument>;
 
-  let user: User;
+  let user: UserDtoWithPuuid;
   const mockGuidePayload: CreateGuideDto = {
     title: 'Guia de Ahri Mid - Season 2026',
     createdBy: '64f1a2b3c4d5e6f7a8b9c0d1',
@@ -33,23 +31,6 @@ describe('GuidesController', () => {
     role: 'Mid',
 
     // Runes
-    runes: {
-      primaryRune: '8100', // Dominação (Domination)
-      primarySlots: {
-        first: '8112', // Eletrocutar (Electrocute) - keystone
-        second: '8143', // Impacto Repentino (Sudden Impact)
-        third: '8138', // Coleção de Olhos (Eyeball Collection)
-        fourth: '8106', // Caçador Supremo (Ultimate Hunter)
-      },
-      secondaryRune: '8200', // Feitiçaria (Sorcery)
-      secondarySlots: {
-        first: '8226', // Cinto de Mana (Manaflow Band)
-        second: '8210', // Transcendência (Transcendence)
-        third: '8237', // Chamuscar (Scorch)
-      },
-    },
-
-    runesDescription: 'Dominação como árvore primária garante dano explosivo, enquanto Feitiçaria complementa o poder mágico e sustain.',
 
     // Bonus
     bonusSlotOne: '5008',
@@ -63,24 +44,6 @@ describe('GuidesController', () => {
     spellsDescription: 'Chama garante segurança e potencial de kill, enquanto Teleporte ajuda no controle de mapa e trocas de rota.',
 
     // Items
-    itemsBlock: [
-      {
-        itemRollName: 'Build Padrão',
-        itemArray: [
-          { id: '3157', description: 'Zhonyas Hourglass - defesa e follow-up' },
-          {
-            id: '3089',
-            description: 'Chapéu do Arcanjo Rabadon - amplificação de dano',
-          },
-        ],
-      },
-      {
-        itemRollName: 'Build Contra Tanques',
-        itemArray: [
-          { id: '3116', description: 'Cetro do Vazio - penetração mágica' },
-        ],
-      },
-    ],
     itemsDescription: 'A build padrão foca em burst e segurança, enquanto a build alternativa aumenta a penetração mágica contra times com muita resistência.',
 
     // Abilities Progression
@@ -116,9 +79,36 @@ describe('GuidesController', () => {
         description: 'LeBlanc tem burst comparável; evite ficar exposta sem Espírito da Raposa disponível para escapar.',
       },
     ],
+    threatsDescription: 'lorem ipsum',
+    createdAt: '2026-01-01',
 
-    threatsDescription: 'lorem impsum',
-    createdAt: '2026-01-01'
+
+    "primaryRune": "8100",
+    "primarySlots": {
+      "first": "8112",
+      "second": "8126",
+      "third": "8137",
+      "fourth": "8105"
+    },
+    "primaryRuneDescription": "asdasdasd",
+    "secondaryRune": "8300",
+    "secondarySlots": {
+      "first": "8304",
+      "second": "8306",
+      "third": "8321"
+    },
+    "secondaryRuneDescription": "asdasdasd",
+    "items": [
+      {
+        "rowName": "asdasdasdasd",
+        "itemsList": [
+          {
+            "itemId": "1001"
+          }
+        ],
+        "description": "adasdasd"
+      }
+    ],
   };
 
   beforeAll(async () => {
@@ -158,20 +148,20 @@ describe('GuidesController', () => {
       userPuuid: faker.string.alphanumeric(78),
       tagLine: faker.string.alphanumeric(5),
       gameName: faker.internet.userName(),
-      server: RIOT_SERVERS.BR1,
+      server: RIOT_SERVERS.br1,
     }).save();
 
-    user = savedUser.toJSON();
+    user = ResponseMappers.userWithPuuid(savedUser)
   });
 
   describe('get', () => {
     it('should get one by id', async () => {
       const document = await guideModel.insertOne({
         ...mockGuidePayload,
-        createdBy: user._id.toString(),
+        createdBy: user.id,
       });
 
-      const result = await controller.getGuide(document._id.toString());
+      const result = await controller.getGuide(document.id);
       expect(result).toBeDefined();
     });
 
@@ -181,7 +171,7 @@ describe('GuidesController', () => {
         await guideModel.insertOne({
           ...mockGuidePayload,
           title,
-          createdBy: user._id.toString(),
+          createdBy: user.id,
         });
 
         const pagination: GuidePaginationDto = {
@@ -194,11 +184,11 @@ describe('GuidesController', () => {
       it('should get by creator', async () => {
         await guideModel.insertOne({
           ...mockGuidePayload,
-          createdBy: user._id.toString(),
+          createdBy: user.id,
         });
 
         const pagination: GuidePaginationDto = {
-          createdBy: user._id.toString(),
+          createdBy: user.id,
         };
         const result = await controller.getGuides(pagination);
         expect(result.guides).toBeDefined();
@@ -208,10 +198,7 @@ describe('GuidesController', () => {
   });
 
   it('should create', async () => {
-    await controller.createGuide({
-      ...mockGuidePayload,
-      createdBy: user._id.toString(),
-    });
+    await controller.createGuide(user, mockGuidePayload);
 
     const storedGuide = await guideModel.findOne({
       title: mockGuidePayload.title,
@@ -222,7 +209,7 @@ describe('GuidesController', () => {
   it('should patch', async () => {
     const document = await guideModel.insertOne({
       ...mockGuidePayload,
-      createdBy: user._id.toString(),
+      createdBy: user.id,
     });
 
     const patchPayload = {
@@ -230,7 +217,7 @@ describe('GuidesController', () => {
     };
 
     const result = await controller.editGuide(
-      document._id.toString(),
+      document.id,
       patchPayload,
     );
 
@@ -243,10 +230,10 @@ describe('GuidesController', () => {
   it('should delete', async () => {
     const document = await guideModel.insertOne({
       ...mockGuidePayload,
-      createdBy: user._id.toString(),
+      createdBy: user.id,
     });
 
-    await controller.deleteGuide(document._id.toString());
+    await controller.deleteGuide(document.id);
 
     const storedGuide = await guideModel.findById(document._id);
     expect(storedGuide).toBeNull();

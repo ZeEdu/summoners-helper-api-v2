@@ -4,12 +4,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { I18nService } from 'nestjs-i18n';
-import { CreateUserDto, IUser } from '@org/contracts';
-import { randomUUID } from 'crypto';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { CreateUserDto, UserDto } from '@org/contracts';
 import * as argon2 from 'argon2';
+import { randomUUID } from 'crypto';
+import { I18nService } from 'nestjs-i18n';
 
 import { UsersService } from '../../users/service/users.service';
 
@@ -22,7 +22,7 @@ export class AuthService {
     private i18n: I18nService,
   ) { }
 
-  async validateUser(email: string, password: string): Promise<IUser> {
+  async validateUser(email: string, password: string): Promise<UserDto> {
     const user = await this.usersService.findOneByEmailWithPassword(email);
     if (!user) {
       throw new UnauthorizedException(
@@ -42,10 +42,10 @@ export class AuthService {
   }
 
   async login(
-    user: IUser,
+    user: UserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const tokens = await this.getTokens(user._id.toString(), user.email);
-    await this.updateRefreshToken(user._id.toString(), tokens.refreshToken);
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -75,11 +75,11 @@ export class AuthService {
     });
 
     const tokens = await this.getTokens(
-      createdUser._id.toString(),
+      createdUser.id,
       createdUser.email,
     );
     await this.updateRefreshToken(
-      createdUser._id.toString(),
+      createdUser.id,
       tokens.refreshToken,
     );
 
@@ -104,8 +104,8 @@ export class AuthService {
       );
     }
 
-    const tokens = await this.getTokens(user._id.toString(), user.email);
-    await this.updateRefreshToken(user._id.toString(), tokens.refreshToken);
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     return tokens;
   }

@@ -1,11 +1,12 @@
-import { ConfigService } from '@nestjs/config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { I18nService } from 'nestjs-i18n';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+
+import { UserDto } from '@org/contracts';
 
 import { UsersService } from '../../users/service/users.service';
-import { IUserWithPuuid } from '../../users/schema/user.schema';
 
 interface JwtPayload {
   email: string;
@@ -27,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<IUserWithPuuid> {
+  async validate(payload: JwtPayload): Promise<UserDto> {
     const user = await this.usersService.findOneByEmailWithPuuid(payload.email);
     if (!user) {
       throw new UnauthorizedException(

@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { I18nService } from 'nestjs-i18n';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { IUser } from '@org/contracts';
+import { UserDto } from '@org/contracts';
 
 import { UsersService } from '../../users/service/users.service';
 
@@ -53,7 +53,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     return (req.body as Record<string, string>)?.refreshToken
   }
 
-  async validate(req: Request, payload: RefreshTokenPayload): Promise<IUser> {
+  async validate(req: Request, payload: RefreshTokenPayload): Promise<UserDto> {
     const refreshToken = this.getFromCookies(req) || this.getFromBody(req);
 
     if (!refreshToken) {

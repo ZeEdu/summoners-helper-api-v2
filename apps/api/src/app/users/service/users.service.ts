@@ -10,9 +10,13 @@ import {
   PaginationDto,
   RIOT_SERVERS,
   UpdateUserDto,
-  UpdateUserProfileDto
+  UpdateUserProfileDto,
+  UserDto,
+  UserDtoWithPassword,
+  UserDtoWithPuuid
 } from '@org/contracts';
 
+import ResponseMappers from '../../response-mappers';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
 import { IUserWithPassword, IUserWithPuuid, SENSIBLE_FIELDS, User } from '../schema/user.schema';
 
@@ -23,68 +27,98 @@ export class UsersService {
     private readonly riotApiService: RiotApiService,
   ) { }
 
-  findOneByEmail(email: User['email']): Promise<IUser | null> {
-    return this.userModel.findOne({ email }).lean<IUser>();
+  async findOneByEmail(email: User['email']): Promise<UserDto | undefined> {
+    const user = await this.userModel.findOne({ email }).lean<IUser>();
+    if (user) {
+      return ResponseMappers.user(user)
+    }
   }
 
-  findOneByEmailWithPuuid(
+  async findOneByEmailWithPuuid(
     email: User['email'],
-  ): Promise<IUserWithPuuid | null> {
-    return this.userModel
+  ): Promise<UserDtoWithPuuid | undefined> {
+    const user = await this.userModel
       .findOne({ email })
       .select('+puuid')
-      .lean<IUserWithPuuid>();
+      .lean<IUserWithPuuid>()
+
+    if (user) {
+      return ResponseMappers.userWithPuuid(user)
+    }
   }
 
-  findOneByIdWithPuuid(
+  async findOneByIdWithPuuid(
     id: string,
-  ): Promise<IUserWithPuuid | null> {
-    return this.userModel
+  ): Promise<UserDtoWithPuuid | undefined> {
+    const user = await this.userModel
       .findById(id)
       .select('+puuid')
-      .lean<IUserWithPuuid>();
+      .lean<IUserWithPuuid>()
+
+    if (user) {
+      return ResponseMappers.userWithPuuid(user)
+    }
   }
 
-  findOneByEmailWithPassword(
+  async findOneByEmailWithPassword(
     email: User['email'],
-  ): Promise<IUserWithPassword | null> {
-    return this.userModel
+  ): Promise<UserDtoWithPassword | undefined> {
+    const user = await this.userModel
       .findOne({ email })
       .select('+password')
       .lean<IUserWithPassword>();
+
+    if (user) {
+      return ResponseMappers.userWithPassword(user)
+    }
   }
 
-  findOneByUsername(username: User['username']): Promise<IUser | null> {
-    return this.userModel.findOne({ username }).lean<IUser>();
+  async findOneByUsername(username: User['username']): Promise<UserDto | undefined> {
+    const user = await this.userModel.findOne({ username }).lean<IUser>();
+
+    if (user) {
+      return ResponseMappers.user(user)
+    }
   }
 
-  findOneById(id: string): Promise<IUser | null> {
-    return this.userModel.findById(id).lean<IUser>();
+  async findOneById(id: string): Promise<UserDto | undefined> {
+    const user = await this.userModel.findById(id).lean<IUser>();
+
+    if (user) {
+      return ResponseMappers.user(user)
+    }
   }
 
-  async create(user: CreateUserDto): Promise<IUser> {
+  async create(user: CreateUserDto): Promise<UserDto> {
     const createdUser = await new this.userModel(user).save();
-    return createdUser.toJSON();
+    return ResponseMappers.user(createdUser)
   }
 
-  update(
+  async update(
     userId: string,
     updatedUserInformation: Partial<UpdateUserDto>,
     queryOptions?: QueryOptions<User>,
-  ) {
+  ): Promise<UserDto | undefined> {
     const { returnDocument = 'after' } = queryOptions || {};
-    return this.userModel
-      .findByIdAndUpdate(userId, updatedUserInformation, {
-        ...queryOptions,
-        returnDocument,
-      })
+
+    const options = {
+      ...queryOptions,
+      returnDocument,
+    }
+
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(userId, updatedUserInformation, options)
       .lean<IUser>();
+
+    if (updatedUser) {
+      return ResponseMappers.user(updatedUser)
+    }
   }
 
   async getAllUsers(
     filter?: QueryFilter<User>,
     pagination?: PaginationDto,
-  ): Promise<{ count: number; users: IUser[] }> {
+  ): Promise<{ count: number; users: UserDto[] }> {
     const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};
     filter = filter || {};
 
@@ -98,7 +132,7 @@ export class UsersService {
       .skip(offset)
       .lean<IUser[]>();
 
-    return { users, count };
+    return { users: users.map(ResponseMappers.user), count };
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {
@@ -128,7 +162,7 @@ export class UsersService {
     return this.update(user._id.toString(), updateData);
   }
 
-  async getTopMasteries(user: IUserWithPuuid, count: number) {
+  async getTopMasteries(user: UserDtoWithPuuid, count: number) {
     return this.riotApiService.getChampionsMasteriesByTop(
       user.puuid,
       count,
@@ -136,14 +170,7 @@ export class UsersService {
     );
   }
 
-  async getLastFiveMatches(user: IUser & { puuid: string }) {
-    // Queue
-    // Match Time
-    // Result
-    // champion
-    // runes
-    // Items
-    // K/D/A
+  async getLastFiveMatches(user: UserDtoWithPuuid) {
     return this.riotApiService.getLastFiveMatches(user.puuid);
   }
 }

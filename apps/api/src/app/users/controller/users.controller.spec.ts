@@ -1,27 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from '../service/users.service';
-import { User, UserSchema } from '../schema/user.schema';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Model } from 'mongoose';
-import {
-  createUserPaginationFilter,
-  UserPaginationDto,
-} from '../user.pagination.dto';
+import { User, UserSchema } from '../schema/user.schema';
+import { UsersService } from '../service/users.service';
+import { UsersController } from './users.controller';
+
 import { faker } from '@faker-js/faker';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { RIOT_SERVERS, UsersPaginationDto } from '@org/contracts';
+import { I18nModule } from 'nestjs-i18n';
 import nock from 'nock';
-import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import { I18N } from '../../i18n.config';
+import { RiotApiModule } from '../../riot-api/riot-api.module';
 import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
-import { RiotApiModule } from '../../riot-api/riot-api.module';
-import { I18nModule } from 'nestjs-i18n';
-import { I18N } from '../../i18n.config';
-import { RIOT_SERVERS } from '@org/contracts';
+import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import UserPagination from '../user.pagination.dto';
 
 let mongodb: MongoMemoryServer;
 
@@ -66,7 +64,7 @@ describe('UsersController', () => {
 
   describe('get all', () => {
     it('should be get users', async () => {
-      const pagination: UserPaginationDto = {
+      const pagination: UsersPaginationDto = {
         offset: 3,
         limit: 15,
         username: faker.internet.displayName(),
@@ -76,7 +74,7 @@ describe('UsersController', () => {
 
       await controller.getAllUsers(pagination);
 
-      const expectedFilter = createUserPaginationFilter(pagination);
+      const expectedFilter = UserPagination.filter(pagination);
 
       const expectedPagination = {
         offset: pagination.offset,
@@ -96,7 +94,7 @@ describe('UsersController', () => {
 
       const tagLine = faker.string.alphanumeric(5);
       const gameName = faker.internet.userName();
-      const server = RIOT_SERVERS.BR1;
+      const server = RIOT_SERVERS.br1;
       const puuid = faker.string.alphanumeric(78);
 
       const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
@@ -135,7 +133,7 @@ describe('UsersController', () => {
             controller.updateProfile(user, {
               tagLine: '',
               gameName: '',
-              server: RIOT_SERVERS.BR1,
+              server: RIOT_SERVERS.br1,
             }),
           ).rejects.toThrow('gameName e tagLine são obrigatórios');
         });
@@ -151,7 +149,7 @@ describe('UsersController', () => {
 
           const tagLine = faker.string.alphanumeric(5);
           const gameName = faker.internet.userName();
-          const server = RIOT_SERVERS.BR1;
+          const server = RIOT_SERVERS.br1;
 
           const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
             gameName,

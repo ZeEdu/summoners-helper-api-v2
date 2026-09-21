@@ -17,6 +17,7 @@ import {
   CreateGuideFormSchema,
   GuidePaginationDto,
   guidesPaginationSchema,
+  UserDtoWithPuuid,
 } from '@org/contracts';
 
 import { CurrentUser } from '../../decorators/user.decorator';
@@ -24,7 +25,6 @@ import { JwtGuard } from '../../guards/jwt.guard';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 import { IsGuideCreatorGuard } from '../../riot-api/guards/is-guide-creator.guard';
-import { IUserWithPuuid } from '../../users/schema/user.schema';
 import { Utils } from '../../utils';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
 
@@ -53,12 +53,12 @@ export class GuidesController {
 
   @Post('')
   async createGuide(
-    @CurrentUser() user: IUserWithPuuid,
+    @CurrentUser() user: UserDtoWithPuuid,
     @Body(new ZodValidationPipe(CreateGuideFormSchema))
     body: CreateGuideFormDto,
   ) {
     const createdAt = new Date().toISOString();
-    const createdBy = user._id.toString();
+    const createdBy = user.id;
     const patchVersion = await Utils.getPatchVersion();
 
     return this.guidesService.create({
