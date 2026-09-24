@@ -1,2 +1,38 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<mat-drawer-container class="sidenav-container" autosize>
+  <mat-drawer #drawer class="sidenav" mode="side">
+    <mat-list>
+      <div mat-subheader>Folders</div>
+      @for (folder of folders; track folder) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>folder</mat-icon>
+          <div matListItemTitle>{{ folder.name }}</div>
+          <div matListItemLine>{{ folder.updated | date }}</div>
+        </mat-list-item>
+      }
+      <mat-divider></mat-divider>
+      <div mat-subheader>Notes</div>
+      @for (note of notes; track note) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>note</mat-icon>
+          <div matListItemTitle>{{ note.name }}</div>
+          <div matListItemLine>{{ note.updated | date }}</div>
+        </mat-list-item>
+      }
+    </mat-list>
+  </mat-drawer>
+  <div class="content" style="display: flex">
+    <!-- Header -->
+    @if (sessionService.user()) {
+      <mat-toolbar>
+        <button matIconButton aria-label="Example icon-button with menu icon" (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span>Painel Adminstrativo</span>
+      </mat-toolbar>
+    }
+    <!-- Content -->
+    <main style="flex: 1">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</mat-drawer-container>

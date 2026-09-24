@@ -29,8 +29,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<UserDto> {
+    console.log(`JwtStrategy`);
     const user = await this.usersService.findOneByEmailWithPuuid(payload.email);
+
     if (!user) {
+      console.log(`JwtStrategy-> !user`);
       throw new UnauthorizedException(
         this.i18n.t('passport-strategy.errors.validate.userNotFound'),
       );

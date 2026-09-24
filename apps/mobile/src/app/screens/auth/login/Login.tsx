@@ -1,10 +1,11 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
+import { useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
 import { LoginUserDto, loginUserSchema } from "@org/contracts";
 import { StyledButton } from "@org/ui";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import AppInputController from '../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
@@ -13,6 +14,7 @@ const resolver = zodResolver(loginUserSchema)
 
 export default function Login() {
   const authContext = useAuthContext();
+  const navigation = useNavigation()
 
   const { control, handleSubmit, formState: { errors } } = useForm<LoginUserDto>({ resolver })
 

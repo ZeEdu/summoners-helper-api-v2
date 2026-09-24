@@ -57,7 +57,7 @@ export default function MyGuides() {
 
   const { control, getValues, reset, setValue } = useForm<GuidePaginationDto>({
     defaultValues: {
-      createdBy: authContext.user!._id.toString(),
+      createdBy: authContext.user!.id,
       offset: 0
     }
   });

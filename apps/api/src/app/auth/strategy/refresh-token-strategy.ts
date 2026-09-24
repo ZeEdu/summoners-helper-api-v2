@@ -44,7 +44,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-
   getFromCookies(req: Request) {
     return (req.cookies as Record<string, string>)?.refresh_token
   }

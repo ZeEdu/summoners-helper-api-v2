@@ -29,7 +29,7 @@ import { Utils } from '../../utils';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
 
 @Controller('guides')
-@UseGuards(JwtGuard, HasRiotInfoGuard)
+@UseGuards(JwtGuard)
 export class GuidesController {
   constructor(private guidesService: GuidesService) { }
 
@@ -52,6 +52,7 @@ export class GuidesController {
   }
 
   @Post('')
+  @UseGuards(HasRiotInfoGuard)
   async createGuide(
     @CurrentUser() user: UserDtoWithPuuid,
     @Body(new ZodValidationPipe(CreateGuideFormSchema))

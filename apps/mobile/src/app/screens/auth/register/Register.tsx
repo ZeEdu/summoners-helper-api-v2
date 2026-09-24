@@ -36,6 +36,8 @@ export default function Register() {
   );
 
   const onSubmit = async (formData: CreateUserDto) => {
+    console.log({ formData });
+
     const register = await authContext.register({
       email: formData.email,
       username: formData.username,

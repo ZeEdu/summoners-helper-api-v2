@@ -106,8 +106,11 @@ export class AuthController {
   ): Promise<{
     accessToken: string;
   }> {
+    console.log(`webRefreshToken`);
+
     const userId = user.id;
     const refreshToken = user.refreshToken;
+
     if (!refreshToken) {
       throw new UnauthorizedException('Token necessário não informado');
     }

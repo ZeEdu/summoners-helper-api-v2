@@ -29,8 +29,8 @@ export class UsersController {
   }
 
   @Get('me')
-  async getMe(@CurrentUser() user: IUser) {
-    return this.usersService.findOneByIdWithPuuid(user._id.toString());
+  async getMe(@CurrentUser() user: UserDtoWithPuuid) {
+    return this.usersService.findOneByIdWithPuuid(user.id);
   }
 
   @Patch('update-profile')
