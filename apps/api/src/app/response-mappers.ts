@@ -1,4 +1,4 @@
-import { GuideDto, IGuide, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid } from "@org/contracts";
+import { GuideDto, IGuide, IPopulatedGuideReport, IPopulatedGuideReportDto, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid } from "@org/contracts";
 import { IUserWithPassword, IUserWithPuuid } from "./users/schema/user.schema";
 
 function user(user: IUser): UserDto {
@@ -62,12 +62,23 @@ function populatedGuide(guide: IGuide): PopulatedGuideDto {
   }
 }
 
+
+function populatedGuideReport(guideReport: IPopulatedGuideReport): IPopulatedGuideReportDto {
+  return {
+    ...guideReport,
+    id: guideReport._id.toString(),
+    guide: populatedGuide(guideReport.guide),
+    reportedBy: user(guideReport.reportedBy)
+  }
+}
+
 const ResponseMappers = {
   user,
   userWithPassword,
   userWithPuuid,
   guide,
-  populatedGuide
+  populatedGuide,
+  populatedGuideReport
 };
 
 export default ResponseMappers

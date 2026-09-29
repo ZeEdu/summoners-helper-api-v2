@@ -73,14 +73,18 @@ export class GuidesService {
   }
 
   async block(guideId: string) {
-    // Tem que notificar:
-    // O criador do guia
-    // Aqueles que fizeram a denuncia
-
     await this.guideModel.updateOne({
       _id: guideId,
     }, {
       blocked: true
+    })
+  }
+
+  async unblock(guideId: string) {
+    await this.guideModel.updateOne({
+      _id: guideId,
+    }, {
+      blocked: false
     })
   }
 }

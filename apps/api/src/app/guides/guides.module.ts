@@ -10,5 +10,6 @@ import { GuidesService } from './service/guides.service';
   imports: [
     MongooseModule.forFeature([{ name: Guide.name, schema: GuideSchema }]),
   ],
+  exports: [GuidesService]
 })
 export class GuidesModule { }

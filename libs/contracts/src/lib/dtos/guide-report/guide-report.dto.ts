@@ -1,7 +1,7 @@
 import z from "zod";
-import { GuideReportReason } from "../../enums";
+import { GUIDE_REPORT_REASON } from "../../enums";
 
-export const enumGuideReportReason = z.enum(GuideReportReason, {
+export const enumGuideReportReason = z.enum(GUIDE_REPORT_REASON, {
   error: 'Valor inválido'
 })
 
