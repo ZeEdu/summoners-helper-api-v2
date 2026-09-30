@@ -12,11 +12,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
 
-
-import { DEFAULT_LIMIT, GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_REASON, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto } from '@org/contracts';
+import {
+  DEFAULT_LIMIT,
+  GUIDE_REPORT_ACTION_TAKEN,
+  GUIDE_REPORT_REASON,
+  GUIDE_REPORT_STATUS,
+  IPopulatedGuideReportDto
+} from '@org/contracts';
 
 import { form, FormField } from '@angular/forms/signals';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { GUIDE_REVIEW_ACTIONS, GuideReview } from './guide-review/guide-review';
 import { GuideReportTableDataSource, GuideReportTableItem } from './service/guide-report.data-source';
 import { GuideReportService } from './service/guide-report.service';
 
@@ -36,7 +43,8 @@ import { GuideReportService } from './service/guide-report.service';
     MatOption,
     FormField,
     MatProgressSpinnerModule,
-    LayoutModule
+    LayoutModule,
+    MatDialogModule
   ],
   templateUrl: './guide-report.html',
   styleUrl: './guide-report.scss',
@@ -45,60 +53,71 @@ export class GuideReport implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatTable) table!: MatTable<GuideReportTableItem>;
 
-  private _snackBar = inject(MatSnackBar)
+  private _dialog = inject(MatDialog)
+  private _snackBar = inject(MatSnackBar);
 
-  breakpoints = inject(BreakpointObserver)
+  breakpoints = inject(BreakpointObserver);
 
-  dataSource: GuideReportTableDataSource
+  dataSource: GuideReportTableDataSource;
 
-  GUIDE_REPORT_ACTION_TAKEN = GUIDE_REPORT_ACTION_TAKEN
-  GUIDE_REPORT_STATUS = GUIDE_REPORT_STATUS
+  GUIDE_REPORT_ACTION_TAKEN = GUIDE_REPORT_ACTION_TAKEN;
+  GUIDE_REPORT_STATUS = GUIDE_REPORT_STATUS;
 
   REASONS_OPTIONS = [
     {
       value: GUIDE_REPORT_REASON.INAPPROPRIATE_CONTENT,
-      label: 'Conteúdo impróprio'
+      label: 'Conteúdo impróprio',
     },
     {
       value: GUIDE_REPORT_REASON.INCORRECT_INFORMATION,
-      label: 'Informação falsa'
+      label: 'Informação falsa',
     },
     {
       value: GUIDE_REPORT_REASON.SPAM,
-      label: 'Spam'
+      label: 'Spam',
     },
     {
       value: GUIDE_REPORT_REASON.ADVERTISING,
-      label: 'Anúncio'
+      label: 'Anúncio',
     },
     {
       value: GUIDE_REPORT_REASON.HARASSMENT,
-      label: 'Assédio'
+      label: 'Assédio',
     },
     {
       value: GUIDE_REPORT_REASON.COPYRIGHT,
-      label: 'Direitos Autorais'
+      label: 'Direitos Autorais',
     },
     {
       value: GUIDE_REPORT_REASON.EXPLOIT_OR_CHEATING,
-      label: 'trapaça'
+      label: 'trapaça',
     },
     {
       value: GUIDE_REPORT_REASON.OTHER,
-      label: 'Outro'
-    }
-  ]
+      label: 'Outro',
+    },
+  ];
 
-  private guideReportPaginationFormModel = signal<{ observation: string, reason: GUIDE_REPORT_REASON | null }>({
+  private guideReportPaginationFormModel = signal<{
+    observation: string;
+    reason: GUIDE_REPORT_REASON | null;
+  }>({
     observation: '',
     reason: null,
   });
 
   paginationForm = form(this.guideReportPaginationFormModel);
 
-  guideReportService = inject(GuideReportService)
+  guideReportService = inject(GuideReportService);
 
-  displayedColumns: string[] = ['id', 'observation', 'reason', 'status', 'actionTaken', 'actions'];
+  displayedColumns: string[] = [
+    'id',
+    'observation',
+    'reason',
+    'status',
+    'actionTaken',
+    'actions',
+  ];
 
   querySort: Sort | null = null;
 
@@ -116,7 +135,7 @@ export class GuideReport implements AfterViewInit {
 
   constructor() {
     console.log('Chegou aqui');
-    this.dataSource = new GuideReportTableDataSource(this.paginationForm)
+    this.dataSource = new GuideReportTableDataSource(this.paginationForm);
   }
 
   ngAfterViewInit(): void {
@@ -131,44 +150,63 @@ export class GuideReport implements AfterViewInit {
   resetFilter() {
     this.paginationForm().reset({
       observation: '',
-      reason: null
-    })
+      reason: null,
+    });
 
-    this.paginator.firstPage()
+    this.paginator.firstPage();
   }
 
   undoReport(guideReport: IPopulatedGuideReportDto) {
     this.guideReportService.unblockReport(guideReport.id).subscribe({
       next: () => {
-        this.dataSource.reloadTable()
-        this._snackBar.open('Guia desbloquado com sucesso')
-        console.log(`undoReport`);
-      }
-    })
+        this.dataSource.reloadTable();
+        this._snackBar.open('Guia desbloquado com sucesso', 'Fechar', {
+          duration: 3_000,
+        });
+      },
+    });
   }
 
   archiveReport(guideReport: IPopulatedGuideReportDto) {
     console.log({ guideReport });
     this.guideReportService.archiveReport(guideReport.id).subscribe({
       next: () => {
-        this.dataSource.reloadTable()
-        this._snackBar.open('Denuncia arquivada com sucesso')
-        console.log(`archiveReport`);
-      }
-    })
+        this.dataSource.reloadTable();
+        this._snackBar.open('Denuncia arquivada com sucesso', 'Fechar', {
+          duration: 3_000,
+        });
+      },
+    });
   }
 
   acceptReport(guideReport: IPopulatedGuideReportDto) {
     this.guideReportService.blockReport(guideReport.id).subscribe({
       next: () => {
-        this.dataSource.reloadTable()
-        this._snackBar.open('Denuncia aceita com sucesso')
-        console.log(`acceptReport`);
-      }
-    })
+        this.dataSource.reloadTable();
+        this._snackBar.open('Denuncia aceita com sucesso', 'Fechar', {
+          duration: 3_000,
+        });
+      },
+    });
   }
 
   reviewGuide(guideReport: IPopulatedGuideReportDto) {
-    console.log({ guideReport });
+    const dialogRef = this._dialog.open(GuideReview, { data: guideReport, maxWidth: 1200 })
+
+    dialogRef.afterClosed()
+      .pipe()
+      .subscribe((result) => {
+        if (result === GUIDE_REVIEW_ACTIONS.ACCEPT) {
+          console.log('ACCEPT');
+        }
+
+        if (result === GUIDE_REVIEW_ACTIONS.ARCHIVE) {
+          console.log('ARCHIVE');
+        }
+
+        if (result === GUIDE_REVIEW_ACTIONS.UNDO) {
+          console.log('UNDO');
+        }
+      })
   }
 }

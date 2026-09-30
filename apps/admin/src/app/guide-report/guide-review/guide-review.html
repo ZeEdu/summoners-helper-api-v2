@@ -1,0 +1,206 @@
+<h1 mat-dialog-title>Review Guide</h1>
+<mat-dialog-content class="mat-typography">
+  <mat-tab-group>
+    <mat-tab label="Introdução">
+      <div>
+        <h2>Título</h2>
+        <p>{{guideReport.guide.title}}</p>
+      </div>
+      <div>
+        <h2>Introdução</h2>
+        <p>{{guideReport.guide.introduction}}</p>
+      </div>
+      <div>
+        <h2>Campeão</h2>
+        <p>{{guideReport.guide.champion}}</p>
+      </div>
+      <div>
+        <h2>Introdução</h2>
+        <p>{{guideReport.guide.role}}</p>
+      </div>
+    </mat-tab>
+    <mat-tab label="Magias">
+      <div>
+        <h2>Primeira Magia</h2>
+        <p>{{guideReport.guide.firstSpell}}</p>
+      </div>
+      <div>
+        <h2>Segunda Magia</h2>
+        <p>{{guideReport.guide.secondSpell}}</p>
+      </div>
+      <div>
+        <h2>Descrição</h2>
+        <p>{{guideReport.guide.spellsDescription}}</p>
+      </div>
+    </mat-tab>
+    <mat-tab label="Runas">
+      <div>
+        <h2>Caminho Principal</h2>
+        <p>{{guideReport.guide.primaryRune}}</p>
+      </div>
+      <div>
+        <h2>Primeira Runa</h2>
+        <p>{{guideReport.guide.primarySlots.first}}</p>
+      </div>
+      <div>
+        <h2>Segunda Runa</h2>
+        <p>{{guideReport.guide.primarySlots.second}}</p>
+      </div>
+      <div>
+        <h2>Terceira Runa</h2>
+        <p>{{guideReport.guide.primarySlots.third}}</p>
+      </div>
+      <div>
+        <h2>Quarta Runa</h2>
+        <p>{{guideReport.guide.primarySlots.fourth}}</p>
+      </div>
+      <div>
+        <h2>Descrição</h2>
+        <p>{{guideReport.guide.primaryRuneDescription}}</p>
+      </div>
+      <div>
+        <h2>Caminho Secundário</h2>
+        <p>{{guideReport.guide.secondaryRune}}</p>
+      </div>
+      <div>
+        <h2>Primeira Runa</h2>
+        <p>{{guideReport.guide.secondarySlots.first}}</p>
+      </div>
+      <div>
+        <h2>Segunda Runa</h2>
+        <p>{{guideReport.guide.secondarySlots.second}}</p>
+      </div>
+      <div>
+        <h2>Terceira Runa</h2>
+        <p>{{guideReport.guide.secondarySlots.third}}</p>
+      </div>
+      <div>
+        <h2>Descrição</h2>
+        <p>{{guideReport.guide.secondaryRuneDescription}}</p>
+      </div>
+    </mat-tab>
+    <mat-tab label="Bonus">
+      <div>
+        <h2>Primeiro Bonus</h2>
+        <p>{{guideReport.guide.bonusSlotOne}}</p>
+      </div>
+      <div>
+        <h2>Segundo Bonus</h2>
+        <p>{{guideReport.guide.bonusSlotTwo}}</p>
+      </div>
+      <div>
+        <h2>Terceiro Bonus</h2>
+        <p>{{guideReport.guide.bonusSlotThree}}</p>
+      </div>
+      <div>
+        <h2>Descrição</h2>
+        <p>{{guideReport.guide.bonusDescription}}</p>
+      </div>
+    </mat-tab>
+    <mat-tab label="Itens">
+      @for(itemRow of guideReport.guide.items; track itemRow.rowName) {
+      <div>
+        <h2>Seção de Itens</h2>
+        <p>{{itemRow.rowName}}</p>
+
+        @for(item of itemRow.itemsList; track item.itemId) {
+        <p>{{item.itemId}}</p>
+        }
+
+        <p>{{itemRow.description}}</p>
+      </div>
+      }
+    </mat-tab>
+    <mat-tab label="Progressão de abilidades">
+      <div>
+        <h2>Progressão de habilidades</h2>
+        <div>
+          <!-- Header -->
+          <div style="display: flex">
+            @for(spell of championSpells; track spell) {
+            <div style="display: flex; flex: 1; gap: 8px; justify-content: flex-start; align-items: center">
+              <div style="display: flex; justify-content: flex-start; align-items: center;">
+                <img src="https://placehold.co/48x48">
+              </div>
+              <span style="flex: 1">
+                Magia do campeão: {{spell}}
+              </span>
+            </div>
+            }
+          </div>
+          <!-- Body -->
+          <div style="display: flex">
+            @for(spell of championSpells; track spell; let spellIndex = $index) {
+            <div style="flex: 1">
+              @for(lvl of levelsArray; track lvl;) {
+              <div
+                style="display: flex; flex: 1; gap: 8px; justify-content: flex-start; align-items: center; margin: 8px;">
+                <div
+                  style="display: flex; flex: 1; justify-content: center; text-align: center; border-radius: 15px; padding-block: 8px"
+                  [ngStyle]="{'background-color': isSelected(guideReport.guide, lvl, spellIndex) ? 'salmon' : 'slateblue'}">
+                  <span style="color: white;">
+                    {{lvl}}
+                  </span>
+                </div>
+              </div>
+              }
+            </div>
+            <pre>{{spell}}</pre>
+            }
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2>Descrição</h2>
+        <p>{{guideReport.guide.abilitiesProgressionDescription}}</p>
+      </div>
+    </mat-tab>
+    <mat-tab label="Ameaças">
+      <div>
+        <div>
+          <h2>Descrição</h2>
+          <p>{{guideReport.guide.threatsDescription}}</p>
+        </div>
+        <div>
+          @for(threat of guideReport.guide.threats; track threat.threat) {
+          <div>
+            <h3>Champeão</h3>
+            <p>{{threat.threat}}</p>
+          </div>
+          <div>
+            <h3>Descrição da ameaça</h3>
+            <p>{{threat.description}}</p>
+          </div>
+          }
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  @if(guideReport.actionTaken !== GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
+  <button matButton (click)="acceptReport(guideReport)">
+    <mat-icon>gavel</mat-icon>
+    <span>Aceitar</span>
+  </button>
+  }
+
+  @if(guideReport.status !== GUIDE_REPORT_STATUS.ARCHIVED) {
+  <button matButton (click)="archiveReport(guideReport)">
+    <mat-icon>archive</mat-icon>
+    <span>Arquivar</span>
+  </button>
+  }
+
+  @if(guideReport.actionTaken === GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
+  <button matButton (click)="undoReport(guideReport)">
+    <mat-icon>undo</mat-icon>
+    <span>Desfazer</span>
+  </button>
+  }
+
+  <button matButton mat-dialog-close cdkFocusInitial>
+    <mat-icon>close</mat-icon>
+    <span>Fechar</span>
+  </button>
+</mat-dialog-actions>

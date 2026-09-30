@@ -1,9 +1,26 @@
 import { IsAdminGuard } from './../../guards/is-admin.guard';
 import { GuidesService } from './../../guides/service/guides.service';
 
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
-import { CreateGuideReportFormDto, CreateGuideReportFormSchema, GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, guideReportPagination, GuideReportPaginationDto } from '@org/contracts';
+import {
+  CreateGuideReportFormDto,
+  CreateGuideReportFormSchema,
+  GUIDE_REPORT_ACTION_TAKEN,
+  GUIDE_REPORT_STATUS,
+  guideReportPagination,
+  GuideReportPaginationDto,
+} from '@org/contracts';
 
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
@@ -17,43 +34,42 @@ import { GuideReportService } from '../service/guide-report.service';
 export class GuideReportController {
   constructor(
     private guideReportService: GuideReportService,
-    private guideService: GuidesService
-  ) { }
+    private guideService: GuidesService,
+  ) {}
 
   @Get('')
   get(
-    @Query(new ZodValidationPipe(guideReportPagination)) pagination: GuideReportPaginationDto
+    @Query(new ZodValidationPipe(guideReportPagination))
+    pagination: GuideReportPaginationDto,
   ) {
-    const { offset, limit, sort } = pagination
-    const filter = GuideReportFilters.get(pagination)
+    const { offset, limit, sort } = pagination;
+    const filter = GuideReportFilters.get(pagination);
 
-    return this.guideReportService.get(filter, { offset, limit, sort })
+    return this.guideReportService.get(filter, { offset, limit, sort });
   }
 
   @Get(':guideReportId')
   getById(@Param('guideReportId') guideReportId: string) {
-    return this.guideReportService.getById(guideReportId)
+    return this.guideReportService.getById(guideReportId);
   }
 
   @Post('')
   // @UseGuards(GuideExists)
   async create(
     @CurrentUser() user: IUserWithPuuid,
-    @Body(
-      new ZodValidationPipe(CreateGuideReportFormSchema)) body: CreateGuideReportFormDto
+    @Body(new ZodValidationPipe(CreateGuideReportFormSchema))
+    body: CreateGuideReportFormDto,
   ) {
-    const createdAt = new Date().toISOString()
-    const reportedBy = user._id.toString()
+    const createdAt = new Date().toISOString();
+    const reportedBy = user._id.toString();
 
-    return this.guideReportService.create({ ...body, createdAt, reportedBy })
+    return this.guideReportService.create({ ...body, createdAt, reportedBy });
   }
 
   @Patch('archive/:guideReportId')
-  async archive(
-    @Param('guideReportId') guideReportId: string
-  ) {
+  async archive(@Param('guideReportId') guideReportId: string) {
     // Apenas arquiva a denuncia
-    const guideReport = await this.guideReportService.getById(guideReportId)
+    const guideReport = await this.guideReportService.getById(guideReportId);
     if (!guideReport) {
       throw new BadRequestException('Denuncia não foi encontrada');
     }
@@ -64,25 +80,19 @@ export class GuideReportController {
 
     await this.guideReportService.patch(guideReport.id, {
       status: GUIDE_REPORT_STATUS.ARCHIVED,
-      actionTaken: GUIDE_REPORT_ACTION_TAKEN.DISMISS
-    })
+      actionTaken: GUIDE_REPORT_ACTION_TAKEN.DISMISS,
+    });
   }
 
   @Patch('block/:guideReportId')
-  async block(
-    @Param('guideReportId') guideReportId: string
-  ) {
-    const guideReport = await this.guideReportService.getById(guideReportId)
+  async block(@Param('guideReportId') guideReportId: string) {
+    const guideReport = await this.guideReportService.getById(guideReportId);
     if (!guideReport) {
       throw new BadRequestException('Denuncia não foi encontrada');
     }
 
-    if (guideReport.status === GUIDE_REPORT_STATUS.ARCHIVED) {
-      throw new BadRequestException('Denuncia já arquivada');
-    }
-
-    await this.guideService.block(guideReport.guide.id)
-    await this.guideReportService.block(guideReport.id)
+    await this.guideService.block(guideReport.guide.id);
+    await this.guideReportService.block(guideReport.id);
 
     // Bloquear o guide
     // Atualizar o report - status (ARCHIVED) - actionTaken (BLOCKED)
@@ -92,10 +102,8 @@ export class GuideReportController {
   }
 
   @Patch('unblock/:guideReportId')
-  async unblock(
-    @Param('guideReportId') guideReportId: string
-  ) {
-    const guideReport = await this.guideReportService.getById(guideReportId)
+  async unblock(@Param('guideReportId') guideReportId: string) {
+    const guideReport = await this.guideReportService.getById(guideReportId);
     if (!guideReport) {
       throw new BadRequestException('Denuncia não foi encontrada');
     }
@@ -104,8 +112,8 @@ export class GuideReportController {
       throw new BadRequestException('Denuncia já foi descartada');
     }
 
-    await this.guideService.unblock(guideReport.guide.id)
-    await this.guideReportService.unblock(guideReport.id)
+    await this.guideService.unblock(guideReport.guide.id);
+    await this.guideReportService.unblock(guideReport.id);
 
     // Desbloquar o guide
     // Atualizar o report - status (ARCHIVED) - actionTaken (DISMISS)
@@ -114,4 +122,3 @@ export class GuideReportController {
     // Notificar quem fez a denuncia
   }
 }
-

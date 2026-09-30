@@ -94,7 +94,7 @@ export default function ViewGuide({ route }: Props) {
 
   const { height } = Dimensions.get('window');
 
-  const isGuideCreator = guide.createdBy.toString() === user?._id.toString()
+  const isGuideCreator = guide.createdBy.toString() === user?.id
 
   const menuItems: { onPress: () => void, title: string, id: string }[] = []
 
