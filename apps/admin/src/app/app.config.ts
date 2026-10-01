@@ -12,6 +12,7 @@ import { appRoutes } from './app.routes';
 import { AuthTokenStorageService } from './auth/service/auth-token-storage.service';
 import { AuthService } from './auth/service/auth.service';
 import { SessionService } from './auth/service/session.service';
+import { DataDragonService } from './data-dragon/data-dragon.service';
 import { authInterceptor } from './interceptors/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -23,7 +24,6 @@ export const appConfig: ApplicationConfig = {
       const authTokenStorageService = inject(AuthTokenStorageService)
 
       const { accessToken } = authTokenStorageService.get()
-      console.log(`provideAppInitializer`, accessToken);
 
       if (accessToken) {
         const authService = inject(AuthService)
@@ -38,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       }
 
       return of(null)
-    })
+    }),
+    provideAppInitializer(() => inject(DataDragonService).load())
   ],
 };

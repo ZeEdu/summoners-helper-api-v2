@@ -28,10 +28,11 @@ const lvlsArrayBuilder = () => {
   return Array.from({ length: CHAMPION_LEVELS }, (_, i) => i + 1) as Array<Lvls>
 }
 
-import { CommonModule, JsonPipe, NgStyle } from "@angular/common";
+import { CommonModule, NgStyle } from "@angular/common";
 import { MatIcon } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { AbilityOption, GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto, PopulatedGuideDto } from '@org/contracts';
+import { EntityName } from "../../data-dragon/pipes/entity-name.pipe";
 
 export enum GUIDE_REVIEW_ACTIONS {
   UNDO = 'UNDO',
@@ -48,8 +49,8 @@ export enum GUIDE_REVIEW_ACTIONS {
     MatIcon,
     MatTabsModule,
     MatListModule,
-    JsonPipe,
-    NgStyle
+    NgStyle,
+    EntityName
   ],
   templateUrl: './guide-review.html',
   styleUrl: './guide-review.scss'

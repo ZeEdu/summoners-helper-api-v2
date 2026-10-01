@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Review Guide</h1>
 <mat-dialog-content class="mat-typography">
-  <mat-tab-group>
+  <mat-tab-group [selectedIndex]="5">
     <mat-tab label="Introdução">
       <div>
         <h2>Título</h2>
@@ -12,7 +12,7 @@
       </div>
       <div>
         <h2>Campeão</h2>
-        <p>{{guideReport.guide.champion}}</p>
+        <p>{{guideReport.guide.champion | entityName : 'champions'}}</p>
       </div>
       <div>
         <h2>Introdução</h2>
@@ -22,11 +22,11 @@
     <mat-tab label="Magias">
       <div>
         <h2>Primeira Magia</h2>
-        <p>{{guideReport.guide.firstSpell}}</p>
+        <p>{{guideReport.guide.firstSpell | entityName: 'spells'}}</p>
       </div>
       <div>
         <h2>Segunda Magia</h2>
-        <p>{{guideReport.guide.secondSpell}}</p>
+        <p>{{guideReport.guide.secondSpell | entityName: 'spells'}}</p>
       </div>
       <div>
         <h2>Descrição</h2>
@@ -36,23 +36,23 @@
     <mat-tab label="Runas">
       <div>
         <h2>Caminho Principal</h2>
-        <p>{{guideReport.guide.primaryRune}}</p>
+        <p>{{guideReport.guide.primaryRune | entityName: 'runes'}}</p>
       </div>
       <div>
         <h2>Primeira Runa</h2>
-        <p>{{guideReport.guide.primarySlots.first}}</p>
+        <p>{{guideReport.guide.primarySlots.first | entityName: 'runesSlots'}}</p>
       </div>
       <div>
         <h2>Segunda Runa</h2>
-        <p>{{guideReport.guide.primarySlots.second}}</p>
+        <p>{{guideReport.guide.primarySlots.second | entityName: 'runesSlots'}}</p>
       </div>
       <div>
         <h2>Terceira Runa</h2>
-        <p>{{guideReport.guide.primarySlots.third}}</p>
+        <p>{{guideReport.guide.primarySlots.third | entityName: 'runesSlots'}}</p>
       </div>
       <div>
         <h2>Quarta Runa</h2>
-        <p>{{guideReport.guide.primarySlots.fourth}}</p>
+        <p>{{guideReport.guide.primarySlots.fourth! | entityName: 'runesSlots'}}</p>
       </div>
       <div>
         <h2>Descrição</h2>
@@ -60,19 +60,19 @@
       </div>
       <div>
         <h2>Caminho Secundário</h2>
-        <p>{{guideReport.guide.secondaryRune}}</p>
+        <p>{{guideReport.guide.secondaryRune | entityName: 'runes'}}</p>
       </div>
       <div>
         <h2>Primeira Runa</h2>
-        <p>{{guideReport.guide.secondarySlots.first}}</p>
+        <p>{{guideReport.guide.secondarySlots.first | entityName: 'runesSlots'}}</p>
       </div>
       <div>
         <h2>Segunda Runa</h2>
-        <p>{{guideReport.guide.secondarySlots.second}}</p>
+        <p>{{guideReport.guide.secondarySlots.second | entityName: 'runesSlots'}}</p>
       </div>
       <div>
         <h2>Terceira Runa</h2>
-        <p>{{guideReport.guide.secondarySlots.third}}</p>
+        <p>{{guideReport.guide.secondarySlots.third | entityName: 'runesSlots'}}</p>
       </div>
       <div>
         <h2>Descrição</h2>
@@ -104,7 +104,7 @@
         <p>{{itemRow.rowName}}</p>
 
         @for(item of itemRow.itemsList; track item.itemId) {
-        <p>{{item.itemId}}</p>
+        <p>{{item.itemId | entityName : 'items'}}</p>
         }
 
         <p>{{itemRow.description}}</p>
@@ -165,7 +165,7 @@
           @for(threat of guideReport.guide.threats; track threat.threat) {
           <div>
             <h3>Champeão</h3>
-            <p>{{threat.threat}}</p>
+            <p>{{threat.threat | entityName : 'champions'}}</p>
           </div>
           <div>
             <h3>Descrição da ameaça</h3>

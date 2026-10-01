@@ -49,10 +49,7 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
   }
 
   override connect(): Observable<GuideReportTableItem[]> {
-    console.log({ paginator: this.paginator, database: this.database, form: this.form });
-
     if (!this.paginator || !this.database || !this.form) {
-
       throw Error(
         'Please set the paginator, sort and database on the data source before connecting.'
       );

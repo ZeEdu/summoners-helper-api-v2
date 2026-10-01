@@ -7,3 +7,5 @@ export * from './guide'
 export * from './guide-report'
 export * from './pagination'
 
+export * from './data-dragon'
+

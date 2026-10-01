@@ -94,8 +94,6 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
     setError(undefined)
     init(version)
       .then(({ champions, spells, runes, runesSlots, items }) => {
-        console.log({ runesSlots });
-
         setDataDragon({
           champions: champions.list,
           spells: spells.list,

@@ -1,4 +1,4 @@
-import { BreakpointObserver, LayoutModule } from '@angular/cdk/layout';
+import { LayoutModule } from '@angular/cdk/layout';
 import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -53,10 +53,11 @@ export class GuideReport implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatTable) table!: MatTable<GuideReportTableItem>;
 
-  private _dialog = inject(MatDialog)
-  private _snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog)
+  private snackBar = inject(MatSnackBar);
 
-  breakpoints = inject(BreakpointObserver);
+  private guideReportService = inject(GuideReportService);
+
 
   dataSource: GuideReportTableDataSource;
 
@@ -108,8 +109,6 @@ export class GuideReport implements AfterViewInit {
 
   paginationForm = form(this.guideReportPaginationFormModel);
 
-  guideReportService = inject(GuideReportService);
-
   displayedColumns: string[] = [
     'id',
     'observation',
@@ -134,7 +133,6 @@ export class GuideReport implements AfterViewInit {
   pageEvent: PageEvent | undefined;
 
   constructor() {
-    console.log('Chegou aqui');
     this.dataSource = new GuideReportTableDataSource(this.paginationForm);
   }
 
@@ -143,8 +141,6 @@ export class GuideReport implements AfterViewInit {
     this.dataSource.database = this.guideReportService;
 
     this.table.dataSource = this.dataSource;
-
-    console.log(`final do ngAfterViewInit`);
   }
 
   resetFilter() {
@@ -160,7 +156,7 @@ export class GuideReport implements AfterViewInit {
     this.guideReportService.unblockReport(guideReport.id).subscribe({
       next: () => {
         this.dataSource.reloadTable();
-        this._snackBar.open('Guia desbloquado com sucesso', 'Fechar', {
+        this.snackBar.open('Guia desbloquado com sucesso', 'Fechar', {
           duration: 3_000,
         });
       },
@@ -172,7 +168,7 @@ export class GuideReport implements AfterViewInit {
     this.guideReportService.archiveReport(guideReport.id).subscribe({
       next: () => {
         this.dataSource.reloadTable();
-        this._snackBar.open('Denuncia arquivada com sucesso', 'Fechar', {
+        this.snackBar.open('Denuncia arquivada com sucesso', 'Fechar', {
           duration: 3_000,
         });
       },
@@ -183,7 +179,7 @@ export class GuideReport implements AfterViewInit {
     this.guideReportService.blockReport(guideReport.id).subscribe({
       next: () => {
         this.dataSource.reloadTable();
-        this._snackBar.open('Denuncia aceita com sucesso', 'Fechar', {
+        this.snackBar.open('Denuncia aceita com sucesso', 'Fechar', {
           duration: 3_000,
         });
       },
@@ -191,21 +187,22 @@ export class GuideReport implements AfterViewInit {
   }
 
   reviewGuide(guideReport: IPopulatedGuideReportDto) {
-    const dialogRef = this._dialog.open(GuideReview, { data: guideReport, maxWidth: 1200 })
+    const dialogRef = this.dialog.open(GuideReview, { data: guideReport, maxWidth: 1200 })
 
     dialogRef.afterClosed()
-      .pipe()
-      .subscribe((result) => {
-        if (result === GUIDE_REVIEW_ACTIONS.ACCEPT) {
-          console.log('ACCEPT');
-        }
+      .subscribe({
+        next: (result) => {
+          if (result === GUIDE_REVIEW_ACTIONS.ACCEPT) {
+            this.acceptReport(guideReport)
+          }
 
-        if (result === GUIDE_REVIEW_ACTIONS.ARCHIVE) {
-          console.log('ARCHIVE');
-        }
+          if (result === GUIDE_REVIEW_ACTIONS.ARCHIVE) {
+            this.archiveReport(guideReport)
+          }
 
-        if (result === GUIDE_REVIEW_ACTIONS.UNDO) {
-          console.log('UNDO');
+          if (result === GUIDE_REVIEW_ACTIONS.UNDO) {
+            this.undoReport(guideReport)
+          }
         }
       })
   }

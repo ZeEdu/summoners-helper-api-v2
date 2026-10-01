@@ -8,6 +8,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { SessionService } from './auth/service/session.service';
+import { DataDragonService } from './data-dragon/data-dragon.service';
 
 export interface Section {
   name: string;
@@ -33,6 +34,7 @@ export interface Section {
 })
 export class App {
   sessionService = inject(SessionService);
+  dataDragonService = inject(DataDragonService)
 
   showToolbar = !!this.sessionService.user();
 

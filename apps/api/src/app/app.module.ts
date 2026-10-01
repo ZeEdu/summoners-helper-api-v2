@@ -11,6 +11,7 @@ import { I18nModule } from 'nestjs-i18n';
 import { I18N } from './i18n.config';
 import { GuidesModule } from './guides/guides.module';
 import { GuideReportModule } from './guide-report/guide-report.module';
+import { DataDragonModule } from './data-dragon/data-dragon.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { GuideReportModule } from './guide-report/guide-report.module';
     RiotApiModule,
     GuidesModule,
     GuideReportModule,
+    DataDragonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
