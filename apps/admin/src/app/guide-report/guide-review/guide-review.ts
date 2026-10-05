@@ -32,7 +32,16 @@ import { CommonModule, NgStyle } from "@angular/common";
 import { MatIcon } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { AbilityOption, GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto, PopulatedGuideDto } from '@org/contracts';
+import { DataDragonService } from "../../data-dragon/data-dragon.service";
 import { EntityName } from "../../data-dragon/pipes/entity-name.pipe";
+import { RoleName } from "../../data-dragon/pipes/role-name.pipe";
+import { GuideBonus } from "./guide-bonus/guide-bonus";
+import { Item } from "./item/item";
+import { Items } from "./items/items";
+import { RuneSlot } from "./rune-slot/rune-slot";
+import { Rune } from "./rune/rune";
+import { Spell } from "./spell/spell";
+import { Threats } from "./threats/threats";
 
 export enum GUIDE_REVIEW_ACTIONS {
   UNDO = 'UNDO',
@@ -50,13 +59,23 @@ export enum GUIDE_REVIEW_ACTIONS {
     MatTabsModule,
     MatListModule,
     NgStyle,
-    EntityName
+    EntityName,
+    RoleName,
+    Item,
+    Spell,
+    RuneSlot,
+    Rune,
+    GuideBonus,
+    Threats,
+    Items
   ],
   templateUrl: './guide-review.html',
   styleUrl: './guide-review.scss'
 })
 export class GuideReview {
   guideReport = inject<IPopulatedGuideReportDto>(MAT_DIALOG_DATA)
+
+  dataDragonService = inject(DataDragonService)
 
   dialogRef = inject(MatDialogRef)
 
@@ -65,10 +84,37 @@ export class GuideReview {
 
   championSpells = Array.from({ length: 4 })
 
+  fullChampion = this.dataDragonService.champion(this.guideReport.guide.champion)
+
+  items = this.dataDragonService
+
   levelsArray = lvlsArrayBuilder()
 
   getArrayLvl(lvl: Lvls): LvlKey {
     return `l${lvl}`
+  }
+
+  getRuneThumbnail(rune: string) {
+    const selectedRune = this.dataDragonService.rune(rune)
+    return `https://ddragon.leagueoflegends.com/cdn/img/${selectedRune?.icon}`
+  }
+
+  getRuneSlot(runeSlot: string) {
+    return this.dataDragonService.runesSlot(runeSlot)
+  }
+
+  getRuneSlotThumbnail(runeSlot: string) {
+    const selectedRunesSlot = this.dataDragonService.runesSlot(runeSlot)
+    return `https://ddragon.leagueoflegends.com/cdn/img/${selectedRunesSlot?.icon}`
+  }
+
+  getItem(item: string) {
+    return this.dataDragonService.item(item)
+  }
+
+  getSpellDescription(spell: string) {
+    const selectedSpell = this.dataDragonService.spell(spell)
+    return selectedSpell?.description
   }
 
   isSelected(guide: PopulatedGuideDto, lvl: Lvls, index: number) {

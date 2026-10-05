@@ -87,4 +87,20 @@ export class DataDragonService {
         map((response) => response.data[champion])
       )
   }
+
+  item(item: string): ItemDetails | undefined {
+    return this.maps()?.items?.[item]
+  }
+
+  rune(rune: string): RunesReforgedDataDragon | undefined {
+    return this.maps()?.runes?.[rune]
+  }
+
+  runesSlot(runeSlot: string): RunesReforgedSlots | undefined {
+    return this.maps()?.runesSlots?.[runeSlot]
+  }
+
+  spell(spell: string): SummonerSpell | undefined {
+    return this.maps()?.spells?.[spell]
+  }
 }

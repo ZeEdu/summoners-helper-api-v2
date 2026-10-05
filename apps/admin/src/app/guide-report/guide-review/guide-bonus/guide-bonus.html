@@ -1,0 +1,11 @@
+<div>
+  <div style="flex: 1">
+    <h2>Descrição</h2>
+    <p>{{guide.bonusDescription}}</p>
+  </div>
+  <div style="flex: 1; display: flex; gap: 8px;">
+    <app-bonus title="Primeiro Bonus" [bonus]="guide.bonusSlotOne" />
+    <app-bonus title="Segundo Bonus" [bonus]="guide.bonusSlotTwo" />
+    <app-bonus title="Terceiro Bonus" [bonus]="guide.bonusSlotThree" />
+  </div>
+</div>

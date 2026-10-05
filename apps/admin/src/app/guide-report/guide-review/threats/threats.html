@@ -1,0 +1,11 @@
+<div>
+  <div>
+    <h2>Descrição</h2>
+    <p>{{guide.threatsDescription}}</p>
+  </div>
+  <div>
+    @for(threat of guide.threats; track threat.threat) {
+    <app-threat [threat]="threat" />
+    }
+  </div>
+</div>

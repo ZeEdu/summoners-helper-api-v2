@@ -45,7 +45,6 @@ export enum SLOT_BONUS {
   Tenacity = 'TENACITY',
 }
 
-
 export enum SLOT_BONUS_LABELS {
   ADAPTIVE_FORCE = 'Força Adaptativa',
   ADAPTIVE_FORCE_SCALING = 'Força Adaptativa por nível',
@@ -57,4 +56,31 @@ export enum SLOT_BONUS_LABELS {
   HASTE = 'Aceleração de Habilidade',
   MOVEMENT_SPEED = 'Velocidade de Movimento',
   TENACITY = 'Tenacidade',
+}
+
+function isBonus(value: string): value is keyof typeof SLOT_BONUS {
+  return value in SLOT_BONUS;
+}
+
+function isBonusLabel(value: string): value is keyof typeof SLOT_BONUS_LABELS {
+  return value in SLOT_BONUS_LABELS;
+}
+
+export function getBonus(key: string): SLOT_BONUS | undefined {
+  if (isBonus(key)) {
+    return SLOT_BONUS[key]
+  }
+
+  return undefined
+}
+
+export function getBonusLabel(key: string): SLOT_BONUS_LABELS | undefined {
+  const bonus = getBonus(key)
+  if (!bonus) return undefined
+
+  if (isBonusLabel(bonus)) {
+    return SLOT_BONUS_LABELS[bonus]
+  }
+
+  return undefined
 }

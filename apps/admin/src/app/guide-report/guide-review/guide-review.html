@@ -1,136 +1,96 @@
 <h1 mat-dialog-title>Review Guide</h1>
 <mat-dialog-content class="mat-typography">
-  <mat-tab-group [selectedIndex]="5">
+  <mat-tab-group [selectedIndex]="4">
     <mat-tab label="Introdução">
       <div>
         <h2>Título</h2>
         <p>{{guideReport.guide.title}}</p>
       </div>
+      <div style="display: flex;">
+        <div style="flex: 1">
+          <h2>Campeão</h2>
+          <p>{{guideReport.guide.champion | entityName : 'champions'}}</p>
+        </div>
+        <div style="flex: 1">
+          <h2>Role</h2>
+          <p>{{guideReport.guide.role | roleName}}</p>
+        </div>
+      </div>
       <div>
         <h2>Introdução</h2>
         <p>{{guideReport.guide.introduction}}</p>
       </div>
-      <div>
-        <h2>Campeão</h2>
-        <p>{{guideReport.guide.champion | entityName : 'champions'}}</p>
-      </div>
-      <div>
-        <h2>Introdução</h2>
-        <p>{{guideReport.guide.role}}</p>
-      </div>
     </mat-tab>
     <mat-tab label="Magias">
-      <div>
-        <h2>Primeira Magia</h2>
-        <p>{{guideReport.guide.firstSpell | entityName: 'spells'}}</p>
-      </div>
-      <div>
-        <h2>Segunda Magia</h2>
-        <p>{{guideReport.guide.secondSpell | entityName: 'spells'}}</p>
-      </div>
       <div>
         <h2>Descrição</h2>
         <p>{{guideReport.guide.spellsDescription}}</p>
       </div>
+      <div style="display: flex;">
+        <div style="flex: 1">
+          <app-spell title="Primeira Magia" [spellId]="guideReport.guide.firstSpell" />
+        </div>
+        <div style="flex: 1">
+          <app-spell title="Segunda Magia" [spellId]="guideReport.guide.secondSpell" />
+        </div>
+      </div>
     </mat-tab>
     <mat-tab label="Runas">
-      <div>
-        <h2>Caminho Principal</h2>
-        <p>{{guideReport.guide.primaryRune | entityName: 'runes'}}</p>
-      </div>
-      <div>
-        <h2>Primeira Runa</h2>
-        <p>{{guideReport.guide.primarySlots.first | entityName: 'runesSlots'}}</p>
-      </div>
-      <div>
-        <h2>Segunda Runa</h2>
-        <p>{{guideReport.guide.primarySlots.second | entityName: 'runesSlots'}}</p>
-      </div>
-      <div>
-        <h2>Terceira Runa</h2>
-        <p>{{guideReport.guide.primarySlots.third | entityName: 'runesSlots'}}</p>
-      </div>
-      <div>
-        <h2>Quarta Runa</h2>
-        <p>{{guideReport.guide.primarySlots.fourth! | entityName: 'runesSlots'}}</p>
-      </div>
-      <div>
-        <h2>Descrição</h2>
-        <p>{{guideReport.guide.primaryRuneDescription}}</p>
-      </div>
-      <div>
-        <h2>Caminho Secundário</h2>
-        <p>{{guideReport.guide.secondaryRune | entityName: 'runes'}}</p>
-      </div>
-      <div>
-        <h2>Primeira Runa</h2>
-        <p>{{guideReport.guide.secondarySlots.first | entityName: 'runesSlots'}}</p>
-      </div>
-      <div>
-        <h2>Segunda Runa</h2>
-        <p>{{guideReport.guide.secondarySlots.second | entityName: 'runesSlots'}}</p>
-      </div>
-      <div>
-        <h2>Terceira Runa</h2>
-        <p>{{guideReport.guide.secondarySlots.third | entityName: 'runesSlots'}}</p>
-      </div>
-      <div>
-        <h2>Descrição</h2>
-        <p>{{guideReport.guide.secondaryRuneDescription}}</p>
+      <div style="display: flex; gap: 16px;">
+        <div style="flex: 1;">
+          <app-rune title="Caminho Principal" [runeId]="guideReport.guide.primaryRune" />
+          <div>
+            <h2>Descrição</h2>
+            <p>{{guideReport.guide.primaryRuneDescription}}</p>
+          </div>
+          <app-rune-slot title="Primeira Runa" [runeSlotId]="guideReport.guide.primarySlots.first" />
+          <app-rune-slot title="Segunda Runa" [runeSlotId]="guideReport.guide.primarySlots.second" />
+          <app-rune-slot title="Terceira Runa" [runeSlotId]="guideReport.guide.primarySlots.third" />
+          <app-rune-slot title="Quart Runa" [runeSlotId]="guideReport.guide.primarySlots.fourth!" />
+        </div>
+        <div style="flex: 1;">
+          <app-rune title="Caminho Secondário" [runeId]="guideReport.guide.secondaryRune" />
+          <div>
+            <h2>Descrição</h2>
+            <p>{{guideReport.guide.secondaryRuneDescription}}</p>
+          </div>
+          <app-rune-slot title="Primeira Runa" [runeSlotId]="guideReport.guide.secondarySlots.first" />
+          <app-rune-slot title="Segunda Runa" [runeSlotId]="guideReport.guide.secondarySlots.second" />
+          <app-rune-slot title="Terceira Runa" [runeSlotId]="guideReport.guide.secondarySlots.third" />
+        </div>
       </div>
     </mat-tab>
     <mat-tab label="Bonus">
-      <div>
-        <h2>Primeiro Bonus</h2>
-        <p>{{guideReport.guide.bonusSlotOne}}</p>
-      </div>
-      <div>
-        <h2>Segundo Bonus</h2>
-        <p>{{guideReport.guide.bonusSlotTwo}}</p>
-      </div>
-      <div>
-        <h2>Terceiro Bonus</h2>
-        <p>{{guideReport.guide.bonusSlotThree}}</p>
-      </div>
-      <div>
-        <h2>Descrição</h2>
-        <p>{{guideReport.guide.bonusDescription}}</p>
-      </div>
+      <app-guide-bonus [guide]="guideReport.guide" />
     </mat-tab>
     <mat-tab label="Itens">
-      @for(itemRow of guideReport.guide.items; track itemRow.rowName) {
-      <div>
-        <h2>Seção de Itens</h2>
-        <p>{{itemRow.rowName}}</p>
-
-        @for(item of itemRow.itemsList; track item.itemId) {
-        <p>{{item.itemId | entityName : 'items'}}</p>
-        }
-
-        <p>{{itemRow.description}}</p>
-      </div>
-      }
+      <app-items [guide]="guideReport.guide" />
     </mat-tab>
     <mat-tab label="Progressão de abilidades">
       <div>
         <h2>Progressão de habilidades</h2>
         <div>
+          @if(fullChampion | async; as champion) {
           <!-- Header -->
           <div style="display: flex">
-            @for(spell of championSpells; track spell) {
-            <div style="display: flex; flex: 1; gap: 8px; justify-content: flex-start; align-items: center">
-              <div style="display: flex; justify-content: flex-start; align-items: center;">
-                <img src="https://placehold.co/48x48">
+            <!-- TODO! Melhorar isso daqui -->
+            @for(spell of champion.spells; track spell.id) {
+            <div
+              style="display: flex; flex: 1; gap: 8px; justify-content: flex-start; align-items: center; margin: 8px;">
+              <div style="display: flex; justify-content: center; align-items: center">
+                <img
+                  src="https://ddragon.leagueoflegends.com/cdn/{{dataDragonService.patch()}}/img/spell/{{spell.id}}.png"
+                  height="48" width="48" style="border-radius: 5px;">
               </div>
-              <span style="flex: 1">
-                Magia do campeão: {{spell}}
+              <span>
+                {{spell.name}}
               </span>
             </div>
             }
           </div>
           <!-- Body -->
           <div style="display: flex">
-            @for(spell of championSpells; track spell; let spellIndex = $index) {
+            @for(spell of champion.spells; track spell.id; let spellIndex = $index) {
             <div style="flex: 1">
               @for(lvl of levelsArray; track lvl;) {
               <div
@@ -145,9 +105,9 @@
               </div>
               }
             </div>
-            <pre>{{spell}}</pre>
             }
           </div>
+          }
         </div>
       </div>
       <div>
@@ -156,24 +116,7 @@
       </div>
     </mat-tab>
     <mat-tab label="Ameaças">
-      <div>
-        <div>
-          <h2>Descrição</h2>
-          <p>{{guideReport.guide.threatsDescription}}</p>
-        </div>
-        <div>
-          @for(threat of guideReport.guide.threats; track threat.threat) {
-          <div>
-            <h3>Champeão</h3>
-            <p>{{threat.threat | entityName : 'champions'}}</p>
-          </div>
-          <div>
-            <h3>Descrição da ameaça</h3>
-            <p>{{threat.description}}</p>
-          </div>
-          }
-        </div>
-      </div>
+      <app-threats [guide]="guideReport.guide" />
     </mat-tab>
   </mat-tab-group>
 </mat-dialog-content>

@@ -1,0 +1,19 @@
+<img style="border-radius: 8px;" width="64" height="64" [src]="imageURL" cdkOverlayOrigin #origin="cdkOverlayOrigin"
+  (mouseenter)="showTooltip.set(true)" (mouseleave)="showTooltip.set(false)">
+
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin" [cdkConnectedOverlayOpen]="showTooltip()"
+  (detach)="showTooltip.set(false)">
+  <div class="tooltip-surface">
+    @if(item) {
+    <div style="display: flex; font-size: 1rem; max-width: 150px;">
+      <div>
+        <img />
+      </div>
+      <div style="flex: 1">
+        <span>{{name}}</span>
+        <p>{{description}}</p>
+      </div>
+    </div>
+    }
+  </div>
+</ng-template>

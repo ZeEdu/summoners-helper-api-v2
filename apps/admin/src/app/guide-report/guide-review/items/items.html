@@ -1,0 +1,13 @@
+@for(itemRow of guide.items; track itemRow.rowName; ) {
+<div>
+  <h2>{{itemRow.rowName}}</h2>
+  @for(item of itemRow.itemsList; track item.itemId) {
+  <app-item [itemId]="item.itemId" />
+  }
+  <p>{{itemRow.description}}</p>
+</div>
+
+@if (!$last) {
+<mat-divider />
+}
+}
