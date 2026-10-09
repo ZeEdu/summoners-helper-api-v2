@@ -8,7 +8,7 @@ export interface ItemDetailsWithId extends ItemDetails {
   id: string
 }
 
-export type DataDragon = {
+export type DataDragonLists = {
   champions: ChampionsDataDragonDetails[],
   spells: SummonerSpell[],
   runes: RunesReforgedDataDragon[],
@@ -27,16 +27,17 @@ export type DataDragonMaps = {
 export type DataDragonContextType = {
   loading: boolean;
   error: string | undefined;
-  dataDragon: DataDragon;
+  dataDragonLists: DataDragonLists;
   dataDragonMaps: DataDragonMaps;
 
-  reload: () => void
+  reload: () => void;
 
-  getChampion: (id: string) => ChampionsDataDragonDetails
-  getSpell: (id: string) => SummonerSpell
-  getRune: (id: string) => RunesReforgedDataDragon
-  getRuneSlots: (id: string) => RunesReforgedSlots
-  getItem: (id: string) => ItemDetails
+  getChampion: (id: string) => ChampionsDataDragonDetails;
+  getSpell: (id: string) => SummonerSpell;
+  getRune: (id: string) => RunesReforgedDataDragon;
+  getRuneSlots: (id: string) => RunesReforgedSlots;
+  getItem: (id: string) => ItemDetails;
+  getPatch: () => string;
 }
 
 export const DataDragonContext = createContext<DataDragonContextType | undefined>(undefined)

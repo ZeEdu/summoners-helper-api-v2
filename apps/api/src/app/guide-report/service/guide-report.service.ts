@@ -11,14 +11,11 @@ export class GuideReportService {
   constructor(@InjectModel(GuideReport.name) private guideReportModel: Model<GuideReportDocument>) { }
 
   async get(filter?: QueryFilter<GuideReport>, pagination?: PaginationDto) {
-
     const limit = pagination?.limit || DEFAULT_LIMIT;
     const offset = pagination?.offset || DEFAULT_OFFSET;
     const sort = sortBuilder(pagination?.sort)
 
     filter = filter || {};
-
-    console.log(`GuideReportService -> get`, { filter });
 
     const count = await this.guideReportModel.countDocuments(filter);
 

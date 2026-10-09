@@ -1,4 +1,5 @@
 import { Auth } from './auth';
+import { Comments } from './comment';
 import { DataDragon } from './data-dragon';
 import { Guides } from './guides';
 import { GuideReport } from './guides-report';
@@ -9,5 +10,6 @@ export const ApiService = {
   Users,
   DataDragon,
   Guides,
-  GuideReport
+  GuideReport,
+  Comments
 };

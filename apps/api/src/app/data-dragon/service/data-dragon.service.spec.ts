@@ -10,6 +10,8 @@ describe('DataDragonService', () => {
     }).compile();
 
     service = module.get<DataDragonService>(DataDragonService);
+
+    jest.spyOn(service, 'getPatchVersion').mockResolvedValue({ patch: '16.19.1' })
   });
 
   it('should be defined', async () => {

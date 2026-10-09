@@ -58,8 +58,6 @@ export class DataDragonService {
       .get<AssetsResponse>(`${ENDPOINT}/assets`)
       .pipe(
         tap(({ data, version }) => {
-          console.log({ data });
-
           this._maps.set(data.maps)
           this._lists.set(data.lists)
           this._patch.set(version)

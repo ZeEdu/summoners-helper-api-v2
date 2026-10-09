@@ -1,4 +1,5 @@
-import { GuideDto, IGuide, IPopulatedGuideReport, IPopulatedGuideReportDto, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid } from "@org/contracts";
+import { GuideDto, IComment, IGuide, IPopulatedGuideReport, IPopulatedGuideReportDto, ISerializedComment, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid } from "@org/contracts";
+import { Types } from "mongoose";
 import { IUserWithPassword, IUserWithPuuid } from "./users/schema/user.schema";
 
 function user(user: IUser): UserDto {
@@ -72,13 +73,52 @@ function populatedGuideReport(guideReport: IPopulatedGuideReport): IPopulatedGui
   }
 }
 
+function isUserDto(user: IUser | Types.ObjectId | UserDto): user is UserDto {
+  return 'id' in user
+}
+
+function isPopulatedUser(user: IUser | Types.ObjectId | UserDto): user is IUser {
+  return !('equals' in user) && ('_id' in user)
+}
+
+function isPopulatedGuide(guide: Types.ObjectId | IGuide): guide is IGuide {
+  return !('equals' in guide)
+}
+
+function comment(comment: IComment): ISerializedComment {
+  let commentCreatedBy: UserDto | undefined = undefined
+
+  if (comment.createdBy && isPopulatedUser(comment.createdBy)) {
+    commentCreatedBy = user(comment.createdBy)
+  }
+
+  let commentGuide: PopulatedGuideDto | undefined = undefined
+
+  if (isPopulatedGuide(comment.guide)) {
+    commentGuide = populatedGuide(comment.guide)
+  }
+
+  return {
+    createdBy: (commentCreatedBy ?? comment.createdBy),
+    guide: (commentGuide ?? comment.guide),
+    id: comment._id.toString(),
+    createdAt: comment.createdAt,
+    removed: comment.removed,
+    content: comment.content,
+    replyTo: comment.replyTo,
+    likeCount: comment.likeCount,
+    liked: comment.liked ?? false
+  }
+}
+
 const ResponseMappers = {
   user,
   userWithPassword,
   userWithPuuid,
   guide,
   populatedGuide,
-  populatedGuideReport
+  populatedGuideReport,
+  comment
 };
 
 export default ResponseMappers

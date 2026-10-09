@@ -1,4 +1,4 @@
-import { CreateGuideFormDto, GuidePaginationDto, IGuide } from '@org/contracts';
+import { CreateGuideFormDto, GuideDto, GuidePaginationDto, IGuide } from '@org/contracts';
 
 import { customFetch } from '../../utils/customFetch/customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
@@ -63,7 +63,7 @@ export const Guides = {
 
   get: async (
     guidePagination: GuidePaginationDto,
-  ): Promise<{ guides: IGuide[]; count: number }> => {
+  ): Promise<{ guides: GuideDto[]; count: number }> => {
     const queryParams = buildQueryStringFromDto(guidePagination);
     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}?${queryParams}`;
 

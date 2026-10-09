@@ -53,7 +53,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
       await AuthTokenStorageService.set(accessToken, refreshToken);
     } catch (error: any) {
-      console.log({ error });
       if (
         error?.body['username'] ||
         error?.body['email'] ||

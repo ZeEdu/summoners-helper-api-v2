@@ -25,7 +25,6 @@ export class AuthService {
       .pipe(
         shareReplay(),
         tap(({ accessToken }) => {
-          console.log({ accessToken });
           this.authTokenStorageService.set(accessToken)
         })
       )

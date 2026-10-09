@@ -9,16 +9,9 @@ const championAssetsSchema = z.object({
 
 type ChampionAssetsDto = z.infer<typeof championAssetsSchema>
 
-
-
 @Controller('data-dragon')
 export class DataDragonController {
   constructor(private dataDragonService: DataDragonService) { }
-  @Get('current-patch')
-  getPatchVersion() {
-    return this.dataDragonService.getPatchVersion()
-  }
-
   @Get('assets')
   getAssets() {
     return this.dataDragonService.getAssets()

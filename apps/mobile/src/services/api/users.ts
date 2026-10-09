@@ -70,8 +70,6 @@ export const Users = {
       body: JSON.stringify(updateUserProfileDto)
     };
 
-    console.log({ init });
-
     return customFetch(url, init)
   },
 

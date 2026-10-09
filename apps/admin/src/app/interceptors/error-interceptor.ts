@@ -6,8 +6,6 @@ import { AuthService } from '../auth/service/auth.service';
 import { SessionService } from '../auth/service/session.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  console.log(`errorInterceptor`);
-
   const router = inject(Router)
   const sessionService = inject(SessionService)
   const authService = inject(AuthService)
@@ -16,7 +14,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     if ([401, 403].includes(err.status) && !!sessionService.user) {
       router.navigate(['login'])
       authService.logout().pipe(catchError((err) => {
-        console.log(`errorInterceptor -> authService.logout`);
         return of(null)
       }))
         .subscribe() // TODO: deve ter uma maneira melhor de fazer isso

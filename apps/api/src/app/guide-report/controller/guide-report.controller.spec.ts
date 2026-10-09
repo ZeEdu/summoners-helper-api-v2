@@ -2,6 +2,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
+import { AuthService } from '../../auth/service/auth.service';
+import { IsAdminGuard } from '../../guards/is-admin.guard';
+import { GuidesModule } from '../../guides/guides.module';
 import { GuideReport, GuideReportSchema } from '../schema/guide-report.schema';
 import { GuideReportService } from '../service/guide-report.service';
 import { GuideReportController } from './guide-report.controller';
@@ -22,8 +25,18 @@ describe('GuideReportController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GuideReportController],
-      providers: [GuideReportService],
+      providers: [
+        GuideReportService,
+        IsAdminGuard,
+        {
+          provide: AuthService,
+          useValue: {
+            validateSystemAdmin: jest.fn(),
+          },
+        }
+      ],
       imports: [
+        GuidesModule,
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([
           {

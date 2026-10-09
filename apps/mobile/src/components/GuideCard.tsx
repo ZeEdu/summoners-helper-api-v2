@@ -1,7 +1,7 @@
 import { Image, StyleSheet, View } from "react-native"
 import { Card, Chip, Text } from "react-native-paper"
 
-import { IGuide } from "@org/contracts"
+import { GuideDto } from "@org/contracts"
 
 import { ReactNode } from "react"
 import { usePatchVersion } from "../contexts/patchVersion/usePatchVersion"
@@ -10,7 +10,7 @@ import DataDragonService from "../services/data-dragon/data-dragon.service"
 
 type GuideCardProps = {
   onPress: () => void,
-  guide: IGuide,
+  guide: GuideDto,
   cardTitleRight?: () => ReactNode
 }
 

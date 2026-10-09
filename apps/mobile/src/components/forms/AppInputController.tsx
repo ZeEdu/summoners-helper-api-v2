@@ -23,7 +23,7 @@ export default function AppInputController<T extends FieldValues>({ name, inputO
           onBlur={onBlur}
           onChangeText={onChange}
           value={value}
-          style={styles.input}
+          style={[styles.input, inputOptions.style]}
         />
       )
     }}

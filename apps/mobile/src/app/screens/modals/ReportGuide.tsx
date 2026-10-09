@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { Button, Dialog, Portal, Snackbar, Text, useTheme } from "react-native-paper"
 
-import { CreateGuideReportFormDto, CreateGuideReportFormSchema, GuideReportReason, IGuide } from "@org/contracts"
+import { CreateGuideReportFormDto, CreateGuideReportFormSchema, GUIDE_REPORT_REASON, GuideDto } from "@org/contracts"
 import { StyledButton, StyledView } from "@org/ui"
 
 import AppSelectController from "../../../components/forms/app-select-controller/AppSelectController"
@@ -14,35 +14,35 @@ import { ApiService } from "../../../services/api/api.service"
 
 const reasonsList = [
   {
-    value: GuideReportReason.INAPPROPRIATE_CONTENT,
+    value: GUIDE_REPORT_REASON.INAPPROPRIATE_CONTENT,
     label: 'Conteúdo impróprio ou ofensivo'
   },
   {
-    value: GuideReportReason.INCORRECT_INFORMATION,
+    value: GUIDE_REPORT_REASON.INCORRECT_INFORMATION,
     label: 'Informações incorretas ou enganosas'
   },
   {
-    value: GuideReportReason.SPAM,
+    value: GUIDE_REPORT_REASON.SPAM,
     label: 'Spam ou conteúdo repetitivo'
   },
   {
-    value: GuideReportReason.ADVERTISING,
+    value: GUIDE_REPORT_REASON.ADVERTISING,
     label: 'Publicidade ou autopromoção'
   },
   {
-    value: GuideReportReason.HARASSMENT,
+    value: GUIDE_REPORT_REASON.HARASSMENT,
     label: 'Assédio ou discurso de ódio'
   },
   {
-    value: GuideReportReason.COPYRIGHT,
+    value: GUIDE_REPORT_REASON.COPYRIGHT,
     label: 'Infração de direitos autorais'
   },
   {
-    value: GuideReportReason.EXPLOIT_OR_CHEATING,
+    value: GUIDE_REPORT_REASON.EXPLOIT_OR_CHEATING,
     label: 'Exploit, trapaça ou comportamento abusivo'
   },
   {
-    value: GuideReportReason.OTHER,
+    value: GUIDE_REPORT_REASON.OTHER,
     label: 'Outro motivo'
   }
 ]
@@ -50,7 +50,7 @@ const reasonsList = [
 const resolver = zodResolver(CreateGuideReportFormSchema)
 
 type Props = StaticScreenProps<{
-  guide: IGuide
+  guide: GuideDto
 }>
 
 export default function ReportGuide({ route }: Props) {
@@ -67,7 +67,7 @@ export default function ReportGuide({ route }: Props) {
   const { control, handleSubmit, getValues, formState: { errors } } = useForm<CreateGuideReportFormDto>({
     resolver,
     defaultValues: {
-      guide: guide._id.toString(),
+      guide: guide.id,
     }
   })
 

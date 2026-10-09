@@ -5,11 +5,11 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import z from 'zod';
 
 import {
+  GuideDto,
   GuidePaginationDto,
   guidesPaginationSchema,
-  IGuide,
   ROLES,
-  ROLES_LABEL,
+  ROLES_LABEL
 } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
@@ -61,14 +61,14 @@ export default function Search() {
   const patchVersion = usePatchVersion();
   const navigation = useNavigation();
 
-  const [guides, setGuides] = useState<IGuide[]>([]);
+  const [guides, setGuides] = useState<GuideDto[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const [isFromSearch, setIsFromSearch] = useState(false)
 
-  const championList = useDataDragon.dataDragon.champions;
+  const championList = useDataDragon.dataDragonLists.champions;
 
   const defaultQuery: FilterInputDto = { offset: 0 };
 
@@ -118,7 +118,6 @@ export default function Search() {
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log({ data });
     await getGuides(data);
   });
 
@@ -208,7 +207,7 @@ export default function Search() {
               )
             }}
             data={guides}
-            keyExtractor={({ _id }) => _id.toString()}
+            keyExtractor={({ id }) => id}
             renderItem={({ item: guide }) => {
               return (
                 <GuideCard

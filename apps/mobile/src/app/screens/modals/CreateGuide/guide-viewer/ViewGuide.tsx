@@ -18,12 +18,13 @@ import RunesSection from "./RunesSection";
 import SpellsSection from "./SpellsSection";
 import ThreatsSection from "./ThreatsSection";
 
-import { IGuide } from "@org/contracts";
+import { GuideDto } from "@org/contracts";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import CommentSection from "../../../../../components/comment-section/CommentSection";
 import { useAuthContext } from "../../../../../contexts/auth/useAuth";
 
 type Props = StaticScreenProps<{
-  guide: IGuide
+  guide: GuideDto
 }>
 
 export default function ViewGuide({ route }: Props) {
@@ -98,8 +99,7 @@ export default function ViewGuide({ route }: Props) {
 
   const menuItems: { onPress: () => void, title: string, id: string }[] = []
 
-  // TODO: retornar para !isGuideCreator quando terminar
-  if (isGuideCreator) {
+  if (!isGuideCreator) {
     menuItems.push({
       onPress: () => {
         closeMenu()
@@ -132,10 +132,6 @@ export default function ViewGuide({ route }: Props) {
     navigation.setOptions(navigationOptions);
   }, [navigation, showMenu]);
 
-  setTimeout(() => {
-    navigation.navigate('ReportGuide', { guide })
-  }, 1_000);
-
   return (
     <StyledView style={{ height, flex: 1 }}>
       <ScrollView>
@@ -165,6 +161,9 @@ export default function ViewGuide({ route }: Props) {
         </List.Accordion>
         <List.Accordion title={'Ameaças'} id={'7'}>
           <ThreatsSection threats={threats} hideTitle={true} />
+        </List.Accordion>
+        <List.Accordion title={'Seção de Comentários'} id={'8'}>
+          <CommentSection guideId={guide.id} />
         </List.Accordion>
       </ScrollView>
     </StyledView>

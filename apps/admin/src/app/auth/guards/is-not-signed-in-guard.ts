@@ -7,8 +7,6 @@ export const isNotSignedInGuard: CanActivateFn = (route, state) => {
   const router = inject(Router)
 
   const isNotSignedIn = sessionService.user() === undefined
-  console.log({ isNotSignedIn });
-
 
   if (!isNotSignedIn) {
     router.navigate([''])

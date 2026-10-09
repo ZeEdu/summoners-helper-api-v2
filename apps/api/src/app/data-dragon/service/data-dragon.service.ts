@@ -39,7 +39,7 @@ export class DataDragonService {
 
     const champions = await this.champions(patch)
     const runes = await this.runes(patch)
-    const runesSlots = this.runesSlots(runes.list)
+    const runeSlots = this.runesSlots(runes.list)
     const spells = await this.spells(patch)
     const items = await this.items(patch)
 
@@ -48,14 +48,14 @@ export class DataDragonService {
         lists: {
           champions: champions.list,
           runes: runes.list,
-          runesSlots: runesSlots.list,
+          runeSlots: runeSlots.list,
           spells: spells.list,
           items: items.list
         },
         maps: {
           champions: champions.map,
           runes: runes.map,
-          runesSlots: runesSlots.map,
+          runeSlots: runeSlots.map,
           spells: spells.map,
           items: items.map
         }

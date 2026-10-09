@@ -35,7 +35,7 @@ export class GuideReportController {
   constructor(
     private guideReportService: GuideReportService,
     private guideService: GuidesService,
-  ) {}
+  ) { }
 
   @Get('')
   get(
@@ -54,7 +54,6 @@ export class GuideReportController {
   }
 
   @Post('')
-  // @UseGuards(GuideExists)
   async create(
     @CurrentUser() user: IUserWithPuuid,
     @Body(new ZodValidationPipe(CreateGuideReportFormSchema))
@@ -68,7 +67,6 @@ export class GuideReportController {
 
   @Patch('archive/:guideReportId')
   async archive(@Param('guideReportId') guideReportId: string) {
-    // Apenas arquiva a denuncia
     const guideReport = await this.guideReportService.getById(guideReportId);
     if (!guideReport) {
       throw new BadRequestException('Denuncia não foi encontrada');
@@ -93,12 +91,6 @@ export class GuideReportController {
 
     await this.guideService.block(guideReport.guide.id);
     await this.guideReportService.block(guideReport.id);
-
-    // Bloquear o guide
-    // Atualizar o report - status (ARCHIVED) - actionTaken (BLOCKED)
-    // Atualizar todas as denuncias de um mesmo guia
-    // Notificar criador do guia
-    // Notificar quem fez a denuncia
   }
 
   @Patch('unblock/:guideReportId')
@@ -114,11 +106,5 @@ export class GuideReportController {
 
     await this.guideService.unblock(guideReport.guide.id);
     await this.guideReportService.unblock(guideReport.id);
-
-    // Desbloquar o guide
-    // Atualizar o report - status (ARCHIVED) - actionTaken (DISMISS)
-    // Arquivar todas as denuncias do guia mesmo guia
-    // Notificar criador do guia
-    // Notificar quem fez a denuncia
   }
 }

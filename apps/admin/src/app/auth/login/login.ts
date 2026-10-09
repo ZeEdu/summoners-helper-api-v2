@@ -2,9 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { LoginUserDto } from '@org/contracts';
 import { switchMap, tap } from 'rxjs';
@@ -47,14 +47,12 @@ export class Login {
           return this.authService.getMe().pipe(
             tap((me) => {
               this.sessionService.setUser(me);
-              console.log({ me });
             }),
           );
         }),
       )
-      .subscribe((res) => {
+      .subscribe(() => {
         this.router.navigate(['']);
-        console.log({ res });
       });
 
     // {

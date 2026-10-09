@@ -164,7 +164,6 @@ export class GuideReport implements AfterViewInit {
   }
 
   archiveReport(guideReport: IPopulatedGuideReportDto) {
-    console.log({ guideReport });
     this.guideReportService.archiveReport(guideReport.id).subscribe({
       next: () => {
         this.dataSource.reloadTable();

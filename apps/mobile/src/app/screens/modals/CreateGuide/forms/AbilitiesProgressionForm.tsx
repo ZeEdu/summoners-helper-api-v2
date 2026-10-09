@@ -87,8 +87,6 @@ export default function GuideAbilitiesProgressionForm({ champion }: Props) {
     abilitiesProgressionDescription: mainFormContext.getValues('abilitiesProgressionDescription')
   }
 
-  console.log({ defaultValues });
-
   const {
     control,
     handleSubmit,
