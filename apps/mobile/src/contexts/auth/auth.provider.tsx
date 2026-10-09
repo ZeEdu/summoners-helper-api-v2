@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ICreateUserDto, ILoginUserDto, IUser } from '@org/contracts';
+import { ICreateUserDto, ILoginUserDto, IUser, UserDto } from '@org/contracts';
 
 import { AuthEvents } from '../../auth-events';
 import { useThemeContext } from '../../providers/theme.provider';
@@ -15,7 +15,7 @@ type AuthProviderProps = {
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const themeContext = useThemeContext();
-  const [user, setUser] = useState<IUser | undefined>(undefined);
+  const [user, setUser] = useState<UserDto | undefined>(undefined);
 
   const login = async (loginUserDto: ILoginUserDto) => {
     try {

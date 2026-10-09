@@ -14,6 +14,22 @@ export enum ROLES_LABEL {
   SUPPORT = 'Support'
 }
 
+function isRolesTypeGuard(key: string): key is ROLES {
+  return Object.values(ROLES).includes(key as ROLES)
+}
+
+function isRolesLabelTypeGuard(key: string): key is ROLES_LABEL {
+  return Object.keys(ROLES_LABEL).includes(key as ROLES_LABEL)
+}
+
+export function getRoleLabel(value: string) {
+  if (isRolesTypeGuard(value) && isRolesLabelTypeGuard(value)) {
+    return ROLES_LABEL[value]
+  }
+
+  return ''
+}
+
 export enum AbilityOption {
   A = 'a',
   B = 'b',
