@@ -1,7 +1,7 @@
 import { StyledView } from '@org/ui';
 import { useEffect, useState } from 'react';
 import { Dimensions, ScrollView } from 'react-native';
-import { IconButton, List, Menu, useTheme } from 'react-native-paper';
+import { IconButton, List, Menu, Text } from 'react-native-paper';
 import { AbilitiesProgressionDto } from '../forms/AbilitiesProgressionForm';
 import { BonusDto } from '../forms/BonusForm';
 import { GuideIntroductionDto } from '../forms/GuideIntroductionForm';
@@ -14,7 +14,6 @@ import AbilitiesProgressionSection from './AbilitiesProgressionSection';
 import BonusSection from './BonusSection';
 import ItemsSection from './ItemsSection';
 import RunesSection from './RunesSection';
-import SpellsSection from './SpellsSection';
 import ThreatsSection from './ThreatsSection';
 
 import { GuideDto } from '@org/contracts';
@@ -23,14 +22,13 @@ import CommentSection from '../../../../../components/comment-section/CommentSec
 import { useAuthContext } from '../../../../../contexts/auth/useAuth';
 import ExpandableCard from './expandable-card/ExpandableCard';
 import HeroBanner from './hero-banner/HeroBanner';
+import SpellContent from './spell-content/SpellContent';
 
 type Props = StaticScreenProps<{
   guide: GuideDto;
 }>;
 
 export default function ViewGuide({ route }: Props) {
-  const theme = useTheme();
-
   const { user } = useAuthContext();
   const { guide } = route.params;
 
@@ -137,24 +135,18 @@ export default function ViewGuide({ route }: Props) {
     navigation.setOptions(navigationOptions);
   }, [navigation, showMenu]);
 
-  const expandCard = () => {
-    console.log(`expandCard`);
-  };
-
   return (
     <StyledView style={{ height, flex: 1 }}>
       <HeroBanner championId={guide.champion} role={guide.role} />
       <ScrollView>
-        <ExpandableCard
-          title="Introdução"
-          content={guideIntroduction.introduction}
-        />
-        <List.Accordion title={'Magias'} id={'2'}>
-          <SpellsSection
-            guideSummonerSpells={guideSummonerSpells}
-            hideTitle={true}
-          />
-        </List.Accordion>
+        <ExpandableCard title="Introdução" titleIcon="shield-crown">
+          <Text variant="bodySmall">{guideIntroduction.introduction}</Text>
+        </ExpandableCard>
+
+        <ExpandableCard title="Magias" titleIcon="magic-staff">
+          <SpellContent spells={guideSummonerSpells} />
+        </ExpandableCard>
+
         <List.Accordion title={'Runas'} id={'3'}>
           <RunesSection
             mainRune={mainRune}
