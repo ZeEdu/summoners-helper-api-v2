@@ -13,15 +13,17 @@ if (
 type Props = {
   title: string;
   titleIcon: string;
+  defaultExpanded?: boolean;
 };
 
 export default function ExpandableCard({
   title,
   titleIcon,
   children,
+  defaultExpanded,
 }: PropsWithChildren<Props>) {
   const theme = useTheme();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded || false);
 
   const toggleExpanded = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

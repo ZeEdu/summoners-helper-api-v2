@@ -13,7 +13,6 @@ import { ThreatsDto } from '../forms/ThreatsForm';
 import AbilitiesProgressionSection from './AbilitiesProgressionSection';
 import BonusSection from './BonusSection';
 import ItemsSection from './ItemsSection';
-import RunesSection from './RunesSection';
 import ThreatsSection from './ThreatsSection';
 
 import { GuideDto } from '@org/contracts';
@@ -23,6 +22,7 @@ import { useAuthContext } from '../../../../../contexts/auth/useAuth';
 import ExpandableCard from './expandable-card/ExpandableCard';
 import HeroBanner from './hero-banner/HeroBanner';
 import SpellContent from './spell-content/SpellContent';
+import RuneContent from './rune-content/RuneContent';
 
 type Props = StaticScreenProps<{
   guide: GuideDto;
@@ -146,14 +146,14 @@ export default function ViewGuide({ route }: Props) {
         <ExpandableCard title="Magias" titleIcon="magic-staff">
           <SpellContent spells={guideSummonerSpells} />
         </ExpandableCard>
-
-        <List.Accordion title={'Runas'} id={'3'}>
-          <RunesSection
-            mainRune={mainRune}
-            secondaryRune={secondaryRune}
-            hideTitle={true}
-          />
-        </List.Accordion>
+        <ExpandableCard
+          title={'Runas'}
+          titleIcon={'checkerboard'}
+          defaultExpanded={true}
+        >
+          <RuneContent rune={mainRune} />
+          <RuneContent rune={secondaryRune} />
+        </ExpandableCard>
         <List.Accordion title={'Bonus'} id={'4'}>
           <BonusSection bonus={bonus} hideTitle={true} />
         </List.Accordion>
