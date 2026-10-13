@@ -11,7 +11,6 @@ import { MainRuneDto } from '../forms/MainRunesForm';
 import { SecondaryRuneDto } from '../forms/SecondaryRunesForm';
 import { ThreatsDto } from '../forms/ThreatsForm';
 import AbilitiesProgressionSection from './AbilitiesProgressionSection';
-import ItemsSection from './ItemsSection';
 import ThreatsSection from './ThreatsSection';
 
 import { GuideDto } from '@org/contracts';
@@ -23,6 +22,7 @@ import HeroBanner from './hero-banner/HeroBanner';
 import SpellContent from './spell-content/SpellContent';
 import RuneContent from './rune-content/RuneContent';
 import BonusContent from './bonus-content/BonusContent';
+import ItemsContent from './items-content/ItemsContent';
 
 type Props = StaticScreenProps<{
   guide: GuideDto;
@@ -150,16 +150,17 @@ export default function ViewGuide({ route }: Props) {
           <RuneContent rune={mainRune} />
           <RuneContent rune={secondaryRune} />
         </ExpandableCard>
-        <ExpandableCard
-          title={'Bonus'}
-          titleIcon={'shield-cross'}
-          defaultExpanded={true}
-        >
+        <ExpandableCard title={'Bonus'} titleIcon={'shield-cross'}>
           <BonusContent bonus={bonus} />
         </ExpandableCard>
-        <List.Accordion title={'Items'} id={'5'}>
-          <ItemsSection items={items} hideTitle={true} />
-        </List.Accordion>
+        <ExpandableCard
+          title={'Itens'}
+          titleIcon={'shopping'}
+          defaultExpanded={true}
+        >
+          <ItemsContent items={items} />
+        </ExpandableCard>
+
         <List.Accordion title={'Progressão de abilidades'} id={'6'}>
           <AbilitiesProgressionSection
             abilitiesProgression={abilitiesProgression}

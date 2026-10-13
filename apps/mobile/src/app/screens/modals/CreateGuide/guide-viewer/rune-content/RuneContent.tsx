@@ -1,5 +1,5 @@
 import { MainRuneDto } from '../../forms/MainRunesForm';
-import { Card, Divider, List, MD3Theme, useTheme } from 'react-native-paper';
+import { Card, List, MD3Theme, useTheme } from 'react-native-paper';
 
 import { StyleSheet } from 'react-native';
 import RunePathListItem from './main-path-list-item/MainPathListItem';
@@ -65,7 +65,6 @@ export default function RuneContent({ rune }: Props) {
             description={runePathDescription}
             title={title}
           />
-          <Divider style={styles.divider} />
           <RuneListItem runeId={firstSlot} title={'Primeira Runa'} />
           <RuneListItem runeId={secondSlot} title={'Segunda Runa'} />
           <RuneListItem

@@ -3,7 +3,7 @@ import { AbilityOption } from '../enums';
 import { IUser } from '../types';
 
 export interface IItemList {
-  itemId: string
+  itemId: string;
 }
 
 export interface IItems {
@@ -96,4 +96,3 @@ export interface IGuide {
 
   blocked?: boolean;
 }
-
