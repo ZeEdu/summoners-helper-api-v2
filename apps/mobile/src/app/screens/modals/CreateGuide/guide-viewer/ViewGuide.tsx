@@ -11,7 +11,6 @@ import { MainRuneDto } from '../forms/MainRunesForm';
 import { SecondaryRuneDto } from '../forms/SecondaryRunesForm';
 import { ThreatsDto } from '../forms/ThreatsForm';
 import AbilitiesProgressionSection from './AbilitiesProgressionSection';
-import BonusSection from './BonusSection';
 import ItemsSection from './ItemsSection';
 import ThreatsSection from './ThreatsSection';
 
@@ -23,6 +22,7 @@ import ExpandableCard from './expandable-card/ExpandableCard';
 import HeroBanner from './hero-banner/HeroBanner';
 import SpellContent from './spell-content/SpellContent';
 import RuneContent from './rune-content/RuneContent';
+import BonusContent from './bonus-content/BonusContent';
 
 type Props = StaticScreenProps<{
   guide: GuideDto;
@@ -139,24 +139,24 @@ export default function ViewGuide({ route }: Props) {
     <StyledView style={{ height, flex: 1 }}>
       <HeroBanner championId={guide.champion} role={guide.role} />
       <ScrollView>
-        <ExpandableCard title="Introdução" titleIcon="shield-crown">
+        <ExpandableCard title="Introdução" titleIcon="text-box-outline">
           <Text variant="bodySmall">{guideIntroduction.introduction}</Text>
         </ExpandableCard>
 
-        <ExpandableCard title="Magias" titleIcon="magic-staff">
+        <ExpandableCard title="Magias" titleIcon="creation">
           <SpellContent spells={guideSummonerSpells} />
         </ExpandableCard>
-        <ExpandableCard
-          title={'Runas'}
-          titleIcon={'checkerboard'}
-          defaultExpanded={true}
-        >
+        <ExpandableCard title={'Runas'} titleIcon={'hexagram-outline'}>
           <RuneContent rune={mainRune} />
           <RuneContent rune={secondaryRune} />
         </ExpandableCard>
-        <List.Accordion title={'Bonus'} id={'4'}>
-          <BonusSection bonus={bonus} hideTitle={true} />
-        </List.Accordion>
+        <ExpandableCard
+          title={'Bonus'}
+          titleIcon={'shield-cross'}
+          defaultExpanded={true}
+        >
+          <BonusContent bonus={bonus} />
+        </ExpandableCard>
         <List.Accordion title={'Items'} id={'5'}>
           <ItemsSection items={items} hideTitle={true} />
         </List.Accordion>

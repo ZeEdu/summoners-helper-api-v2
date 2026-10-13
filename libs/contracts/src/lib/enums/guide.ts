@@ -91,12 +91,127 @@ export function getBonus(key: string): SLOT_BONUS | undefined {
 }
 
 export function getBonusLabel(key: string): SLOT_BONUS_LABELS | undefined {
-  const bonus = getBonus(key)
-  if (!bonus) return undefined
+  const bonus = getBonus(key);
+  if (!bonus) return undefined;
 
   if (isBonusLabel(bonus)) {
-    return SLOT_BONUS_LABELS[bonus]
+    return SLOT_BONUS_LABELS[bonus];
   }
 
-  return undefined
+  return undefined;
+}
+
+export const bonusDescriptions: Record<string, { pt: string; en: string }> = {
+  ADAPTIVE_FORCE: {
+    pt: 'Aumenta o dano de ataque ou o poder de habilidade.',
+    en: 'Increases attack damage or ability power.',
+  },
+  ADAPTIVE_FORCE_SCALING: {
+    pt: 'Aumenta a força adaptativa por nível.',
+    en: 'Increases adaptive force per level.',
+  },
+  ARMOR: {
+    pt: 'Reduz o dano físico recebido.',
+    en: 'Reduces physical damage taken.',
+  },
+  ATTACK_SPEED: {
+    pt: 'Aumenta a velocidade de ataque.',
+    en: 'Increases attack speed.',
+  },
+  CDR_SCALING: {
+    pt: 'Reduz o tempo de recarga das habilidades.',
+    en: 'Reduces ability cooldowns.',
+  },
+  HEALTH: {
+    pt: 'Aumenta a vida máxima.',
+    en: 'Increases maximum health.',
+  },
+  HEALTH_SCALING: {
+    pt: 'Aumenta a vida por nível.',
+    en: 'Increases health per level.',
+  },
+  HASTE: {
+    pt: 'Permite usar habilidades com mais frequência.',
+    en: 'Allows more frequent ability casts.',
+  },
+  MOVEMENT_SPEED: {
+    pt: 'Aumenta a velocidade de movimento.',
+    en: 'Increases movement speed.',
+  },
+  TENACITY: {
+    pt: 'Reduz a duração dos efeitos de controle.',
+    en: 'Reduces crowd control duration.',
+  },
+} as const;
+
+
+export function getBonusDescription(bonus: string): string {
+  const bonusSlot = getBonus(bonus);
+  return bonusDescriptions[bonusSlot as string].pt;
+}
+
+export const bonusValues: Record<string, number> = {
+  ADAPTIVE_FORCE: 9,
+  ADAPTIVE_FORCE_SCALING: 0,
+  ARMOR: 6,
+  ATTACK_SPEED: 10,
+  CDR_SCALING: 8,
+  HEALTH: 65,
+  HEALTH_SCALING: 10,
+  HASTE: 8,
+  MOVEMENT_SPEED: 2.5,
+  TENACITY: 10,
+};
+
+export function getBonusValue(bonus: string): number {
+  const bonusSlot = getBonus(bonus)
+  return bonusValues[bonusSlot as string];
+}
+
+export const bonusLabelsShard: Record<string, { pt: string; en: string }> = {
+  ADAPTIVE_FORCE: {
+    pt: 'DANO / PODER',
+    en: 'DAMAGE / POWER',
+  },
+  ADAPTIVE_FORCE_SCALING: {
+    pt: 'DANO / PODER',
+    en: 'DAMAGE / POWER',
+  },
+  ARMOR: {
+    pt: 'ARMADURA',
+    en: 'ARMOR',
+  },
+  ATTACK_SPEED: {
+    pt: 'VEL. ATAQUE',
+    en: 'ATTACK SPD.',
+  },
+  CDR_SCALING: {
+    pt: 'ACEL. HAB.',
+    en: 'ABILITY HASTE',
+  },
+  HEALTH: {
+    pt: 'VIDA',
+    en: 'HEALTH',
+  },
+  HEALTH_SCALING: {
+    pt: 'VIDA',
+    en: 'HEALTH',
+  },
+  HASTE: {
+    pt: 'ACEL. HAB.',
+    en: 'ABILITY HASTE',
+  },
+  MOVEMENT_SPEED: {
+    pt: 'VEL. MOV.',
+    en: 'MOVE SPEED',
+  },
+  TENACITY: {
+    pt: 'TENACIDADE',
+    en: 'TENACITY',
+  },
+};
+
+export function getBonusLabelsShard(bonus: string) {
+  const bonusSlot = getBonus(bonus);
+  return bonusLabelsShard[bonusSlot as string].pt;
 }
