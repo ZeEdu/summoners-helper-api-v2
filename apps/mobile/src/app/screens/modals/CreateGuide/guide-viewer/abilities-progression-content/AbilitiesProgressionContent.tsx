@@ -35,7 +35,6 @@ export default function AbilitiesProgressionContent({ abilitiesProgression, cham
         <Text>Um erro ocorreu ao tentar carregar os dados</Text>
       </View>
     )
-
   }
 
   return (

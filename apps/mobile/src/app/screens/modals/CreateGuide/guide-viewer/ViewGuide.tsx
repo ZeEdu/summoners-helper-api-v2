@@ -10,8 +10,6 @@ import { ItemsDto } from '../forms/items-form/ItemsForm';
 import { MainRuneDto } from '../forms/MainRunesForm';
 import { SecondaryRuneDto } from '../forms/SecondaryRunesForm';
 import { ThreatsDto } from '../forms/ThreatsForm';
-import AbilitiesProgressionSection from './AbilitiesProgressionSection';
-import ThreatsSection from './ThreatsSection';
 
 import { GuideDto } from '@org/contracts';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
@@ -24,6 +22,7 @@ import HeroBanner from './hero-banner/HeroBanner';
 import ItemsContent from './items-content/ItemsContent';
 import RuneContent from './rune-content/RuneContent';
 import SpellContent from './spell-content/SpellContent';
+import ThreatsContent from './threats-content/ThreatsContent';
 
 type Props = StaticScreenProps<{
   guide: GuideDto;
@@ -163,7 +162,6 @@ export default function ViewGuide({ route }: Props) {
         <ExpandableCard
           title={'Progressão de Abilidades'}
           titleIcon={'chart-timeline-variant'}
-          defaultExpanded={true}
         >
           <AbilitiesProgressionContent
             abilitiesProgression={abilitiesProgression}
@@ -171,16 +169,14 @@ export default function ViewGuide({ route }: Props) {
           />
         </ExpandableCard>
 
-        <List.Accordion title={'Progressão de abilidades'} id={'6'}>
-          <AbilitiesProgressionSection
-            abilitiesProgression={abilitiesProgression}
-            champion={guideIntroduction.champion}
-            hideTitle={true}
-          />
-        </List.Accordion>
-        <List.Accordion title={'Ameaças'} id={'7'}>
-          <ThreatsSection threats={threats} hideTitle={true} />
-        </List.Accordion>
+        <ExpandableCard
+          title={'Ameaças'}
+          titleIcon={'alert-outline'}
+          defaultExpanded={true}
+        >
+          <ThreatsContent threats={threats} />
+        </ExpandableCard>
+
         <List.Accordion title={'Seção de Comentários'} id={'8'}>
           <CommentSection guideId={guide.id} />
         </List.Accordion>
