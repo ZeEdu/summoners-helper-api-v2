@@ -46,6 +46,45 @@ export interface ChampionsDataDragonDetails {
   };
 }
 
+export interface ChampionDataDragonSpell {
+  id: string;
+  name: string;
+  description: string;
+  tooltip: string;
+  leveltip: {
+    label: string[];
+    effect: string[];
+  };
+  maxrank: number;
+  cooldown: number[];
+  cooldownBurn: string;
+  cost: number[];
+  costBurn: string;
+  datavalues: any;
+  effect: (null | number[])[];
+  effectBurn: null | string;
+  vars: {
+    link: string;
+    coeff: number;
+    key: string;
+  }[];
+  costType: string;
+  maxammo: string;
+  range: number[];
+  rangeBurn: string;
+  image: {
+    full: string;
+    sprite: string;
+    group: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  };
+  resource: string;
+
+}
+
 export interface ChampionsDataDragonDetailsSolo extends ChampionsDataDragonDetails {
   lore: string;
   skins: {
@@ -56,43 +95,7 @@ export interface ChampionsDataDragonDetailsSolo extends ChampionsDataDragonDetai
   }[];
   allytips: string[];
   enemytips: string[];
-  spells: {
-    id: string;
-    name: string;
-    description: string;
-    tooltip: string;
-    leveltip: {
-      label: string[];
-      effect: string[];
-    };
-    maxrank: number;
-    cooldown: number[];
-    cooldownBurn: string;
-    cost: number[];
-    costBurn: string;
-    datavalues: any;
-    effect: (null | number[])[];
-    effectBurn: null | string;
-    vars: {
-      link: string;
-      coeff: number;
-      key: string;
-    }[];
-    costType: string;
-    maxammo: string;
-    range: number[];
-    rangeBurn: string;
-    image: {
-      full: string;
-      sprite: string;
-      group: string;
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-    };
-    resource: string;
-  }[];
+  spells: ChampionDataDragonSpell[];
   passive: {
     name: string;
     description: string;

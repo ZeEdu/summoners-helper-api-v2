@@ -38,6 +38,7 @@ export default function ExpandableCard({
         left={() => (
           <Icon source={titleIcon} size={24} color={theme.colors.primary} />
         )}
+        titleNumberOfLines={2}
         right={() => (
           <IconButton
             icon={expanded ? 'chevron-up' : 'chevron-down'}

@@ -17,12 +17,13 @@ import { GuideDto } from '@org/contracts';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import CommentSection from '../../../../../components/comment-section/CommentSection';
 import { useAuthContext } from '../../../../../contexts/auth/useAuth';
+import AbilitiesProgressionContent from './abilities-progression-content/AbilitiesProgressionContent';
+import BonusContent from './bonus-content/BonusContent';
 import ExpandableCard from './expandable-card/ExpandableCard';
 import HeroBanner from './hero-banner/HeroBanner';
-import SpellContent from './spell-content/SpellContent';
-import RuneContent from './rune-content/RuneContent';
-import BonusContent from './bonus-content/BonusContent';
 import ItemsContent from './items-content/ItemsContent';
+import RuneContent from './rune-content/RuneContent';
+import SpellContent from './spell-content/SpellContent';
 
 type Props = StaticScreenProps<{
   guide: GuideDto;
@@ -156,9 +157,18 @@ export default function ViewGuide({ route }: Props) {
         <ExpandableCard
           title={'Itens'}
           titleIcon={'shopping'}
-          defaultExpanded={true}
         >
           <ItemsContent items={items} />
+        </ExpandableCard>
+        <ExpandableCard
+          title={'Progressão de Abilidades'}
+          titleIcon={'chart-timeline-variant'}
+          defaultExpanded={true}
+        >
+          <AbilitiesProgressionContent
+            abilitiesProgression={abilitiesProgression}
+            championId={guideIntroduction.champion}
+          />
         </ExpandableCard>
 
         <List.Accordion title={'Progressão de abilidades'} id={'6'}>
