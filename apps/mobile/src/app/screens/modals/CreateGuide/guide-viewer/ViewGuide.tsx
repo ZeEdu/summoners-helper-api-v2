@@ -1,7 +1,7 @@
 import { StyledView } from '@org/ui';
 import { useEffect, useState } from 'react';
 import { Dimensions, ScrollView } from 'react-native';
-import { IconButton, List, Menu, Text } from 'react-native-paper';
+import { IconButton, Menu, Text } from 'react-native-paper';
 import { AbilitiesProgressionDto } from '../forms/AbilitiesProgressionForm';
 import { BonusDto } from '../forms/BonusForm';
 import { GuideIntroductionDto } from '../forms/GuideIntroductionForm';
@@ -172,14 +172,17 @@ export default function ViewGuide({ route }: Props) {
         <ExpandableCard
           title={'Ameaças'}
           titleIcon={'alert-outline'}
-          defaultExpanded={true}
         >
           <ThreatsContent threats={threats} />
         </ExpandableCard>
 
-        <List.Accordion title={'Seção de Comentários'} id={'8'}>
+        <ExpandableCard
+          title={'Comentários'}
+          titleIcon='comment-multiple-outline'
+          defaultExpanded={true}
+        >
           <CommentSection guideId={guide.id} />
-        </List.Accordion>
+        </ExpandableCard>
       </ScrollView>
     </StyledView>
   );

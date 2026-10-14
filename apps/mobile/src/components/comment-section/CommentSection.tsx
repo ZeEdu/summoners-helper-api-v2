@@ -1,4 +1,4 @@
-import { FlatList, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 
 import { CommentPaginationDto, ISerializedComment } from "@org/contracts";
 import { useEffect, useState } from "react";
@@ -45,7 +45,9 @@ export default function CommentSection({ guideId }: Props) {
   }
 
   const addReplyTo = (comment: ISerializedComment, replyTo: ISerializedComment) => {
-
+    if (replyTo.id === replyTo.id) {
+      setComments((previous) => [comment, ...previous])
+    }
   }
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function CommentSection({ guideId }: Props) {
   }, [query]);
 
   return (
-    <View style={{ margin: 16 }}>
+    <View>
       <FlatList
         data={comments}
         ListFooterComponent={() => {
@@ -85,13 +87,7 @@ export default function CommentSection({ guideId }: Props) {
 
           return <Button onPress={loadMore}>Carregar mais</Button>;
         }}
-        ListEmptyComponent={() => {
-          return (
-            <View style={{ marginBottom: 16 }}>
-              <Text style={{ textAlign: 'center' }}>Nenhum comentário foi feito. Seja o primeiro!</Text>
-            </View>
-          )
-        }}
+        ListEmptyComponent={<EmptyComponent />}
         keyExtractor={(comment) => comment.id}
         renderItem={
           ({ item: comment }) => {
@@ -121,3 +117,20 @@ export default function CommentSection({ guideId }: Props) {
     </View>
   )
 }
+
+function EmptyComponent() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Nenhum comentário foi feito. Seja o primeiro!</Text>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16
+  },
+  text: {
+    textAlign: 'center'
+  }
+})

@@ -9,9 +9,10 @@ type Props = {
   comment: ISerializedComment,
   setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
   setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
+  useAlternativeColors?: boolean
 }
 
-export default function Comment({ comment, setReplyTo, setShowRepliesTo }: Props) {
+export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlternativeColors = false }: Props) {
   const [liked, setLiked] = useState(comment.liked || false)
   const [likeCount, setLikeCount] = useState(comment.likeCount)
 
@@ -52,7 +53,7 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo }: Props
       style={[
         styles.card,
         {
-          backgroundColor: theme.colors.surfaceVariant,
+          backgroundColor: useAlternativeColors ? theme.colors.surface : theme.colors.surfaceVariant,
         },
       ]}
     >
@@ -91,13 +92,12 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo }: Props
               onPress={() => handleLike(comment.id)}
               style={styles.likeButton}
             />
-
             <Text variant="labelMedium">
               {likeCount}
             </Text>
           </View>
-
           <Button
+            icon={'reply'}
             mode="text"
             compact
             onPress={() => setReplyTo(comment)}
@@ -105,6 +105,7 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo }: Props
             Responder
           </Button>
           <Button
+            icon={'message-reply-text'}
             mode="text"
             compact
             onPress={() => setShowRepliesTo(comment)}
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
+    gap: 8,
     justifyContent: 'flex-end'
   },
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { StyleSheet, TextInputContentSizeChangeEvent, View } from "react-native"
+import { Pressable, StyleSheet, TextInputContentSizeChangeEvent, View } from "react-native"
 
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 
@@ -7,10 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { createCommentFormSchema, CreateCommentFormType, ISerializedComment } from "@org/contracts"
 
 import { useForm } from "react-hook-form"
-import { Avatar, Button, Card, IconButton, Text, useTheme } from "react-native-paper"
+import { Button, Icon, MD3Theme, Text, useTheme } from "react-native-paper"
 import { useAuthContext } from "../../../contexts/auth/useAuth"
 import { ApiService } from "../../../services/api/api.service"
 import AppInputController from "../../forms/AppInputController"
+import ReplyCard from "./reply-card/ReplyCard"
 
 type Props = {
   guideId: string;
@@ -28,6 +29,8 @@ const MAX_HEIGHT = 160;
 
 export default function PostComment({ guideId, addComment, replyTo, setReplyTo, addReply, setShowRepliesTo }: Props) {
   const authContext = useAuthContext()
+  const theme = useTheme()
+  const styles = makeStyles(theme)
 
   const { control, handleSubmit, setValue } = useForm<CreateCommentFormType>({
     resolver,
@@ -43,8 +46,6 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
   const [error, setError] = useState('')
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  const theme = useTheme()
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -120,7 +121,6 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
         })
     }
 
-
     if (replyTo) {
       createReply(replyTo)
     } else {
@@ -129,21 +129,11 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
 
   }
 
-
   useEffect(() => {
     if (replyTo) {
       handlePresentModalPress()
     }
   }, [replyTo])
-
-
-  const getCreatedBy = (replyTo: ISerializedComment) => {
-    if (replyTo.createdBy && 'username' in replyTo.createdBy) {
-      return replyTo.createdBy.username
-    }
-
-    return ''
-  }
 
   return (
     <View>
@@ -154,75 +144,27 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
         Comentar
       </Button>
       <BottomSheetModal
-        backgroundStyle={{
-          backgroundColor: theme.colors.surfaceVariant
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: theme.colors.onSurfaceVariant
-        }}
+        backgroundStyle={styles.background}
+        handleIndicatorStyle={styles.handle}
         ref={bottomSheetModalRef}
         onDismiss={handleOnDismiss}
       >
-        <BottomSheetView style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'stretch',
-        }}>
-
-          <View>
+        <BottomSheetView style={styles.bottomSheet}>
+          <Text variant="titleLarge">
             {
-              replyTo && (
-                <Card
-                  mode="contained"
-                  style={[
-                    styles.card,
-                    {
-                      backgroundColor: theme.colors.surface,
-                    },
-                  ]}
-                >
-                  <Card.Content>
-                    <View style={styles.header}>
-                      <Avatar.Text
-                        size={40}
-                        label={getCreatedBy(replyTo).slice(0, 2).toUpperCase()}
-                      />
-
-                      <View style={styles.author}>
-                        <Text variant="titleSmall">{getCreatedBy(replyTo)}</Text>
-
-                        <Text
-                          variant="bodySmall"
-                          style={{ color: theme.colors.onSurfaceVariant }}
-                        >
-                          {new Date(replyTo.createdAt).toLocaleString('pt-BR')}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <Text
-                      variant="bodyMedium"
-                      style={styles.content}
-                    >
-                      {replyTo.content}
-                    </Text>
-                  </Card.Content>
-                </Card>
-              )
+              replyTo ? 'Responder' : 'Novo Comentário'
             }
+          </Text>
+          <View>
+            {replyTo && <ReplyCard replyTo={replyTo} />}
             <View
-              style={{
-                flex: 1,
-                margin: 8,
-                flexDirection: 'row',
-                alignItems: 'flex-end',
-              }}>
+              style={styles.form}
+            >
               <AppInputController
                 control={control}
                 inputOptions={{
                   onContentSizeChange: handleContentSizeChange,
-                  label: 'Comentário',
-                  placeholder: 'Escreva a sua opinião',
+                  placeholder: 'Escreva a seu comentário...',
                   multiline: true,
                   style: {
                     height,
@@ -231,51 +173,53 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
                 }}
                 name={"content"}
               />
-              <IconButton
-                iconColor={theme.colors.primary}
-                icon="send"
+              <Pressable
                 onPress={handleSubmit(onSubmit)}
                 disabled={loading}
-              />
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 8,
+                  backgroundColor: theme.colors.primary,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: loading ? 0.5 : 1,
+                }}
+              >
+                <Icon
+                  source="send"
+                  size={24}
+                  color={theme.colors.onPrimary}
+                />
+              </Pressable>
             </View>
           </View>
-
         </BottomSheetView>
       </BottomSheetModal>
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 12,
-    margin: 8,
-  },
-
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  author: {
-    flex: 1,
-    marginLeft: 12,
-  },
-
-  content: {
-    marginTop: 16,
-    lineHeight: 21,
-  },
-
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    justifyContent: 'flex-end'
-  },
-
-  like: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-});
+const makeStyles = ({ colors }: MD3Theme) => {
+  return StyleSheet.create({
+    background: {
+      backgroundColor: colors.surfaceVariant
+    },
+    handle: {
+      backgroundColor: colors.onSurfaceVariant
+    },
+    bottomSheet: {
+      flex: 1,
+      gap: 8,
+      display: 'flex',
+      alignItems: 'stretch',
+      marginHorizontal: 16
+    },
+    form: {
+      flex: 1,
+      gap: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+    }
+  })
+};

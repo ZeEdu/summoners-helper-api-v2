@@ -1,7 +1,7 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useEffect, useRef, useState } from "react";
-import { FlatList, View } from "react-native";
-import { Button, Text, useTheme } from "react-native-paper";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Button, MD3Theme, Text, useTheme } from "react-native-paper";
 
 import { CommentPaginationDto, ISerializedComment } from "@org/contracts";
 
@@ -21,6 +21,7 @@ export default function Replies({ showRepliesTo, setShowRepliesTo, guideId, setR
   const [replies, setReplies] = useState<ISerializedComment[]>([])
 
   const theme = useTheme()
+  const styles = makeStyles(theme)
 
   const defaultQuery: CommentPaginationDto = {
     limit: 10,
@@ -61,51 +62,70 @@ export default function Replies({ showRepliesTo, setShowRepliesTo, guideId, setR
     <View>
       <BottomSheetModal
         onDismiss={handleOnDismiss}
-        backgroundStyle={{
-          backgroundColor: theme.colors.surfaceVariant
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: theme.colors.onSurfaceVariant
-        }}
+        backgroundStyle={styles.background}
+        handleIndicatorStyle={styles.handleIndicator}
         ref={bottomSheetModalRef}
       >
-        <BottomSheetView style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'stretch',
-        }}>
-          <View>
-            <FlatList
-              keyExtractor={({ id }) => id}
-              data={replies}
-              ListEmptyComponent={() => (
-                <View style={{ margin: 16, justifyContent: 'center' }}>
-                  <Text
-                    variant="titleMedium"
-                    style={{ textAlign: 'center', marginVertical: 8 }}
-                  >
-                    Esse comentário não tem nenhuma resposta
-                  </Text>
-                  <Button
-                    mode="contained"
-                    onPress={handleReplyTo}
-                  >
-                    Responder
-                  </Button>
-                </View>
+        <BottomSheetView style={styles.view}>
+          <FlatList
+            style={styles.flatList}
+            keyExtractor={({ id }) => id}
+            data={replies}
+            ListEmptyComponent={() => (
+              <View style={styles.emptyComponentWrapper}>
+                <Text
+                  variant="titleMedium"
+                  style={styles.emptyComponentText}
+                >
+                  Esse comentário não tem nenhuma resposta
+                </Text>
+                <Button
+                  mode="contained"
+                  onPress={handleReplyTo}
+                >
+                  Responder
+                </Button>
+              </View>
+            )}
+            renderItem={
+              ({ item: comment }) => (
+                <Comment
+                  comment={comment}
+                  setReplyTo={setReplyTo}
+                  setShowRepliesTo={setShowRepliesTo}
+                  useAlternativeColors={true}
+                />
               )}
-              renderItem={
-                ({ item: comment }) => (
-                  <Comment
-                    comment={comment}
-                    setReplyTo={setReplyTo}
-                    setShowRepliesTo={setShowRepliesTo}
-                  />
-                )}
-            />
-          </View>
+          />
         </BottomSheetView>
       </BottomSheetModal>
     </View>
   )
+}
+
+const makeStyles = ({ colors }: MD3Theme) => {
+  return StyleSheet.create({
+    background: {
+      backgroundColor: colors.surfaceVariant
+    },
+    handleIndicator: {
+      backgroundColor: colors.onSurfaceVariant
+    },
+    view: {
+      flex: 1,
+      display: 'flex',
+      alignItems: 'stretch',
+    },
+    flatList: {
+      marginHorizontal: 16
+    },
+    emptyComponentWrapper: {
+      margin: 16,
+      justifyContent: 'center'
+    },
+    emptyComponentText: {
+      textAlign: 'center',
+      marginVertical: 8
+    }
+  })
 }
