@@ -86,25 +86,19 @@ export default function RecentGuidesList() {
               <FlatList
                 contentContainerStyle={styles.flatListContainer}
                 data={guides}
-                ListFooterComponent={() => {
-                  return (
-                    <View>
-                      <Button onPress={loadMore}>
-                        Carregar mais
-                      </Button>
-                    </View>
-                  )
-                }}
-                renderItem={({ item: guide }) => {
-                  return (
-                    <GuideCard
-                      onPress={() => {
-                        navigation.navigate("ViewGuide", { guide })
-                      }}
-                      guide={guide}
-                    />
-                  )
-                }}
+                ListFooterComponent={() => (<View>
+                  <Button onPress={loadMore}>
+                    Carregar mais
+                  </Button>
+                </View>)}
+                renderItem={({ item: guide }) => (
+                  <GuideCard
+                    onPress={() => {
+                      navigation.navigate("ViewGuide", { guide })
+                    }}
+                    guide={guide}
+                  />
+                )}
               />
             </FadeInView>
           ) : null

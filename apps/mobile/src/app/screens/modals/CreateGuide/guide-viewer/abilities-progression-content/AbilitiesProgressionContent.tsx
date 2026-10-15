@@ -1,6 +1,5 @@
 import { FlatList, StyleSheet, View } from "react-native";
-import { ActivityIndicator, MD3Theme, Text, useTheme } from "react-native-paper";
-import useDataDragonContext from "../../../../../../contexts/data-dragon/useDataDragonContext";
+import { ActivityIndicator, Text } from "react-native-paper";
 import useChampionData from "../../../../../../hooks/useChampion";
 import { AbilitiesProgressionDto } from "../../forms/AbilitiesProgressionForm";
 import SpellDescriptionCard from "./spell-description-card/SpellDescriptionCard";
@@ -13,11 +12,7 @@ type Props = {
 }
 
 export default function AbilitiesProgressionContent({ abilitiesProgression, championId }: Props) {
-  const theme = useTheme()
   const { championData, error, loading } = useChampionData(championId)
-  const dataDragon = useDataDragonContext()
-
-  const styles = makeStyles(theme)
 
   if (loading) {
     return (
@@ -38,7 +33,9 @@ export default function AbilitiesProgressionContent({ abilitiesProgression, cham
   }
 
   return (
-    <>
+    <View style={styles.container}>
+      <Text variant="bodyMedium"> {abilitiesProgression.abilitiesProgressionDescription} </Text>
+
       <FlatList
         data={championData?.spells}
         contentContainerStyle={styles.spellContentContainer}
@@ -55,16 +52,17 @@ export default function AbilitiesProgressionContent({ abilitiesProgression, cham
         <AbilitiesProgressionHeader spells={championData.spells} championId={championData.id} />
         <AbilitiesProgressionBody spells={championData.spells} abilitiesProgression={abilitiesProgression} />
       </View >
-    </>
+    </View>
   )
 }
 
 
-const makeStyles = ({ colors }: MD3Theme) => {
-  return StyleSheet.create({
-    spellContentContainer: { gap: 4 },
-    abilitiesProgressionContainer: {
-      gap: 8
-    }
-  })
-}
+const styles = StyleSheet.create({
+  container: {
+    gap: 8
+  },
+  spellContentContainer: { gap: 4 },
+  abilitiesProgressionContainer: {
+    gap: 8
+  }
+})

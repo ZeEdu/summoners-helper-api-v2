@@ -33,7 +33,6 @@ export default function ViewGuide({ route }: Props) {
   const { guide } = route.params;
 
   const [showMenu, setShowMenu] = useState(false);
-  const [expandedAccordion, setExpandedAccordion] = useState(true);
   const navigation = useNavigation();
 
   const openMenu = () => {
@@ -137,28 +136,58 @@ export default function ViewGuide({ route }: Props) {
 
   return (
     <StyledView style={{ height, flex: 1 }}>
-      <HeroBanner championId={guide.champion} role={guide.role} />
       <ScrollView>
-        <ExpandableCard title="Introdução" titleIcon="text-box-outline">
-          <Text variant="bodySmall">{guideIntroduction.introduction}</Text>
+        <HeroBanner championId={guide.champion} role={guide.role} />
+        <ExpandableCard
+          title="Introdução"
+          titleIcon="text-box-outline"
+        >
+          <Text
+            variant="bodyMedium"
+          >
+            {guideIntroduction.introduction}
+          </Text>
         </ExpandableCard>
 
-        <ExpandableCard title="Magias" titleIcon="creation">
-          <SpellContent spells={guideSummonerSpells} />
+        <ExpandableCard
+          title="Magias"
+          titleIcon="creation"
+        >
+          <SpellContent
+            spells={guideSummonerSpells}
+          />
         </ExpandableCard>
-        <ExpandableCard title={'Runas'} titleIcon={'hexagram-outline'}>
-          <RuneContent rune={mainRune} />
-          <RuneContent rune={secondaryRune} />
+
+        <ExpandableCard
+          title={'Runas'}
+          titleIcon={'hexagram-outline'}
+        >
+          <RuneContent
+            rune={mainRune}
+          />
+          <RuneContent
+            rune={secondaryRune}
+          />
         </ExpandableCard>
-        <ExpandableCard title={'Bonus'} titleIcon={'shield-cross'}>
-          <BonusContent bonus={bonus} />
+
+        <ExpandableCard
+          title={'Bonus'}
+          titleIcon={'shield-cross'}
+        >
+          <BonusContent
+            bonus={bonus}
+          />
         </ExpandableCard>
+
         <ExpandableCard
           title={'Itens'}
           titleIcon={'shopping'}
         >
-          <ItemsContent items={items} />
+          <ItemsContent
+            items={items}
+          />
         </ExpandableCard>
+
         <ExpandableCard
           title={'Progressão de Abilidades'}
           titleIcon={'chart-timeline-variant'}
@@ -173,15 +202,18 @@ export default function ViewGuide({ route }: Props) {
           title={'Ameaças'}
           titleIcon={'alert-outline'}
         >
-          <ThreatsContent threats={threats} />
+          <ThreatsContent
+            threats={threats}
+          />
         </ExpandableCard>
 
         <ExpandableCard
           title={'Comentários'}
           titleIcon='comment-multiple-outline'
-          defaultExpanded={true}
         >
-          <CommentSection guideId={guide.id} />
+          <CommentSection
+            guideId={guide.id}
+          />
         </ExpandableCard>
       </ScrollView>
     </StyledView>

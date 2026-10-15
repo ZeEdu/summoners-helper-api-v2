@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View } from 'react-native';
 import { MD3Theme, Text, useTheme } from 'react-native-paper';
 
-import { IGuide } from '@org/contracts';
+import { GuideDto } from '@org/contracts';
 import { StyledView } from '@org/ui';
 
 import RecentGuidesList from './RecentGuidesList';
@@ -13,7 +13,7 @@ export default function RecentGuides() {
   const styles = makeStyles(theme)
   const navigation = useNavigation()
 
-  const navigateToGuide = (guide: IGuide) => {
+  const navigateToGuide = (guide: GuideDto) => {
     navigation.navigate('ViewGuide', { guide })
   }
 

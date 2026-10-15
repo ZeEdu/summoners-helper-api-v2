@@ -1,9 +1,9 @@
-import { MainRuneDto } from '../../forms/MainRunesForm';
 import { Card, List, MD3Theme, useTheme } from 'react-native-paper';
+import { MainRuneDto } from '../../forms/MainRunesForm';
 
 import { StyleSheet } from 'react-native';
-import RunePathListItem from './main-path-list-item/MainPathListItem';
 import { SecondaryRuneDto } from '../../forms/SecondaryRunesForm';
+import RunePathListItem from './main-path-list-item/MainPathListItem';
 import RuneListItem from './rune-list-item/RuneListItem';
 
 function mainRuneTypeGuard(
@@ -70,7 +70,7 @@ export default function RuneContent({ rune }: Props) {
           <RuneListItem
             runeId={thirdSlot}
             title={'Terceira Runa'}
-            divider={false}
+            divider={fourthSlot ? true : false}
           />
           {fourthSlot && (
             <RuneListItem
