@@ -8,7 +8,7 @@ import {
   AbilityOption,
   CreateGuideFormDto,
   CreateGuideFormSchema,
-  IGuide
+  GuideDto
 } from '@org/contracts';
 import { StyledView } from '@org/ui';
 
@@ -38,7 +38,7 @@ const createRequest = (value: CreateGuideFormDto, guideId?: string,) => {
 }
 
 type Props = StaticScreenProps<{
-  guide?: IGuide
+  guide?: GuideDto
 }>
 
 export default function CreateGuide({ route }: Props) {
@@ -62,7 +62,7 @@ export default function CreateGuide({ route }: Props) {
     setError('');
     setLoading(true);
 
-    const guideId = route.params.guide?._id.toString()
+    const guideId = route.params.guide?.id
 
     createRequest(value, guideId)
       .catch((err) => {

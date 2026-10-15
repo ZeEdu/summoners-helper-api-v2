@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Button, FAB, MD3Theme, Text, useTheme } from 'react-native-paper';
 
-import { GuidePaginationDto, IGuide, ROLES, ROLES_LABEL } from '@org/contracts';
+import { GuideDto, GuidePaginationDto, ROLES, ROLES_LABEL } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
 import { useNavigation } from '@react-navigation/native';
@@ -45,7 +45,7 @@ export default function MyGuides() {
   const theme = useTheme();
   const style = makeStyles(theme);
 
-  const [builds, setBuilds] = useState<IGuide[]>([]);
+  const [builds, setBuilds] = useState<GuideDto[]>([]);
   const [count, setCount] = useState(0);
 
   const hasMore = builds.length < count;
@@ -113,13 +113,13 @@ export default function MyGuides() {
     getBuilds()
   }
 
-  const championList = dataDragonContext.dataDragon?.champions || [];
+  const championList = dataDragonContext.dataDragonLists.champions;
 
-  const editGuide = (guide: IGuide) => {
+  const editGuide = (guide: GuideDto) => {
     navigation.navigate('CreateGuide', { guide });
   }
 
-  const viewGuide = (guide: IGuide) => {
+  const viewGuide = (guide: GuideDto) => {
     navigation.navigate('ViewGuide', { guide });
   }
 
@@ -192,7 +192,7 @@ export default function MyGuides() {
               <FlatList
                 style={{ paddingBottom: 8 }}
                 data={builds}
-                keyExtractor={(item) => item._id.toString()}
+                keyExtractor={(item) => item.id}
                 contentContainerStyle={{
                   paddingHorizontal: 16,
                   rowGap: 8
@@ -219,10 +219,13 @@ export default function MyGuides() {
                 )}
               />
             ) : (
-              <View>
-                <View>
-                  <Text>Voce não tem nenhuma build ainda</Text>
-                </View>
+              <View style={{ flex: 1, justifyContent: 'center' }}>
+                <Text
+                  variant='headlineSmall'
+                  style={{ textAlign: 'center' }}
+                >
+                  Você não tem nenhuma build ainda
+                </Text>
               </View>
             )
         }
