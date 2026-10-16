@@ -3,15 +3,12 @@ import { CanActivateFn, Router } from '@angular/router';
 import { SessionService } from '../service/session.service';
 
 export const isSignedInGuard: CanActivateFn = () => {
-  const sessionService = inject(SessionService)
-  const router = inject(Router)
+  const sessionService = inject(SessionService);
+  const router = inject(Router);
 
-  const isSigned = !!sessionService.user()
-
-  if (!isSigned) {
-    router.navigate(['login'])
-    return false
+  const isSigned = !!sessionService.user();
+  if (isSigned) {
+    return true;
   }
-
-  return true
+  return router.createUrlTree(['login']);
 };

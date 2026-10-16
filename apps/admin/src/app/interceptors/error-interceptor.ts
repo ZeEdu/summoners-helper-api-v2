@@ -6,22 +6,23 @@ import { AuthService } from '../auth/service/auth.service';
 import { SessionService } from '../auth/service/session.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router)
-  const sessionService = inject(SessionService)
-  const authService = inject(AuthService)
+  const router = inject(Router);
+  const sessionService = inject(SessionService);
+  const authService = inject(AuthService);
 
-  return next(req).pipe(catchError((err) => {
-    if ([401, 403].includes(err.status) && !!sessionService.user) {
-      router.navigate(['login'])
-      authService.logout().pipe(catchError((err) => {
-        return of(null)
-      }))
-        .subscribe() // TODO: deve ter uma maneira melhor de fazer isso
-      // force logout
-    }
+  return next(req).pipe(
+    catchError((err) => {
+      const hasUserSession = !!sessionService.user();
 
-    const error = (err && err.error && err.error.message) || err.statusText;
-    console.error(err);
-    return throwError(() => error);
-  }));
+      if ([401, 403].includes(err.status) && hasUserSession) {
+        router.navigate(['login']);
+        authService
+          .logout()
+          .pipe(catchError(() => of(null)))
+          .subscribe();
+      }
+
+      return throwError(() => err);
+    }),
+  );
 };
