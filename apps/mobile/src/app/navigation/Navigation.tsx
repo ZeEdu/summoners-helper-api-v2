@@ -67,15 +67,19 @@ const RootStack = createNativeStackNavigator({
       if: useIsAuthenticated,
       screens: {
         BindRiotAccount: {
+          options: { title: 'Vincular conta Riot' },
           screen: BindRiotAccount
         },
         CreateGuide: {
+          options: { title: 'Criar Guia' },
           screen: CreateGuide
         },
         ViewGuide: {
+          options: { title: 'Visualizar guia' },
           screen: ViewGuide
         },
         ReportGuide: {
+          options: { title: 'Denunciar guia' },
           screen: ReportGuide
         }
       },

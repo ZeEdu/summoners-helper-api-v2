@@ -63,8 +63,10 @@ export default function Profile() {
         <View style={styles.userInfoContainer}>
           <View style={styles.profileHeader}>
             <Avatar.Text size={48} label={avatarTextLabel} />
+
             <View>
               <Text variant="titleLarge">{username}</Text>
+
               <Text variant="labelMedium">Perfil do Summoner's Helper</Text>
             </View>
           </View>
@@ -104,6 +106,7 @@ export default function Profile() {
                 <Text variant="labelMedium" style={styles.itemTitleText}>
                   Nome no Jogo
                 </Text>
+
                 <Text variant="bodyLarge">{gameName}</Text>
               </View>
 
@@ -115,6 +118,8 @@ export default function Profile() {
                 </Text>
                 <Text variant="bodyLarge">{tagLine}</Text>
               </View>
+
+              <Divider style={styles.divider} />
 
               <View style={styles.item}>
                 <Text variant="labelMedium" style={styles.itemTitleText}>
@@ -157,13 +162,20 @@ export default function Profile() {
       </StyledView>
 
       <Portal>
-        <Dialog visible={isDialogVisible} onDismiss={closeDialog}>
-          <Dialog.Title>Você Tem certeza</Dialog.Title>
+        <Dialog
+          visible={isDialogVisible}
+          onDismiss={closeDialog}
+        >
+          <Dialog.Title>
+            Você Tem certeza
+          </Dialog.Title>
+
           <Dialog.Content>
             <Text variant="bodyMedium">
               Você tem certeza que quer deslogar?
             </Text>
           </Dialog.Content>
+
           <Dialog.Actions>
             <Button onPress={closeDialog}>NÃO</Button>
             <Button onPress={handleLogOut}>SIM</Button>

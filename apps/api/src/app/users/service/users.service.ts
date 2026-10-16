@@ -144,7 +144,7 @@ export class UsersService {
   }
 
   async updateUserWithRiotData(
-    user: IUser,
+    user: UserDto,
     updateProfileDto: UpdateUserProfileDto,
   ) {
     const accountData = await this.riotApiService.getAccountByRiotId(
@@ -159,7 +159,7 @@ export class UsersService {
       server: updateProfileDto.server,
     };
 
-    return this.update(user._id.toString(), updateData);
+    return this.update(user.id, updateData);
   }
 
   async getTopMasteries(user: UserDtoWithPuuid, count: number) {

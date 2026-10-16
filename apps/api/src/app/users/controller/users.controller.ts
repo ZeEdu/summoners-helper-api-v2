@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 
-import { IUser, UpdateUserProfileDto, updateUserProfileSchema, UserDto, UserDtoWithPuuid, UsersPaginationDto, usersPaginationSchema } from '@org/contracts';
+import { UpdateUserProfileDto, updateUserProfileSchema, UserDto, UserDtoWithPuuid, UsersPaginationDto, usersPaginationSchema } from '@org/contracts';
 
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
@@ -36,7 +36,7 @@ export class UsersController {
   @Patch('update-profile')
   async updateProfile(
     @CurrentUser()
-    user: IUser,
+    user: UserDto,
     @Body(new ZodValidationPipe(updateUserProfileSchema))
     updateProfileDto: UpdateUserProfileDto,
   ) {
