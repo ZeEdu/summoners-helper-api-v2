@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import AppSelectController from '../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../components/forms/AppInputController';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
 import useDataDragonContext from '../../../../contexts/data-dragon/useDataDragonContext';
 import { ApiService } from '../../../../services/api/api.service';
 import GuideListItem from './guide-list-item/GuideListItem';
@@ -40,6 +41,7 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
 export default function MyGuides() {
   const authContext = useAuthContext();
   const dataDragonContext = useDataDragonContext();
+  const userHasRiotBindedAccount = useUserHasRiotBindedAccount();
   const navigation = useNavigation()
 
   const theme = useTheme();
@@ -63,8 +65,11 @@ export default function MyGuides() {
   });
 
   const handleCreateGuide = () => {
-    // TODO: Só navega para a próxima tela se tiver os dados vinculados da RIOT
-    navigation.navigate('CreateGuide', {});
+    if (userHasRiotBindedAccount) {
+      navigation.navigate('CreateGuide', {});
+    } else {
+      console.log('Avisar o usuário');
+    }
   };
 
   const getBuilds = async () => {

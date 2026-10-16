@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ICreateUserDto, ILoginUserDto, IUser, UserDto } from '@org/contracts';
+import { ICreateUserDto, ILoginUserDto, UserDto } from '@org/contracts';
 
 import { AuthEvents } from '../../auth-events';
 import { useThemeContext } from '../../providers/theme.provider';
@@ -79,7 +79,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await ApiService.Users.me();
 
-      const userFromRequest = response as IUser;
+      const userFromRequest = response;
       setUser(userFromRequest);
       return userFromRequest;
     } catch (error) {
