@@ -94,7 +94,7 @@ const makeStyles = ({ colors }: MD3Theme) => {
       flexDirection: 'row',
     },
     championName: {
-      color: colors.onSurface,
+      color: colors.primary,
     },
     chip: {
       backgroundColor: colors.primaryContainer,

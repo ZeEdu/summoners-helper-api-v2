@@ -26,7 +26,7 @@ export type SecondaryRuneDto = z.infer<typeof secondaryRuneSchema>;
 const resolver = zodResolver(secondaryRuneSchema);
 
 export default function GuideSecondaryRunesForm() {
-  const useDataDragon = useDataDragonContext();
+  const dataDragon = useDataDragonContext();
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
 
@@ -58,8 +58,8 @@ export default function GuideSecondaryRunesForm() {
     ],
   });
 
-  const runeList = useDataDragon.dataDragon?.runes || [];
-  const runeMap = useDataDragon.dataDragonMaps?.runes || {};
+  const runeList = dataDragon.lists?.runes || [];
+  const runeMap = dataDragon.maps?.runes || {};
 
   const buildSecondaryRunePathOptions = () => {
     return runeList

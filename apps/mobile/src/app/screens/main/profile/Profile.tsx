@@ -19,10 +19,14 @@ import { StyledView } from '@org/ui';
 
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
+import { useThemeContext } from '../../../../providers/theme.provider';
 
 export default function Profile() {
   const theme = useTheme();
   const navigation = useNavigation();
+
+  const themeContext = useThemeContext();
+
   const authContext = useAuthContext();
   const styles = makeStyle(theme);
   const userHasRiotBindedAccount = useUserHasRiotBindedAccount();
@@ -149,6 +153,13 @@ export default function Profile() {
               </View>
             </Card>
           )}
+        </View>
+        <View>
+          <Button mode='contained' onPress={() => {
+            themeContext.toggleTheme()
+          }}>
+            Trocar tema
+          </Button>
         </View>
         <View style={styles.logOutContainer}>
           <Button

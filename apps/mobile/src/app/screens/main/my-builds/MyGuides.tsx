@@ -118,7 +118,7 @@ export default function MyGuides() {
     getBuilds()
   }
 
-  const championList = dataDragonContext.dataDragonLists.champions;
+  const championList = dataDragonContext.lists.champions;
 
   const editGuide = (guide: GuideDto) => {
     navigation.navigate('CreateGuide', { guide });

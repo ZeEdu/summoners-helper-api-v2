@@ -27,8 +27,8 @@ export type DataDragonMaps = {
 export type DataDragonContextType = {
   loading: boolean;
   error: string | undefined;
-  dataDragonLists: DataDragonLists;
-  dataDragonMaps: DataDragonMaps;
+  lists: DataDragonLists;
+  maps: DataDragonMaps;
 
   reload: () => void;
 

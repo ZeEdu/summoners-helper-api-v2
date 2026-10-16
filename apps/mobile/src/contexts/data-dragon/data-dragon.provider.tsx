@@ -3,7 +3,6 @@ import { ApiService } from "../../services/api/api.service";
 import { usePatchVersion } from "../patchVersion/usePatchVersion";
 import { DataDragonContext, DataDragonContextType, DataDragonLists, DataDragonMaps } from "./data-dragon.context";
 
-// Migrar as chamadas individuais para a chamada ao get-assets da api local
 export default function DataDragonProvider({ children }: PropsWithChildren) {
   const { version } = usePatchVersion()
 
@@ -72,8 +71,8 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
   const value: DataDragonContextType = {
     loading,
     error,
-    dataDragonLists,
-    dataDragonMaps,
+    lists: dataDragonLists,
+    maps: dataDragonMaps,
     reload,
     getChampion,
     getSpell,

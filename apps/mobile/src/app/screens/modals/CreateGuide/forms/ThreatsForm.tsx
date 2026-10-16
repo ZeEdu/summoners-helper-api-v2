@@ -23,7 +23,7 @@ export type ThreatsDto = z.infer<typeof ThreatsSchema>;
 const resolver = zodResolver(ThreatsSchema);
 
 export default function ThreatsForm() {
-  const useDataDragon = useDataDragonContext();
+  const dataDragon = useDataDragonContext();
   const mainFormContext = useFormContext<CreateGuideFormDto>();
 
   const defaultValues: ThreatsDto = {
@@ -42,7 +42,7 @@ export default function ThreatsForm() {
     name: 'threats',
   });
 
-  const championList = useDataDragon.dataDragon?.champions || [];
+  const championList = dataDragon.lists.champions || [];
 
   const appendThreat = () => {
     append({

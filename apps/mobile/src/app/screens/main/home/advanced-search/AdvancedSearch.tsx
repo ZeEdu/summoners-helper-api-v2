@@ -68,7 +68,7 @@ export default function Search() {
 
   const [isFromSearch, setIsFromSearch] = useState(false)
 
-  const championList = useDataDragon.dataDragonLists.champions;
+  const championList = useDataDragon.lists.champions;
 
   const defaultQuery: FilterInputDto = { offset: 0 };
 
