@@ -13,8 +13,8 @@ import { AuthTokenStorageService } from './auth/service/auth-token-storage.servi
 import { AuthService } from './auth/service/auth.service';
 import { SessionService } from './auth/service/session.service';
 import { DataDragonService } from './data-dragon/data-dragon.service';
-import { authInterceptor } from './interceptors/auth-interceptor';
-import { errorInterceptor } from './interceptors/error-interceptor';
+import { authInterceptor } from './interceptors/auth-interceptor/auth-interceptor';
+import { errorInterceptor } from './interceptors/error-interceptor/error-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

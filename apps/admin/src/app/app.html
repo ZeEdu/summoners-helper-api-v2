@@ -2,7 +2,7 @@
   <mat-drawer #drawer class="sidenav" mode="side">
     <mat-list>
       <div mat-subheader>Folders</div>
-      @for (folder of folders; track folder) {
+      <!-- @for (folder of folders; track folder) {
       <mat-list-item>
         <mat-icon matListItemIcon>folder</mat-icon>
         <div matListItemTitle>{{ folder.name }}</div>
@@ -10,14 +10,14 @@
       </mat-list-item>
       }
       <mat-divider></mat-divider>
-      <div mat-subheader>Notes</div>
-      @for (note of notes; track note) {
+      <div mat-subheader>Notes</div> -->
+      <!-- @for (note of notes; track note) {
       <mat-list-item>
         <mat-icon matListItemIcon>note</mat-icon>
         <div matListItemTitle>{{ note.name }}</div>
         <div matListItemLine>{{ note.updated | date }}</div>
       </mat-list-item>
-      }
+      } -->
     </mat-list>
   </mat-drawer>
   <div class="content" style="display: flex">

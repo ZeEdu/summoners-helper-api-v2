@@ -1,5 +1,4 @@
-import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,8 +6,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from './auth/service/auth.service';
 import { SessionService } from './auth/service/session.service';
 import { DataDragonService } from './data-dragon/data-dragon.service';
+import { EventBusService } from './services/event-bus.service';
 
 export interface Section {
   name: string;
@@ -23,7 +25,6 @@ export interface Section {
     MatListModule,
     MatIconModule,
     MatDividerModule,
-    DatePipe,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -32,36 +33,36 @@ export interface Section {
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit, OnDestroy {
+  authService = inject(AuthService)
   sessionService = inject(SessionService);
   dataDragonService = inject(DataDragonService)
+  eventBusService = inject(EventBusService)
 
   showToolbar = !!this.sessionService.user();
 
+  eventBusSub?: Subscription
+
   protected title = 'admin';
 
-  folders: Section[] = [
-    {
-      name: 'Photos',
-      updated: new Date('1/1/16'),
-    },
-    {
-      name: 'Recipes',
-      updated: new Date('1/17/16'),
-    },
-    {
-      name: 'Work',
-      updated: new Date('1/28/16'),
-    },
-  ];
-  notes: Section[] = [
-    {
-      name: 'Vacation Itinerary',
-      updated: new Date('2/20/16'),
-    },
-    {
-      name: 'Kitchen Remodel',
-      updated: new Date('1/18/16'),
-    },
-  ];
+  ngOnInit(): void {
+    this.eventBusSub = this.eventBusService.on('logout', () => {
+      this.handleLogout()
+    })
+  }
+
+  ngOnDestroy() {
+    this.eventBusSub?.unsubscribe()
+  }
+
+  handleLogout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        window.location.reload()
+      },
+      error: (err) => {
+        console.log({ err });
+      }
+    })
+  }
 }
