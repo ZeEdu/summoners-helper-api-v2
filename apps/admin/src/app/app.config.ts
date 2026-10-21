@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
   inject,
@@ -29,18 +29,27 @@ export const appConfig: ApplicationConfig = {
       if (accessToken) {
         const authService = inject(AuthService);
         const sessionService = inject(SessionService);
+
+        const clearSession = () => {
+          authTokenStorageService.delete();
+          sessionService.removeUser();
+        }
+
         return authService.refreshToken().pipe(
-          catchError(() => {
-            authTokenStorageService.delete();
-            sessionService.removeUser();
+          catchError((error) => {
+            if (isAuthenticationError(error)) {
+              clearSession()
+            }
+
             return of(null);
           }),
           switchMap((user) => {
             if (user) {
               return authService.getMe().pipe(
-                catchError(() => {
-                  authTokenStorageService.delete();
-                  sessionService.removeUser();
+                catchError((error) => {
+                  if (isAuthenticationError(error)) {
+                    clearSession()
+                  }
 
                   return of(null);
                 }),
@@ -61,3 +70,10 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => inject(DataDragonService).load()),
   ],
 };
+
+function isAuthenticationError(error: unknown): boolean {
+  return (
+    error instanceof HttpErrorResponse &&
+    error.status === 401
+  );
+}

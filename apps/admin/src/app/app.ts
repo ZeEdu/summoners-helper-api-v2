@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -39,11 +39,13 @@ export class App implements OnInit, OnDestroy {
   dataDragonService = inject(DataDragonService)
   eventBusService = inject(EventBusService)
 
-  showToolbar = !!this.sessionService.user();
+  showToolbar = computed(() => !!this.sessionService.user());
 
   eventBusSub?: Subscription
 
   protected title = 'admin';
+
+  isLoggingOut = false
 
   ngOnInit(): void {
     this.eventBusSub = this.eventBusService.on('logout', () => {
@@ -56,11 +58,17 @@ export class App implements OnInit, OnDestroy {
   }
 
   handleLogout() {
+    if (this.isLoggingOut) return
+
+    this.isLoggingOut = true
     this.authService.logout().subscribe({
       next: () => {
         window.location.reload()
       },
       error: (err) => {
+        this.sessionService.removeUser();
+        this.isLoggingOut = false;
+        window.location.reload()
         console.log({ err });
       }
     })
