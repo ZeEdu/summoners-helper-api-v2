@@ -22,12 +22,16 @@
   </mat-drawer>
   <div class="content" style="display: flex">
     <!-- Header -->
-    @if (sessionService.user()) {
+    @if (showToolbar()) {
     <mat-toolbar>
-      <button matIconButton aria-label="Example icon-button with menu icon" (click)="drawer.toggle()">
+      <!-- <button matIconButton (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
-      </button>
+      </button> -->
       <span>Painel Administrativo</span>
+      <span style="flex: 1 1 auto"></span>
+      <button matButton="filled" (click)="confirmUserLogoutIntention()">
+        Sair
+      </button>
     </mat-toolbar>
     }
     <!-- Content -->

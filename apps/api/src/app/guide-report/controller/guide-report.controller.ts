@@ -6,6 +6,7 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -45,7 +46,9 @@ export class GuideReportController {
     const { offset, limit, sort } = pagination;
     const filter = GuideReportFilters.get(pagination);
 
-    return this.guideReportService.get(filter, { offset, limit, sort });
+    throw new InternalServerErrorException('Erro teste')
+
+    // return this.guideReportService.get(filter, { offset, limit, sort });
   }
 
   @Get(':guideReportId')

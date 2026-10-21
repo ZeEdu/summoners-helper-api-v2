@@ -58,7 +58,6 @@ export class GuideReport implements AfterViewInit {
 
   private guideReportService = inject(GuideReportService);
 
-
   dataSource: GuideReportTableDataSource;
 
   GUIDE_REPORT_ACTION_TAKEN = GUIDE_REPORT_ACTION_TAKEN;

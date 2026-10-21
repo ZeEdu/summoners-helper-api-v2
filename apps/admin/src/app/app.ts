@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -9,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth/service/auth.service';
 import { SessionService } from './auth/service/session.service';
+import { CONFIRM_LOGOUT_ACTIONS, ConfirmUserLogout } from './components/confirm-user-logout';
 import { DataDragonService } from './data-dragon/data-dragon.service';
 import { EventBusService } from './services/event-bus.service';
 
@@ -34,6 +36,8 @@ export interface Section {
   styleUrl: './app.scss',
 })
 export class App implements OnInit, OnDestroy {
+  readonly dialog = inject(MatDialog);
+
   authService = inject(AuthService)
   sessionService = inject(SessionService);
   dataDragonService = inject(DataDragonService)
@@ -72,5 +76,21 @@ export class App implements OnInit, OnDestroy {
         console.log({ err });
       }
     })
+  }
+
+  confirmUserLogoutIntention() {
+    const dialogRef = this.dialog.open(ConfirmUserLogout)
+
+    dialogRef
+      .afterClosed()
+      .subscribe({
+        next: (result) => {
+          console.log({ result });
+
+          if (result === CONFIRM_LOGOUT_ACTIONS.CONFIRM) {
+            this.handleLogout()
+          }
+        }
+      })
   }
 }

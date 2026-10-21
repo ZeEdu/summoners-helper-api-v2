@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
 import { LoginUserDto, UserDto } from '@org/contracts';
-import { finalize, Observable, shareReplay, tap } from 'rxjs';
+import { catchError, finalize, Observable, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { API_CONSTANTS } from '../../endpoint.constants';
 import { AuthTokenStorageService } from './auth-token-storage.service';
 
@@ -24,11 +24,6 @@ export class AuthService {
       .post<{ accessToken: string }>(`${this.endpoint}/admin/login`, user, {
         withCredentials: true
       })
-      .pipe(
-        tap(({ accessToken }) => {
-          this.authTokenStorageService.set(accessToken)
-        })
-      )
   }
 
   logout() {
@@ -47,6 +42,25 @@ export class AuthService {
     return this.http.get<UserDto>(`${API_CONSTANTS.API_URL}/users/me`, {
       withCredentials: true
     })
+  }
+
+  setupLogin(user: LoginUserDto) {
+    return this
+      .login(user)
+      .pipe(
+        tap(({ accessToken }) => {
+          this.authTokenStorageService.set(accessToken)
+        }),
+        switchMap(() => {
+          return this.getMe()
+            .pipe(
+              catchError((error) => {
+                this.authTokenStorageService.delete()
+                return throwError(() => error)
+              }),
+            );
+        }),
+      )
   }
 
   refreshToken() {

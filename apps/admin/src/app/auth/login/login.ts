@@ -5,9 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { LoginUserDto } from '@org/contracts';
-import { switchMap, tap } from 'rxjs';
 import { AuthService } from '../service/auth.service';
 import { SessionService } from '../service/session.service';
 
@@ -19,12 +19,15 @@ import { SessionService } from '../service/session.service';
     MatInputModule,
     MatButtonModule,
     MatCardModule,
+    MatSnackBarModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login {
   router = inject(Router);
+  snackBar = inject(MatSnackBar)
+
   authService = inject(AuthService);
   sessionService = inject(SessionService);
 
@@ -41,18 +44,16 @@ export class Login {
     const user = this.loginForm().value();
 
     this.authService
-      .login(user)
-      .pipe(
-        switchMap(() => {
-          return this.authService.getMe().pipe(
-            tap((me) => {
-              this.sessionService.setUser(me);
-            }),
-          );
-        }),
-      )
-      .subscribe(() => {
-        this.router.navigate(['']);
+      .setupLogin(user)
+      .subscribe({
+        next: (me) => {
+          this.sessionService.setUser(me);
+          this.router.navigate(['']);
+        },
+        error: (err) => {
+          console.log({ err });
+          this.snackBar.open('Um erro ocorreu ao realizar o login. Tente novamente', 'Ok')
+        }
       });
 
     // {
