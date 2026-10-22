@@ -6,12 +6,11 @@ import {
   Body,
   Controller,
   Get,
-  InternalServerErrorException,
   Param,
   Patch,
   Post,
   Query,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 
 import {
@@ -46,9 +45,9 @@ export class GuideReportController {
     const { offset, limit, sort } = pagination;
     const filter = GuideReportFilters.get(pagination);
 
-    throw new InternalServerErrorException('Erro teste')
+    // throw new InternalServerErrorException('Erro teste')
 
-    // return this.guideReportService.get(filter, { offset, limit, sort });
+    return this.guideReportService.get(filter, { offset, limit, sort });
   }
 
   @Get(':guideReportId')

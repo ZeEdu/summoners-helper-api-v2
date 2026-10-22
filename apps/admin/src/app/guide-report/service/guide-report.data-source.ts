@@ -4,7 +4,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { FieldTree } from "@angular/forms/signals";
 import { MatPaginator } from "@angular/material/paginator";
 import { DEFAULT_LIMIT, GUIDE_REPORT_REASON, GuideReportPaginationDto, IPopulatedGuideReportDto } from "@org/contracts";
-import { catchError, debounceTime, map, merge, Observable, Subject, switchMap, tap, throwError } from "rxjs";
+import { catchError, debounceTime, map, merge, Observable, startWith, Subject, switchMap, tap } from "rxjs";
 import { GuideReportService } from "./guide-report.service";
 
 export type GuideReportTableItem = IPopulatedGuideReportDto
@@ -12,8 +12,6 @@ export type GuideReportTableItem = IPopulatedGuideReportDto
 type TableForm = FieldTree<{ observation: string, reason: GUIDE_REPORT_REASON | null }>
 
 export class GuideReportTableDataSource extends DataSource<GuideReportTableItem> {
-  data: GuideReportTableItem[] = [];
-
   paginator: MatPaginator | undefined;
   database: GuideReportService | undefined;
   form: TableForm;
@@ -86,17 +84,18 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
         return this.database
           .get(query)
           .pipe(
-            catchError((error) => {
-              this.hasError.set(true)
-              this.isLoading.set(false)
-
-              return throwError(() => error)
-            }),
             map(({ count, guideReports }) => {
               this.isLoading.set(false)
               this.resultsLength.set(count)
+
               return guideReports
-            })
+            }),
+            catchError((error) => {
+              this.hasError.set(true)
+              this.isLoading.set(false)
+              return []
+            }),
+            startWith([]),
           )
       })
     )
