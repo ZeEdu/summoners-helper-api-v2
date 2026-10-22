@@ -13,7 +13,6 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
 
 import {
-  DEFAULT_LIMIT,
   GUIDE_REPORT_ACTION_TAKEN,
   GUIDE_REPORT_REASON,
   GUIDE_REPORT_STATUS,
@@ -119,7 +118,8 @@ export class GuideReport implements AfterViewInit {
 
   querySort: Sort | null = null;
 
-  pageSize = DEFAULT_LIMIT;
+  // pageSize = DEFAULT_LIMIT;
+  pageSize = 5;
   pageIndex = 0;
 
   pageSizeOptions = [5, 10, 25, 100];

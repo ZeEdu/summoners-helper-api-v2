@@ -1,15 +1,21 @@
 import { DataSource } from "@angular/cdk/collections";
-import { computed, signal } from "@angular/core";
+import { signal } from "@angular/core";
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FieldTree } from "@angular/forms/signals";
 import { MatPaginator } from "@angular/material/paginator";
 import { DEFAULT_LIMIT, GUIDE_REPORT_REASON, GuideReportPaginationDto, IPopulatedGuideReportDto } from "@org/contracts";
-import { catchError, debounceTime, map, merge, Observable, startWith, Subject, switchMap, tap } from "rxjs";
+import { catchError, debounceTime, map, merge, Observable, of, startWith, Subject, switchMap, tap } from "rxjs";
 import { GuideReportService } from "./guide-report.service";
 
 export type GuideReportTableItem = IPopulatedGuideReportDto
 
 type TableForm = FieldTree<{ observation: string, reason: GUIDE_REPORT_REASON | null }>
+
+enum FILTER_EVENTS {
+  PAGINATION = 'pagination',
+  FILTER = 'filter',
+  RELOAD = 'reload'
+}
 
 export class GuideReportTableDataSource extends DataSource<GuideReportTableItem> {
   paginator: MatPaginator | undefined;
@@ -19,8 +25,6 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
   resultsLength = signal(0)
   isLoading = signal(true)
   hasError = signal(false)
-
-  success = computed(() => !this.isLoading() && !this.hasError())
 
   observationField$;
   reason$;
@@ -51,14 +55,33 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
       );
     }
 
-    return merge(this.paginator.page, this.observationField$, this.reason$, this.reload$).pipe(
-      debounceTime(250),
+    const paginationEvent$ = this.paginator.page
+      .pipe(
+        map(() => ({ type: FILTER_EVENTS.PAGINATION }))
+      )
+
+    const filterEvents$ = merge(this.observationField$, this.reason$)
+      .pipe(
+        debounceTime(250),
+        map(() => ({ type: FILTER_EVENTS.FILTER }))
+      )
+
+    const reloadEvent$ = this.reload$
+      .pipe(
+        map(() => ({ type: FILTER_EVENTS.RELOAD }))
+      )
+
+    return merge(
+      paginationEvent$,
+      filterEvents$,
+      reloadEvent$
+    ).pipe(
       tap(() => {
         this.isLoading.set(true)
         this.hasError.set(false)
       }),
-      switchMap((filterEvent: any) => {
-        if (this.paginator && filterEvent?.pageIndex && filterEvent?.pageIndex > 0) {
+      switchMap((filterEvent: { type: FILTER_EVENTS }) => {
+        if (this.paginator && filterEvent.type === FILTER_EVENTS.FILTER) {
           this.paginator.pageIndex = 0
         }
 
@@ -90,10 +113,10 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
 
               return guideReports
             }),
-            catchError((error) => {
+            catchError(() => {
               this.hasError.set(true)
               this.isLoading.set(false)
-              return []
+              return of([])
             }),
             startWith([]),
           )
