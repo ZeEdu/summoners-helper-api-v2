@@ -1,0 +1,18 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        Magias do invocador
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+      <p>{{guide.spellsDescription}}</p>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-content class="spells-card-content">
+      <app-spell title="Primeira Magia" [spellId]="guide.firstSpell" />
+      <app-spell title="Segunda Magia" [spellId]="guide.secondSpell" />
+    </mat-card-content>
+  </mat-card>
+</div>

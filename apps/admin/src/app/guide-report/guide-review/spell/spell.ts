@@ -10,7 +10,6 @@ import { DataDragonService } from "../../../data-dragon/data-dragon.service";
   styleUrl: './spell.scss'
 })
 export class Spell implements OnInit {
-  @Input({ required: true }) title: string
   @Input({ required: true }) spellId: string
 
   dataDragonService = inject(DataDragonService)

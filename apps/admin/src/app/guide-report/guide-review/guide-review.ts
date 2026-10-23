@@ -39,7 +39,7 @@ import { Items } from "./items/items";
 import { Overview } from "./overview/overview";
 import { RuneSlot } from "./rune-slot/rune-slot";
 import { Rune } from "./rune/rune";
-import { Spell } from "./spell/spell";
+import { Spells } from "./tabs/spells/spells";
 import { Threats } from "./threats/threats";
 
 export enum GUIDE_REVIEW_ACTIONS {
@@ -58,14 +58,14 @@ export enum GUIDE_REVIEW_ACTIONS {
     MatTabsModule,
     MatListModule,
     NgStyle,
-    Spell,
     RuneSlot,
     Rune,
     GuideBonus,
     Threats,
     Items,
     Introduction,
-    Overview
+    Overview,
+    Spells
   ],
   templateUrl: './guide-review.html',
   styleUrl: './guide-review.scss'
