@@ -29,6 +29,8 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
   observationField$;
   reason$;
 
+  testData: IPopulatedGuideReportDto[] = []
+
   private _reload = new Subject<void>()
 
   private get reload$() {
@@ -110,6 +112,7 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
             map(({ count, guideReports }) => {
               this.isLoading.set(false)
               this.resultsLength.set(count)
+              this.testData = guideReports
 
               return guideReports
             }),

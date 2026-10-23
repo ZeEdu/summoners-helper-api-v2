@@ -1,0 +1,30 @@
+<mat-card>
+  <mat-card-content class="card-content">
+    <div class="guide-info">
+      <div>
+        <img class="champion-thumbnail-wrapper" [src]="championThumbnail" />
+      </div>
+      <div>
+        <h2>{{guide.champion | entityName : 'champions'}}</h2>
+        <span>
+          {{guide.role | roleName}}
+          {{titleSeparator}}
+          Patch
+          {{guide.patchVersion}}
+        </span>
+      </div>
+    </div>
+    <div class="separator"></div>
+    <div class="creation">
+      <div>
+        <h2 class="createdBy">
+          <mat-icon>shield</mat-icon>
+          <span>
+            Carlinhos Carlos
+          </span>
+        </h2>
+        <p>{{createdAt}}</p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

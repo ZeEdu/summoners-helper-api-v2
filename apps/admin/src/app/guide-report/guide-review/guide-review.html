@@ -1,25 +1,9 @@
 <h1 mat-dialog-title>Review Guide</h1>
-<mat-dialog-content class="mat-typography">
+<mat-dialog-content class="mat-typography content">
+  <app-overview [guide]="guideReport.guide" />
   <mat-tab-group>
     <mat-tab label="Introdução">
-      <div>
-        <h2>Título</h2>
-        <p>{{guideReport.guide.title}}</p>
-      </div>
-      <div style="display: flex;">
-        <div style="flex: 1">
-          <h2>Campeão</h2>
-          <p>{{guideReport.guide.champion | entityName : 'champions'}}</p>
-        </div>
-        <div style="flex: 1">
-          <h2>Role</h2>
-          <p>{{guideReport.guide.role | roleName}}</p>
-        </div>
-      </div>
-      <div>
-        <h2>Introdução</h2>
-        <p>{{guideReport.guide.introduction}}</p>
-      </div>
+      <app-introduction [guide]="guideReport.guide" />
     </mat-tab>
     <mat-tab label="Magias">
       <div>

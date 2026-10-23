@@ -1,0 +1,50 @@
+$base-dimension: 96px;
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .guide-info {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+
+    .champion-thumbnail-wrapper {
+      border-radius: 1rem;
+
+      width: $base-dimension;
+      height: $base-dimension;
+    }
+  }
+
+  .separator {
+    display: none;
+    border: 1px var(--mat-sys-primary) solid;
+    border-radius: 1rem;
+  }
+
+  .creation {
+    display: flex;
+    flex: 1;
+
+    .createdBy {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      span {
+        margin-left: .5rem
+      }
+    }
+  }
+
+  @media (min-width: 576px) {
+    flex-direction: row;
+
+    .separator {
+      display: block;
+    }
+  }
+}

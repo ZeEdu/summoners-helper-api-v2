@@ -13,6 +13,7 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
 
 import {
+  DEFAULT_LIMIT,
   GUIDE_REPORT_ACTION_TAKEN,
   GUIDE_REPORT_REASON,
   GUIDE_REPORT_STATUS,
@@ -22,6 +23,7 @@ import {
 import { form, FormField } from '@angular/forms/signals';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { delay, interval, takeWhile } from 'rxjs';
 import { GUIDE_REVIEW_ACTIONS, GuideReview } from './guide-review/guide-review';
 import { GuideReportTableDataSource, GuideReportTableItem } from './service/guide-report.data-source';
 import { GuideReportService } from './service/guide-report.service';
@@ -118,8 +120,7 @@ export class GuideReport implements AfterViewInit {
 
   querySort: Sort | null = null;
 
-  // pageSize = DEFAULT_LIMIT;
-  pageSize = 5;
+  pageSize = DEFAULT_LIMIT;
   pageIndex = 0;
 
   pageSizeOptions = [5, 10, 25, 100];
@@ -140,6 +141,19 @@ export class GuideReport implements AfterViewInit {
     this.dataSource.database = this.guideReportService;
 
     this.table.dataSource = this.dataSource;
+
+
+
+    interval(250)
+      .pipe(
+        takeWhile(() => {
+          return this.dataSource.testData.length === 0
+        }),
+        delay(100)
+      )
+      .subscribe(() => {
+        this.reviewGuide(this.dataSource.testData[0])
+      })
   }
 
   resetFilter() {
