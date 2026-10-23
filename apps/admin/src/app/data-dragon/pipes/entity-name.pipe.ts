@@ -4,7 +4,7 @@ import { DataDragonService } from "../data-dragon.service";
 type DataDragonEntity = 'champions' |
   'spells' |
   'runes' |
-  'runesSlots' |
+  'runeSlots' |
   'items'
 
 @Pipe({

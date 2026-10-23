@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Review Guide</h1>
 <mat-dialog-content class="mat-typography content">
   <app-overview [guide]="guideReport.guide" />
-  <mat-tab-group dynamicHeight [selectedIndex]="1">
+  <mat-tab-group dynamicHeight [selectedIndex]="2">
     <mat-tab label="Introdução">
       <app-introduction [guide]="guideReport.guide" />
     </mat-tab>
@@ -11,30 +11,9 @@
     </mat-tab>
 
     <mat-tab label="Runas">
-      <div style="display: flex; gap: 16px;">
-        <div style="flex: 1;">
-          <app-rune title="Caminho Principal" [runeId]="guideReport.guide.primaryRune" />
-          <div>
-            <h2>Descrição</h2>
-            <p>{{guideReport.guide.primaryRuneDescription}}</p>
-          </div>
-          <app-rune-slot title="Primeira Runa" [runeSlotId]="guideReport.guide.primarySlots.first" />
-          <app-rune-slot title="Segunda Runa" [runeSlotId]="guideReport.guide.primarySlots.second" />
-          <app-rune-slot title="Terceira Runa" [runeSlotId]="guideReport.guide.primarySlots.third" />
-          <app-rune-slot title="Quart Runa" [runeSlotId]="guideReport.guide.primarySlots.fourth!" />
-        </div>
-        <div style="flex: 1;">
-          <app-rune title="Caminho Secondário" [runeId]="guideReport.guide.secondaryRune" />
-          <div>
-            <h2>Descrição</h2>
-            <p>{{guideReport.guide.secondaryRuneDescription}}</p>
-          </div>
-          <app-rune-slot title="Primeira Runa" [runeSlotId]="guideReport.guide.secondarySlots.first" />
-          <app-rune-slot title="Segunda Runa" [runeSlotId]="guideReport.guide.secondarySlots.second" />
-          <app-rune-slot title="Terceira Runa" [runeSlotId]="guideReport.guide.secondarySlots.third" />
-        </div>
-      </div>
+      <app-runes [guide]="guideReport.guide" />
     </mat-tab>
+
     <mat-tab label="Bonus">
       <app-guide-bonus [guide]="guideReport.guide" />
     </mat-tab>

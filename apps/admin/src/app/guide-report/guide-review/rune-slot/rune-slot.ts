@@ -11,7 +11,6 @@ import { GuideReviewUtils } from "../guide-review.utils";
   styleUrl: './rune-slot.scss'
 })
 export class RuneSlot implements OnInit {
-  @Input({ required: true }) title: string
   @Input({ required: true }) runeSlotId: string
 
   dataDragonService = inject(DataDragonService)

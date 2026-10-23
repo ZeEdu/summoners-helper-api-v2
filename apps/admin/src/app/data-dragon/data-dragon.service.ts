@@ -23,7 +23,7 @@ export type DataDragonMaps = {
   champions: Record<string, ChampionsDataDragonDetails>
   spells: Record<string, SummonerSpell>,
   runes: Record<string, RunesReforgedDataDragon>,
-  runesSlots: Record<string, RunesReforgedSlots>,
+  runeSlots: Record<string, RunesReforgedSlots>,
   items: Record<string, ItemDetails>,
 }
 
@@ -58,6 +58,8 @@ export class DataDragonService {
       .get<AssetsResponse>(`${ENDPOINT}/assets`)
       .pipe(
         tap(({ data, version }) => {
+          console.log({ maps: data.maps.runeSlots });
+
           this._maps.set(data.maps)
           this._lists.set(data.lists)
           this._patch.set(version)
@@ -95,7 +97,7 @@ export class DataDragonService {
   }
 
   runesSlot(runeSlot: string): RunesReforgedSlots | undefined {
-    return this.maps()?.runesSlots?.[runeSlot]
+    return this.maps()?.runeSlots?.[runeSlot]
   }
 
   spell(spell: string): SummonerSpell | undefined {

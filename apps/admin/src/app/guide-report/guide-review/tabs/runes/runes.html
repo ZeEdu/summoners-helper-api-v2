@@ -1,0 +1,36 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <span class="title">
+          Runa Principal - {{mainRuneName}}
+        </span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+      <app-rune-slot [runeSlotId]="guide.primarySlots.first" />
+      <app-rune-slot [runeSlotId]="guide.primarySlots.second" />
+      <app-rune-slot [runeSlotId]="guide.primarySlots.third" />
+      <app-rune-slot [runeSlotId]="guide.primarySlots.fourth!" />
+      <p>
+        {{guide.primaryRuneDescription}}
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        Runa Secondária - {{mainRuneName}}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+      <app-rune-slot [runeSlotId]="guide.secondarySlots.first" />
+      <app-rune-slot [runeSlotId]="guide.secondarySlots.second" />
+      <app-rune-slot [runeSlotId]="guide.secondarySlots.third" />
+      <p>
+        {{guide.primaryRuneDescription}}
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>

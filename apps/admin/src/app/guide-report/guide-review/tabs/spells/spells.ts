@@ -2,7 +2,7 @@ import { Component, Input } from "@angular/core";
 
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 import { PopulatedGuideDto } from "@org/contracts";
-import { Spell } from "../../spell/spell";
+import { Spell } from "./spell/spell";
 
 @Component({
   selector: 'app-spells',

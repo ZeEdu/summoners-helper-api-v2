@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as mixins;
+
 $base-dimension: 96px;
 
 .card-content {
@@ -40,7 +42,7 @@ $base-dimension: 96px;
     }
   }
 
-  @media (min-width: 576px) {
+  @include mixins.sm {
     flex-direction: row;
 
     .separator {

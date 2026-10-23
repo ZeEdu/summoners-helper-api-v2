@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  gap: 0.5rem;
+
+  .thumbnail-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding: 0 1rem;
+
+    img {
+      border-radius: 0.5rem;
+      width: 64px;
+      height: 64px;
+    }
+  }
+
+  .rune-slot {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &>* {
+      margin: 0;
+    }
+
+    .name {
+      font: var(--mat-sys-title-medium);
+    }
+
+    .description {
+      font: var(--mat-sys-body-medium);
+    }
+  }
+
+}

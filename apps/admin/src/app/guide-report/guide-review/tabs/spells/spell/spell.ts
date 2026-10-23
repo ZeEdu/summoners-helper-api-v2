@@ -1,8 +1,8 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
 
 import { SummonerSpell } from "@org/contracts";
+import { DataDragonService } from "../../../../../data-dragon/data-dragon.service";
 
-import { DataDragonService } from "../../../data-dragon/data-dragon.service";
 
 @Component({
   selector: 'app-spell',
