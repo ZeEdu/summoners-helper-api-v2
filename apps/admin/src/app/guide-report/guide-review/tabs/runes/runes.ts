@@ -3,14 +3,13 @@ import { DataDragonService } from './../../../../data-dragon/data-dragon.service
 
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 import { PopulatedGuideDto } from "@org/contracts";
-import { RuneSlot } from "../../rune-slot/rune-slot";
-import { Rune } from "../../rune/rune";
+import { RuneSlot } from "./rune-slot/rune-slot";
 
 @Component({
   selector: 'app-runes',
   templateUrl: './runes.html',
   styleUrl: './runes.scss',
-  imports: [Rune, RuneSlot, MatCard, MatCardHeader, MatCardTitle, MatCardContent]
+  imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, RuneSlot]
 })
 export class Runes {
   @Input() guide: PopulatedGuideDto

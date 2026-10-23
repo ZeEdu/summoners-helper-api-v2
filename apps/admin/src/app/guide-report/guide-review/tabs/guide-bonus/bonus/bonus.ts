@@ -8,7 +8,6 @@ import { getBonusLabel } from "@org/contracts";
   styleUrl: './bonus.scss'
 })
 export class Bonus {
-  @Input({ required: true }) title: string
   @Input({ required: true }) bonus: string
 
   get name() {

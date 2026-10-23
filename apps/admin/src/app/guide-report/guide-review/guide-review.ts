@@ -33,11 +33,9 @@ import { MatIcon } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { AbilityOption, GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto, PopulatedGuideDto } from '@org/contracts';
 import { DataDragonService } from "../../data-dragon/data-dragon.service";
-import { GuideBonus } from "./guide-bonus/guide-bonus";
 import { Items } from "./items/items";
 import { Overview } from "./overview/overview";
-import { RuneSlot } from "./rune-slot/rune-slot";
-import { Rune } from "./rune/rune";
+import { GuideBonus } from "./tabs/guide-bonus/guide-bonus";
 import { Introduction } from "./tabs/introduction/introduction";
 import { Runes } from "./tabs/runes/runes";
 import { Spells } from "./tabs/spells/spells";
@@ -59,15 +57,13 @@ export enum GUIDE_REVIEW_ACTIONS {
     MatTabsModule,
     MatListModule,
     NgStyle,
-    RuneSlot,
-    Rune,
     GuideBonus,
     Threats,
     Items,
     Introduction,
     Overview,
     Spells,
-    Runes
+    Runes,
   ],
   templateUrl: './guide-review.html',
   styleUrl: './guide-review.scss'

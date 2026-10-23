@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 
 export enum CONFIRM_LOGOUT_ACTIONS {
   CONFIRM = 'CONFIRM',
@@ -13,7 +13,6 @@ export enum CONFIRM_LOGOUT_ACTIONS {
   imports: [
     MatButtonModule,
     MatDialogActions,
-    MatDialogClose,
     MatDialogTitle,
     MatDialogContent
   ]

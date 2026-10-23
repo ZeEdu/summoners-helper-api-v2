@@ -2,8 +2,8 @@ import { Component, inject, Input, OnInit, SecurityContext } from "@angular/core
 
 import { DomSanitizer } from "@angular/platform-browser";
 import { RunesReforgedSlots } from "@org/contracts";
-import { DataDragonService } from "../../../data-dragon/data-dragon.service";
-import { GuideReviewUtils } from "../guide-review.utils";
+import { DataDragonService } from "../../../../../data-dragon/data-dragon.service";
+import { GuideReviewUtils } from "../../../guide-review.utils";
 
 @Component({
   selector: 'app-rune-slot',
