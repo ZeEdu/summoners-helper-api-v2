@@ -1,9 +1,9 @@
-import { OverlayModule } from "@angular/cdk/overlay";
-import { Component, inject, Input, OnInit, SecurityContext, signal } from "@angular/core";
+import { Component, inject, Input, OnInit, SecurityContext } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 
 import { ItemDetails } from "@org/contracts";
 
+import { MatCard, MatCardContent } from "@angular/material/card";
 import { DataDragonService } from "../../../data-dragon/data-dragon.service";
 import { GuideReviewUtils } from "../guide-review.utils";
 
@@ -12,13 +12,12 @@ import { GuideReviewUtils } from "../guide-review.utils";
   templateUrl: './item.html',
   styleUrl: './item.scss',
   imports: [
-    OverlayModule,
+    MatCard,
+    MatCardContent
   ]
 })
 export class Item implements OnInit {
   @Input({ required: true }) itemId: string
-
-  showTooltip = signal(false)
 
   dataDragonService = inject(DataDragonService)
   domSanitizer = inject(DomSanitizer)
@@ -47,9 +46,5 @@ export class Item implements OnInit {
     }
 
     return ''
-  }
-
-  onHover() {
-    this.showTooltip.update((current) => !current)
   }
 }

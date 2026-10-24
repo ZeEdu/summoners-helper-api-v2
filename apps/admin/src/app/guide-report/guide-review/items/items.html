@@ -1,13 +1,15 @@
-@for(itemRow of guide.items; track itemRow.rowName; ) {
-<div>
-  <h2>{{itemRow.rowName}}</h2>
-  @for(item of itemRow.itemsList; track item.itemId) {
-  <app-item [itemId]="item.itemId" />
-  }
-  <p>{{itemRow.description}}</p>
-</div>
+<mat-card class="container">
+  <mat-card-header>
+    <mat-card-title>
+      Itens
+    </mat-card-title>
+  </mat-card-header>
 
-@if (!$last) {
-<mat-divider />
-}
-}
+  <mat-card-content>
+    <p>{{guide.itemsDescription}}</p>
+
+    @for(itemRow of guide.items; track itemRow.rowName) {
+    <app-item-section [itemRow]="itemRow" />
+    }
+  </mat-card-content>
+</mat-card>

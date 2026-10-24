@@ -1,0 +1,18 @@
+<mat-card appearance="filled">
+  <mat-card-header>
+    <mat-card-title>
+      {{itemRow.rowName}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p>{{itemRow.description}}</p>
+
+    <div class="item-list">
+      @for(item of itemRow.itemsList; track item.itemId) {
+      <div class="item-wrapper">
+        <app-item [itemId]="item.itemId" />
+      </div>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

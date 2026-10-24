@@ -1,0 +1,12 @@
+@use '../../../styles/mixins' as mixins;
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+
+  .item-wrapper {
+    @include mixins.md {
+      max-width: 360px;
+    }
+  }
+}
