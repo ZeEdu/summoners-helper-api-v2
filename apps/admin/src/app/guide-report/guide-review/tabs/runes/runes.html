@@ -9,9 +9,13 @@
     </mat-card-header>
     <mat-card-content class="card-content">
       <app-rune-slot [runeSlotId]="guide.primarySlots.first" />
+      <mat-divider />
       <app-rune-slot [runeSlotId]="guide.primarySlots.second" />
+      <mat-divider />
       <app-rune-slot [runeSlotId]="guide.primarySlots.third" />
+      <mat-divider />
       <app-rune-slot [runeSlotId]="guide.primarySlots.fourth!" />
+      <mat-divider />
       <p>
         {{guide.primaryRuneDescription}}
       </p>
@@ -26,8 +30,11 @@
     </mat-card-header>
     <mat-card-content class="card-content">
       <app-rune-slot [runeSlotId]="guide.secondarySlots.first" />
+      <mat-divider />
       <app-rune-slot [runeSlotId]="guide.secondarySlots.second" />
+      <mat-divider />
       <app-rune-slot [runeSlotId]="guide.secondarySlots.third" />
+      <mat-divider />
       <p>
         {{guide.primaryRuneDescription}}
       </p>

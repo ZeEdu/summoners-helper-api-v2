@@ -4,8 +4,8 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { ItemDetails } from "@org/contracts";
 
 import { MatCard, MatCardContent } from "@angular/material/card";
-import { DataDragonService } from "../../../data-dragon/data-dragon.service";
-import { GuideReviewUtils } from "../guide-review.utils";
+import { DataDragonService } from "../../../../../../data-dragon/data-dragon.service";
+import { GuideReviewUtils } from "../../../../guide-review.utils";
 
 @Component({
   selector: 'app-item',

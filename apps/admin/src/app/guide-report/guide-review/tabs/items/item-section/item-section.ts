@@ -3,7 +3,7 @@ import { MatCardModule } from "@angular/material/card";
 
 import { IItems } from "@org/contracts";
 
-import { Item } from "../item/item";
+import { Item } from "./item/item";
 
 @Component({
   selector: 'app-item-section',

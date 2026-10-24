@@ -1,15 +1,17 @@
 import { Component, inject, Input } from "@angular/core";
-import { DataDragonService } from './../../../../data-dragon/data-dragon.service';
-
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
+import { MatDivider } from "@angular/material/divider";
+
 import { PopulatedGuideDto } from "@org/contracts";
+
+import { DataDragonService } from './../../../../data-dragon/data-dragon.service';
 import { RuneSlot } from "./rune-slot/rune-slot";
 
 @Component({
   selector: 'app-runes',
   templateUrl: './runes.html',
   styleUrl: './runes.scss',
-  imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, RuneSlot]
+  imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, RuneSlot, MatDivider]
 })
 export class Runes {
   @Input() guide: PopulatedGuideDto

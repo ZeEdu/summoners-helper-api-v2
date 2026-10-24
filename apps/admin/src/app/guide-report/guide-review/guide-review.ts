@@ -33,10 +33,10 @@ import { MatIcon } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { AbilityOption, GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto, PopulatedGuideDto } from '@org/contracts';
 import { DataDragonService } from "../../data-dragon/data-dragon.service";
-import { Items } from "./items/items";
 import { Overview } from "./overview/overview";
 import { GuideBonus } from "./tabs/guide-bonus/guide-bonus";
 import { Introduction } from "./tabs/introduction/introduction";
+import { Items } from "./tabs/items/items";
 import { Runes } from "./tabs/runes/runes";
 import { Spells } from "./tabs/spells/spells";
 import { Threats } from "./threats/threats";
@@ -63,7 +63,7 @@ export enum GUIDE_REVIEW_ACTIONS {
     Introduction,
     Overview,
     Spells,
-    Runes,
+    Runes
   ],
   templateUrl: './guide-review.html',
   styleUrl: './guide-review.scss'

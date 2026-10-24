@@ -3,6 +3,7 @@ import { Component, inject, Input } from "@angular/core";
 import { MatCard, MatCardContent, MatCardModule } from "@angular/material/card";
 import { PopulatedGuideDto } from "@org/contracts";
 
+import { MatDivider } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { DataDragonService } from "../../../data-dragon/data-dragon.service";
 import { EntityName } from "../../../data-dragon/pipes/entity-name.pipe";
@@ -13,7 +14,7 @@ import { RoleName } from "../../../data-dragon/pipes/role-name.pipe";
   templateUrl: './overview.html',
   styleUrl: './overview.scss',
   imports: [MatCardModule, EntityName, RoleName, MatIconModule, MatCard,
-    MatCardContent]
+    MatCardContent, MatDivider]
 })
 
 export class Overview {
