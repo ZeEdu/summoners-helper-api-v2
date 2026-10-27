@@ -1,9 +1,11 @@
-<div style="display: flex; gap: 8px;">
-  <div style="display: flex; justify-content: center; align-items: start;">
-    <img style="width: 64px; height: 64px; border-radius: 1rem;" [src]="thumbnail" />
-  </div>
-  <div style="">
-    <h3 style="margin-top: 0;">{{threat.threat | entityName : 'champions'}}</h3>
-    <p>{{threat.description}}</p>
-  </div>
-</div>
+<mat-card>
+  <mat-card-content class="card-content">
+    <div>
+      <img class="thumbnail" [src]="thumbnail" />
+    </div>
+    <div class="description-wrapper" style="margin: 0">
+      <h3 class="title">{{threat.threat | entityName : 'champions'}}</h3>
+      <p class="description">{{threat.description}}</p>
+    </div>
+  </mat-card-content>
+</mat-card>
