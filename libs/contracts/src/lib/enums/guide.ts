@@ -37,6 +37,19 @@ export enum AbilityOption {
   D = 'd',
 }
 
+export function isAbilityOption(value: string): value is AbilityOption {
+  return ['a', 'b', 'c', 'd'].includes(value)
+}
+
+
+export function getAbilityOption(value: string): AbilityOption | null {
+  if (isAbilityOption(value)) {
+    return value
+  }
+  return null
+}
+
+
 export enum SLOT_BONUS {
   ADAPTIVE_FORCE = 'AdaptiveForce',
   ADAPTIVE_FORCE_SCALING = 'AdaptiveForceScaling',

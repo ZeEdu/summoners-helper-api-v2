@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>Review Guide</h1>
 <mat-dialog-content class="mat-typography content">
-  <app-overview [guide]="guideReport.guide" />
+  <app-overview [guide]="guideReport.guide" />`
+
   <mat-tab-group dynamicHeight [selectedIndex]="5">
     <mat-tab label="Introdução">
       <app-introduction [guide]="guideReport.guide" />
@@ -23,54 +24,9 @@
     </mat-tab>
 
     <mat-tab label="Progressão de abilidades">
-      <div>
-        <h2>Progressão de habilidades</h2>
-        <div>
-          @if(fullChampion | async; as champion) {
-          <!-- Header -->
-          <div style="display: flex">
-            <!-- TODO! Melhorar isso daqui -->
-            @for(spell of champion.spells; track spell.id) {
-            <div
-              style="display: flex; flex: 1; gap: 8px; justify-content: flex-start; align-items: center; margin: 8px;">
-              <div style="display: flex; justify-content: center; align-items: center">
-                <img
-                  src="https://ddragon.leagueoflegends.com/cdn/{{dataDragonService.patch()}}/img/spell/{{spell.id}}.png"
-                  height="48" width="48" style="border-radius: 5px;">
-              </div>
-              <span>
-                {{spell.name}}
-              </span>
-            </div>
-            }
-          </div>
-          <!-- Body -->
-          <div style="display: flex">
-            @for(spell of champion.spells; track spell.id; let spellIndex = $index) {
-            <div style="flex: 1">
-              @for(lvl of levelsArray; track lvl;) {
-              <div
-                style="display: flex; flex: 1; gap: 8px; justify-content: flex-start; align-items: center; margin: 8px;">
-                <div
-                  style="display: flex; flex: 1; justify-content: center; text-align: center; border-radius: 15px; padding-block: 8px"
-                  [ngStyle]="{'background-color': isSelected(guideReport.guide, lvl, spellIndex) ? 'salmon' : 'slateblue'}">
-                  <span style="color: white;">
-                    {{lvl}}
-                  </span>
-                </div>
-              </div>
-              }
-            </div>
-            }
-          </div>
-          }
-        </div>
-      </div>
-      <div>
-        <h2>Descrição</h2>
-        <p>{{guideReport.guide.abilitiesProgressionDescription}}</p>
-      </div>
+      <app-abilities-progression [guide]="guideReport.guide" />
     </mat-tab>
+
     <mat-tab label="Ameaças">
       <app-threats [guide]="guideReport.guide" />
     </mat-tab>
@@ -78,21 +34,21 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   @if(guideReport.actionTaken !== GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
-  <button matButton (click)="acceptReport(guideReport)">
+  <button matButton (click)="acceptReport()">
     <mat-icon>gavel</mat-icon>
     <span>Aceitar</span>
   </button>
   }
 
   @if(guideReport.status !== GUIDE_REPORT_STATUS.ARCHIVED) {
-  <button matButton (click)="archiveReport(guideReport)">
+  <button matButton (click)="archiveReport()">
     <mat-icon>archive</mat-icon>
     <span>Arquivar</span>
   </button>
   }
 
   @if(guideReport.actionTaken === GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
-  <button matButton (click)="undoReport(guideReport)">
+  <button matButton (click)="undoReport()">
     <mat-icon>undo</mat-icon>
     <span>Desfazer</span>
   </button>

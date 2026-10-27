@@ -1,0 +1,23 @@
+<mat-card class="card">
+  <mat-card-header>
+    <mat-card-title>
+      Progressão de habilidades
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    @if(fullChampion | async; as champion) {
+    <div class="abilities-descriptions">
+      @for(spell of champion.spells; track spell.id) {
+      <app-ability-description [spell]="spell" [index]="$index" />
+      }
+    </div>
+
+    @if(champion) {
+    <div>
+      <app-abilities-progression-bar [guide]="guide" [champion]="champion" />
+    </div>
+    }
+    }
+    <p>{{guide.abilitiesProgressionDescription}}</p>
+  </mat-card-content>
+</mat-card>

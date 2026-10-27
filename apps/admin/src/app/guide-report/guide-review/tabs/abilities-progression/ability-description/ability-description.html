@@ -1,0 +1,18 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div class="thumbnail-wrapper">
+      <img [src]="thumbnailUrl">
+    </div>
+    <div class="description-wrapper">
+      <h2 class="title">
+        <span class="key">
+          {{key}}
+        </span>
+        - {{spell.name}}
+      </h2>
+      <p class="description">
+        {{spell.description}}
+      </p>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -3,37 +3,13 @@ import { MatButtonModule } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 
-type Lvls = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18
-type LvlKey = `l${Lvls}`
-
-const keymapIndex = {
-  0: 'q',
-  1: 'w',
-  2: 'e',
-  3: 'r',
-};
-
-type KeymapIndexType = keyof typeof keymapIndex;
-
-const indexToAbilityOption = {
-  0: AbilityOption.A,
-  1: AbilityOption.B,
-  2: AbilityOption.C,
-  3: AbilityOption.D,
-};
-
-const CHAMPION_LEVELS = 18
-
-const lvlsArrayBuilder = () => {
-  return Array.from({ length: CHAMPION_LEVELS }, (_, i) => i + 1) as Array<Lvls>
-}
-
-import { CommonModule, NgStyle } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { MatIcon } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
-import { AbilityOption, GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto, PopulatedGuideDto } from '@org/contracts';
+import { GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto } from '@org/contracts';
 import { DataDragonService } from "../../data-dragon/data-dragon.service";
 import { Overview } from "./overview/overview";
+import { AbilitiesProgression } from "./tabs/abilities-progression/abilities-progression";
 import { GuideBonus } from "./tabs/guide-bonus/guide-bonus";
 import { Introduction } from "./tabs/introduction/introduction";
 import { Items } from "./tabs/items/items";
@@ -56,14 +32,14 @@ export enum GUIDE_REVIEW_ACTIONS {
     MatIcon,
     MatTabsModule,
     MatListModule,
-    NgStyle,
     GuideBonus,
     Threats,
     Items,
     Introduction,
     Overview,
     Spells,
-    Runes
+    Runes,
+    AbilitiesProgression
   ],
   templateUrl: './guide-review.html',
   styleUrl: './guide-review.scss'
@@ -80,15 +56,7 @@ export class GuideReview {
 
   championSpells = Array.from({ length: 4 })
 
-  fullChampion = this.dataDragonService.champion(this.guideReport.guide.champion)
-
   items = this.dataDragonService
-
-  levelsArray = lvlsArrayBuilder()
-
-  getArrayLvl(lvl: Lvls): LvlKey {
-    return `l${lvl}`
-  }
 
   getRuneThumbnail(rune: string) {
     const selectedRune = this.dataDragonService.rune(rune)
@@ -113,21 +81,13 @@ export class GuideReview {
     return selectedSpell?.description
   }
 
-  isSelected(guide: PopulatedGuideDto, lvl: Lvls, index: number) {
-    const level = this.getArrayLvl(lvl)
-    const selectedAbility = guide.abilitiesProgression[level]
-    const value = indexToAbilityOption[index as KeymapIndexType]
-
-    return selectedAbility === value
-  }
-
-  undoReport(guideReport: IPopulatedGuideReportDto) {
+  undoReport() {
     this.dialogRef.close(GUIDE_REVIEW_ACTIONS.UNDO)
   }
-  archiveReport(guideReport: IPopulatedGuideReportDto) {
+  archiveReport() {
     this.dialogRef.close(GUIDE_REVIEW_ACTIONS.ARCHIVE)
   }
-  acceptReport(guideReport: IPopulatedGuideReportDto) {
+  acceptReport() {
     this.dialogRef.close(GUIDE_REVIEW_ACTIONS.ACCEPT)
   }
 }
