@@ -1,12 +1,13 @@
-import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
+import { AfterViewInit, Component, computed, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth/service/auth.service';
 import { SessionService } from './auth/service/session.service';
@@ -30,18 +31,22 @@ export interface Section {
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    TitleCasePipe
   ],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App implements OnInit, OnDestroy {
+export class App implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(MatDrawer) drawer!: MatDrawer;
+
   readonly dialog = inject(MatDialog);
 
   authService = inject(AuthService)
   sessionService = inject(SessionService);
   dataDragonService = inject(DataDragonService)
   eventBusService = inject(EventBusService)
+  activatedRoute = inject(ActivatedRoute)
 
   showToolbar = computed(() => !!this.sessionService.user());
 
@@ -51,10 +56,58 @@ export class App implements OnInit, OnDestroy {
 
   isLoggingOut = false
 
+  listItems = [
+    {
+      title: 'Guias',
+      icon: 'report_problem',
+      onClick: () => {
+        this.handleDrawerClick('guide')
+      }
+    },
+    {
+      title: 'Comentários',
+      icon: 'comment',
+      onClick: () => {
+        this.handleDrawerClick('comments')
+      }
+    }
+  ]
+
+  routes = [
+    {
+      title: 'Início',
+      link: '',
+      icon: 'home'
+    },
+
+    {
+      title: 'Comentários',
+      link: 'comment',
+      icon: 'comment'
+    },
+    {
+      title: 'Guias',
+      link: 'guide',
+      icon: 'report_problem',
+    }
+  ];
+  activeLink = signal<string | null>(null);
+
   ngOnInit(): void {
     this.eventBusSub = this.eventBusService.on('logout', () => {
       this.handleLogout()
     })
+
+    this.activatedRoute.fragment.subscribe((fragment) => {
+      console.log({ fragment });
+    })
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      console.log(`ngAfterViewInit`);
+      this.drawer.toggle()
+    }, 500);
   }
 
   ngOnDestroy() {
@@ -92,5 +145,10 @@ export class App implements OnInit, OnDestroy {
           }
         }
       })
+  }
+
+
+  handleDrawerClick(page: string) {
+    console.log('handleDrawerClick', page);
   }
 }

@@ -1,5 +1,6 @@
+@use '@angular/material' as mat;
+
 .sidenav-container {
-  // width: 500px;
   height: 100%;
 }
 
@@ -7,8 +8,26 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  .separator {
+    flex: 1 1 auto;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
 }
 
 .sidenav {
   padding: 20px;
+  @include mat.elevation(2);
+}
+
+
+mat-list-item:hover {
+  @include mat.elevation(2);
+  cursor: pointer;
 }
