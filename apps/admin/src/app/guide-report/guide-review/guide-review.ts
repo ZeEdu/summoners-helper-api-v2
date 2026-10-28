@@ -6,7 +6,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { CommonModule } from "@angular/common";
 import { MatIcon } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
-import { GUIDE_REPORT_ACTION_TAKEN, GUIDE_REPORT_STATUS, IPopulatedGuideReportDto } from '@org/contracts';
+import { IPopulatedReportDto, PopulatedGuideDto, REPORT_ACTION_TAKEN, REPORT_STATUS } from '@org/contracts';
 import { DataDragonService } from "../../data-dragon/data-dragon.service";
 import { Overview } from "./overview/overview";
 import { AbilitiesProgression } from "./tabs/abilities-progression/abilities-progression";
@@ -45,14 +45,14 @@ export enum GUIDE_REVIEW_ACTIONS {
   styleUrl: './guide-review.scss'
 })
 export class GuideReview {
-  guideReport = inject<IPopulatedGuideReportDto>(MAT_DIALOG_DATA)
+  report = inject<IPopulatedReportDto & { guide: PopulatedGuideDto }>(MAT_DIALOG_DATA)
 
   dataDragonService = inject(DataDragonService)
 
   dialogRef = inject(MatDialogRef)
 
-  GUIDE_REPORT_ACTION_TAKEN = GUIDE_REPORT_ACTION_TAKEN;
-  GUIDE_REPORT_STATUS = GUIDE_REPORT_STATUS;
+  GUIDE_REPORT_ACTION_TAKEN = REPORT_ACTION_TAKEN;
+  GUIDE_REPORT_STATUS = REPORT_STATUS;
 
   championSpells = Array.from({ length: 4 })
 

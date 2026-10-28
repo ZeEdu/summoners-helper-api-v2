@@ -1,3 +1,3 @@
 export * from './guide';
-export * from './guide-report-reason';
+export * from './report-reason';
 

@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Model, QueryFilter, Types } from 'mongoose';
 import { I18nService } from 'nestjs-i18n';
 
-import { CreateUserDto, DEFAULT_LIMIT, DEFAULT_OFFSET, IUser, RIOT_SERVERS, UpdateUserDto } from '@org/contracts';
+import { CreateUserDto, DEFAULT_LIMIT, DEFAULT_OFFSET, IUser, RIOT_SERVERS, UpdateUserDto, UserDto } from '@org/contracts';
 
 import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
@@ -376,6 +376,7 @@ describe('UsersService', () => {
 
       const userId = new Types.ObjectId()
 
+
       const mockedUser: IUser = {
         _id: userId,
         username: faker.internet.userName(),
@@ -383,7 +384,17 @@ describe('UsersService', () => {
         password: faker.internet.password(),
         tagLine,
         gameName,
+        puuid
+      }
+
+      const userDto: UserDto = {
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        tagLine,
+        gameName,
         puuid,
+        id: userId.toString()
       };
 
       const mockLean = jest.fn().mockReturnValue(mockedUser);
@@ -404,14 +415,14 @@ describe('UsersService', () => {
         mockedGetAccountByRiotId,
       );
 
-      await service.updateUserWithRiotData(mockedUser, {
+      await service.updateUserWithRiotData(userDto, {
         tagLine,
         gameName,
         server,
       });
 
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
-        mockedUser._id.toString(),
+        userId.toString(),
         {
           puuid,
           tagLine,

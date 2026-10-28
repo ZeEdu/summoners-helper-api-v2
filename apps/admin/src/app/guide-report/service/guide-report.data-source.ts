@@ -3,13 +3,13 @@ import { signal } from "@angular/core";
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FieldTree } from "@angular/forms/signals";
 import { MatPaginator } from "@angular/material/paginator";
-import { DEFAULT_LIMIT, GUIDE_REPORT_REASON, GuideReportPaginationDto, IPopulatedGuideReportDto } from "@org/contracts";
+import { DEFAULT_LIMIT, IPopulatedReportDto, REPORT_REASON, ReportPaginationDto } from "@org/contracts";
 import { catchError, debounceTime, map, merge, Observable, of, startWith, Subject, switchMap, tap } from "rxjs";
 import { GuideReportService } from "./guide-report.service";
 
-export type GuideReportTableItem = IPopulatedGuideReportDto
+export type GuideReportTableItem = IPopulatedReportDto
 
-type TableForm = FieldTree<{ observation: string, reason: GUIDE_REPORT_REASON | null }>
+type TableForm = FieldTree<{ observation: string, reason: REPORT_REASON | null }>
 
 enum FILTER_EVENTS {
   PAGINATION = 'pagination',
@@ -29,7 +29,7 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
   observationField$;
   reason$;
 
-  testData: IPopulatedGuideReportDto[] = []
+  testData: IPopulatedReportDto[] = []
 
   private _reload = new Subject<void>()
 
@@ -87,7 +87,7 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
           this.paginator.pageIndex = 0
         }
 
-        const query: GuideReportPaginationDto = {
+        const query: ReportPaginationDto = {
           limit: this.paginator?.pageSize || DEFAULT_LIMIT,
           offset: this.paginator?.pageIndex || 0,
         }
@@ -109,12 +109,12 @@ export class GuideReportTableDataSource extends DataSource<GuideReportTableItem>
         return this.database
           .get(query)
           .pipe(
-            map(({ count, guideReports }) => {
+            map(({ count, reports }) => {
               this.isLoading.set(false)
               this.resultsLength.set(count)
-              this.testData = guideReports
+              this.testData = reports
 
-              return guideReports
+              return reports
             }),
             catchError(() => {
               this.hasError.set(true)

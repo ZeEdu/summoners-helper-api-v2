@@ -30,6 +30,9 @@ export class Comment implements IComment {
 
   @Prop({ type: Number, default: 0 })
   likeCount: number;
+
+  @Prop({ type: Boolean })
+  blocked?: boolean;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)

@@ -1,53 +1,53 @@
 <h1 mat-dialog-title>Review Guide</h1>
 <mat-dialog-content class="mat-typography content">
-  <app-overview [guide]="guideReport.guide" />`
+  <app-overview [guide]="report.guide" />`
 
   <mat-tab-group dynamicHeight [selectedIndex]="6">
     <mat-tab label="Introdução">
-      <app-introduction [guide]="guideReport.guide" />
+      <app-introduction [guide]="report.guide" />
     </mat-tab>
 
     <mat-tab label="Magias">
-      <app-spells [guide]="guideReport.guide" />
+      <app-spells [guide]="report.guide" />
     </mat-tab>
 
     <mat-tab label="Runas">
-      <app-runes [guide]="guideReport.guide" />
+      <app-runes [guide]="report.guide" />
     </mat-tab>
 
     <mat-tab label="Bonus">
-      <app-guide-bonus [guide]="guideReport.guide" />
+      <app-guide-bonus [guide]="report.guide" />
     </mat-tab>
 
     <mat-tab label="Itens">
-      <app-items [guide]="guideReport.guide" />
+      <app-items [guide]="report.guide" />
     </mat-tab>
 
     <mat-tab label="Progressão de abilidades">
-      <app-abilities-progression [guide]="guideReport.guide" />
+      <app-abilities-progression [guide]="report.guide" />
     </mat-tab>
 
     <mat-tab label="Ameaças">
-      <app-threats [guide]="guideReport.guide" />
+      <app-threats [guide]="report.guide" />
     </mat-tab>
   </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  @if(guideReport.actionTaken !== GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
+  @if(report.actionTaken !== GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
   <button matButton (click)="acceptReport()">
     <mat-icon>gavel</mat-icon>
     <span>Aceitar</span>
   </button>
   }
 
-  @if(guideReport.status !== GUIDE_REPORT_STATUS.ARCHIVED) {
+  @if(report.status !== GUIDE_REPORT_STATUS.ARCHIVED) {
   <button matButton (click)="archiveReport()">
     <mat-icon>archive</mat-icon>
     <span>Arquivar</span>
   </button>
   }
 
-  @if(guideReport.actionTaken === GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
+  @if(report.actionTaken === GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
   <button matButton (click)="undoReport()">
     <mat-icon>undo</mat-icon>
     <span>Desfazer</span>

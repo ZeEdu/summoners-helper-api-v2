@@ -13,6 +13,7 @@ import { CommentsService } from './service/comments.service';
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: CommentLike.name, schema: CommentLikeSchema }]),
     GuidesModule
-  ]
+  ],
+  exports: [CommentsService]
 })
 export class CommentsModule { }

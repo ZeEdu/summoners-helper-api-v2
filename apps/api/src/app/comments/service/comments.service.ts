@@ -10,7 +10,6 @@ import { CommentLike, CommentLikeDocument, ICommentLike } from '../schema/like.s
 
 @Injectable()
 export class CommentsService {
-
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(CommentLike.name) private commentLikeModel: Model<CommentLikeDocument>
@@ -93,7 +92,6 @@ export class CommentsService {
           $inc: { likeCount: 1 }
         }
       )
-
   }
 
   async unlike(commentId: string, userId: string) {
@@ -115,5 +113,21 @@ export class CommentsService {
 
   async likedComment(commentId: string, userId: string) {
     return this.commentLikeModel.exists({ comment: commentId, user: userId })
+  }
+
+  async block(commentId: string) {
+    await this.commentModel.updateOne({
+      _id: commentId,
+    }, {
+      blocked: true
+    })
+  }
+
+  async unblock(commentId: string) {
+    await this.commentModel.updateOne({
+      _id: commentId,
+    }, {
+      blocked: false
+    })
   }
 }

@@ -7,10 +7,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { DataDragonModule } from './data-dragon/data-dragon.module';
-import { GuideReportModule } from './guide-report/guide-report.module';
 import { GuidesModule } from './guides/guides.module';
 import { I18N } from './i18n.config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { ReportModule } from './report/report.module';
 import { RiotApiModule } from './riot-api/riot-api.module';
 import { UsersModule } from './users/users.module';
 
@@ -31,7 +31,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     RiotApiModule,
     GuidesModule,
-    GuideReportModule,
+    ReportModule,
     DataDragonModule,
     CommentsModule,
   ],

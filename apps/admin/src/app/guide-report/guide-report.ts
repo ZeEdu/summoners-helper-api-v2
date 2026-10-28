@@ -14,10 +14,10 @@ import { MatTable, MatTableModule } from '@angular/material/table';
 
 import {
   DEFAULT_LIMIT,
-  GUIDE_REPORT_ACTION_TAKEN,
-  GUIDE_REPORT_REASON,
-  GUIDE_REPORT_STATUS,
-  IPopulatedGuideReportDto
+  IPopulatedReportDto,
+  REPORT_ACTION_TAKEN,
+  REPORT_REASON,
+  REPORT_STATUS
 } from '@org/contracts';
 
 import { form, FormField } from '@angular/forms/signals';
@@ -60,47 +60,47 @@ export class GuideReport implements AfterViewInit {
 
   dataSource: GuideReportTableDataSource;
 
-  GUIDE_REPORT_ACTION_TAKEN = GUIDE_REPORT_ACTION_TAKEN;
-  GUIDE_REPORT_STATUS = GUIDE_REPORT_STATUS;
+  GUIDE_REPORT_ACTION_TAKEN = REPORT_ACTION_TAKEN;
+  GUIDE_REPORT_STATUS = REPORT_STATUS;
 
   REASONS_OPTIONS = [
     {
-      value: GUIDE_REPORT_REASON.INAPPROPRIATE_CONTENT,
+      value: REPORT_REASON.INAPPROPRIATE_CONTENT,
       label: 'Conteúdo impróprio',
     },
     {
-      value: GUIDE_REPORT_REASON.INCORRECT_INFORMATION,
+      value: REPORT_REASON.INCORRECT_INFORMATION,
       label: 'Informação falsa',
     },
     {
-      value: GUIDE_REPORT_REASON.SPAM,
+      value: REPORT_REASON.SPAM,
       label: 'Spam',
     },
     {
-      value: GUIDE_REPORT_REASON.ADVERTISING,
+      value: REPORT_REASON.ADVERTISING,
       label: 'Anúncio',
     },
     {
-      value: GUIDE_REPORT_REASON.HARASSMENT,
+      value: REPORT_REASON.HARASSMENT,
       label: 'Assédio',
     },
     {
-      value: GUIDE_REPORT_REASON.COPYRIGHT,
+      value: REPORT_REASON.COPYRIGHT,
       label: 'Direitos Autorais',
     },
     {
-      value: GUIDE_REPORT_REASON.EXPLOIT_OR_CHEATING,
+      value: REPORT_REASON.EXPLOIT_OR_CHEATING,
       label: 'trapaça',
     },
     {
-      value: GUIDE_REPORT_REASON.OTHER,
+      value: REPORT_REASON.OTHER,
       label: 'Outro',
     },
   ];
 
   private guideReportPaginationFormModel = signal<{
     observation: string;
-    reason: GUIDE_REPORT_REASON | null;
+    reason: REPORT_REASON | null;
   }>({
     observation: '',
     reason: null,
@@ -151,7 +151,7 @@ export class GuideReport implements AfterViewInit {
     this.paginator.firstPage();
   }
 
-  undoReport(guideReport: IPopulatedGuideReportDto) {
+  undoReport(guideReport: IPopulatedReportDto) {
     this.guideReportService.unblockReport(guideReport.id).subscribe({
       next: () => {
         this.dataSource.reloadTable();
@@ -162,7 +162,7 @@ export class GuideReport implements AfterViewInit {
     });
   }
 
-  archiveReport(guideReport: IPopulatedGuideReportDto) {
+  archiveReport(guideReport: IPopulatedReportDto) {
     this.guideReportService.archiveReport(guideReport.id).subscribe({
       next: () => {
         this.dataSource.reloadTable();
@@ -173,7 +173,7 @@ export class GuideReport implements AfterViewInit {
     });
   }
 
-  acceptReport(guideReport: IPopulatedGuideReportDto) {
+  acceptReport(guideReport: IPopulatedReportDto) {
     this.guideReportService.blockReport(guideReport.id).subscribe({
       next: () => {
         this.dataSource.reloadTable();
@@ -184,7 +184,7 @@ export class GuideReport implements AfterViewInit {
     });
   }
 
-  reviewGuide(guideReport: IPopulatedGuideReportDto) {
+  reviewGuide(guideReport: IPopulatedReportDto) {
     const dialogRef = this.dialog.open(GuideReview, { data: guideReport, maxWidth: 1200 })
 
     dialogRef.afterClosed()

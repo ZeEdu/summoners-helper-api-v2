@@ -1,14 +1,13 @@
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { GuideReport, GuideReportSchema } from '../schema/guide-report.schema';
-import { GuideReportService } from './guide-report.service';
+import { Report, ReportSchema } from '../schema/report.schema';
+import { ReportService } from './report.service';
 
 let mongodb: MongoMemoryServer;
 
-
 describe('GuideReportService', () => {
-  let service: GuideReportService;
+  let service: ReportService;
 
   beforeAll(async () => {
     mongodb = await MongoMemoryServer.create();
@@ -20,16 +19,16 @@ describe('GuideReportService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GuideReportService],
+      providers: [ReportService],
       imports: [
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([
-          { name: GuideReport.name, schema: GuideReportSchema },
+          { name: Report.name, schema: ReportSchema },
         ])
       ]
     }).compile();
 
-    service = module.get<GuideReportService>(GuideReportService);
+    service = module.get<ReportService>(ReportService);
   });
 
   it('should be defined', () => {

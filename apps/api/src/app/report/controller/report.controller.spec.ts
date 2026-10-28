@@ -3,16 +3,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { AuthService } from '../../auth/service/auth.service';
+import { CommentsModule } from '../../comments/comments.module';
 import { IsAdminGuard } from '../../guards/is-admin.guard';
 import { GuidesModule } from '../../guides/guides.module';
-import { GuideReport, GuideReportSchema } from '../schema/guide-report.schema';
-import { GuideReportService } from '../service/guide-report.service';
-import { GuideReportController } from './guide-report.controller';
+import { Report, ReportSchema } from '../schema/report.schema';
+import { ReportService } from '../service/report.service';
+import { ReportController } from './report.controller';
 
 let mongodb: MongoMemoryServer;
 
 describe('GuideReportController', () => {
-  let controller: GuideReportController;
+  let controller: ReportController;
 
   beforeAll(async () => {
     mongodb = await MongoMemoryServer.create();
@@ -24,9 +25,9 @@ describe('GuideReportController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [GuideReportController],
+      controllers: [ReportController],
       providers: [
-        GuideReportService,
+        ReportService,
         IsAdminGuard,
         {
           provide: AuthService,
@@ -37,16 +38,17 @@ describe('GuideReportController', () => {
       ],
       imports: [
         GuidesModule,
+        CommentsModule,
         MongooseModule.forRoot(mongodb.getUri()),
         MongooseModule.forFeature([
           {
-            name: GuideReport.name,
-            schema: GuideReportSchema
+            name: Report.name,
+            schema: ReportSchema
           },
         ])]
     }).compile();
 
-    controller = module.get<GuideReportController>(GuideReportController);
+    controller = module.get<ReportController>(ReportController);
   });
 
   it('should be defined', () => {

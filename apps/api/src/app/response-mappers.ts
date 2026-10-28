@@ -1,4 +1,4 @@
-import { GuideDto, IComment, IGuide, IPopulatedGuideReport, IPopulatedGuideReportDto, ISerializedComment, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid } from "@org/contracts";
+import { GuideDto, IComment, IGuide, IPopulatedReport, IPopulatedReportDto, ISerializedComment, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid } from "@org/contracts";
 import { Types } from "mongoose";
 import { IUserWithPassword, IUserWithPuuid } from "./users/schema/user.schema";
 
@@ -63,13 +63,17 @@ function populatedGuide(guide: IGuide): PopulatedGuideDto {
   }
 }
 
-
-function populatedGuideReport(guideReport: IPopulatedGuideReport): IPopulatedGuideReportDto {
+function populatedReport(report: IPopulatedReport): IPopulatedReportDto {
   return {
-    ...guideReport,
-    id: guideReport._id.toString(),
-    guide: populatedGuide(guideReport.guide),
-    reportedBy: user(guideReport.reportedBy)
+    id: report._id.toString(),
+    reportedBy: user(report.reportedBy),
+    createdAt: report.createdAt,
+    reason: report.reason,
+    observation: report.observation,
+    status: report.status,
+    actionTaken: report.actionTaken,
+    ...(!!report.guide && { guide: populatedGuide(report.guide) }),
+    ...(!!report.comment && { comment: comment(report.comment) })
   }
 }
 
@@ -117,7 +121,7 @@ const ResponseMappers = {
   userWithPuuid,
   guide,
   populatedGuide,
-  populatedGuideReport,
+  populatedReport,
   comment
 };
 
