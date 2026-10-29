@@ -14,7 +14,7 @@ import Profile from '../screens/main/profile/Profile';
 import BindRiotAccount from '../screens/modals/BindRiotAccount';
 import CreateGuide from '../screens/modals/CreateGuide/CreateGuide';
 import ViewGuide from '../screens/modals/CreateGuide/guide-viewer/ViewGuide';
-import ReportGuide from '../screens/modals/ReportGuide';
+import Report from '../screens/modals/Report';
 
 const HomeStack = createNativeStackNavigator({
   screens: {
@@ -78,9 +78,9 @@ const RootStack = createNativeStackNavigator({
           options: { title: 'Visualizar guia' },
           screen: ViewGuide
         },
-        ReportGuide: {
-          options: { title: 'Denunciar guia' },
-          screen: ReportGuide
+        Report: {
+          options: { title: 'Denunciar' },
+          screen: Report
         }
       },
       screenOptions: {

@@ -68,7 +68,7 @@ export class ReportController {
     @CurrentUser() user: UserDto,
     @Body(new ZodValidationPipe(CreateReportSchema)) body: CreateReportDto,
   ) {
-    const createdAt = new Date().toISOString();
+    const createdAt = new Date()
     const reportedBy = user.id;
 
     return this.reportService.create({ ...body, createdAt, reportedBy });

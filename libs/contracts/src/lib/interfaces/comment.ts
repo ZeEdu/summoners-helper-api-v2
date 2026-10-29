@@ -11,7 +11,8 @@ export interface IComment {
   removed: boolean;
   removedAt?: Date;
   likeCount: number;
-  liked?: boolean // Não deve ser um campo no schema, é uma logica feita manualmente após a query
+  liked?: boolean; // Não deve ser um campo no schema, é uma logica feita manualmente após a query
+  blocked?: boolean;
 }
 
 export interface ISerializedComment extends Omit<IComment, '_id' | 'createdBy' | 'replyTo' | 'guide'> {

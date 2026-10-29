@@ -50,7 +50,11 @@ export class ReportService {
     }
   }
 
-  create(report: CreateReportDto) {
+  // Trocar esse formato
+  create(report: CreateReportDto & {
+    createdAt: Date,
+    reportedBy: string
+  }) {
     return this.reportModel.create(report)
   }
 

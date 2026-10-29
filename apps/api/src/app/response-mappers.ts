@@ -91,16 +91,16 @@ function isPopulatedGuide(guide: Types.ObjectId | IGuide): guide is IGuide {
 
 function comment(comment: IComment): ISerializedComment {
   let commentCreatedBy: UserDto | undefined = undefined
-
   if (comment.createdBy && isPopulatedUser(comment.createdBy)) {
     commentCreatedBy = user(comment.createdBy)
   }
 
   let commentGuide: PopulatedGuideDto | undefined = undefined
-
   if (isPopulatedGuide(comment.guide)) {
     commentGuide = populatedGuide(comment.guide)
   }
+
+  const content = comment.blocked ? comment.content : 'Comentário bloquado pela moderação'
 
   return {
     createdBy: (commentCreatedBy ?? comment.createdBy),
@@ -108,10 +108,10 @@ function comment(comment: IComment): ISerializedComment {
     id: comment._id.toString(),
     createdAt: comment.createdAt,
     removed: comment.removed,
-    content: comment.content,
     replyTo: comment.replyTo,
     likeCount: comment.likeCount,
-    liked: comment.liked ?? false
+    liked: comment.liked ?? false,
+    content,
   }
 }
 

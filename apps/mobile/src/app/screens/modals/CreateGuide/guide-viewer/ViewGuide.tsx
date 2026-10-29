@@ -103,7 +103,7 @@ export default function ViewGuide({ route }: Props) {
     menuItems.push({
       onPress: () => {
         closeMenu();
-        navigation.navigate('ReportGuide', { guide });
+        navigation.navigate('Report', { guide });
       },
       title: 'Denunciar guia',
       id: 'report-guide',

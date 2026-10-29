@@ -6,10 +6,10 @@ import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 export class Report implements IReport {
   _id: Types.ObjectId;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Guide', required: true })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Guide' })
   guide?: Types.ObjectId;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Comment', required: true })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Comment' })
   comment?: Types.ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })

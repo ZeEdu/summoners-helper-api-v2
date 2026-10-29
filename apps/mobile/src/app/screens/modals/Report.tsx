@@ -2,9 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { StaticScreenProps, useNavigation } from "@react-navigation/native"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { Button, Dialog, Portal, Snackbar, Text, useTheme } from "react-native-paper"
+import { StyleSheet } from "react-native"
+import { Button, Dialog, MD3Theme, Portal, Snackbar, Text, useTheme } from "react-native-paper"
+import z from 'zod'
 
-import { CreateGuideReportFormDto, CreateGuideReportFormSchema, GUIDE_REPORT_REASON, GuideDto } from "@org/contracts"
+import { enumReportReason, GuideDto, ISerializedComment, REPORT_REASON } from "@org/contracts"
 import { StyledButton, StyledView } from "@org/ui"
 
 import AppSelectController from "../../../components/forms/app-select-controller/AppSelectController"
@@ -14,48 +16,65 @@ import { ApiService } from "../../../services/api/api.service"
 
 const reasonsList = [
   {
-    value: GUIDE_REPORT_REASON.INAPPROPRIATE_CONTENT,
+    value: REPORT_REASON.INAPPROPRIATE_CONTENT,
     label: 'Conteúdo impróprio ou ofensivo'
   },
   {
-    value: GUIDE_REPORT_REASON.INCORRECT_INFORMATION,
+    value: REPORT_REASON.INCORRECT_INFORMATION,
     label: 'Informações incorretas ou enganosas'
   },
   {
-    value: GUIDE_REPORT_REASON.SPAM,
+    value: REPORT_REASON.SPAM,
     label: 'Spam ou conteúdo repetitivo'
   },
   {
-    value: GUIDE_REPORT_REASON.ADVERTISING,
+    value: REPORT_REASON.ADVERTISING,
     label: 'Publicidade ou autopromoção'
   },
   {
-    value: GUIDE_REPORT_REASON.HARASSMENT,
+    value: REPORT_REASON.HARASSMENT,
     label: 'Assédio ou discurso de ódio'
   },
   {
-    value: GUIDE_REPORT_REASON.COPYRIGHT,
+    value: REPORT_REASON.COPYRIGHT,
     label: 'Infração de direitos autorais'
   },
   {
-    value: GUIDE_REPORT_REASON.EXPLOIT_OR_CHEATING,
+    value: REPORT_REASON.EXPLOIT_OR_CHEATING,
     label: 'Exploit, trapaça ou comportamento abusivo'
   },
   {
-    value: GUIDE_REPORT_REASON.OTHER,
+    value: REPORT_REASON.OTHER,
     label: 'Outro motivo'
   }
 ]
 
-const resolver = zodResolver(CreateGuideReportFormSchema)
+const formSchema = z.object({
+  comment: z.string({ error: 'Valor inválido' }).optional(),
+  guide: z.string({ error: 'Valor inválido' }).optional(),
+  reason: enumReportReason,
+  observation: z.string({ error: 'Valor inválido' }).min(3, { error: 'Deve ter ao menos 3 caracteres' }),
+}).refine(
+  (value) => !!(value.comment || value.guide),
+  {
+    error: '`guide` ou `comment` devem ser fornecidos'
+  }
+)
+
+type FormDto = z.infer<typeof formSchema>
+
+const resolver = zodResolver(formSchema)
 
 type Props = StaticScreenProps<{
-  guide: GuideDto
+  guide?: GuideDto,
+  comment?: ISerializedComment
 }>
 
 export default function ReportGuide({ route }: Props) {
   const theme = useTheme()
-  const { guide } = route.params
+  const styles = makeStyles(theme)
+
+  const { guide, comment } = route.params
   const navigation = useNavigation()
 
   const [visibleDialog, setVisibleDialog] = useState(false)
@@ -64,12 +83,15 @@ export default function ReportGuide({ route }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const { control, handleSubmit, getValues, formState: { errors } } = useForm<CreateGuideReportFormDto>({
+  const { control, handleSubmit, getValues, formState: { errors } } = useForm<FormDto>({
     resolver,
     defaultValues: {
-      guide: guide.id,
+      ...(guide && { guide: guide?.id }),
+      ...(comment && { comment: comment?.id })
     }
   })
+
+  const label = guide ? 'guia' : 'comentário'
 
   const openDialog = () => {
     setVisibleDialog(true)
@@ -100,11 +122,11 @@ export default function ReportGuide({ route }: Props) {
     handleReport(getValues())
   }
 
-  const handleReport = (formData: CreateGuideReportFormDto) => {
+  const handleReport = (formData: FormDto) => {
     setLoading(false)
     setError('')
 
-    ApiService.GuideReport.create(formData)
+    ApiService.Report.create(formData)
       .catch((err) => {
         setError('A denuncia falhou. Tente novamente.')
       })
@@ -112,14 +134,13 @@ export default function ReportGuide({ route }: Props) {
         setLoading(false)
         openSnack()
       });
-
   }
 
   return (
     <>
-      <StyledView style={{ padding: 16, gap: 8 }}>
-        <Text variant="headlineSmall">Denunciar guia</Text>
-        <Text variant="bodyMedium">Ajude-nos a manter a comunidade segura e útil. Selecione o motivo que melhor descreve o problema encontrado neste guia.</Text>
+      <StyledView style={styles.container}>
+        <Text variant="headlineSmall">Denunciar {label}</Text>
+        <Text variant="bodyMedium">Ajude-nos a manter a comunidade segura e útil. Selecione o motivo que melhor descreve o problema encontrado neste {label}.</Text>
 
         <Text variant="headlineSmall">Motivo da denúncia</Text>
         <Text variant="bodyMedium">Selecione um motivo para continuar</Text>
@@ -147,17 +168,17 @@ export default function ReportGuide({ route }: Props) {
         <FormFieldErrors fieldError={errors.observation} />
 
         <StyledButton buttonColor={theme.colors.errorContainer} onPress={handleSubmit(openDialog)} disabled={loading}>
-          <Text style={{ color: theme.colors.error }}>
+          <Text style={styles.warningText}>
             {loading ? 'Criando a denuncia' : 'Denunciar'}
           </Text>
         </StyledButton>
-      </StyledView>
+      </StyledView >
       <Portal>
         <Dialog visible={visibleDialog} onDismiss={closeDialog}>
-          <Dialog.Title>Denunciar guia?</Dialog.Title>
+          <Dialog.Title>Denunciar {label}?</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">
-              Tem certeza que deseja denunciar este guia? Sua denúncia será analisada pela equipe responsável
+              Tem certeza que deseja denunciar este {label}? Sua denúncia será analisada pela equipe responsável
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
@@ -177,4 +198,11 @@ export default function ReportGuide({ route }: Props) {
       </Portal>
     </>
   )
+}
+
+const makeStyles = ({ colors }: MD3Theme) => {
+  return StyleSheet.create({
+    container: { padding: 16, gap: 8 },
+    warningText: { color: colors.error }
+  })
 }

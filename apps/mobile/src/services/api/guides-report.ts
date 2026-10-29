@@ -1,13 +1,13 @@
-import { CreateGuideReportFormDto, IGuide } from '@org/contracts';
+import { CreateReportDto, IGuide } from '@org/contracts';
 
 import { customFetch } from '../../utils/customFetch/customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { API_CONSTANTS } from './api.constants';
 
-const ENDPOINT = 'guide-report';
+const ENDPOINT = 'report';
 
-export const GuideReport = {
-  create: async (createGuideReportDto: CreateGuideReportFormDto): Promise<IGuide> => {
+export const Report = {
+  create: async (createGuideReportDto: CreateReportDto): Promise<IGuide> => {
     const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`;
 
     const tokens = await AuthTokenStorageService.get();

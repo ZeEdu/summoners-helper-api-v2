@@ -2,7 +2,7 @@ import { Auth } from './auth';
 import { Comments } from './comment';
 import { DataDragon } from './data-dragon';
 import { Guides } from './guides';
-import { GuideReport } from './guides-report';
+import { Report } from './guides-report';
 import { Users } from './users';
 
 export const ApiService = {
@@ -10,6 +10,6 @@ export const ApiService = {
   Users,
   DataDragon,
   Guides,
-  GuideReport,
+  Report,
   Comments
 };

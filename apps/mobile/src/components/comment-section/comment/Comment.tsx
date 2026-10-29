@@ -1,7 +1,8 @@
 import { StyleSheet, View } from "react-native";
-import { Avatar, Button, Card, IconButton, Text, useTheme } from "react-native-paper";
+import { Avatar, Button, Card, IconButton, Menu, Text, useTheme } from "react-native-paper";
 
 import { ISerializedComment } from "@org/contracts";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { ApiService } from "../../../services/api/api.service";
 
@@ -17,6 +18,7 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlte
   const [likeCount, setLikeCount] = useState(comment.likeCount)
 
   const theme = useTheme()
+  const navigation = useNavigation();
 
   let createdBy = 'Deletado'
   if (comment.createdBy && 'username' in comment.createdBy) {
@@ -47,6 +49,10 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlte
       .catch(() => { })
   }
 
+  const reportComment = () => {
+    navigation.navigate('Report', { comment })
+  }
+
   return (
     <Card
       mode="contained"
@@ -73,6 +79,9 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlte
             >
               {createdAt}
             </Text>
+          </View>
+          <View>
+            <SideMenu reportComment={reportComment} />
           </View>
         </View>
 
@@ -156,3 +165,25 @@ const styles = StyleSheet.create({
     marginHorizontal: 0
   }
 });
+
+const SideMenu = ({ reportComment }: { reportComment: () => void }) => {
+  const [visible, setVisible] = useState(false)
+
+  const handleClick = () => {
+    setVisible(false)
+    reportComment()
+  }
+
+  return (
+    <View>
+      <Menu
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        anchor={
+          <IconButton icon='dots-vertical' size={24} onPress={() => setVisible(true)} />
+        }>
+        <Menu.Item onPress={handleClick} title="Denunciar comentário" />
+      </Menu>
+    </View>
+  )
+}
