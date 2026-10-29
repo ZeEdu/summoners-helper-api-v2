@@ -1,8 +1,9 @@
 import { Types } from 'mongoose';
 import { AbilityOption } from '../enums';
+import { IUser } from '../types';
 
 export interface IItemList {
-  itemId: string
+  itemId: string;
 }
 
 export interface IItems {
@@ -50,7 +51,7 @@ export interface IGuide {
   // _id: string;
 
   title: string;
-  createdBy: Types.ObjectId;
+  createdBy: Types.ObjectId | IUser;
   // createdBy: string;
 
   introduction: string;
@@ -92,4 +93,6 @@ export interface IGuide {
 
   threatsDescription: string;
   threats: IThreat[];
+
+  blocked?: boolean;
 }

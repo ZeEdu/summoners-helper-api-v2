@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react"
 import { FlatList, StyleSheet, View } from "react-native"
 import { Button, MD3Theme, Portal, Searchbar, Surface, Text, useTheme } from "react-native-paper"
 
-import { IGuide } from "@org/contracts"
+import { GuideDto } from "@org/contracts"
 
 import Error from "../../../../../../components/Error"
 import LoadingIndicator from "../../../../../../components/LoadingIndicator"
@@ -11,7 +11,7 @@ import useGuideQuickSearch from "../../../../../../hooks/useQuickSearch"
 import QuickSearchCard from "./QuickSearchCard"
 
 type QuickSearchbarProps = {
-  navigateToGuide: (guide: IGuide) => void
+  navigateToGuide: (guide: GuideDto) => void
 }
 
 export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps) {
@@ -98,7 +98,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
                     contentContainerStyle={styles.contentContainerStyle}
                     data={guides}
                     renderItem={({ item: guide }) => {
-                      const navigateToGuideAndClearList = (guide: IGuide) => {
+                      const navigateToGuideAndClearList = (guide: GuideDto) => {
                         navigateToGuide(guide)
                         clear()
                       }
@@ -106,7 +106,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
                       return <QuickSearchCard
                         navigateToGuide={navigateToGuideAndClearList}
                         guide={guide}
-                        key={guide._id.toString()}
+                        key={guide.id}
                       />
                     }}
                   />

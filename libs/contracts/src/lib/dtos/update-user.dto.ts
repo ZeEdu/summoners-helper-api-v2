@@ -6,49 +6,36 @@ const passwordPattern =
 
 export const updateUserSchema = z.object({
   email: z
-    .email({ error: 'Email deve ser válido' })
+    .email()
     .optional(),
 
   username: z
-    .string({ error: 'Formato inválido' })
-    .min(5, {
-      error: 'O nome de usuário deve ter pelo menos 5 caracteres',
-    })
-    .max(16, {
-      error: 'O nome de usuário deve ter no máximo 16 caracteres',
-    })
+    .string()
+    .min(5)
+    .max(16)
     .optional(),
 
   password: z
-    .string({ error: 'Formato inválido' })
-    .min(8, {
-      error: 'A senha deve ter no mínimo 8 caracteres',
-    })
-    .max(64, {
-      error: 'A senha deve ter no máximo 64 caracteres',
-    })
-    .regex(passwordPattern, {
-      error:
-        'A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)',
-    })
+    .string()
+    .min(8)
+    .max(64)
+    .regex(passwordPattern)
     .optional(),
 
   puuid: z
-    .string({ error: 'Formato inválido' })
+    .string()
     .optional(),
 
   tagLine: z
-    .string({ error: 'Formato inválido' })
+    .string()
     .optional(),
 
   gameName: z
-    .string({ error: 'Formato inválido' })
+    .string()
     .optional(),
 
   server: z
-    .enum(RIOT_SERVERS, {
-      error: 'Servidor inválido',
-    })
+    .enum(RIOT_SERVERS)
     .optional(),
 });
 

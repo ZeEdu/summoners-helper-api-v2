@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ICreateUserDto, ILoginUserDto, IUser } from '@org/contracts';
+import { ICreateUserDto, ILoginUserDto, UserDto } from '@org/contracts';
 
 import { AuthEvents } from '../../auth-events';
 import { useThemeContext } from '../../providers/theme.provider';
@@ -15,7 +15,7 @@ type AuthProviderProps = {
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const themeContext = useThemeContext();
-  const [user, setUser] = useState<IUser | undefined>(undefined);
+  const [user, setUser] = useState<UserDto | undefined>(undefined);
 
   const login = async (loginUserDto: ILoginUserDto) => {
     try {
@@ -53,7 +53,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
       await AuthTokenStorageService.set(accessToken, refreshToken);
     } catch (error: any) {
-      console.log({ error });
       if (
         error?.body['username'] ||
         error?.body['email'] ||
@@ -80,7 +79,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await ApiService.Users.me();
 
-      const userFromRequest = response as IUser;
+      const userFromRequest = response;
       setUser(userFromRequest);
       return userFromRequest;
     } catch (error) {

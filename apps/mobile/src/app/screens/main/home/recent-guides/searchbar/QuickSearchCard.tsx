@@ -1,14 +1,14 @@
 import { Image } from "react-native"
 import { Card } from "react-native-paper"
 
-import { IGuide } from "@org/contracts"
+import { GuideDto } from "@org/contracts"
 
 import { usePatchVersion } from "../../../../../../contexts/patchVersion/usePatchVersion"
 import DataDragonService from "../../../../../../services/data-dragon/data-dragon.service"
 
 type QuickSearchCardProps = {
-  guide: IGuide,
-  navigateToGuide: (guide: IGuide) => void
+  guide: GuideDto,
+  navigateToGuide: (guide: GuideDto) => void
 }
 
 export default function QuickSearchCard({ guide, navigateToGuide }: QuickSearchCardProps) {

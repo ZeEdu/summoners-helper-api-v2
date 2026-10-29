@@ -1,11 +1,11 @@
-import { AppModule } from '../app.module';
-import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { User, UserDocument } from '../users/schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto, IUser } from '@org/contracts';
+import { Model } from 'mongoose';
+import { AppModule } from '../app.module';
+import { User, UserDocument } from '../users/schema/user.schema';
 import cookieParser = require('cookie-parser');
 import request = require('supertest');
 

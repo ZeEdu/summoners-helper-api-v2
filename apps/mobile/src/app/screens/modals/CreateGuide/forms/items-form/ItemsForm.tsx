@@ -42,7 +42,7 @@ export type ItemsDto = z.infer<typeof ItemsSchema>;
 const resolver = zodResolver(ItemsSchema);
 
 export default function ItemsForm() {
-  const useDataDragon = useDataDragonContext();
+  const dataDragon = useDataDragonContext();
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
 
@@ -65,15 +65,14 @@ export default function ItemsForm() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    getValues,
+    formState: { errors }
   } = methods;
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'items',
   });
 
-  const itemList = useDataDragon.dataDragon?.items || [];
+  const itemList = dataDragon.lists?.items || [];
 
   const onSubmit = (values: ItemsDto) => {
     mainFormContext.setValues(values, { shouldValidate: true });
@@ -98,6 +97,7 @@ export default function ItemsForm() {
     const matchedItems = itemList.filter(({ name }) =>
       name.toLocaleLowerCase().includes(searchQuery.toLowerCase()),
     );
+
     if (matchedItems.length) {
       setSearchList(matchedItems);
     } else {
@@ -105,14 +105,8 @@ export default function ItemsForm() {
     }
   }, [searchQuery]);
 
-  const checkForm = () => {
-    const arrayValues = getValues();
-    console.log({ arrayValues });
-  };
-
   return (
     <View style={styles.container}>
-      <Button onPress={checkForm}>Checar formulário</Button>
       <View style={styles.content}>
         <View>
           <AppInputController

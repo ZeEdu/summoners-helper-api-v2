@@ -11,4 +11,13 @@ export interface IUser {
   tagLine?: string;
   server?: RIOT_SERVERS;
   puuid?: string;
+  isSystemAdmin?: boolean;
 }
+
+export interface UserDto extends Omit<IUser, '_id'> {
+  id: string;
+}
+
+
+export type UserDtoWithPuuid = UserDto & { puuid: string };
+export type UserDtoWithPassword = UserDto & { password: string }

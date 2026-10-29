@@ -1,6 +1,6 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { RIOT_SERVERS } from '@org/contracts';
+import { RIOT_SERVERS, UserDtoWithPuuid } from '@org/contracts';
 import { Model } from 'mongoose';
 import { I18nService } from 'nestjs-i18n';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
@@ -11,7 +11,6 @@ import {
   RunesReforgedSlots,
 } from '../../ddragon/dto/runes-reforged-data.dragon';
 import { SummonerSpell } from '../../ddragon/dto/spell.dto';
-import { IUserWithPuuid } from '../../users/schema/user.schema';
 import { ChampionMastery } from '../interfaces/champion-mastery.interface';
 import { LeagueEntry } from '../interfaces/league-entry.interface';
 import { Match, MatchParticipant } from '../interfaces/match.interface';
@@ -76,39 +75,39 @@ export interface IRankedStatusResponse {
 
 export interface IRiotApiService {
   getAccountByRiotId: (
-    gameName: IUserWithPuuid['gameName'],
-    tagLine: IUserWithPuuid['tagLine'],
+    gameName: UserDtoWithPuuid['gameName'],
+    tagLine: UserDtoWithPuuid['tagLine'],
   ) => Promise<RiotAccount>;
 
   getChampionsMasteries: (
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     server: RIOT_SERVERS,
   ) => Promise<IChampionMasteryResponse[]>;
 
   getSummoner: (
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     server: RIOT_SERVERS,
   ) => Promise<ISummonerResponse>;
 
   getChampionsMasteriesByChampion: (
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     championId: number,
     server: RIOT_SERVERS,
   ) => Promise<IChampionMasteryResponse>;
 
   getChampionsMasteriesByTop: (
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     count: number,
     server: RIOT_SERVERS,
   ) => Promise<IChampionMasteryResponse[]>;
 
   getRankedStatus: (
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     server: RIOT_SERVERS,
   ) => Promise<IRankedStatusResponse[]>;
 
   getLastFiveMatches: (
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
   ) => Promise<ILastFiveMatchesResponse[]>;
 }
 
@@ -123,8 +122,8 @@ export class RiotApiService implements IRiotApiService {
   ) { }
 
   async getAccountByRiotId(
-    gameName: IUserWithPuuid['gameName'],
-    tagLine: IUserWithPuuid['tagLine'],
+    gameName: UserDtoWithPuuid['gameName'],
+    tagLine: UserDtoWithPuuid['tagLine'],
   ): Promise<RiotAccount> {
     if (!gameName || !tagLine) {
       throw new Error(
@@ -142,7 +141,7 @@ export class RiotApiService implements IRiotApiService {
   }
 
   async getChampionsMasteries(
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IChampionMasteryResponse[]> {
     const url = this.riotApiUtilsService.buildGetChampionMasteryURL(
@@ -157,7 +156,7 @@ export class RiotApiService implements IRiotApiService {
   }
 
   async getChampionsMasteriesByChampion(
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     championId: number,
     server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IChampionMasteryResponse> {
@@ -172,7 +171,7 @@ export class RiotApiService implements IRiotApiService {
   }
 
   async getChampionsMasteriesByTop(
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     count: number,
     server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IChampionMasteryResponse[]> {
@@ -190,7 +189,7 @@ export class RiotApiService implements IRiotApiService {
   }
 
   async getRankedStatus(
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<IRankedStatusResponse[]> {
     const url = this.riotApiUtilsService.buildGetRankedStatsURL(puuid, server);
@@ -200,7 +199,7 @@ export class RiotApiService implements IRiotApiService {
   }
 
   async getLastFiveMatches(
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
   ): Promise<ILastFiveMatchesResponse[]> {
     const url = this.riotApiUtilsService.buildGetLastFiveMatchesURL(puuid);
     const response = await fetch(url);
@@ -217,7 +216,7 @@ export class RiotApiService implements IRiotApiService {
   }
 
   async getSummoner(
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
     server: RIOT_SERVERS = RIOT_SERVERS.br1,
   ): Promise<ISummonerResponse> {
     const url = this.riotApiUtilsService.buildGetSummonerURL(puuid, server);

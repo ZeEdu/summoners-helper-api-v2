@@ -3,13 +3,14 @@ import { useForm } from 'react-hook-form';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Button, FAB, MD3Theme, Text, useTheme } from 'react-native-paper';
 
-import { GuidePaginationDto, IGuide, ROLES, ROLES_LABEL } from '@org/contracts';
+import { GuideDto, GuidePaginationDto, ROLES, ROLES_LABEL } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
 import { useNavigation } from '@react-navigation/native';
 import AppSelectController from '../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../components/forms/AppInputController';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
 import useDataDragonContext from '../../../../contexts/data-dragon/useDataDragonContext';
 import { ApiService } from '../../../../services/api/api.service';
 import GuideListItem from './guide-list-item/GuideListItem';
@@ -40,12 +41,13 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
 export default function MyGuides() {
   const authContext = useAuthContext();
   const dataDragonContext = useDataDragonContext();
+  const userHasRiotBindedAccount = useUserHasRiotBindedAccount();
   const navigation = useNavigation()
 
   const theme = useTheme();
   const style = makeStyles(theme);
 
-  const [builds, setBuilds] = useState<IGuide[]>([]);
+  const [builds, setBuilds] = useState<GuideDto[]>([]);
   const [count, setCount] = useState(0);
 
   const hasMore = builds.length < count;
@@ -57,14 +59,17 @@ export default function MyGuides() {
 
   const { control, getValues, reset, setValue } = useForm<GuidePaginationDto>({
     defaultValues: {
-      createdBy: authContext.user!._id.toString(),
+      createdBy: authContext.user!.id,
       offset: 0
     }
   });
 
   const handleCreateGuide = () => {
-    // TODO: Só navega para a próxima tela se tiver os dados vinculados da RIOT
-    navigation.navigate('CreateGuide', {});
+    if (userHasRiotBindedAccount) {
+      navigation.navigate('CreateGuide', {});
+    } else {
+      console.log('Avisar o usuário');
+    }
   };
 
   const getBuilds = async () => {
@@ -113,13 +118,13 @@ export default function MyGuides() {
     getBuilds()
   }
 
-  const championList = dataDragonContext.dataDragon?.champions || [];
+  const championList = dataDragonContext.lists.champions;
 
-  const editGuide = (guide: IGuide) => {
+  const editGuide = (guide: GuideDto) => {
     navigation.navigate('CreateGuide', { guide });
   }
 
-  const viewGuide = (guide: IGuide) => {
+  const viewGuide = (guide: GuideDto) => {
     navigation.navigate('ViewGuide', { guide });
   }
 
@@ -192,7 +197,7 @@ export default function MyGuides() {
               <FlatList
                 style={{ paddingBottom: 8 }}
                 data={builds}
-                keyExtractor={(item) => item._id.toString()}
+                keyExtractor={(item) => item.id}
                 contentContainerStyle={{
                   paddingHorizontal: 16,
                   rowGap: 8
@@ -219,10 +224,13 @@ export default function MyGuides() {
                 )}
               />
             ) : (
-              <View>
-                <View>
-                  <Text>Voce não tem nenhuma build ainda</Text>
-                </View>
+              <View style={{ flex: 1, justifyContent: 'center' }}>
+                <Text
+                  variant='headlineSmall'
+                  style={{ textAlign: 'center' }}
+                >
+                  Você não tem nenhuma build ainda
+                </Text>
               </View>
             )
         }

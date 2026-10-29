@@ -1,16 +1,15 @@
-import { AppModule } from '../app.module';
-import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 import { BadRequestException, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import {
   AbilityOption,
-  CreateGuideFormDto,
   CreateGuideFormSchema,
   CreateUserDto,
-  createUserSchema,
+  createUserSchema
 } from '@org/contracts';
-import { ZodValidationPipe } from './zod-validation.pipe';
 import z from 'zod';
+import { AppModule } from '../app.module';
+import { ZodValidationPipe } from './zod-validation.pipe';
 
 import mongoose from 'mongoose';
 
@@ -231,97 +230,6 @@ describe('zod validation pipe', () => {
         path: 'email',
         message: 'Email deve ser válido',
         code: 'invalid_format',
-      });
-    });
-  });
-  describe('invalid ObjectId', () => {
-    it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(CreateGuideFormSchema);
-      const createGuide: CreateGuideFormDto = {
-        title: 'Segundo',
-        introduction: 'asdasd',
-        champion: 'Aatrox',
-        role: 'TOP_LANE',
-        bonusSlotOne: 'ADAPTIVE',
-        bonusSlotTwo: 'ADAPTIVE',
-        bonusSlotThree: 'BASE_HEALTH',
-        bonusDescription: 'asdasd',
-        primaryRune: '8100',
-        primarySlots: {
-          first: '8112',
-          second: '8126',
-          third: '8137',
-          fourth: '8105',
-        },
-        primaryRuneDescription: 'asdasdasd',
-        secondaryRune: '8300',
-        secondarySlots: {
-          first: '8304',
-          second: '8306',
-          third: '8321',
-        },
-        secondaryRuneDescription: 'asdasdasd',
-        firstSpell: 'SummonerBarrier',
-        secondSpell: 'SummonerBoost',
-        spellsDescription: 'asdasda',
-        items: [
-          {
-            rowName: 'asdasdasdasd',
-            itemsList: [
-              {
-                itemId: '1001',
-              },
-            ],
-            description: 'adasdasd',
-          },
-        ],
-        itemsDescription: 'asdasdasd',
-        abilitiesProgression: {
-          l1: AbilityOption.A,
-          l2: AbilityOption.A,
-          l3: AbilityOption.A,
-          l4: AbilityOption.A,
-          l5: AbilityOption.A,
-          l6: AbilityOption.A,
-          l7: AbilityOption.A,
-          l8: AbilityOption.A,
-          l9: AbilityOption.A,
-          l10: AbilityOption.A,
-          l11: AbilityOption.A,
-          l12: AbilityOption.A,
-          l13: AbilityOption.A,
-          l14: AbilityOption.A,
-          l15: AbilityOption.A,
-          l16: AbilityOption.A,
-          l17: AbilityOption.A,
-          l18: AbilityOption.A,
-        },
-        abilitiesProgressionDescription: 'asdasdas',
-        threatsDescription: 'asdasdasd',
-        threats: [
-          {
-            threat: 'Akali',
-            description: 'asdasdasd',
-          },
-        ],
-      };
-
-      let exception: BadRequestException;
-
-      try {
-        validationPipe.transform(createGuide);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
-
-      const response = exception.getResponse() as ValidationErrorResponse;
-
-      expect(response.message).toContainEqual({
-        path: 'createdBy',
-        message: 'ObjectId inválido',
-        code: 'custom',
       });
     });
   });

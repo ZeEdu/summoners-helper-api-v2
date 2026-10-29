@@ -6,25 +6,28 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { RiotApiService } from '../service/riot-api.service';
+
+import { UserDtoWithPuuid } from '@org/contracts';
+
 import { CurrentUser } from '../../decorators/user.decorator';
-import { IUserWithPuuid } from '../../users/schema/user.schema';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { HasRiotInfoGuard } from '../guards/has-riot-info.guard';
+import { RiotApiService } from '../service/riot-api.service';
+
 
 @Controller('riot-api')
 @UseGuards(JwtGuard, HasRiotInfoGuard)
 export class RiotApiController {
-  constructor(private readonly riotApiService: RiotApiService) {}
+  constructor(private readonly riotApiService: RiotApiService) { }
 
   @Get('champion-masteries')
-  getChampionsMasteries(@CurrentUser() user: IUserWithPuuid) {
+  getChampionsMasteries(@CurrentUser() user: UserDtoWithPuuid) {
     return this.riotApiService.getChampionsMasteries(user.puuid, user.server);
   }
 
   @Get('champion-masteries/by-champion/:championId')
   getChampionsMasteriesByChampion(
-    @CurrentUser() user: IUserWithPuuid,
+    @CurrentUser() user: UserDtoWithPuuid,
     @Param('championId', ParseIntPipe) championId: number,
   ) {
     return this.riotApiService.getChampionsMasteriesByChampion(
@@ -36,7 +39,7 @@ export class RiotApiController {
 
   @Get('champion-masteries/top')
   getChampionsMasteriesByTop(
-    @CurrentUser() user: IUserWithPuuid,
+    @CurrentUser() user: UserDtoWithPuuid,
     @Query('count', new ParseIntPipe({ optional: true })) count?: number,
   ) {
     return this.riotApiService.getChampionsMasteriesByTop(
@@ -47,17 +50,17 @@ export class RiotApiController {
   }
 
   @Get('current-rank')
-  getRankedStatus(@CurrentUser() user: IUserWithPuuid) {
+  getRankedStatus(@CurrentUser() user: UserDtoWithPuuid) {
     return this.riotApiService.getRankedStatus(user.puuid, user.server);
   }
 
   @Get('last-five-matches')
-  getLastFiveMatches(@CurrentUser() user: IUserWithPuuid) {
+  getLastFiveMatches(@CurrentUser() user: UserDtoWithPuuid) {
     return this.riotApiService.getLastFiveMatches(user.puuid);
   }
 
   @Get('summoner')
-  getSummoner(@CurrentUser() user: IUserWithPuuid) {
+  getSummoner(@CurrentUser() user: UserDtoWithPuuid) {
     return this.riotApiService.getSummoner(user.puuid, user.server);
   }
 }

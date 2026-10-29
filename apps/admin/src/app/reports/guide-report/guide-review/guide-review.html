@@ -1,0 +1,61 @@
+<h1 mat-dialog-title>Review Guide</h1>
+<mat-dialog-content class="mat-typography content">
+  <app-overview [guide]="report.guide" />`
+
+  <mat-tab-group dynamicHeight [selectedIndex]="6">
+    <mat-tab label="Introdução">
+      <app-introduction [guide]="report.guide" />
+    </mat-tab>
+
+    <mat-tab label="Magias">
+      <app-spells [guide]="report.guide" />
+    </mat-tab>
+
+    <mat-tab label="Runas">
+      <app-runes [guide]="report.guide" />
+    </mat-tab>
+
+    <mat-tab label="Bonus">
+      <app-guide-bonus [guide]="report.guide" />
+    </mat-tab>
+
+    <mat-tab label="Itens">
+      <app-items [guide]="report.guide" />
+    </mat-tab>
+
+    <mat-tab label="Progressão de abilidades">
+      <app-abilities-progression [guide]="report.guide" />
+    </mat-tab>
+
+    <mat-tab label="Ameaças">
+      <app-threats [guide]="report.guide" />
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  @if(report.actionTaken !== GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
+  <button matButton (click)="acceptReport()">
+    <mat-icon>gavel</mat-icon>
+    <span>Aceitar</span>
+  </button>
+  }
+
+  @if(report.status !== GUIDE_REPORT_STATUS.ARCHIVED) {
+  <button matButton (click)="archiveReport()">
+    <mat-icon>archive</mat-icon>
+    <span>Arquivar</span>
+  </button>
+  }
+
+  @if(report.actionTaken === GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
+  <button matButton (click)="undoReport()">
+    <mat-icon>undo</mat-icon>
+    <span>Desfazer</span>
+  </button>
+  }
+
+  <button matButton mat-dialog-close cdkFocusInitial>
+    <mat-icon>close</mat-icon>
+    <span>Fechar</span>
+  </button>
+</mat-dialog-actions>

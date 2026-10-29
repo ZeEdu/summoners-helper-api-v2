@@ -1,0 +1,29 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Dashboard</mat-card-title>
+    <mat-card-subtitle>Visão geral da moderação</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="dashboard">
+      <div class="dashboard-card">
+        <app-dashboard-card [mode]="REPORT_PAGINATION_TYPE.GUIDE" icon="book" title="Guia" link="guide" />
+      </div>
+      <div class="dashboard-card">
+        <app-dashboard-card [mode]="REPORT_PAGINATION_TYPE.COMMENT" icon="comment" title="Comentários" link="comment" />
+      </div>
+    </div>
+
+    <div class="quick-access">
+      <h3 class="quick-access-header">
+        Acesso Rápido
+      </h3>
+      <div class="quick-access-body">
+        <app-quick-access-card title="Denúncias de guias" subtitle="Analisar guias sinalizados pelos usuários"
+          leftIcon="book" rightIcon="chevron_right" link="guide" />
+
+        <app-quick-access-card title="Denúncias de comentários" subtitle="Revisar comentários denunciados"
+          leftIcon="comment" rightIcon="chevron_right" link="comment" />
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

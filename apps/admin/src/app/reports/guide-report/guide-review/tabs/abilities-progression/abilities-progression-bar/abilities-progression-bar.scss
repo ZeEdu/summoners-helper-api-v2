@@ -1,0 +1,41 @@
+.card {
+  margin-top: 1rem;
+
+  .card-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(3.5rem, 1fr));
+    gap: 0.5rem;
+
+    .progression {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      text-align: center;
+
+      .thumbnail {
+        width: 100%;
+        max-width: 3.5rem;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 1rem;
+      }
+
+      .progression-identification {
+        padding: 0.5rem 0;
+
+        .progression-key {
+          padding: 0.25rem;
+          border-radius: 1rem;
+          font: var(--mat-sys-title-medium);
+          color: var(--mat-sys-primary);
+        }
+
+        .progression-level {
+          color: var(--mat-sys-secondary)
+        }
+      }
+    }
+
+  }
+}

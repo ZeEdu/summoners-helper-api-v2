@@ -1,4 +1,4 @@
-import { IUser, UpdateUserProfileDto, UsersPaginationDto } from "@org/contracts";
+import { IUser, UpdateUserProfileDto, UserDto, UsersPaginationDto } from "@org/contracts";
 
 import { customFetch } from '../../utils/customFetch/customFetch';
 import { AuthTokenStorageService } from '../auth-token-storage.service';
@@ -31,7 +31,7 @@ export const Users = {
       },
     };
 
-    return customFetch(url, init)
+    return customFetch<UserDto>(url, init)
   },
 
   users: async () => {
@@ -69,8 +69,6 @@ export const Users = {
       },
       body: JSON.stringify(updateUserProfileDto)
     };
-
-    console.log({ init });
 
     return customFetch(url, init)
   },

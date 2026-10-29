@@ -1,0 +1,30 @@
+<div style="height: 100%; display: flex; justify-content: center; align-items: center">
+  <form (submit)="handleSubmit($event)" style="width: 400px" class="mat-elevation-z1">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title style="margin-bottom: 8px">
+          Login
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div style="display: flex; flex-direction: column;">
+          <mat-form-field>
+            <mat-label>
+              Email:
+            </mat-label>
+            <input id="email" matInput type="email" [formField]="loginForm.email" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>
+              Senha:
+            </mat-label>
+            <input id="password" matInput type="password" [formField]="loginForm.password" />
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions style="justify-content: flex-end">
+        <button type="submit" matButton>Entrar</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

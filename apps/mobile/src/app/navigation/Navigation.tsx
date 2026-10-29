@@ -14,6 +14,7 @@ import Profile from '../screens/main/profile/Profile';
 import BindRiotAccount from '../screens/modals/BindRiotAccount';
 import CreateGuide from '../screens/modals/CreateGuide/CreateGuide';
 import ViewGuide from '../screens/modals/CreateGuide/guide-viewer/ViewGuide';
+import Report from '../screens/modals/Report';
 
 const HomeStack = createNativeStackNavigator({
   screens: {
@@ -65,12 +66,21 @@ const RootStack = createNativeStackNavigator({
     AuthenticatedModals: {
       if: useIsAuthenticated,
       screens: {
-        BindRiotAccount,
+        BindRiotAccount: {
+          options: { title: 'Vincular conta Riot' },
+          screen: BindRiotAccount
+        },
         CreateGuide: {
+          options: { title: 'Criar Guia' },
           screen: CreateGuide
         },
         ViewGuide: {
+          options: { title: 'Visualizar guia' },
           screen: ViewGuide
+        },
+        Report: {
+          options: { title: 'Denunciar' },
+          screen: Report
         }
       },
       screenOptions: {
@@ -80,8 +90,12 @@ const RootStack = createNativeStackNavigator({
     NotAuthenticated: {
       if: useIsNotAuthenticated,
       screens: {
-        Login,
-        Register
+        Login: {
+          screen: Login
+        },
+        Register: {
+          screen: Register
+        }
       }
     }
   },

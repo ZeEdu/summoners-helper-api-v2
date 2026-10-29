@@ -1,0 +1,16 @@
+<mat-card class="card">
+  <mat-card-header>
+    <mat-card-title>
+      Ameaças
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p>{{guide.threatsDescription}}</p>
+
+    <div class="threat-wrapper">
+      @for(threat of guide.threats; track threat.threat) {
+      <app-threat [threat]="threat" />
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

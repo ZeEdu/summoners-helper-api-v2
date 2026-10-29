@@ -1,12 +1,12 @@
-import { IGuide } from "@org/contracts";
+import { GuideDto } from "@org/contracts";
 import { useState } from "react";
 import { IconButton, Menu } from "react-native-paper";
 import GuideCard from "../../../../../components/GuideCard";
 
 type GuideListItemProps = {
-  guide: IGuide,
-  editGuide: (guide: IGuide) => void
-  viewGuide: (guide: IGuide) => void
+  guide: GuideDto,
+  editGuide: (guide: GuideDto) => void
+  viewGuide: (guide: GuideDto) => void
 }
 
 export default function GuideListItem({ guide, editGuide, viewGuide }: GuideListItemProps) {

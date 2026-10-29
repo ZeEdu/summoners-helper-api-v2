@@ -1,0 +1,15 @@
+<mat-card class="container">
+  <mat-card-header>
+    <mat-card-title>
+      Itens
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p>{{guide.itemsDescription}}</p>
+
+    @for(itemRow of guide.items; track itemRow.rowName) {
+    <app-item-section [itemRow]="itemRow" />
+    }
+  </mat-card-content>
+</mat-card>

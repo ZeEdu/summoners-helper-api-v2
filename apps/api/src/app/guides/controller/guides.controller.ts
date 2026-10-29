@@ -17,6 +17,7 @@ import {
   CreateGuideFormSchema,
   GuidePaginationDto,
   guidesPaginationSchema,
+  UserDtoWithPuuid,
 } from '@org/contracts';
 
 import { CurrentUser } from '../../decorators/user.decorator';
@@ -24,14 +25,13 @@ import { JwtGuard } from '../../guards/jwt.guard';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 import { IsGuideCreatorGuard } from '../../riot-api/guards/is-guide-creator.guard';
-import { IUserWithPuuid } from '../../users/schema/user.schema';
 import { Utils } from '../../utils';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
 
 @Controller('guides')
-@UseGuards(JwtGuard, HasRiotInfoGuard)
+@UseGuards(JwtGuard)
 export class GuidesController {
-  constructor(private guidesService: GuidesService) {}
+  constructor(private guidesService: GuidesService) { }
 
   @Get('')
   getGuides(
@@ -40,7 +40,7 @@ export class GuidesController {
   ) {
     const { offset, limit } = pagination;
     const filter = GuidesPagination.createFilter(pagination);
-    return this.guidesService.getGuides(filter, {
+    return this.guidesService.get(filter, {
       offset,
       limit,
     });
@@ -48,20 +48,21 @@ export class GuidesController {
 
   @Get(':guideId')
   getGuide(@Param('guideId') guideId: string) {
-    return this.guidesService.getGuideById(guideId);
+    return this.guidesService.getById(guideId);
   }
 
   @Post('')
+  @UseGuards(HasRiotInfoGuard)
   async createGuide(
-    @CurrentUser() user: IUserWithPuuid,
+    @CurrentUser() user: UserDtoWithPuuid,
     @Body(new ZodValidationPipe(CreateGuideFormSchema))
     body: CreateGuideFormDto,
   ) {
     const createdAt = new Date().toISOString();
-    const createdBy = user._id.toString();
+    const createdBy = user.id;
     const patchVersion = await Utils.getPatchVersion();
 
-    return this.guidesService.createGuide({
+    return this.guidesService.create({
       ...body,
       createdAt,
       createdBy,
@@ -78,7 +79,7 @@ export class GuidesController {
     const updatedAt = new Date().toISOString();
     const patchVersion = await Utils.getPatchVersion();
 
-    return this.guidesService.patchGuide(guideId, {
+    return this.guidesService.patch(guideId, {
       ...patchGuide,
       updatedAt,
       patchVersion,
@@ -89,5 +90,11 @@ export class GuidesController {
   @UseGuards(IsGuideCreatorGuard)
   deleteGuide(@Param('guideId') guideId: string) {
     return this.guidesService.deleteGuide(guideId);
+  }
+
+  @Patch(':guideId')
+  // @UseGuards(IsAdmin)
+  block(@Param('guideId') guideId: string) {
+    return this.guidesService.block(guideId)
   }
 }

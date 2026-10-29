@@ -1,0 +1,30 @@
+@use '@angular/material' as mat;
+
+.card {
+  @include mat.elevation-transition();
+  @include mat.elevation(1);
+
+  &:hover {
+    cursor: pointer;
+    @include mat.elevation(4);
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+
+    .left {
+      padding: 0.5rem;
+    }
+
+    .title {
+      flex: 1;
+    }
+
+    .right {
+      padding: 0.5rem;
+    }
+  }
+}

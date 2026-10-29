@@ -55,7 +55,7 @@ export type GuideIntroductionDto = z.infer<typeof GuideIntroductionSchema>;
 const resolver = zodResolver(GuideIntroductionSchema);
 
 export default function GuideIntroductionForm() {
-  const useDataDragon = useDataDragonContext();
+  const dataDragon = useDataDragonContext();
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
@@ -80,7 +80,7 @@ export default function GuideIntroductionForm() {
     stepperContext.nextStep();
   };
 
-  const championList = useDataDragon.dataDragon?.champions || [];
+  const championList = dataDragon.lists.champions || [];
 
   return (
     <View style={styles.container}>

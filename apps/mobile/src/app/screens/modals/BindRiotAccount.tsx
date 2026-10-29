@@ -1,19 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Text } from 'react-native-paper';
 
 import { RIOT_SERVERS, RIOT_SERVERS_LABEL, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
+import { useNavigation } from '@react-navigation/native';
 import AppSelectController from '../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../contexts/auth/useAuth';
 import { ApiService } from '../../../services/api/api.service';
-import { ModalStackParamList } from '../../navigation/types';
 
 const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
   {
@@ -80,10 +79,9 @@ const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
 
 const resolver = zodResolver(updateUserProfileSchema);
 
-type Props = NativeStackScreenProps<ModalStackParamList, 'BindRiotAccount'>
-
-export default function BindRiotAccount({ navigation }: Props) {
+export default function BindRiotAccount() {
   const authContext = useAuthContext()
+  const navigation = useNavigation()
 
   const defaultServerValue = RIOT_SERVERS.na1
   const {
@@ -134,37 +132,66 @@ export default function BindRiotAccount({ navigation }: Props) {
     <>
       <StyledView style={style.container}>
         <View style={style.items}>
-          <AppSelectController
-            control={control}
-            title={'Selecione um servidor'}
-            options={serverOptions}
-            placeholder={'Selecione um servidor'}
-            name={'server'}
-          />
-          <FormFieldErrors fieldError={errors.server} />
+          <View>
+            <Text
+              variant='titleMedium'
+            >
+              Região
+            </Text>
 
-          <AppInputController
-            control={control}
-            name="gameName" inputOptions={{
-              label: "Nome no jogo",
-              placeholder: "Seu nome no jogo"
-            }}
-          />
-          <FormFieldErrors fieldError={errors.gameName} />
+            <AppSelectController
+              control={control}
+              title={'Selecione um servidor'}
+              options={serverOptions}
+              placeholder={'Selecione um servidor'}
+              name={'server'}
+            />
 
-          <AppInputController
-            control={control}
-            name="tagLine"
-            inputOptions={{
-              label: "Tag line",
-              placeholder: "Sua tag line"
-            }}
+            <FormFieldErrors fieldError={errors.server} />
+          </View>
 
-          />
-          <FormFieldErrors fieldError={errors.tagLine} />
+          <View>
+            <Text
+              variant='titleMedium'
+            >
+              Nome de jogo
+            </Text>
+
+            <AppInputController
+              control={control}
+              name="gameName"
+              inputOptions={{
+                placeholder: "Seu nome no jogo"
+              }}
+            />
+
+            <FormFieldErrors fieldError={errors.gameName} />
+          </View>
+
+          <View>
+            <Text
+              variant='titleMedium'
+            >
+              Tagline
+            </Text>
+
+            <AppInputController
+              control={control}
+              name="tagLine"
+              inputOptions={{
+                placeholder: "Ex.: TTV"
+              }}
+
+            />
+
+            <FormFieldErrors fieldError={errors.tagLine} />
+          </View>
         </View>
-        <StyledButton onPress={handleSubmit(onSubmit)}>Enviar</StyledButton>
-      </StyledView>
+        <StyledButton onPress={handleSubmit(onSubmit)}>Vincular Conta</StyledButton>
+        <Text variant='labelSmall'>
+          Use o Riot ID atual, composto pelo nome de jogo e pela tagline. Não é necessário informar sua senha da Riot.
+        </Text>
+      </StyledView >
       <Snackbar
         visible={visibleSnackbar}
         onDismiss={hideSnackbar}

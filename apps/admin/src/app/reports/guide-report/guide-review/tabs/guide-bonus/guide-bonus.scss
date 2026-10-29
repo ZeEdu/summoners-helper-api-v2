@@ -1,0 +1,25 @@
+@use '../../../../../styles/mixins' as mixins;
+
+.container {
+  margin-top: 1rem;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 1rem;
+
+  .bonus {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+
+  @include mixins.md {
+    flex-direction: row;
+
+    .description {
+      flex: 1;
+    }
+  }
+}

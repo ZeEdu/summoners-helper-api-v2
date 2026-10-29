@@ -1,23 +1,20 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
+import { useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
 import { LoginUserDto, loginUserSchema } from "@org/contracts";
 import { StyledButton } from "@org/ui";
 
-
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import AppInputController from '../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import { AuthStackParamList } from '../../../navigation/types';
 
 const resolver = zodResolver(loginUserSchema)
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>
-
-export default function Login({ navigation }: Props) {
+export default function Login() {
   const authContext = useAuthContext();
+  const navigation = useNavigation()
 
   const { control, handleSubmit, formState: { errors } } = useForm<LoginUserDto>({ resolver })
 
@@ -37,8 +34,10 @@ export default function Login({ navigation }: Props) {
       <View>
         <AppInputController
           control={control}
-          label='Email'
-          placeholder='Email'
+          inputOptions={{
+            label: 'Email',
+            placeholder: 'Email'
+          }}
           name='email'
         />
         <FormFieldErrors fieldError={errors.email} />
@@ -46,8 +45,10 @@ export default function Login({ navigation }: Props) {
       <View>
         <AppInputController
           control={control}
-          label='Senha'
-          placeholder='Senha'
+          inputOptions={{
+            label: 'Senha',
+            placeholder: 'Senha'
+          }}
           name='password'
         />
         <FormFieldErrors fieldError={errors.password} />

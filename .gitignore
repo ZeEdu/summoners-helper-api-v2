@@ -137,3 +137,5 @@ npm-debug.*
 web-build/
 cache/
 /apps/mobile/android/
+
+__screenshots__/

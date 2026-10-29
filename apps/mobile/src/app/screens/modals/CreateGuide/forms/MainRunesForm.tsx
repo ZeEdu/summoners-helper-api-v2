@@ -30,7 +30,7 @@ type Props = {
 };
 
 export default function GuideMainRunesForm({ secondaryRune }: Props) {
-  const useDataDragon = useDataDragonContext();
+  const dataDragon = useDataDragonContext();
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
@@ -39,7 +39,7 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
     primaryRune: mainFormContext.getValues('primaryRune'),
     primarySlots: mainFormContext.getValues('primarySlots'),
     primaryRuneDescription: mainFormContext.getValues('primaryRuneDescription'),
-  }
+  };
 
   const {
     control,
@@ -54,8 +54,8 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
     name: 'primaryRune',
   });
 
-  const runeList = useDataDragon.dataDragon?.runes || [];
-  const runeMap = useDataDragon.dataDragonMaps?.runes || {};
+  const runeList = dataDragon.lists?.runes || [];
+  const runeMap = dataDragon.maps?.runes || {};
 
   const buildMainRunesOptions = () => {
     return runeList
@@ -96,7 +96,7 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
 
   useEffect(() => {
     if (primaryRune === defaultValues.primaryRune) {
-      return
+      return;
     }
 
     setValues({

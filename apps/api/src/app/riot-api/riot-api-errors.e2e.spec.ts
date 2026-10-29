@@ -1,20 +1,20 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-import cookieParser = require('cookie-parser');
-import { User, UserDocument } from '../users/schema/user.schema';
-import { AppModule } from '../app.module';
 import { faker } from '@faker-js/faker';
-import request = require('supertest');
-import { RiotApiErrorLogger } from './schema/riot-api-error-logger.schema';
-import nock from 'nock';
-import { RiotApiUtilsService } from './service/riot-api.utils.service';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+import { Model } from 'mongoose';
+import nock from 'nock';
+import { AppModule } from '../app.module';
+import { User, UserDocument } from '../users/schema/user.schema';
+import { RiotApiErrorLogger } from './schema/riot-api-error-logger.schema';
+import { RiotApiUtilsService } from './service/riot-api.utils.service';
+import cookieParser = require('cookie-parser');
+import request = require('supertest');
 
 describe('Riot API errors (e2e)', () => {
   let app: INestApplication;
-  let userModel: Model<User>;
+  let userModel: Model<UserDocument>;
   let riotApiErrorLoggerModel: Model<RiotApiErrorLogger>;
   let riotApiUtilsService: RiotApiUtilsService;
 
@@ -75,7 +75,7 @@ describe('Riot API errors (e2e)', () => {
       puuid: faker.string.alphanumeric(78),
       tagLine: faker.string.alphanumeric(5),
       gameName: faker.internet.userName(),
-      server: RIOT_SERVERS.BR1,
+      server: RIOT_SERVERS.br1,
     };
 
     const updatedUser = await userModel

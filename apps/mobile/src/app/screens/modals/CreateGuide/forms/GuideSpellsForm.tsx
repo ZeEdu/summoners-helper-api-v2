@@ -33,8 +33,8 @@ export type GuideSummonerSpellsDto = z.infer<typeof GuideSummonerSpellsSchema>;
 const resolver = zodResolver(GuideSummonerSpellsSchema);
 
 export default function GuideSummonerSpellsForm() {
-  const useDataDragon = useDataDragonContext();
-  const spellsList = useDataDragon.dataDragon?.spells || [];
+  const dataDragon = useDataDragonContext();
+  const spellsList = dataDragon.lists?.spells || [];
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
@@ -44,8 +44,6 @@ export default function GuideSummonerSpellsForm() {
     secondSpell: mainFormContext.getValues('secondSpell'),
     spellsDescription: mainFormContext.getValues('spellsDescription'),
   }
-
-  console.log({ defaultValues });
 
   const {
     control,

@@ -1,27 +1,27 @@
+import { faker } from '@faker-js/faker';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { RiotApiController } from './riot-api.controller';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Model } from 'mongoose';
 import {
-  IUserWithPuuid,
   User,
   UserSchema,
 } from '../../users/schema/user.schema';
-import { Model } from 'mongoose';
-import { faker } from '@faker-js/faker';
 import { UsersService } from '../../users/service/users.service';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { RiotApiService } from '../service/riot-api.service';
+import { RiotApiController } from './riot-api.controller';
 
 jest.mock('../service/riot-api.service');
-import { RiotApiService } from '../service/riot-api.service';
 
+import { CreateUserDto, RIOT_SERVERS, UserDtoWithPuuid } from '@org/contracts';
+import { I18nModule } from 'nestjs-i18n';
 import {
   IExpectedRiotApiService,
   RiotApiFixtures,
 } from '../../__fixtures__/riot-api.fixtures';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
-import { I18nModule } from 'nestjs-i18n';
 import { I18N } from '../../i18n.config';
-import { CreateUserDto, RIOT_SERVERS } from '@org/contracts';
+import ResponseMappers from '../../response-mappers';
 
 let mongodb: MongoMemoryServer;
 
@@ -29,7 +29,7 @@ describe('RiotApiController', () => {
   let controller: RiotApiController;
   let userModel: Model<User>;
 
-  let user: IUserWithPuuid;
+  let user: UserDtoWithPuuid;
   let buildExpectedRiotApiService: IExpectedRiotApiService;
 
   const userDto: CreateUserDto = {
@@ -40,7 +40,7 @@ describe('RiotApiController', () => {
   const userPuuid = faker.string.alphanumeric(78);
   const tagLine = faker.string.alphanumeric(5);
   const gameName = faker.internet.userName();
-  const server = RIOT_SERVERS.BR1;
+  const server = RIOT_SERVERS.br1;
 
   const championId = 107;
 
@@ -95,7 +95,7 @@ describe('RiotApiController', () => {
       puuid: userPuuid,
     }).save();
 
-    user = savedUser.toJSON();
+    user = ResponseMappers.userWithPuuid(savedUser);
   });
 
   describe('getChampionsMastery', () => {

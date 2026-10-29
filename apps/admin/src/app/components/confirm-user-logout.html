@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>
+  Tem certeza que deseja sair?
+</h2>
+<mat-dialog-content>
+  Ao confirmar, sua sessão será encerrada
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton (click)="cancel()" cdkFocusInitial>Cancelar</button>
+  <button matButton (click)="confirm()">Confirmar</button>
+</mat-dialog-actions>

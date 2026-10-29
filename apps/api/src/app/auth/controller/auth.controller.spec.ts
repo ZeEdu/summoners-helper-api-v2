@@ -1,23 +1,24 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
-import { UsersService } from '../../users/service/users.service';
-import { AuthService } from '../service/auth.service';
+import { faker } from '@faker-js/faker';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../../users/schema/user.schema';
-import { Model } from 'mongoose';
-import { faker } from '@faker-js/faker';
+import { Test, TestingModule } from '@nestjs/testing';
+import { CreateUserDto, IUser } from '@org/contracts';
 import { Response } from 'express';
-import { ConfigModule } from '@nestjs/config';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Model } from 'mongoose';
+import { I18nModule, I18nService } from 'nestjs-i18n';
+import { I18N } from '../../i18n.config';
+import ResponseMappers from '../../response-mappers';
+import { RiotApiModule } from '../../riot-api/riot-api.module';
 import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
 } from '../../riot-api/schema/riot-api-error-logger.schema';
-import { RiotApiModule } from '../../riot-api/riot-api.module';
-import { I18nModule, I18nService } from 'nestjs-i18n';
-import { I18N } from '../../i18n.config';
-import { CreateUserDto, IUser } from '@org/contracts';
+import { User, UserSchema } from '../../users/schema/user.schema';
+import { UsersService } from '../../users/service/users.service';
+import { AuthService } from '../service/auth.service';
+import { AuthController } from './auth.controller';
 
 let mongodb: MongoMemoryServer;
 
@@ -174,7 +175,7 @@ describe('AuthController', () => {
       expect(createdUser).toBeDefined();
 
       const { accessToken } = await controller.webLogin(
-        createdUser,
+        ResponseMappers.user(createdUser),
         getTypedMockedResponse(),
       );
 
@@ -201,7 +202,7 @@ describe('AuthController', () => {
 
       expect(createdUser.refreshToken).toBeDefined();
 
-      await controller.logout(createdUser, getTypedMockedResponse());
+      await controller.logout(ResponseMappers.user(createdUser), getTypedMockedResponse());
 
       const updatedUser = (await userModel
         .findOne({
@@ -245,7 +246,7 @@ describe('AuthController', () => {
       expect(rawRefreshToken!).toBeDefined();
 
       await controller.webRefreshToken(
-        { _id: createdUser._id, refreshToken: rawRefreshToken! } as IUser,
+        ResponseMappers.user({ ...createdUser, refreshToken: rawRefreshToken! }),
         getTypedMockedResponse(),
       );
 

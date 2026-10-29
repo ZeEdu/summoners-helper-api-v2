@@ -1,0 +1,17 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    @for(progression of progressionPerLevel; track progression.key) {
+    <div class="progression">
+      <img class="thumbnail" [src]="spellURL(progression.spell)" />
+      <div class="progression-identification">
+        <span class="progression-key">
+          {{progression.key.toUpperCase()}}
+        </span>
+        <span class="progression-level">
+          {{$index + 1}}
+        </span>
+      </div>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>

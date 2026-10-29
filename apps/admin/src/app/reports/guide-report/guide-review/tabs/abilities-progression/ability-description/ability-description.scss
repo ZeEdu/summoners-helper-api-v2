@@ -1,0 +1,38 @@
+@use '../../../../../../styles/mixins' as mixin;
+
+.card {
+  height: 100%;
+
+  .card-content {
+    display: flex;
+    gap: 1rem;
+
+    .thumbnail-wrapper {
+      img {
+        height: 4rem;
+        width: 4rem;
+        border-radius: 1rem
+      }
+    }
+
+    .description-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      gap: 0.5rem;
+
+      &>* {
+        margin: 0;
+      }
+
+      .title {
+        font: var(--mat-sys-title-medium);
+
+        .key {
+          color: var(--mat-sys-primary);
+        }
+      }
+    }
+  }
+}

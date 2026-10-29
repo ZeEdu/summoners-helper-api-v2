@@ -5,4 +5,8 @@ export * from './update-user.dto'
 
 export * from './guide'
 export * from './pagination'
+export * from './report'
+
+export * from './comments'
+export * from './data-dragon'
 

@@ -34,6 +34,25 @@ export enum RIOT_SERVERS_LABEL {
   vn2 = 'Vietnã',
 }
 
-export function sharedTest(): string {
-  return 'shared-test';
+function isRiotServer(value: string): value is RIOT_SERVERS {
+  return !!RIOT_SERVERS[value as RIOT_SERVERS]
+}
+
+export function getServer(value: string) {
+  if (isRiotServer(value)) {
+    return RIOT_SERVERS[value]
+  }
+  return ''
+}
+
+function isRiotServerLabel(value: string): value is keyof typeof RIOT_SERVERS_LABEL {
+  return Object.hasOwn(RIOT_SERVERS_LABEL, value)
+}
+
+export function getServerLabel(value: string) {
+  if (isRiotServerLabel(value)) {
+    return RIOT_SERVERS_LABEL[value]
+  }
+
+  return ''
 }

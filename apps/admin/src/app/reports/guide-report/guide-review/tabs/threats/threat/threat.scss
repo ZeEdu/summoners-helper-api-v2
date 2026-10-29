@@ -1,0 +1,25 @@
+.card-content {
+  display: flex;
+  gap: 1rem;
+
+  .thumbnail {
+    width: 64px;
+    height: 64px;
+    border-radius: 1rem;
+  }
+
+  .description-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .title,
+    .description {
+      margin: 0;
+    }
+
+    .title {}
+
+    .description {}
+  }
+}

@@ -1,7 +1,7 @@
 import { Image, StyleSheet, View } from "react-native"
-import { Card, Chip, Text } from "react-native-paper"
+import { Card, Chip, MD3Theme, Text, useTheme } from "react-native-paper"
 
-import { IGuide } from "@org/contracts"
+import { GuideDto } from "@org/contracts"
 
 import { ReactNode } from "react"
 import { usePatchVersion } from "../contexts/patchVersion/usePatchVersion"
@@ -10,12 +10,14 @@ import DataDragonService from "../services/data-dragon/data-dragon.service"
 
 type GuideCardProps = {
   onPress: () => void,
-  guide: IGuide,
+  guide: GuideDto,
   cardTitleRight?: () => ReactNode
 }
 
 export default function GuideCard({ guide, onPress, cardTitleRight }: GuideCardProps) {
   const usePatch = usePatchVersion()
+
+  const styles = makeStyles(useTheme())
 
   return (
     <Card onPress={onPress}>
@@ -42,14 +44,19 @@ export default function GuideCard({ guide, onPress, cardTitleRight }: GuideCardP
   )
 }
 
-const styles = StyleSheet.create({
-  cardTitleImage: {
-    width: 48,
-    height: 48
-  },
-  chipRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginTop: 8
-  },
-})
+const makeStyles = ({ colors }: MD3Theme) => {
+  return StyleSheet.create({
+    cardTitleImage: {
+      width: 48,
+      height: 48,
+      borderRadius: 16,
+      borderWidth: 2,
+      borderColor: colors.primary
+    },
+    chipRow: {
+      flexDirection: "row",
+      gap: 8,
+      marginTop: 8
+    },
+  })
+}
