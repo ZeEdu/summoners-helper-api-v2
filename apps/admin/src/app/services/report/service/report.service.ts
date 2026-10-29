@@ -19,8 +19,6 @@ export class ReportService {
     const queryString = qs.stringify(query)
     const requestUrl = `${this.endpoint}?${queryString}`
 
-    console.log({ query });
-
     return this.http
       .get<{
         reports: IPopulatedReportDto[];

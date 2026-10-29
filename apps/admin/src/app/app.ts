@@ -1,5 +1,5 @@
-import { TitleCasePipe } from '@angular/common';
-import { AfterViewInit, Component, computed, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { AsyncPipe, TitleCasePipe } from '@angular/common';
+import { AfterViewInit, Component, computed, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -7,8 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter, map, startWith, Subscription } from 'rxjs';
 import { AuthService } from './auth/service/auth.service';
 import { SessionService } from './auth/service/session.service';
 import { CONFIRM_LOGOUT_ACTIONS, ConfirmUserLogout } from './components/confirm-user-logout';
@@ -31,7 +31,8 @@ export interface Section {
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    TitleCasePipe
+    TitleCasePipe,
+    AsyncPipe
   ],
   selector: 'app-root',
   templateUrl: './app.html',
@@ -47,6 +48,7 @@ export class App implements OnInit, OnDestroy, AfterViewInit {
   dataDragonService = inject(DataDragonService)
   eventBusService = inject(EventBusService)
   activatedRoute = inject(ActivatedRoute)
+  router = inject(Router)
 
   showToolbar = computed(() => !!this.sessionService.user());
 
@@ -56,30 +58,12 @@ export class App implements OnInit, OnDestroy, AfterViewInit {
 
   isLoggingOut = false
 
-  listItems = [
-    {
-      title: 'Guias',
-      icon: 'report_problem',
-      onClick: () => {
-        this.handleDrawerClick('guide')
-      }
-    },
-    {
-      title: 'Comentários',
-      icon: 'comment',
-      onClick: () => {
-        this.handleDrawerClick('comments')
-      }
-    }
-  ]
-
   routes = [
     {
       title: 'Início',
       link: '',
       icon: 'home'
     },
-
     {
       title: 'Comentários',
       link: 'comment',
@@ -91,21 +75,21 @@ export class App implements OnInit, OnDestroy, AfterViewInit {
       icon: 'report_problem',
     }
   ];
-  activeLink = signal<string | null>(null);
+
+  currentUrl$ = this.router.events.pipe(
+    filter((event) => event instanceof NavigationEnd),
+    map((event) => event.urlAfterRedirects),
+    startWith(this.router.url)
+  )
 
   ngOnInit(): void {
     this.eventBusSub = this.eventBusService.on('logout', () => {
       this.handleLogout()
     })
-
-    this.activatedRoute.fragment.subscribe((fragment) => {
-      console.log({ fragment });
-    })
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      console.log(`ngAfterViewInit`);
       this.drawer.toggle()
     }, 500);
   }
@@ -122,11 +106,10 @@ export class App implements OnInit, OnDestroy, AfterViewInit {
       next: () => {
         window.location.reload()
       },
-      error: (err) => {
+      error: () => {
         this.sessionService.removeUser();
         this.isLoggingOut = false;
         window.location.reload()
-        console.log({ err });
       }
     })
   }
@@ -138,17 +121,10 @@ export class App implements OnInit, OnDestroy, AfterViewInit {
       .afterClosed()
       .subscribe({
         next: (result) => {
-          console.log({ result });
-
           if (result === CONFIRM_LOGOUT_ACTIONS.CONFIRM) {
             this.handleLogout()
           }
         }
       })
-  }
-
-
-  handleDrawerClick(page: string) {
-    console.log('handleDrawerClick', page);
   }
 }

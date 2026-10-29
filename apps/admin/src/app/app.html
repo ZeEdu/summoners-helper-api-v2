@@ -3,13 +3,13 @@
     <mat-nav-list>
       <div mat-subheader>Denuncias</div>
       @for (route of routes; track route.link) {
-
-      <a mat-list-item [routerLink]="route.link"
-        (click)="$event.preventDefault(); activeLink.set(route.link); drawer.close()"
-        [activated]="activeLink() === route.link">
+      @if (currentUrl$ | async; as currentUrl) {
+      <a mat-list-item [routerLink]="route.link" (click)="$event.preventDefault(); drawer.close()"
+        [activated]="route.link === currentUrl.replace('/', '')">
         <mat-icon matListItemIcon>{{route.icon}}</mat-icon>
         {{route.title | titlecase}}
       </a>
+      }
       }
     </mat-nav-list>
   </mat-drawer>
