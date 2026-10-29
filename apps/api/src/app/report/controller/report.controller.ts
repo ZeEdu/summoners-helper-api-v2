@@ -30,7 +30,7 @@ import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import ReportFilters from '../report.filters';
 import { ReportService } from '../service/report.service';
 
-@Controller('guide-report')
+@Controller('report')
 @UseGuards(JwtGuard, IsAdminGuard)
 export class ReportController {
   constructor(
@@ -49,6 +49,13 @@ export class ReportController {
     // throw new InternalServerErrorException('Erro teste')
 
     return this.reportService.get(filter, { offset, limit, sort });
+  }
+
+  @Get('count')
+  getCount(
+    @Query(new ZodValidationPipe(reportPagination)) pagination: ReportPaginationDto,
+  ) {
+    return this.reportService.count(ReportFilters.get(pagination));
   }
 
   @Get(':reportId')

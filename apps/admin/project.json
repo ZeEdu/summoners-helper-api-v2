@@ -8,9 +8,14 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
+        "allowedCommonJsDependencies": [
+          "qs"
+        ],
         "outputPath": "dist/apps/admin",
         "browser": "apps/admin/src/main.ts",
         "tsConfig": "apps/admin/tsconfig.app.json",
@@ -21,7 +26,9 @@
             "input": "apps/admin/public"
           }
         ],
-        "styles": ["apps/admin/src/styles.scss"]
+        "styles": [
+          "apps/admin/src/styles.scss"
+        ]
       },
       "configurations": {
         "production": {

@@ -1,0 +1,23 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="card-title">
+      <mat-icon>{{icon}}</mat-icon>
+      {{title}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    <h2 class="count">
+      @if(count$ | async; as count) {
+      {{count.value}}
+      }
+    </h2>
+    <p class="hint">
+      Pendentes de análise
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button matButton="text" [routerLink]="link">
+      Ver denúncias
+    </button>
+  </mat-card-actions>
+</mat-card>

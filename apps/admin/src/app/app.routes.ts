@@ -4,9 +4,9 @@ import { isNotSignedInGuard } from './auth/guards/is-not-signed-in-guard';
 import { isSignedInGuard } from './auth/guards/is-signed-in-guard';
 import { isSystemAdminGuard } from './auth/guards/is-system-admin-guard';
 import { Login } from './auth/login/login';
-import { CommentReport } from './comment-report/comment-report';
-import { GuideReport } from './guide-report/guide-report';
 import { Home } from './home/home';
+import { CommentReport } from './reports/comment-report/comment-report';
+import { GuideReport } from './reports/guide-report/guide-report';
 
 export const appRoutes: Route[] = [
   {

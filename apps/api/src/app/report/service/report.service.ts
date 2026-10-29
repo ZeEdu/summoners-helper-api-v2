@@ -21,6 +21,8 @@ export class ReportService {
 
     const skip = offset * limit
 
+    console.log({ filter });
+
     const reports = await this.reportModel
       .find(filter)
       .limit(limit)
@@ -33,6 +35,10 @@ export class ReportService {
       reports: reports.map(ResponseMappers.populatedReport),
       count
     };
+  }
+
+  async count(filter?: QueryFilter<Report>) {
+    return this.reportModel.countDocuments(filter)
   }
 
   async getById(reportId: string) {
