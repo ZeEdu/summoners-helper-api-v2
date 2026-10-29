@@ -21,8 +21,6 @@ export class ReportService {
 
     const skip = offset * limit
 
-    console.log({ filter });
-
     const reports = await this.reportModel
       .find(filter)
       .limit(limit)

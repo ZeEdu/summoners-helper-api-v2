@@ -46,8 +46,6 @@ export class ReportController {
     const { offset, limit, sort } = pagination;
     const filter = ReportFilters.get(pagination);
 
-    // throw new InternalServerErrorException('Erro teste')
-
     return this.reportService.get(filter, { offset, limit, sort });
   }
 
