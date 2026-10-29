@@ -5,13 +5,13 @@ z.object({
 });
 
 const limitSchema = z
-  .number({ error: 'Valor deve ser um número' })
-  .nonnegative({ error: 'Valor deve ser positivo' })
+  .number()
+  .nonnegative()
   .optional();
 
 const offsetSchema = z
-  .number({ error: 'Valor deve ser um número' })
-  .nonnegative({ error: 'Valor deve ser positivo' })
+  .number()
+  .nonnegative()
   .optional();
 
 const sortEnum = z.enum(['desc', 'asc', ''])

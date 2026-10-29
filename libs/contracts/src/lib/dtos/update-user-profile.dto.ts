@@ -4,16 +4,14 @@ import { RIOT_SERVERS } from '../constants';
 
 export const updateUserProfileSchema = z.object({
   gameName: z
-    .string({ error: 'Formato inválido' })
-    .min(1, { error: 'gameName é obrigatório' }),
+    .string()
+    .min(1),
 
   tagLine: z
-    .string({ error: 'Formato inválido' })
-    .min(1, { error: 'tagLine é obrigatório' }),
+    .string()
+    .min(1),
 
-  server: z.enum(RIOT_SERVERS, {
-    error: 'Servidor inválido',
-  }),
+  server: z.enum(RIOT_SERVERS),
 });
 
 export type UpdateUserProfileDto = z.infer<typeof updateUserProfileSchema>;

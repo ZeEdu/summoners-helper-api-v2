@@ -114,6 +114,7 @@ export function getBonusLabel(key: string): SLOT_BONUS_LABELS | undefined {
   return undefined;
 }
 
+// TODO: MIGRA ISSO PARA DENTRO DA INTERNACIONALIZAÇÃO
 export const bonusDescriptions: Record<string, { pt: string; en: string }> = {
   ADAPTIVE_FORCE: {
     pt: 'Aumenta o dano de ataque ou o poder de habilidade.',

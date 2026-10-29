@@ -6,16 +6,16 @@ export const enumReportReason = z.enum(REPORT_REASON, {
 })
 
 export const ReportShape = z.object({
-  reportedBy: z.string({ error: 'O campo deve ser uma string' }),
+  reportedBy: z.string(),
   reason: enumReportReason,
-  observation: z.string({ error: 'O campo deve ser uma string' }),
-  createdAt: z.string({ error: 'O campo deve ser uma string' })
+  observation: z.string(),
+  createdAt: z.string()
 })
 
 export const ReportGuideShape = ReportShape.extend({
-  guide: z.string({ error: 'O campo deve ser uma string' })
+  guide: z.string()
 })
 
 export const ReportCommentShape = ReportShape.extend({
-  comment: z.string({ error: 'O campo deve ser uma string' })
+  comment: z.string()
 })

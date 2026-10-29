@@ -9,12 +9,12 @@ export enum REPORT_PAGINATION_TYPE {
 }
 
 export const reportPagination = paginationSchema.safeExtend({
-  guide: z.string({ error: 'O campo deve ser uma string' }).optional(),
-  comment: z.string({ error: 'O campo deve ser uma string' }).optional(),
-  reportedBy: z.string({ error: 'O campo deve ser uma string' }).optional(),
+  guide: z.string().optional(),
+  comment: z.string().optional(),
+  reportedBy: z.string().optional(),
   reason: enumReportReason.optional(),
-  observation: z.string({ error: 'O campo deve ser uma string' }).optional(),
-  createdAt: z.date({ error: 'O campo deve ser uma data valida' }).optional(),
+  observation: z.string().optional(),
+  createdAt: z.date().optional(),
   type: z.enum(REPORT_PAGINATION_TYPE).optional(),
   actionTaken: z.enum(REPORT_ACTION_TAKEN).optional()
 })

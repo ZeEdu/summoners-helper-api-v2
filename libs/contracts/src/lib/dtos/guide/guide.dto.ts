@@ -2,9 +2,7 @@ import z from 'zod';
 
 import { AbilityOption } from '../../enums';
 
-export const enumAbilitiesOption = z.enum(AbilityOption, {
-  error: `Valor invalido. Deve ser um dos seguintes valores: ${AbilityOption.A},${AbilityOption.B},${AbilityOption.C} ou ${AbilityOption.D}`,
-});
+export const enumAbilitiesOption = z.enum(AbilityOption);
 
 export const abilitiesProgressionSchema = z.object({
   l1: enumAbilitiesOption,
@@ -27,96 +25,95 @@ export const abilitiesProgressionSchema = z.object({
   l18: enumAbilitiesOption,
 });
 
-// TODO: TENTAR SE LIVRAR DISSO DAQUI E FAZER APENAS UM ARRAY DE STRING
 export const itemSchema = z.object({
-  itemId: z.string({ error: 'formato do campo é inválido' }),
+  itemId: z.string(),
 });
 
 export const itemsSchema = z.object({
   rowName: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   itemsList: z
     .array(itemSchema)
-    .min(1, { error: 'Campo obrigatório' }),
+    .min(1),
   description: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
 });
 
 export const GuideSchemaShape = z.object({
-  patchVersion: z.string({ error: 'formato do campo é inválido' }),
-  createdAt: z.string({ error: 'formato do campo é inválido' }),
-  createdBy: z.string({ error: 'formato do campo é inválido' }),
+  patchVersion: z.string(),
+  createdAt: z.string(),
+  createdBy: z.string(),
 
   title: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   introduction: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   champion: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   role: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
 
   // Bonus
   bonusSlotOne: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   bonusSlotTwo: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   bonusSlotThree: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   bonusDescription: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
 
-  primaryRune: z.string({ error: 'formato do campo é inválido' }),
+  primaryRune: z.string(),
   primarySlots: z.object({
     first: z
-      .string({ error: 'formato do campo é inválido' })
-      .min(1, { error: 'Campo obrigatório' }),
+      .string()
+      .min(1),
     second: z
-      .string({ error: 'formato do campo é inválido' })
-      .min(1, { error: 'Campo obrigatório' }),
+      .string()
+      .min(1),
     third: z
-      .string({ error: 'formato do campo é inválido' })
-      .min(1, { error: 'Campo obrigatório' }),
+      .string()
+      .min(1),
     fourth: z
-      .string({ error: 'formato do campo é inválido' })
-      .min(1, { error: 'Campo obrigatório' }),
+      .string()
+      .min(1),
   }),
-  primaryRuneDescription: z.string({ error: 'formato do campo é inválido' }),
+  primaryRuneDescription: z.string(),
 
-  secondaryRune: z.string({ error: 'formato do campo é inválido' }),
+  secondaryRune: z.string(),
   secondarySlots: z.object({
     first: z
-      .string({ error: 'formato do campo é inválido' })
-      .min(1, { error: 'Campo obrigatório' }),
+      .string()
+      .min(1),
     second: z
-      .string({ error: 'formato do campo é inválido' })
-      .min(1, { error: 'Campo obrigatório' }),
+      .string()
+      .min(1),
     third: z
-      .string({ error: 'formato do campo é inválido' })
-      .min(1, { error: 'Campo obrigatório' }),
+      .string()
+      .min(1),
   }),
-  secondaryRuneDescription: z.string({ error: 'formato do campo é inválido' }),
+  secondaryRuneDescription: z.string(),
 
   // Spells
-  firstSpell: z.string({ error: 'formato do campo é inválido' }),
-  secondSpell: z.string({ error: 'formato do campo é inválido' }),
-  spellsDescription: z.string({ error: 'formato do campo é inválido' }),
+  firstSpell: z.string(),
+  secondSpell: z.string(),
+  spellsDescription: z.string(),
 
   // Items
   items: z.array(itemsSchema),
   itemsDescription: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
 
   // Abilities Progression
   abilitiesProgression: abilitiesProgressionSchema,
@@ -125,16 +122,16 @@ export const GuideSchemaShape = z.object({
   }),
 
   threatsDescription: z
-    .string({ error: 'formato do campo é inválido' })
-    .min(1, { error: 'Campo obrigatório' }),
+    .string()
+    .min(1),
   threats: z.array(
     z.object({
       threat: z
-        .string({ error: 'formato do campo é inválido' })
-        .min(1, { error: 'Campo obrigatório' }),
+        .string()
+        .min(1),
       description: z
-        .string({ error: 'formato do campo é inválido' })
-        .min(1, { error: 'Campo obrigatório' }),
+        .string()
+        .min(1),
     }),
   ),
 });
