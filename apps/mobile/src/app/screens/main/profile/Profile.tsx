@@ -14,15 +14,16 @@ import {
   useTheme,
 } from 'react-native-paper';
 
-import { getServerLabel } from '@org/contracts';
 import { StyledView } from '@org/ui';
 
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
+import useI18n from '../../../../contexts/i18n/useI18n';
 import { useThemeContext } from '../../../../providers/theme.provider';
 import ChangeLanguageButton from './change-language-button/ChangeLanguageButton';
 
 export default function Profile() {
+  const i18n = useI18n()
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -48,10 +49,6 @@ export default function Profile() {
 
   const toggleTheme = () => {
     themeContext.toggleTheme()
-  }
-
-  const handleChangeLanguage = () => {
-
   }
 
   const showDialog = () => {
@@ -80,20 +77,20 @@ export default function Profile() {
             <View>
               <Text variant="titleLarge">{username}</Text>
 
-              <Text variant="labelMedium">Perfil do Summoner's Helper</Text>
+              <Text variant="labelMedium">{i18n.t('profile.header.text')}</Text>
             </View>
           </View>
 
           <Divider />
 
           <Text variant="titleLarge" style={styles.title}>
-            Informações pessoais
+            {i18n.t('profile.personalInfo.title')}
           </Text>
 
           <Card mode={'contained'}>
             <View style={styles.item}>
               <Text variant="labelMedium" style={styles.itemTitleText}>
-                Email
+                {i18n.t('profile.personalInfo.email')}
               </Text>
 
               <Text variant="bodyLarge">{email}</Text>
@@ -102,7 +99,7 @@ export default function Profile() {
 
             <View style={styles.item}>
               <Text variant="labelMedium" style={styles.itemTitleText}>
-                Username
+                {i18n.t('profile.personalInfo.username')}
               </Text>
 
               <Text variant="bodyLarge">{username}</Text>
@@ -110,14 +107,14 @@ export default function Profile() {
           </Card>
 
           <Text variant="titleLarge" style={styles.title}>
-            Conta Riot
+            {i18n.t('profile.riotAccount.title')}
           </Text>
 
           {userHasRiotBindedAccount ? (
             <Card mode={'contained'}>
               <View style={styles.item}>
                 <Text variant="labelMedium" style={styles.itemTitleText}>
-                  Nome no Jogo
+                  {i18n.t('profile.riotAccount.gameName')}
                 </Text>
 
                 <Text variant="bodyLarge">{gameName}</Text>
@@ -127,7 +124,7 @@ export default function Profile() {
 
               <View style={styles.item}>
                 <Text variant="labelMedium" style={styles.itemTitleText}>
-                  TagLine
+                  {i18n.t('profile.riotAccount.tagLine')}
                 </Text>
                 <Text variant="bodyLarge">{tagLine}</Text>
               </View>
@@ -136,28 +133,29 @@ export default function Profile() {
 
               <View style={styles.item}>
                 <Text variant="labelMedium" style={styles.itemTitleText}>
-                  Servidor
+                  {i18n.t('profile.riotAccount.server')}
                 </Text>
                 <Text variant="bodyLarge">
-                  {server && getServerLabel(server)}
+                  {server && i18n.t(`riot.server.${server}`)}
                 </Text>
               </View>
             </Card>
           ) : (
             <Card mode="outlined">
               <View style={styles.bindRiotAccountContainer}>
-                <Text variant="titleLarge">Nenhuma conta vinculada</Text>
+                <Text variant="titleLarge">
+                  {i18n.t('profile.bindAccount.title')}
+                </Text>
 
                 <Text variant="labelMedium" style={styles.bindAccountHelpText}>
-                  Associe sua conta Riot para conectar seus dados de jogo ao
-                  perfil.
+                  {i18n.t('profile.bindAccount.hint')}
                 </Text>
 
                 <Button
                   mode="contained"
                   onPress={() => navigation.navigate('BindRiotAccount')}
                 >
-                  Vincular conta Riot
+                  {i18n.t('profile.bindAccount.button')}
                 </Button>
               </View>
             </Card>
@@ -166,7 +164,7 @@ export default function Profile() {
 
         <View style={styles.actionButtons}>
           <Button mode='contained' onPress={toggleTheme}>
-            Trocar tema
+            {i18n.t('profile.toggleTheme')}
           </Button>
           <ChangeLanguageButton />
         </View>
@@ -176,7 +174,7 @@ export default function Profile() {
             textColor={theme.colors.onTertiary}
             onPress={showDialog}
           >
-            Sair da conta
+            {i18n.t('profile.logout.button')}
           </Button>
         </View>
       </StyledView>
@@ -187,18 +185,22 @@ export default function Profile() {
           onDismiss={closeDialog}
         >
           <Dialog.Title>
-            Você Tem certeza
+            {i18n.t('profile.logout.title')}
           </Dialog.Title>
 
           <Dialog.Content>
             <Text variant="bodyMedium">
-              Você tem certeza que quer deslogar?
+              {i18n.t('profile.logout.content')}
             </Text>
           </Dialog.Content>
 
           <Dialog.Actions>
-            <Button onPress={closeDialog}>NÃO</Button>
-            <Button onPress={handleLogOut}>SIM</Button>
+            <Button onPress={closeDialog}>
+              {i18n.t('general.no').toUpperCase()}
+            </Button>
+            <Button onPress={handleLogOut}>
+              {i18n.t('general.yes').toUpperCase()}
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -213,7 +215,7 @@ export default function Profile() {
           },
         }}
       >
-        Não foi possivel deslogar. Tente novamente
+        {i18n.t('profile.snackbar')}
       </Snackbar>
     </>
   );
