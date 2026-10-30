@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import useI18n from "./useI18n";
 
-type ScreenName = 'Profile'
+type ScreenName = 'Profile' | 'MyGuides'
 
 export default function useTranslateScreenName(screenName: ScreenName) {
   const i18n = useI18n()

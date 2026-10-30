@@ -27,6 +27,38 @@ const profile = {
   snackbar: 'Não foi possivel deslogar. Tente novamente'
 }
 
+const myGuides = {
+  feedback: {
+    loading: 'Carregando...',
+    error: 'Um erro ocorreu',
+    loadMore: 'Carregar mais',
+    emptyList: 'Você não tem nenhuma build ainda',
+
+  },
+  filter: {
+    buttons: {
+      toggle: 'Filtros',
+      clear: 'Limpar',
+      submit: 'Buscar'
+    },
+    fields: {
+      title: {
+        label: 'Título',
+        placeholder: 'Título'
+      },
+      champion: {
+        title: 'Campeão',
+        placeholder: 'Selecione um campeão'
+      },
+      role: {
+        title: 'Selecione um role',
+        placeholder: 'Selecione um role'
+      }
+    }
+  }
+
+}
+
 const riot = {
   server: {
     br1: 'Brasil',
@@ -60,7 +92,8 @@ const general = {
 }
 
 const screens = {
-  Profile: 'Perfil'
+  Profile: 'Perfil',
+  MyGuides: 'Meus guias'
 }
 
 const ptBR = {
@@ -68,7 +101,8 @@ const ptBR = {
   profile,
   riot,
   general,
-  screens
+  screens,
+  myGuides
 }
 
 export default ptBR

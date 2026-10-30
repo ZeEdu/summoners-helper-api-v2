@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FlatList, StyleSheet, View } from 'react-native';
@@ -6,12 +7,13 @@ import { Button, FAB, MD3Theme, Text, useTheme } from 'react-native-paper';
 import { GuideDto, GuidePaginationDto, ROLES, ROLES_LABEL } from '@org/contracts';
 import { StyledButton, StyledView } from '@org/ui';
 
-import { useNavigation } from '@react-navigation/native';
 import AppSelectController from '../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../components/forms/AppInputController';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
 import useDataDragonContext from '../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../contexts/i18n/useI18n';
+import useTranslateScreenName from '../../../../contexts/i18n/useTranslateScreenName';
 import { ApiService } from '../../../../services/api/api.service';
 import GuideListItem from './guide-list-item/GuideListItem';
 
@@ -39,11 +41,14 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export default function MyGuides() {
+  useTranslateScreenName('MyGuides')
+
   const authContext = useAuthContext();
   const dataDragonContext = useDataDragonContext();
   const userHasRiotBindedAccount = useUserHasRiotBindedAccount();
-  const navigation = useNavigation()
+  const i18n = useI18n()
 
+  const navigation = useNavigation()
   const theme = useTheme();
   const style = makeStyles(theme);
 
@@ -65,11 +70,7 @@ export default function MyGuides() {
   });
 
   const handleCreateGuide = () => {
-    if (userHasRiotBindedAccount) {
-      navigation.navigate('CreateGuide', {});
-    } else {
-      console.log('Avisar o usuário');
-    }
+    navigation.navigate('CreateGuide', {});
   };
 
   const getBuilds = async () => {
@@ -90,7 +91,7 @@ export default function MyGuides() {
         setCount(count)
       })
       .catch(() => {
-        setError('Erro ao buscar builds');
+        setError(i18n.t('myGuides.feedback.error'));
       })
       .finally(() => {
         setLoading(false);
@@ -141,7 +142,7 @@ export default function MyGuides() {
               setShowFilters(!showFilters);
             }}
           >
-            Filtros
+            {i18n.t('myGuides.filter.buttons.toggle')}
           </StyledButton>
         </View>
 
@@ -149,45 +150,45 @@ export default function MyGuides() {
           <View style={{ marginHorizontal: 16, gap: 8 }}>
             <AppInputController
               inputOptions={{
-                label: 'Título',
-                placeholder: 'Título',
+                label: i18n.t('myGuides.filter.fields.title.label'),
+                placeholder: i18n.t('myGuides.filter.fields.title.placeholder'),
               }}
               name={'title'}
               control={control}
             />
             <AppSelectController
               control={control}
-              title={'Campeão'}
+              title={i18n.t('myGuides.filter.fields.champion.title')}
               options={championList.map(({ id, name }) => ({
                 value: id,
                 label: name,
               }))}
-              placeholder={'Selecione um campeão'}
+              placeholder={i18n.t('myGuides.filter.fields.champion.placeholder')}
               name={'champion'}
             />
             <AppSelectController
               control={control}
-              title={'Selecione um role'}
+              title={i18n.t('myGuides.filter.fields.role.title')}
               options={ROLE_OPTIONS}
-              placeholder={'Selecione um role'}
+              placeholder={i18n.t('myGuides.filter.fields.role.placeholder')}
               name={'role'}
             />
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
-              <StyledButton mode='contained-tonal' onPress={clearFilters}>Limpar</StyledButton>
-              <StyledButton onPress={handleFilterSearch}>Buscar</StyledButton>
+              <StyledButton mode='contained-tonal' onPress={clearFilters}>{i18n.t('myGuides.filter.buttons.clear')}</StyledButton>
+              <StyledButton onPress={handleFilterSearch}>{i18n.t('myGuides.filter.buttons.submit')}</StyledButton>
             </View>
           </View>
         )}
 
         {loading && (
           <View>
-            <Text>Carregando</Text>
+            <Text>{i18n.t('myGuides.feedback.loading')}</Text>
           </View>
         )}
 
         {Boolean(error) && (
           <View>
-            <Text>Um erro ocorreu</Text>
+            <Text>{i18n.t('myGuides.feedback.error')}</Text>
           </View>
         )}
 
@@ -207,7 +208,7 @@ export default function MyGuides() {
                     return (
                       <View>
                         <Button onPress={loadMore}>
-                          Carregar mais
+                          {i18n.t('myGuides.feedback.loadMore')}
                         </Button>
                       </View>
                     )
@@ -229,7 +230,7 @@ export default function MyGuides() {
                   variant='headlineSmall'
                   style={{ textAlign: 'center' }}
                 >
-                  Você não tem nenhuma build ainda
+                  {i18n.t('myGuides.feedback.emptyList')}
                 </Text>
               </View>
             )
