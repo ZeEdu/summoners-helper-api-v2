@@ -59,11 +59,16 @@ const general = {
   no: 'não'
 }
 
+const screens = {
+  Profile: 'Perfil'
+}
+
 const ptBR = {
   changeLanguage,
   profile,
   riot,
-  general
+  general,
+  screens
 }
 
 export default ptBR

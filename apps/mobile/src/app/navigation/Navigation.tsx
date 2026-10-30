@@ -45,7 +45,6 @@ const MainTabs = createBottomTabNavigator({
     Profile: {
       screen: Profile,
       options: {
-        title: 'Perfil',
         tabBarIcon: ({ color }) => <Ionicons style={{ color: color }} name={'person'} />
       }
     }
@@ -100,7 +99,6 @@ const RootStack = createNativeStackNavigator({
     }
   },
 });
-
 
 export const Navigation = createStaticNavigation(RootStack)
 

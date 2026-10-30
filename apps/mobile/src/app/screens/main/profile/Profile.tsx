@@ -19,11 +19,14 @@ import { StyledView } from '@org/ui';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
 import useI18n from '../../../../contexts/i18n/useI18n';
+import useTranslateScreenName from '../../../../contexts/i18n/useTranslateScreenName';
 import { useThemeContext } from '../../../../providers/theme.provider';
 import ChangeLanguageButton from './change-language-button/ChangeLanguageButton';
 
 export default function Profile() {
-  const i18n = useI18n()
+  useTranslateScreenName('Profile')
+
+  const i18n = useI18n();
   const theme = useTheme();
   const navigation = useNavigation();
 
