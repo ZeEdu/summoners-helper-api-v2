@@ -20,6 +20,7 @@ import { StyledView } from '@org/ui';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
 import { useThemeContext } from '../../../../providers/theme.provider';
+import ChangeLanguageButton from './change-language-button/ChangeLanguageButton';
 
 export default function Profile() {
   const theme = useTheme();
@@ -28,7 +29,7 @@ export default function Profile() {
   const themeContext = useThemeContext();
 
   const authContext = useAuthContext();
-  const styles = makeStyle(theme);
+  const styles = makeStyles(theme);
   const userHasRiotBindedAccount = useUserHasRiotBindedAccount();
 
   const [isDialogVisible, setIsDialogVisible] = useState(false);
@@ -44,6 +45,14 @@ export default function Profile() {
       showSnackbar();
     }
   };
+
+  const toggleTheme = () => {
+    themeContext.toggleTheme()
+  }
+
+  const handleChangeLanguage = () => {
+
+  }
 
   const showDialog = () => {
     setIsDialogVisible(true);
@@ -154,12 +163,12 @@ export default function Profile() {
             </Card>
           )}
         </View>
-        <View>
-          <Button mode='contained' onPress={() => {
-            themeContext.toggleTheme()
-          }}>
+
+        <View style={styles.actionButtons}>
+          <Button mode='contained' onPress={toggleTheme}>
             Trocar tema
           </Button>
+          <ChangeLanguageButton />
         </View>
         <View style={styles.logOutContainer}>
           <Button
@@ -210,17 +219,22 @@ export default function Profile() {
   );
 }
 
-const makeStyle = ({ colors }: MD3Theme) => {
+const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     container: {
       margin: 16,
       justifyContent: 'space-between',
       height: '100%',
     },
-    userInfoContainer: { gap: 16 },
+    userInfoContainer: {
+      gap: 16
+    },
     profileHeader: {
       flexDirection: 'row',
       gap: 16,
+    },
+    actionButtons: {
+      gap: 16
     },
     title: { color: colors.primary },
     changeRiotAccountButton: {
