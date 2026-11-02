@@ -1,12 +1,14 @@
 import { ISerializedComment } from "@org/contracts";
 import { StyleSheet } from "react-native";
 import { Card, MD3Theme, Text, useTheme } from "react-native-paper";
+import useI18n from "../../../../contexts/i18n/useI18n";
 
 type Props = {
   replyTo: ISerializedComment
 }
 
 export default function ReplyCard({ replyTo }: Props) {
+  const i18n = useI18n()
   const styles = makeStyles(useTheme())
 
   const getCreatedBy = (replyTo: ISerializedComment) => {
@@ -22,7 +24,7 @@ export default function ReplyCard({ replyTo }: Props) {
       mode="contained"
       style={styles.card}
     >
-      <Card.Title title={`Respondendo a ${getCreatedBy(replyTo)}`} titleStyle={styles.authorText} />
+      <Card.Title title={`${i18n.t('replyTo')} ${getCreatedBy(replyTo)}`} titleStyle={styles.authorText} />
       <Card.Content>
         <Text
           variant="bodyMedium"

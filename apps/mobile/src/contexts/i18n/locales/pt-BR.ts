@@ -202,6 +202,10 @@ const postComment = {
   placeholder: 'Escreva a seu comentário...'
 }
 
+const replyCard = {
+  replyTo: 'Respondendo a'
+}
+
 const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
@@ -242,7 +246,8 @@ const ptBR = {
   displayUserList,
   commentSection,
   replies,
-  postComment
+  postComment,
+  replyCard
 }
 
 export default ptBR
