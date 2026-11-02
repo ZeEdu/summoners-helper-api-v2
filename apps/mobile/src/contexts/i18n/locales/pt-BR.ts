@@ -163,6 +163,10 @@ const createGuide = {
   }
 }
 
+const stepper = {
+  error: 'Deve passar mais de um elemento'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -192,7 +196,8 @@ const ptBR = {
   recentGuidesList,
   advancedSearch,
   guideListItem,
-  createGuide
+  createGuide,
+  stepper
 }
 
 export default ptBR
