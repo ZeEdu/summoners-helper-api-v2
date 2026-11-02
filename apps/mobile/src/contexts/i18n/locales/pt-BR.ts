@@ -140,6 +140,29 @@ const guideListItem = {
   edit: 'Editar guia'
 }
 
+const createGuide = {
+  error: 'Salvamento falhou. Tente novamente.',
+  saveButton: {
+    loading: 'Salvando...',
+    text: 'Salvar'
+  },
+  steppers: {
+    intro: 'Introdução',
+    spells: 'Magias',
+    primaryRunes: 'Runas Principais',
+    secondaryRunes: 'Runas Secondárias',
+    bonus: 'Bonus',
+    items: 'Itens',
+    progression: 'Progressão de Habilidades',
+    threats: 'Ameaças',
+    review: 'Revisão'
+  },
+  snack: {
+    close: 'Fechar',
+    success: 'Salvo com sucesso!'
+  }
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -168,7 +191,8 @@ const ptBR = {
   quickSearchbar,
   recentGuidesList,
   advancedSearch,
-  guideListItem
+  guideListItem,
+  createGuide
 }
 
 export default ptBR

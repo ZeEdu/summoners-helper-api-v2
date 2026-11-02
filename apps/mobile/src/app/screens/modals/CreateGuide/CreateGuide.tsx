@@ -15,6 +15,7 @@ import { StyledView } from '@org/ui';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { Stepper, StepperItem } from '../../../../components/stepper';
 import { StepperProvider } from '../../../../components/stepper/context';
+import useI18n from '../../../../contexts/i18n/useI18n';
 import { ApiService } from '../../../../services/api/api.service';
 import GuideAbilitiesProgressionForm from './forms/AbilitiesProgressionForm';
 import BonusForm from './forms/BonusForm';
@@ -47,6 +48,7 @@ export default function CreateGuide({ route }: Props) {
   const [error, setError] = useState('');
 
   const navigation = useNavigation()
+  const i18n = useI18n()
 
   const defaultValues = route.params.guide ?? {}
 
@@ -65,8 +67,8 @@ export default function CreateGuide({ route }: Props) {
     const guideId = route.params.guide?.id
 
     createRequest(value, guideId)
-      .catch((err) => {
-        setError('Salvamento falhou. Tente novamente.');
+      .catch(() => {
+        setError(i18n.t('createGuide.error'));
       })
       .finally(() => {
         setLoading(false);
@@ -160,6 +162,7 @@ export default function CreateGuide({ route }: Props) {
     );
   };
 
+  // TODO: Criar uma forma de diferenciar o ambiente em que está rodando o projeto
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -176,7 +179,7 @@ export default function CreateGuide({ route }: Props) {
             style={style.headerButton}
             onPress={methods.handleSubmit(onSubmit)}
           >
-            {loading ? 'Salvando...' : 'Salvar'}
+            {loading ? i18n.t('createGuide.saveButton.loading') : i18n.t('createGuide.saveButton.text')}
           </Button>
         </>
       ),
@@ -185,38 +188,38 @@ export default function CreateGuide({ route }: Props) {
 
   return (
     <>
-      <StyledView style={{ ...style.container, height: height }}>
+      <StyledView style={{ ...style.container, height }}>
         {
           <FormProvider {...methods}>
             <StepperProvider>
               <Stepper>
-                <StepperItem title="Introdução">
+                <StepperItem title={i18n.t('createGuide.steppers.intro')}>
                   <GuideIntroductionForm />
                 </StepperItem>
-                <StepperItem title="Magias">
+                <StepperItem title={i18n.t('createGuide.steppers.spells')}>
                   <GuideSummonerSpellsForm />
                 </StepperItem>
-                <StepperItem title="Runas Principais">
+                <StepperItem title={i18n.t('createGuide.steppers.primaryRunes')}>
                   <GuideMainRunesForm secondaryRune={secondaryRune} />
                 </StepperItem>
-                <StepperItem title="Runas Secondárias">
+                <StepperItem title={i18n.t('createGuide.steppers.secondaryRunes')}>
                   <GuideSecondaryRunesForm />
                 </StepperItem>
-                <StepperItem title="Bonus">
+                <StepperItem title={i18n.t('createGuide.steppers.bonus')}>
                   <BonusForm />
                 </StepperItem>
-                <StepperItem title="Itens">
+                <StepperItem title={i18n.t('createGuide.steppers.items')}>
                   <ItemSelectionProvider>
                     <ItemsForm />
                   </ItemSelectionProvider>
                 </StepperItem>
-                <StepperItem title="Progressão de Habilidades">
+                <StepperItem title={i18n.t('createGuide.steppers.progression')}>
                   <GuideAbilitiesProgressionForm champion={watchChampion} />
                 </StepperItem>
-                <StepperItem title="Ameaças">
+                <StepperItem title={i18n.t('createGuide.steppers.threats')}>
                   <ThreatsForm />
                 </StepperItem>
-                <StepperItem title="Revisão">
+                <StepperItem title={i18n.t('createGuide.steppers.review')}>
                   <ReviewGuide handleConfirm={methods.handleSubmit(onSubmit)} />
                 </StepperItem>
               </Stepper>
@@ -232,16 +235,15 @@ export default function CreateGuide({ route }: Props) {
             if (!error) {
               navigation.goBack();
             }
-
           }}
           action={{
-            label: 'Fechar',
+            label: i18n.t('createGuide.snack.close'),
             onPress: () => {
               setShowSnack(false);
             },
           }}
         >
-          {error ? error : 'Salvo com sucesso!'}
+          {error ?? i18n.t('createGuide.snack.success')}
         </Snackbar>
       </Portal>
     </>
