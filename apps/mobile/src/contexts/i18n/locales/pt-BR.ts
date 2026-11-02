@@ -83,6 +83,12 @@ const recentGuides = {
   title: 'Guias Recentes'
 }
 
+const quickSearchbar = {
+  searchbarPlaceholder: 'Busque por um guia',
+  advancedSearchButton: 'Busca avançada',
+  emptyText: 'Nenhum resultado encontrado'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -107,7 +113,8 @@ const ptBR = {
   general,
   screens,
   myGuides,
-  recentGuides
+  recentGuides,
+  quickSearchbar
 }
 
 export default ptBR
