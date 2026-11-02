@@ -172,6 +172,12 @@ const stepper = {
   contextError: 'StepperContext deve ser utilizado dentro de StepperProvider'
 }
 
+const userPicker = {
+  title: 'Selecione o usuário',
+  searchbar: 'Busque pelo usuário aqui',
+  cancel: 'Cancelar'
+}
+
 const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
@@ -207,7 +213,8 @@ const ptBR = {
   guideListItem,
   createGuide,
   stepper,
-  error
+  error,
+  userPicker
 }
 
 export default ptBR
