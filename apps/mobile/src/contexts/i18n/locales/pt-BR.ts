@@ -453,6 +453,15 @@ const register = {
   submit: 'Cadastrar'
 }
 
+const errorFeedback = {
+  text: 'O carregamento dos dados do Data Dragon falhou...',
+  button: 'Tentar novamente!'
+}
+
+const loadingFeedback = {
+  text: 'Carregando dados do Data Dragon...'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -508,7 +517,9 @@ const ptBR = {
   itemDialog,
   itemsFields,
   login,
-  register
+  register,
+  errorFeedback,
+  loadingFeedback
 }
 
 export default ptBR
