@@ -400,7 +400,17 @@ const itemsForm = {
   removeBlockButton: 'Remover bloco',
   addItem: 'Adicionar',
   searchbar: 'Buscar itens'
+}
 
+const itemContext = {
+  error: 'ItemSelectionContext deve ser utilizado dentro de ItemSelectionProvider'
+}
+
+const itemDialog = {
+  title: 'Tem certeza?',
+  content: 'O item será removido da lista',
+  cancel: 'Cancelar',
+  remove: 'Tenho certeza'
 }
 
 const changeLanguage = {
@@ -453,7 +463,9 @@ const ptBR = {
   mainRuneForm,
   secondaryRuneForm,
   threatsForm,
-  itemsForm
+  itemsForm,
+  itemContext,
+  itemDialog
 }
 
 export default ptBR
