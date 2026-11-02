@@ -319,6 +319,33 @@ const spellsForm = {
   }
 }
 
+const mainRuneForm = {
+  primaryRune: {
+    title: 'Caminho Principal',
+    placeholder: 'Selecione um caminho'
+  },
+  first: {
+    title: 'Primeira Runa',
+    placeholder: 'Selecione a primeira runa'
+  },
+  second: {
+    title: 'Segunda Runa',
+    placeholder: 'Selecione a segunda runa'
+  },
+  third: {
+    title: 'Terceira Runa',
+    placeholder: 'Selecione a terceira runa'
+  },
+  fourth: {
+    title: 'Quarta Runa',
+    placeholder: 'Selecione a quarta runa'
+  },
+  description: {
+    label: 'Descrição da runas',
+    placeholder: 'Descrição da runas'
+  }
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -365,7 +392,8 @@ const ptBR = {
   slotBonus,
   slotBonusDescription,
   bonusLabelShards,
-  spellsForm
+  spellsForm,
+  mainRuneForm
 }
 
 export default ptBR

@@ -9,11 +9,11 @@ import { useEffect } from 'react';
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter, {
-  buildCustomButtonProps,
-} from '../../../../../components/stepper/StepperFooter';
+import StepperFooter from '../../../../../components/stepper/StepperFooter';
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 
 export const mainRuneSchema = CreateGuideFormSchema.pick({
   primaryRune: true,
@@ -31,6 +31,7 @@ type Props = {
 
 export default function GuideMainRunesForm({ secondaryRune }: Props) {
   const dataDragon = useDataDragonContext();
+  const i18n = useI18n()
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
@@ -114,9 +115,9 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
       <View style={styles.content}>
         <AppSelectController
           control={control}
-          title={'Caminho Principal'}
+          title={i18n.t('mainRune.primaryRune.title')}
           options={buildMainRunesOptions()}
-          placeholder={'Selecione um caminho'}
+          placeholder={i18n.t('mainRune.primaryRune.placeholder')}
           name={`primaryRune`}
         />
         <FormFieldErrors fieldError={errors.primaryRune} />
@@ -124,36 +125,36 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
           <>
             <AppSelectController
               control={control}
-              title={'Primeira Runa'}
+              title={i18n.t('mainRune.first.title')}
               options={buildFirstRunesOptions('first')}
-              placeholder={'Selecione a primeira runa'}
+              placeholder={i18n.t('mainRune.first.placeholder')}
               name={`primarySlots.first`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.first} />
 
             <AppSelectController
               control={control}
-              title={'Segunda Runa'}
+              title={i18n.t('mainRune.second.title')}
               options={buildFirstRunesOptions('second')}
-              placeholder={'Selecione a segunda runa'}
+              placeholder={i18n.t('mainRune.second.placeholder')}
               name={`primarySlots.second`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.second} />
 
             <AppSelectController
               control={control}
-              title={'Terceira Runa'}
+              title={i18n.t('mainRune.third.title')}
               options={buildFirstRunesOptions('third')}
-              placeholder={'Selecione a terceira runa'}
+              placeholder={i18n.t('mainRune.third.placeholder')}
               name={`primarySlots.third`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.third} />
 
             <AppSelectController
               control={control}
-              title={'Quarta Runa'}
+              title={i18n.t('mainRune.fourth.title')}
               options={buildFirstRunesOptions('forth')}
-              placeholder={'Selecione a quarta runa'}
+              placeholder={i18n.t('mainRune.fourth.placeholder')}
               name={`primarySlots.fourth`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.fourth} />
@@ -162,8 +163,8 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
               control={control}
               name={'primaryRuneDescription'}
               inputOptions={{
-                label: 'Descrição da runas',
-                placeholder: 'Descrição da runas',
+                label: i18n.t('mainRune.description.label'),
+                placeholder: i18n.t('mainRune.description.placeholder'),
                 multiline: true,
               }}
             />
@@ -174,6 +175,7 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t
         })}
       />
     </View>
