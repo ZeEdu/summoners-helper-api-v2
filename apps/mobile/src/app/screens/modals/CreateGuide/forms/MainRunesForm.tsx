@@ -115,9 +115,9 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
       <View style={styles.content}>
         <AppSelectController
           control={control}
-          title={i18n.t('mainRune.primaryRune.title')}
+          title={i18n.t('mainRuneForm.primaryRune.title')}
           options={buildMainRunesOptions()}
-          placeholder={i18n.t('mainRune.primaryRune.placeholder')}
+          placeholder={i18n.t('mainRuneForm.primaryRune.placeholder')}
           name={`primaryRune`}
         />
         <FormFieldErrors fieldError={errors.primaryRune} />
@@ -125,36 +125,36 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
           <>
             <AppSelectController
               control={control}
-              title={i18n.t('mainRune.first.title')}
+              title={i18n.t('mainRuneForm.first.title')}
               options={buildFirstRunesOptions('first')}
-              placeholder={i18n.t('mainRune.first.placeholder')}
+              placeholder={i18n.t('mainRuneForm.first.placeholder')}
               name={`primarySlots.first`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.first} />
 
             <AppSelectController
               control={control}
-              title={i18n.t('mainRune.second.title')}
+              title={i18n.t('mainRuneForm.second.title')}
               options={buildFirstRunesOptions('second')}
-              placeholder={i18n.t('mainRune.second.placeholder')}
+              placeholder={i18n.t('mainRuneForm.second.placeholder')}
               name={`primarySlots.second`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.second} />
 
             <AppSelectController
               control={control}
-              title={i18n.t('mainRune.third.title')}
+              title={i18n.t('mainRuneForm.third.title')}
               options={buildFirstRunesOptions('third')}
-              placeholder={i18n.t('mainRune.third.placeholder')}
+              placeholder={i18n.t('mainRuneForm.third.placeholder')}
               name={`primarySlots.third`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.third} />
 
             <AppSelectController
               control={control}
-              title={i18n.t('mainRune.fourth.title')}
+              title={i18n.t('mainRuneForm.fourth.title')}
               options={buildFirstRunesOptions('forth')}
-              placeholder={i18n.t('mainRune.fourth.placeholder')}
+              placeholder={i18n.t('mainRuneForm.fourth.placeholder')}
               name={`primarySlots.fourth`}
             />
             <FormFieldErrors fieldError={errors.primarySlots?.fourth} />
@@ -163,8 +163,8 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
               control={control}
               name={'primaryRuneDescription'}
               inputOptions={{
-                label: i18n.t('mainRune.description.label'),
-                placeholder: i18n.t('mainRune.description.placeholder'),
+                label: i18n.t('mainRuneForm.description.label'),
+                placeholder: i18n.t('mainRuneForm.description.placeholder'),
                 multiline: true,
               }}
             />
