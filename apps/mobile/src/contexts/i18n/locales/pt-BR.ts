@@ -187,6 +187,13 @@ const commentSection = {
   empty: 'Nenhum comentário foi feito. Seja o primeiro!'
 }
 
+const replies = {
+  empty: {
+    text: 'Esse comentário não tem nenhuma resposta',
+    button: 'Responder'
+  }
+}
+
 const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
@@ -225,7 +232,8 @@ const ptBR = {
   error,
   userPicker,
   displayUserList,
-  commentSection
+  commentSection,
+  replies
 }
 
 export default ptBR

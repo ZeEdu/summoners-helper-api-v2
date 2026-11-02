@@ -5,6 +5,7 @@ import { Button, MD3Theme, Text, useTheme } from "react-native-paper";
 
 import { CommentPaginationDto, ISerializedComment } from "@org/contracts";
 
+import useI18n from "../../../contexts/i18n/useI18n";
 import { ApiService } from "../../../services/api/api.service";
 import Comment from "../comment/Comment";
 
@@ -17,6 +18,7 @@ type Props = {
 }
 
 export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setReplyTo, reportComment }: Props) {
+  const i18n = useI18n()
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const [replies, setReplies] = useState<ISerializedComment[]>([])
@@ -81,13 +83,13 @@ export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setR
                   variant="titleMedium"
                   style={styles.emptyComponentText}
                 >
-                  Esse comentário não tem nenhuma resposta
+                  {i18n.t('replies.empty.text')}
                 </Text>
                 <Button
                   mode="contained"
                   onPress={handleReplyTo}
                 >
-                  Responder
+                  {i18n.t('replies.empty.button')}
                 </Button>
               </View>
             )}
