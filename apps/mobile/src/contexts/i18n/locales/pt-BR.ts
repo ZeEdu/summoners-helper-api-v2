@@ -413,6 +413,13 @@ const itemDialog = {
   remove: 'Tenho certeza'
 }
 
+const itemsFields = {
+  block: {
+    name: 'Nome do bloco de itens',
+    description: 'Descrição do bloco de itens'
+  }
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -465,7 +472,8 @@ const ptBR = {
   threatsForm,
   itemsForm,
   itemContext,
-  itemDialog
+  itemDialog,
+  itemsFields
 }
 
 export default ptBR
