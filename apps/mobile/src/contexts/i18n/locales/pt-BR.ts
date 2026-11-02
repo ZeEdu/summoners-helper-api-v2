@@ -304,6 +304,21 @@ const bonusLabelShards = {
   TENACITY: 'TENACIDADE',
 }
 
+const spellsForm = {
+  firstSpell: {
+    title: 'Selecione uma magia',
+    placeholder: 'Selecione uma magia'
+  },
+  secondSpell: {
+    title: 'Selecione uma segunda magia',
+    placeholder: 'Selecione uma segunda magia'
+  },
+  description: {
+    label: 'Descrição das magias',
+    placeholder: 'Descreva o uso das magias'
+  }
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -349,7 +364,8 @@ const ptBR = {
   bonusForm,
   slotBonus,
   slotBonusDescription,
-  bonusLabelShards
+  bonusLabelShards,
+  spellsForm
 }
 
 export default ptBR
