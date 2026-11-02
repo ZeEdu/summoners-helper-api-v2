@@ -164,7 +164,11 @@ const createGuide = {
 }
 
 const stepper = {
-  error: 'Deve passar mais de um elemento'
+  error: 'Deve passar mais de um elemento',
+  footer: {
+    next: 'Próximo passo',
+    previous: 'Passo anterior'
+  }
 }
 
 const changeLanguage = {

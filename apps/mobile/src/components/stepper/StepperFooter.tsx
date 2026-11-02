@@ -1,25 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Button, ButtonProps } from "react-native-paper";
+import useI18n from "../../contexts/i18n/useI18n";
 import { useStepperContext } from "./context";
-
-type ButtonPropsWithOptionalChildren = Omit<ButtonProps, 'children'> & {
-  children?: React.ReactNode
-}
-
-const styles = StyleSheet.create({
-  footerButton: {
-    flex: 1
-  }
-})
-
-export const buildCustomButtonProps = (buttonProps: ButtonPropsWithOptionalChildren): ButtonProps => {
-  return {
-    children: 'Próximo passo',
-    mode: "contained",
-    style: styles.footerButton,
-    ...buttonProps,
-  }
-}
 
 type Props = {
   customPreviousButtonText?: string;
@@ -35,6 +17,7 @@ export default function StepperFooter({
   goBackOnly = false
 }: Props) {
   const stepperContext = useStepperContext()
+  const i18n = useI18n()
 
   const GoBackButton = () => {
     return (
@@ -46,13 +29,13 @@ export default function StepperFooter({
           stepperContext.previousStep()
         }}
       >
-        {customPreviousButtonText || 'Passo anterior'}
+        {customPreviousButtonText || i18n.t('stepper.footer.previous')}
       </Button>
     )
   }
 
   return (
-    <View style={{ flexDirection: 'row', marginBottom: 16, gap: 8 }}>
+    <View style={styles.container}>
       {
         goBackOnly ?
           (
@@ -77,7 +60,7 @@ export default function StepperFooter({
                         stepperContext.nextStep()
                       }}
                     >
-                      {nextButtonText || 'Próximo passo'}
+                      {nextButtonText || i18n.t('stepper.footer.next')}
                     </Button>
                   )
               }
@@ -87,3 +70,11 @@ export default function StepperFooter({
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    gap: 8
+  }
+})
