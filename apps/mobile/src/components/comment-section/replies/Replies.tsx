@@ -9,13 +9,14 @@ import { ApiService } from "../../../services/api/api.service";
 import Comment from "../comment/Comment";
 
 type Props = {
-  guideId: string;
-  showRepliesTo: ISerializedComment | null;
-  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>;
-  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
+  guideId: string,
+  showRepliesTo: ISerializedComment | null,
+  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
+  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
+  reportComment: (comment: ISerializedComment) => void;
 }
 
-export default function Replies({ showRepliesTo, setShowRepliesTo, guideId, setReplyTo }: Props) {
+export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setReplyTo, reportComment }: Props) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const [replies, setReplies] = useState<ISerializedComment[]>([])
@@ -29,7 +30,10 @@ export default function Replies({ showRepliesTo, setShowRepliesTo, guideId, setR
   }
 
   useEffect(() => {
-    if (!showRepliesTo) return
+    if (!showRepliesTo) {
+      bottomSheetModalRef.current?.close()
+      return
+    }
 
     async function getReplies() {
       ApiService.Comments.get({
@@ -91,6 +95,7 @@ export default function Replies({ showRepliesTo, setShowRepliesTo, guideId, setR
               ({ item: comment }) => (
                 <Comment
                   comment={comment}
+                  reportComment={reportComment}
                   setReplyTo={setReplyTo}
                   setShowRepliesTo={setShowRepliesTo}
                   useAlternativeColors={true}

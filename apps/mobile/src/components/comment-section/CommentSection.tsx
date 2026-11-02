@@ -8,12 +8,12 @@ import Comment from "./comment/Comment";
 import PostComment from "./post-comment/PostComment";
 import Replies from "./replies/Replies";
 
-
 type Props = {
   guideId: string;
+  reportComment: (comment: ISerializedComment) => void;
 }
 
-export default function CommentSection({ guideId }: Props) {
+export default function CommentSection({ guideId, reportComment }: Props) {
   const [comments, setComments] = useState<ISerializedComment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown | undefined>(undefined);
@@ -94,6 +94,7 @@ export default function CommentSection({ guideId }: Props) {
             return (
               <Comment
                 comment={comment}
+                reportComment={reportComment}
                 setReplyTo={setReplyTo}
                 setShowRepliesTo={setShowRepliesTo}
               />
@@ -109,10 +110,11 @@ export default function CommentSection({ guideId }: Props) {
         setShowRepliesTo={setShowRepliesTo}
       />
       <Replies
+        guideId={guideId}
         showRepliesTo={showRepliesTo}
         setShowRepliesTo={setShowRepliesTo}
-        guideId={guideId}
         setReplyTo={setReplyTo}
+        reportComment={reportComment}
       />
     </View>
   )

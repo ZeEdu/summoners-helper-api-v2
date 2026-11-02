@@ -1,24 +1,24 @@
 import { StyleSheet, View } from "react-native";
-import { Avatar, Button, Card, IconButton, Menu, Text, useTheme } from "react-native-paper";
+import { Avatar, Button, Card, IconButton, Text, useTheme } from "react-native-paper";
 
 import { ISerializedComment } from "@org/contracts";
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { ApiService } from "../../../services/api/api.service";
+import SideMenu from "./side-menu/SideMenu";
 
 type Props = {
   comment: ISerializedComment,
-  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
-  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
-  useAlternativeColors?: boolean
+  useAlternativeColors?: boolean,
+  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
+  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
+  reportComment: (comment: ISerializedComment) => void
 }
 
-export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlternativeColors = false }: Props) {
+export default function Comment({ comment, useAlternativeColors = false, setReplyTo, setShowRepliesTo, reportComment }: Props) {
+  const theme = useTheme()
+
   const [liked, setLiked] = useState(comment.liked || false)
   const [likeCount, setLikeCount] = useState(comment.likeCount)
-
-  const theme = useTheme()
-  const navigation = useNavigation();
 
   let createdBy = 'Deletado'
   if (comment.createdBy && 'username' in comment.createdBy) {
@@ -49,8 +49,8 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlte
       .catch(() => { })
   }
 
-  const reportComment = () => {
-    navigation.navigate('Report', { comment })
+  const onSideMenuClick = () => {
+    setShowRepliesTo(null)
   }
 
   return (
@@ -81,7 +81,7 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlte
             </Text>
           </View>
           <View>
-            <SideMenu reportComment={reportComment} />
+            <SideMenu comment={comment} reportComment={reportComment} onClick={onSideMenuClick} />
           </View>
         </View>
 
@@ -105,6 +105,7 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlte
               {likeCount}
             </Text>
           </View>
+
           <Button
             icon={'reply'}
             mode="text"
@@ -113,11 +114,17 @@ export default function Comment({ comment, setReplyTo, setShowRepliesTo, useAlte
           >
             Responder
           </Button>
+
           <Button
             icon={'message-reply-text'}
             mode="text"
             compact
-            onPress={() => setShowRepliesTo(comment)}
+            onPress={() => {
+              setShowRepliesTo((old) => {
+                if (old?.id === comment.id) return null
+                return comment
+              })
+            }}
           >
             Respostas
           </Button>
@@ -133,22 +140,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingBottom: 0,
   },
-
   header: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   author: {
     flex: 1,
     marginLeft: 12,
   },
-
   content: {
     marginTop: 16,
     lineHeight: 21,
   },
-
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -156,7 +159,6 @@ const styles = StyleSheet.create({
     gap: 8,
     justifyContent: 'flex-end'
   },
-
   like: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -165,25 +167,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 0
   }
 });
-
-const SideMenu = ({ reportComment }: { reportComment: () => void }) => {
-  const [visible, setVisible] = useState(false)
-
-  const handleClick = () => {
-    setVisible(false)
-    reportComment()
-  }
-
-  return (
-    <View>
-      <Menu
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        anchor={
-          <IconButton icon='dots-vertical' size={24} onPress={() => setVisible(true)} />
-        }>
-        <Menu.Item onPress={handleClick} title="Denunciar comentário" />
-      </Menu>
-    </View>
-  )
-}

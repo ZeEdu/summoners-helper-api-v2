@@ -56,7 +56,6 @@ const myGuides = {
       }
     }
   }
-
 }
 
 const riot = {
@@ -183,6 +182,10 @@ const displayUserList = {
   notFound: 'Nenhum usuário encontrado'
 }
 
+const commentSection = {
+  loadMore: 'Carregar mais'
+}
+
 const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
@@ -220,7 +223,8 @@ const ptBR = {
   stepper,
   error,
   userPicker,
-  displayUserList
+  displayUserList,
+  commentSection
 }
 
 export default ptBR

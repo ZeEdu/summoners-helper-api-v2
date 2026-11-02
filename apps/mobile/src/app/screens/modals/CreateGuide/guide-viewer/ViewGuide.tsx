@@ -11,7 +11,7 @@ import { MainRuneDto } from '../forms/MainRunesForm';
 import { SecondaryRuneDto } from '../forms/SecondaryRunesForm';
 import { ThreatsDto } from '../forms/ThreatsForm';
 
-import { GuideDto } from '@org/contracts';
+import { GuideDto, ISerializedComment } from '@org/contracts';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import CommentSection from '../../../../../components/comment-section/CommentSection';
 import { useAuthContext } from '../../../../../contexts/auth/useAuth';
@@ -108,6 +108,10 @@ export default function ViewGuide({ route }: Props) {
       title: 'Denunciar guia',
       id: 'report-guide',
     });
+  }
+
+  const reportComment = (comment: ISerializedComment) => {
+    navigation.navigate('Report', { comment })
   }
 
   useEffect(() => {
@@ -212,6 +216,7 @@ export default function ViewGuide({ route }: Props) {
           titleIcon='comment-multiple-outline'
         >
           <CommentSection
+            reportComment={reportComment}
             guideId={guide.id}
           />
         </ExpandableCard>
