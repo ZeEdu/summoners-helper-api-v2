@@ -420,6 +420,39 @@ const itemsFields = {
   }
 }
 
+const login = {
+  fields: {
+    email: {
+      label: 'Email',
+      placeholder: 'Seu email'
+    },
+    password: {
+      label: 'Senha',
+      placeholder: 'Sua senha'
+    }
+  },
+  submit: 'Entrar',
+  goToRegister: 'Ir para cadastro'
+}
+
+const register = {
+  fields: {
+    email: {
+      label: 'Email',
+      placeholder: 'Seu email'
+    },
+    username: {
+      label: 'Nome de usuário',
+      placeholder: 'Seu nome de usuário'
+    },
+    password: {
+      label: 'Senha',
+      placeholder: 'Sua senha'
+    }
+  },
+  submit: 'Cadastrar'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -473,7 +506,9 @@ const ptBR = {
   itemsForm,
   itemContext,
   itemDialog,
-  itemsFields
+  itemsFields,
+  login,
+  register
 }
 
 export default ptBR

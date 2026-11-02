@@ -11,10 +11,12 @@ import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
 import AppInputController from '../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import useI18n from '../../../../contexts/i18n/useI18n';
 
 const resolver = zodResolver(createUserSchema);
 
 export default function Register() {
+  const i18n = useI18n();
   const authContext = useAuthContext();
 
   const {
@@ -60,8 +62,8 @@ export default function Register() {
       <AppInputController
         name="email"
         inputOptions={{
-          label: "Email",
-          placeholder: "Seu Email"
+          label: i18n.t('register.fields.email.label'),
+          placeholder: i18n.t('register.fields.email.placeholder')
         }}
         control={control}
       />
@@ -72,8 +74,8 @@ export default function Register() {
         control={control}
         name="username"
         inputOptions={{
-          label: "Username",
-          placeholder: "Seu nome de usuário"
+          label: i18n.t('register.fields.username.label'),
+          placeholder: i18n.t('register.fields.username.placeholder')
         }}
       />
       <FormFieldErrors fieldError={errors.username} />
@@ -83,15 +85,15 @@ export default function Register() {
         name="password"
         control={control}
         inputOptions={{
-          label: "Password",
-          placeholder: ""
+          label: i18n.t('register.fields.password.label'),
+          placeholder: i18n.t('register.fields.password.placeholder')
         }}
       />
       <FormFieldErrors fieldError={errors.password} />
       <ApiFieldErrors apiErrors={apiErrors?.password} />
 
       <View>
-        <StyledButton onPress={handleSubmit(onSubmit)}>Submit</StyledButton>
+        <StyledButton onPress={handleSubmit(onSubmit)}>{i18n.t('register.submit')}</StyledButton>
       </View>
     </View>
   );

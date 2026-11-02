@@ -9,10 +9,12 @@ import { StyledButton } from "@org/ui";
 import AppInputController from '../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
+import useI18n from '../../../../contexts/i18n/useI18n';
 
 const resolver = zodResolver(loginUserSchema)
 
 export default function Login() {
+  const i18n = useI18n()
   const authContext = useAuthContext();
   const navigation = useNavigation()
 
@@ -35,8 +37,8 @@ export default function Login() {
         <AppInputController
           control={control}
           inputOptions={{
-            label: 'Email',
-            placeholder: 'Email'
+            label: i18n.t('login.fields.email.label'),
+            placeholder: i18n.t('login.fields.email.placeholder')
           }}
           name='email'
         />
@@ -46,16 +48,16 @@ export default function Login() {
         <AppInputController
           control={control}
           inputOptions={{
-            label: 'Senha',
-            placeholder: 'Senha'
+            label: i18n.t('login.fields.password.label'),
+            placeholder: i18n.t('login.fields.password.placeholder')
           }}
           name='password'
         />
         <FormFieldErrors fieldError={errors.password} />
       </View>
       <View>
-        <StyledButton onPress={handleSubmit(onSubmit)}>Submit</StyledButton>
-        <StyledButton mode='contained-tonal' onPress={goToRegister}>Go to Register</StyledButton>
+        <StyledButton onPress={handleSubmit(onSubmit)}>{i18n.t('login.submit')}</StyledButton>
+        <StyledButton mode='contained-tonal' onPress={goToRegister}>{i18n.t('login.goToRegister')}</StyledButton>
       </View>
     </View>
   );
