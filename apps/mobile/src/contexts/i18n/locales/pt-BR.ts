@@ -89,6 +89,12 @@ const quickSearchbar = {
   emptyText: 'Nenhum resultado encontrado'
 }
 
+const recentGuidesList = {
+  reload: 'Ops! Um erro ocorreu... Clique para tentar novamente!',
+  loadMore: 'Carregar mais',
+  error: 'Erro ao buscar builds'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -114,7 +120,8 @@ const ptBR = {
   screens,
   myGuides,
   recentGuides,
-  quickSearchbar
+  quickSearchbar,
+  recentGuidesList
 }
 
 export default ptBR
