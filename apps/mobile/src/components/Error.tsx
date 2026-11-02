@@ -1,8 +1,10 @@
 import { PropsWithChildren } from "react"
 import { StyleSheet, View } from "react-native"
 import { Text } from "react-native-paper"
+import useI18n from "../contexts/i18n/useI18n"
 
 export default function Error({ children }: PropsWithChildren) {
+  const i18n = useI18n()
   return (
     <View
       style={styles.container}
@@ -10,7 +12,7 @@ export default function Error({ children }: PropsWithChildren) {
       {
         children ?? (
           <Text style={styles.fallbackText}>
-            Ops! Um erro ocorreu... Tente novamente mais tarde!
+            {i18n.t('error.text')}
           </Text>
         )
       }
