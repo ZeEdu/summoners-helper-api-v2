@@ -219,6 +219,25 @@ const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
 
+const introForm = {
+  title: {
+    label: 'Titulo',
+    placeholder: 'Titulo'
+  },
+  intro: {
+    label: 'Introdução',
+    placeholder: 'Introdução'
+  },
+  champion: {
+    title: 'Selecione um campeão',
+    placeholder: 'Selecione um campeão'
+  },
+  role: {
+    title: 'Selecione um role',
+    placeholder: 'Selecione um role'
+  }
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -258,7 +277,8 @@ const ptBR = {
   postComment,
   replyCard,
   comment,
-  sideMenu
+  sideMenu,
+  introForm
 }
 
 export default ptBR
