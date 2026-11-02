@@ -6,62 +6,36 @@ import z from 'zod';
 import {
   CreateGuideFormDto,
   CreateGuideFormSchema,
-  SLOT_BONUS,
-  SLOT_BONUS_LABELS,
+  SLOT_BONUS
 } from '@org/contracts';
 
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter, {
-  buildCustomButtonProps,
-} from '../../../../../components/stepper/StepperFooter';
+import StepperFooter from '../../../../../components/stepper/StepperFooter';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 
-const slotOne = [
-  {
-    value: SLOT_BONUS.ADAPTIVE_FORCE,
-    label: SLOT_BONUS_LABELS.ADAPTIVE_FORCE,
-  },
-  {
-    value: SLOT_BONUS.ATTACK_SPEED,
-    label: SLOT_BONUS_LABELS.ATTACK_SPEED,
-  },
-  {
-    value: SLOT_BONUS.HASTE,
-    label: SLOT_BONUS_LABELS.HASTE,
-  },
-];
+const makeSlots = (slots: SLOT_BONUS[], t: (key: string) => string) => {
+  return slots
+    .map((key) => ({
+      value: key,
+      label: t(`slotBonus.${key}`)
+    }))
+}
 
-const slotTwo = [
-  {
-    value: SLOT_BONUS.ADAPTIVE_FORCE,
-    label: SLOT_BONUS_LABELS.ADAPTIVE_FORCE,
-  },
-  {
-    value: SLOT_BONUS.MOVEMENT_SPEED,
-    label: SLOT_BONUS_LABELS.MOVEMENT_SPEED,
-  },
-  {
-    value: SLOT_BONUS.HEALTH,
-    label: SLOT_BONUS_LABELS.HEALTH,
-  },
-];
+const makeSlotOne = (t: (key: string) => string) => {
+  return makeSlots([SLOT_BONUS.HEALTH, SLOT_BONUS.ATTACK_SPEED, SLOT_BONUS.HASTE], t)
+}
 
-const slotThree = [
-  {
-    value: SLOT_BONUS.HEALTH,
-    label: SLOT_BONUS_LABELS.HEALTH,
-  },
-  {
-    value: SLOT_BONUS.TENACITY,
-    label: SLOT_BONUS_LABELS.TENACITY,
-  },
-  {
-    value: SLOT_BONUS.HEALTH_SCALING,
-    label: SLOT_BONUS_LABELS.HEALTH_SCALING,
-  },
-];
+const makeSlotTwo = (t: (key: string) => string) => {
+  return makeSlots([SLOT_BONUS.ADAPTIVE_FORCE, SLOT_BONUS.MOVEMENT_SPEED, SLOT_BONUS.HEALTH], t)
+}
+
+const makeSlotThree = (t: (key: string) => string) => {
+  return makeSlots([SLOT_BONUS.HEALTH, SLOT_BONUS.TENACITY, SLOT_BONUS.HEALTH_SCALING], t)
+}
 
 export const BonusSchema = CreateGuideFormSchema.pick({
   bonusDescription: true,
@@ -77,6 +51,7 @@ const resolver = zodResolver(BonusSchema);
 export default function BonusForm() {
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
+  const i18n = useI18n()
 
   const defaultValues: BonusDto = {
     bonusSlotOne: mainFormContext.getValues('bonusSlotOne'),
@@ -103,8 +78,8 @@ export default function BonusForm() {
           control={control}
           name={'bonusDescription'}
           inputOptions={{
-            label: 'Descrição dos bonus',
-            placeholder: 'Descreva os bonus',
+            label: i18n.t('bonusForm.description.label'),
+            placeholder: i18n.t('bonusForm.description.placeholder'),
             multiline: true,
           }}
         />
@@ -112,27 +87,27 @@ export default function BonusForm() {
 
         <AppSelectController
           control={control}
-          title={'Selecione um bonus'}
-          options={slotOne}
-          placeholder={'Selecione um bonus'}
+          title={i18n.t('bonusForm.slotOne.title')}
+          options={makeSlotOne(i18n.t)}
+          placeholder={i18n.t('bonusForm.slotOne.placeholder')}
           name={'bonusSlotOne'}
         />
         <FormFieldErrors fieldError={errors.bonusSlotOne} />
 
         <AppSelectController
           control={control}
-          title={'Selecione um segundo bonus'}
-          options={slotTwo}
-          placeholder={'Selecione um segundo bonus'}
+          title={i18n.t('bonusForm.slotTwo.title')}
+          options={makeSlotTwo(i18n.t)}
+          placeholder={i18n.t('bonusForm.slotTwo.placeholder')}
           name={'bonusSlotTwo'}
         />
         <FormFieldErrors fieldError={errors.bonusSlotTwo} />
 
         <AppSelectController
           control={control}
-          title={'Selecione um terceiro bonus'}
-          options={slotThree}
-          placeholder={'Selecione um terceiro bonus'}
+          title={i18n.t('bonusForm.slotThree.title')}
+          options={makeSlotThree(i18n.t)}
+          placeholder={i18n.t('bonusForm.slotThree.placeholder')}
           name={'bonusSlotThree'}
         />
         <FormFieldErrors fieldError={errors.bonusSlotThree} />
@@ -141,6 +116,7 @@ export default function BonusForm() {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t
         })}
       />
     </View>

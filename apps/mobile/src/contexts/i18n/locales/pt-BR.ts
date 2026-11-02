@@ -246,6 +246,64 @@ const progressionForm = {
   noChampionData: 'Nenhum campeão selecionado'
 }
 
+const bonusForm = {
+  description: {
+    label: 'Progressão das abilidades',
+    placeholder: 'Descrição da Progressão das abilidades'
+  },
+  slotOne: {
+    title: 'Selecione um bonus',
+    placeholder: 'Selecione um bonus'
+  },
+  slotTwo: {
+    title: 'Selecione um segundo bonus',
+    placeholder: 'Selecione um segundo bonus'
+  },
+  slotThree: {
+    title: 'Selecione um terceiro bonus',
+    placeholder: 'Selecione um terceiro bonus'
+  }
+}
+
+const slotBonus = {
+  ADAPTIVE_FORCE: 'Força Adaptativa',
+  ADAPTIVE_FORCE_SCALING: 'Força Adaptativa por nível',
+  ARMOR: 'Armadura',
+  ATTACK_SPEED: 'Velocidade de Ataque',
+  CDR_SCALING: 'Aceleração de Habilidade por nível',
+  HEALTH: 'Vida',
+  HEALTH_SCALING: 'Vida por nível',
+  HASTE: 'Aceleração de Habilidade',
+  MOVEMENT_SPEED: 'Velocidade de Movimento',
+  TENACITY: 'Tenacidade',
+}
+
+const slotBonusDescription = {
+  ADAPTIVE_FORCE: 'Aumenta o dano de ataque ou o poder de habilidade.',
+  ADAPTIVE_FORCE_SCALING: 'Aumenta a força adaptativa por nível.',
+  ARMOR: 'Reduz o dano físico recebido.',
+  ATTACK_SPEED: 'Aumenta a velocidade de ataque.',
+  CDR_SCALING: 'Reduz o tempo de recarga das habilidades.',
+  HEALTH: 'Aumenta a vida máxima.',
+  HEALTH_SCALING: 'Aumenta a vida por nível.',
+  HASTE: 'Permite usar habilidades com mais frequência.',
+  MOVEMENT_SPEED: 'Aumenta a velocidade de movimento.',
+  TENACITY: 'Reduz a duração dos efeitos de controle.',
+}
+
+const bonusLabelShards = {
+  ADAPTIVE_FORCE: 'DANO / PODER',
+  ADAPTIVE_FORCE_SCALING: 'DANO / PODER',
+  ARMOR: 'ARMADURA',
+  ATTACK_SPEED: 'VEL. ATAQUE',
+  CDR_SCALING: 'ACEL. HAB.',
+  HEALTH: 'VIDA',
+  HEALTH_SCALING: 'VIDA',
+  HASTE: 'ACEL. HAB.',
+  MOVEMENT_SPEED: 'VEL. MOV.',
+  TENACITY: 'TENACIDADE',
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -287,7 +345,11 @@ const ptBR = {
   comment,
   sideMenu,
   introForm,
-  progressionForm
+  progressionForm,
+  bonusForm,
+  slotBonus,
+  slotBonusDescription,
+  bonusLabelShards
 }
 
 export default ptBR
