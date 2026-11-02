@@ -178,6 +178,11 @@ const userPicker = {
   cancel: 'Cancelar'
 }
 
+const displayUserList = {
+  idle: 'Busque por um usuário',
+  notFound: 'Nenhum usuário encontrado'
+}
+
 const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
@@ -214,7 +219,8 @@ const ptBR = {
   createGuide,
   stepper,
   error,
-  userPicker
+  userPicker,
+  displayUserList
 }
 
 export default ptBR

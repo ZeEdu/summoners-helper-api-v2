@@ -7,7 +7,7 @@ import { IUser } from "@org/contracts";
 
 import useI18n from "../../../contexts/i18n/useI18n";
 import useSearchUsers from "../../../hooks/useSearchUsers";
-import DisplayUserList from "./DisplayUserList";
+import DisplayUserList from "./display-user-list/DisplayUserList";
 
 interface AppUserSelectProps<
   T extends FieldValues,
