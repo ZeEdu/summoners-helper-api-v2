@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 type StepperItemProps = PropsWithChildren & {
   title: string; // Não é utilizado no componente. Mas é utilizado no Stepper pai
@@ -7,8 +7,14 @@ type StepperItemProps = PropsWithChildren & {
 
 export default function StepperItem({ children }: StepperItemProps) {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={style.flex}>
       {children}
     </View>
   )
 }
+
+const style = StyleSheet.create({
+  flex: {
+    flex: 1
+  }
+})

@@ -168,7 +168,12 @@ const stepper = {
   footer: {
     next: 'Próximo passo',
     previous: 'Passo anterior'
-  }
+  },
+  contextError: 'StepperContext deve ser utilizado dentro de StepperProvider'
+}
+
+const error = {
+  text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
 
 const changeLanguage = {
@@ -201,7 +206,8 @@ const ptBR = {
   advancedSearch,
   guideListItem,
   createGuide,
-  stepper
+  stepper,
+  error
 }
 
 export default ptBR
