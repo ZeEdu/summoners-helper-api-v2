@@ -10,7 +10,6 @@ import { StyledButton, StyledView } from '@org/ui';
 import AppSelectController from '../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../components/forms/AppInputController';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
 import useDataDragonContext from '../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../contexts/i18n/useI18n';
 import useTranslateScreenName from '../../../../contexts/i18n/useTranslateScreenName';
@@ -45,12 +44,11 @@ export default function MyGuides() {
 
   const authContext = useAuthContext();
   const dataDragonContext = useDataDragonContext();
-  const userHasRiotBindedAccount = useUserHasRiotBindedAccount();
   const i18n = useI18n()
 
   const navigation = useNavigation()
   const theme = useTheme();
-  const style = makeStyles(theme);
+  const styles = makeStyles(theme);
 
   const [builds, setBuilds] = useState<GuideDto[]>([]);
   const [count, setCount] = useState(0);
@@ -131,13 +129,10 @@ export default function MyGuides() {
 
   return (
     <>
-      <StyledView style={{ flex: 1, gap: 8 }}>
+      <StyledView style={styles.container}>
         <View>
           <StyledButton
-            style={{
-              marginTop: 16,
-              marginHorizontal: 16,
-            }}
+            style={styles.filterButton}
             onPress={() => {
               setShowFilters(!showFilters);
             }}
@@ -147,7 +142,7 @@ export default function MyGuides() {
         </View>
 
         {showFilters && (
-          <View style={{ marginHorizontal: 16, gap: 8 }}>
+          <View style={styles.filter}>
             <AppInputController
               inputOptions={{
                 label: i18n.t('myGuides.filter.fields.title.label'),
@@ -173,7 +168,7 @@ export default function MyGuides() {
               placeholder={i18n.t('myGuides.filter.fields.role.placeholder')}
               name={'role'}
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
+            <View style={styles.filterActions}>
               <StyledButton mode='contained-tonal' onPress={clearFilters}>{i18n.t('myGuides.filter.buttons.clear')}</StyledButton>
               <StyledButton onPress={handleFilterSearch}>{i18n.t('myGuides.filter.buttons.submit')}</StyledButton>
             </View>
@@ -192,57 +187,67 @@ export default function MyGuides() {
           </View>
         )}
 
-        {
-          builds.length ?
-            (
-              <FlatList
-                style={{ paddingBottom: 8 }}
-                data={builds}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{
-                  paddingHorizontal: 16,
-                  rowGap: 8
-                }}
-                ListFooterComponent={() => {
-                  if (hasMore) {
-                    return (
-                      <View>
-                        <Button onPress={loadMore}>
-                          {i18n.t('myGuides.feedback.loadMore')}
-                        </Button>
-                      </View>
-                    )
-                  }
+        <FlatList
+          style={styles.list}
+          data={builds}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text
+                variant='headlineSmall'
+                style={styles.emptyContainerText}
+              >
+                {i18n.t('myGuides.feedback.emptyList')}
+              </Text>
+            </View>
+          }
+          ListFooterComponent={() => {
+            if (hasMore) {
+              return (
+                <View>
+                  <Button onPress={loadMore}>
+                    {i18n.t('myGuides.feedback.loadMore')}
+                  </Button>
+                </View>
+              )
+            }
 
-                  return null
-                }}
-                renderItem={({ item: guide }) => (
-                  <GuideListItem
-                    guide={guide}
-                    editGuide={editGuide}
-                    viewGuide={viewGuide}
-                  />
-                )}
-              />
-            ) : (
-              <View style={{ flex: 1, justifyContent: 'center' }}>
-                <Text
-                  variant='headlineSmall'
-                  style={{ textAlign: 'center' }}
-                >
-                  {i18n.t('myGuides.feedback.emptyList')}
-                </Text>
-              </View>
-            )
-        }
+            return null
+          }}
+          renderItem={({ item: guide }) => (
+            <GuideListItem
+              guide={guide}
+              editGuide={editGuide}
+              viewGuide={viewGuide}
+            />
+          )}
+        />
       </StyledView>
-      <FAB style={style.fab} icon={'plus'} onPress={handleCreateGuide}></FAB>
+      <FAB style={styles.fab} icon={'plus'} onPress={handleCreateGuide}></FAB>
     </>
   );
 }
 
 const makeStyles = (_: MD3Theme) => {
   return StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: 8
+    },
+    filterButton: {
+      marginTop: 16,
+      marginHorizontal: 16,
+    },
+    filter: {
+      marginHorizontal: 16,
+      gap: 8
+    },
+    filterActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      gap: 16
+    },
     fab: {
       position: 'absolute',
       margin: 16,
@@ -253,5 +258,19 @@ const makeStyles = (_: MD3Theme) => {
       width: 48,
       height: 48,
     },
+    list: {
+      paddingBottom: 8
+    },
+    listContainer: {
+      paddingHorizontal: 16,
+      rowGap: 8
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center'
+    },
+    emptyContainerText: {
+      textAlign: 'center'
+    }
   });
 };
