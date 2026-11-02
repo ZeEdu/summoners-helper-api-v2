@@ -238,6 +238,14 @@ const introForm = {
   }
 }
 
+const progressionForm = {
+  description: {
+    label: 'Progressão das abilidades',
+    placeholder: 'Descrição da Progressão das abilidades'
+  },
+  noChampionData: 'Nenhum campeão selecionado'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -278,7 +286,8 @@ const ptBR = {
   replyCard,
   comment,
   sideMenu,
-  introForm
+  introForm,
+  progressionForm
 }
 
 export default ptBR
