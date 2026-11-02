@@ -135,6 +135,11 @@ const advancedSearch = {
   error: 'Erro ao buscar builds'
 }
 
+const guideListItem = {
+  view: 'Visualizar',
+  edit: 'Editar guia'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -162,7 +167,8 @@ const ptBR = {
   recentGuides,
   quickSearchbar,
   recentGuidesList,
-  advancedSearch
+  advancedSearch,
+  guideListItem
 }
 
 export default ptBR
