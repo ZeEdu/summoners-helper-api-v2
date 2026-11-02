@@ -209,7 +209,10 @@ const replyCard = {
 const comment = {
   reply: 'Responder',
   replies: 'Respostas'
+}
 
+const sideMenu = {
+  report: 'Denunciar comentário'
 }
 
 const error = {
@@ -254,7 +257,8 @@ const ptBR = {
   replies,
   postComment,
   replyCard,
-  comment
+  comment,
+  sideMenu
 }
 
 export default ptBR

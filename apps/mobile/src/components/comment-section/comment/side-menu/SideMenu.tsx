@@ -2,6 +2,7 @@ import { useState } from "react"
 import { View } from "react-native"
 import { IconButton, Menu } from "react-native-paper"
 import { ISerializedComment } from "../../../../../../../libs/contracts/src"
+import useI18n from "../../../../contexts/i18n/useI18n"
 
 type Props = {
   comment: ISerializedComment,
@@ -10,6 +11,8 @@ type Props = {
 }
 
 export default function SideMenu({ comment, reportComment, onClick }: Props) {
+  const i18n = useI18n()
+
   const [visible, setVisible] = useState(false)
 
   return (
@@ -26,7 +29,7 @@ export default function SideMenu({ comment, reportComment, onClick }: Props) {
             setVisible(false)
             reportComment(comment)
           }}
-          title="Denunciar comentário"
+          title={i18n.t('sideMenu.report')}
         />
       </Menu>
     </View>
