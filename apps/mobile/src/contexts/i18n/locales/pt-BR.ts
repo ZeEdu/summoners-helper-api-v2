@@ -390,6 +390,19 @@ const threatsForm = {
   addThreatButton: 'Adicionar ameaça'
 }
 
+const itemsForm = {
+  fields: {
+    description: 'Descrição dos itens',
+    placeholder: 'Descreva a escolha dos itens'
+  },
+
+  addNewBlockButton: 'Adicionar um novo bloco',
+  removeBlockButton: 'Remover bloco',
+  addItem: 'Adicionar',
+  searchbar: 'Buscar itens'
+
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -439,7 +452,8 @@ const ptBR = {
   spellsForm,
   mainRuneForm,
   secondaryRuneForm,
-  threatsForm
+  threatsForm,
+  itemsForm
 }
 
 export default ptBR

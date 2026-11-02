@@ -23,10 +23,11 @@ import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 import AppInputController from '../../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../../components/forms/FormFieldErrors';
 import { StepperFooter } from '../../../../../../components/stepper';
-import { buildCustomButtonProps } from '../../../../../../components/stepper/StepperFooter';
+import { buildCustomButtonProps } from '../../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../../components/stepper/context';
 import { ItemDetailsWithId } from '../../../../../../contexts/data-dragon/data-dragon.context';
 import useDataDragonContext from '../../../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../../../contexts/i18n/useI18n';
 import { usePatchVersion } from '../../../../../../contexts/patchVersion/usePatchVersion';
 import Utils from '../../../../../../utils/utils';
 import ItemsField from './ItemsFields';
@@ -43,6 +44,7 @@ const resolver = zodResolver(ItemsSchema);
 
 export default function ItemsForm() {
   const dataDragon = useDataDragonContext();
+  const i18n = useI18n();
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
 
@@ -121,7 +123,7 @@ export default function ItemsForm() {
         </View>
 
         <Button mode="contained" onPress={addNewBlock}>
-          Adicionar um novo bloco
+          {i18n.t('itemsForm.addNewBlockButton')}
         </Button>
 
         <ScrollView>
@@ -139,7 +141,7 @@ export default function ItemsForm() {
                           removeBlock(index);
                         }}
                       >
-                        Remover bloco
+                        {i18n.t('itemsForm.removeBlockButton')}
                       </Button>
                     </View>
                   </View>
@@ -188,7 +190,7 @@ export default function ItemsForm() {
                                 itemSelectionContext.appendFunction(id);
                               }}
                             >
-                              Adicionar
+                              {i18n.t('itemsForm.addItem')}
                             </Button>
                           </Card.Actions>
                         </Card>
@@ -199,7 +201,7 @@ export default function ItemsForm() {
               </Surface>
             ) : null}
             <Searchbar
-              placeholder="Buscar itens"
+              placeholder={i18n.t('itemsForm.searchbar')}
               onChangeText={setSearchQuery}
               value={searchQuery}
             />
@@ -209,6 +211,7 @@ export default function ItemsForm() {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t
         })}
       />
     </View>
