@@ -79,6 +79,10 @@ const riot = {
   }
 }
 
+const recentGuides = {
+  title: 'Guias Recentes'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -102,7 +106,8 @@ const ptBR = {
   riot,
   general,
   screens,
-  myGuides
+  myGuides,
+  recentGuides
 }
 
 export default ptBR
