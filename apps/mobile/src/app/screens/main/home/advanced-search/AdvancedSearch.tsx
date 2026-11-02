@@ -57,7 +57,7 @@ type FilterOutputDto = z.output<typeof customGuidesPaginationSchema>;
 
 const resolver = zodResolver(customGuidesPaginationSchema);
 
-// TODO: Botar o filtro dentro de um accordion ou algo do tipo
+// TODO: Botar o filtro dentro de um accordion ou algo do tipoi
 export default function Search() {
   const useDataDragon = useDataDragonContext();
   const patchVersion = usePatchVersion();
@@ -113,7 +113,7 @@ export default function Search() {
         setIsFromSearch(true)
       })
       .catch(() => {
-        setError('Erro ao buscar builds');
+        setError(i18n.t('advancedSearch.error'));
       })
       .finally(() => {
         setLoading(false);
