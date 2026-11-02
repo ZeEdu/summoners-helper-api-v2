@@ -3,6 +3,7 @@ import { Avatar, Button, Card, IconButton, Text, useTheme } from "react-native-p
 
 import { ISerializedComment } from "@org/contracts";
 import { useState } from "react";
+import useI18n from "../../../contexts/i18n/useI18n";
 import { ApiService } from "../../../services/api/api.service";
 import SideMenu from "./side-menu/SideMenu";
 
@@ -15,6 +16,7 @@ type Props = {
 }
 
 export default function Comment({ comment, useAlternativeColors = false, setReplyTo, setShowRepliesTo, reportComment }: Props) {
+  const i18n = useI18n()
   const theme = useTheme()
 
   const [liked, setLiked] = useState(comment.liked || false)
@@ -112,7 +114,7 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
             compact
             onPress={() => setReplyTo(comment)}
           >
-            Responder
+            {i18n.t('reply')}
           </Button>
 
           <Button
@@ -126,7 +128,7 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
               })
             }}
           >
-            Respostas
+            {i18n.t('replies')}
           </Button>
         </View>
       </Card.Content>

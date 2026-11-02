@@ -206,6 +206,12 @@ const replyCard = {
   replyTo: 'Respondendo a'
 }
 
+const comment = {
+  reply: 'Responder',
+  replies: 'Respostas'
+
+}
+
 const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
@@ -247,7 +253,8 @@ const ptBR = {
   commentSection,
   replies,
   postComment,
-  replyCard
+  replyCard,
+  comment
 }
 
 export default ptBR
