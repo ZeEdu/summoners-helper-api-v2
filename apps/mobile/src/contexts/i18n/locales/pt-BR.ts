@@ -95,6 +95,46 @@ const recentGuidesList = {
   error: 'Erro ao buscar builds'
 }
 
+const advancedSearch = {
+  form: {
+    fields: {
+      champion: {
+        title: 'Campeão',
+        placeholder: 'Selecione um campeão'
+      },
+      title: {
+        label: 'Busque pelo título',
+        placeholder: 'Busque pelo título'
+      },
+      role: {
+        title: 'Role do campeão',
+        placeholder: 'Busque de acordo com a role do campeão'
+      },
+      createdBy: {
+        title: 'Criador do guia',
+        placeholder: 'Busquem por quem criou o guia'
+      },
+      deprecatedPatch: {
+        label: 'Buscar guias desatualizados'
+      }
+    },
+    actions: {
+      clear: 'Limpar',
+      submit: 'Buscar'
+    },
+  },
+  feedback: {
+    loading: 'Carregando...',
+    error: 'Um erro ocorreu...',
+  },
+  listEmpty: {
+    empty: 'Atualize o filtro para encontrar um guia',
+    fromSearch: 'Nenhum guia encontrado'
+  },
+  loadMore: 'Carregar mais',
+  error: 'Erro ao buscar builds'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -121,7 +161,8 @@ const ptBR = {
   myGuides,
   recentGuides,
   quickSearchbar,
-  recentGuidesList
+  recentGuidesList,
+  advancedSearch
 }
 
 export default ptBR
