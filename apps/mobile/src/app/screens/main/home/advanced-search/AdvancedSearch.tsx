@@ -57,6 +57,7 @@ type FilterOutputDto = z.output<typeof customGuidesPaginationSchema>;
 
 const resolver = zodResolver(customGuidesPaginationSchema);
 
+// TODO: Botar o filtro dentro de um accordion ou algo do tipo
 export default function Search() {
   const useDataDragon = useDataDragonContext();
   const patchVersion = usePatchVersion();
