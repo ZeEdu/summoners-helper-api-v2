@@ -194,6 +194,14 @@ const replies = {
   }
 }
 
+const postComment = {
+  error: 'Não foi possivel criar o comentário',
+  button: 'Comentar',
+  replyTo: 'Responder',
+  title: 'Novo Comentário',
+  placeholder: 'Escreva a seu comentário...'
+}
+
 const error = {
   text: 'Ops! Um erro ocorreu... Tente novamente mais tarde!'
 }
@@ -233,7 +241,8 @@ const ptBR = {
   userPicker,
   displayUserList,
   commentSection,
-  replies
+  replies,
+  postComment
 }
 
 export default ptBR

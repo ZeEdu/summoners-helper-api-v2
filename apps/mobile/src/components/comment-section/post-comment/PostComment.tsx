@@ -9,6 +9,7 @@ import { createCommentFormSchema, CreateCommentFormType, ISerializedComment } fr
 import { useForm } from "react-hook-form"
 import { Button, Icon, MD3Theme, Text, useTheme } from "react-native-paper"
 import { useAuthContext } from "../../../contexts/auth/useAuth"
+import useI18n from "../../../contexts/i18n/useI18n"
 import { ApiService } from "../../../services/api/api.service"
 import AppInputController from "../../forms/AppInputController"
 import ReplyCard from "./reply-card/ReplyCard"
@@ -29,6 +30,7 @@ const MAX_HEIGHT = 160;
 
 export default function PostComment({ guideId, addComment, replyTo, setReplyTo, addReply, setShowRepliesTo }: Props) {
   const authContext = useAuthContext()
+  const i18n = useI18n()
   const theme = useTheme()
   const styles = makeStyles(theme)
 
@@ -90,7 +92,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
           bottomSheetModalRef.current?.dismiss()
         })
         .catch(() => {
-          setError('Não foi possivel criar o comentário')
+          setError(i18n.t('postComment.error'))
         }).finally(() => {
           setLoading(false)
         })
@@ -115,7 +117,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
           bottomSheetModalRef.current?.dismiss()
         })
         .catch(() => {
-          setError('Não foi possivel criar o comentário')
+          setError(i18n.t('postComment.error'))
         }).finally(() => {
           setLoading(false)
         })
@@ -151,9 +153,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
       >
         <BottomSheetView style={styles.bottomSheet}>
           <Text variant="titleLarge">
-            {
-              replyTo ? 'Responder' : 'Novo Comentário'
-            }
+            {replyTo ? i18n.t('postComment.replyTo') : i18n.t('postComment.title')}
           </Text>
           <View>
             {replyTo && <ReplyCard replyTo={replyTo} />}
@@ -164,7 +164,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
                 control={control}
                 inputOptions={{
                   onContentSizeChange: handleContentSizeChange,
-                  placeholder: 'Escreva a seu comentário...',
+                  placeholder: i18n.t('postComment.placeholder'),
                   multiline: true,
                   style: {
                     height,
