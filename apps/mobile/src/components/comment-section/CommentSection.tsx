@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { CommentPaginationDto, ISerializedComment } from "@org/contracts";
 import { useEffect, useState } from "react";
 import { Button, Text } from "react-native-paper";
+import useI18n from "../../contexts/i18n/useI18n";
 import { ApiService } from "../../services/api/api.service";
 import Comment from "./comment/Comment";
 import PostComment from "./post-comment/PostComment";
@@ -14,6 +15,8 @@ type Props = {
 }
 
 export default function CommentSection({ guideId, reportComment }: Props) {
+  const i18n = useI18n()
+
   const [comments, setComments] = useState<ISerializedComment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown | undefined>(undefined);
@@ -85,7 +88,7 @@ export default function CommentSection({ guideId, reportComment }: Props) {
             return null
           }
 
-          return <Button onPress={loadMore}>Carregar mais</Button>;
+          return <Button onPress={loadMore}>{i18n.t('commentSection.loadMore')}</Button>;
         }}
         ListEmptyComponent={<EmptyComponent />}
         keyExtractor={(comment) => comment.id}
@@ -121,9 +124,10 @@ export default function CommentSection({ guideId, reportComment }: Props) {
 }
 
 function EmptyComponent() {
+  const i18n = useI18n()
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Nenhum comentário foi feito. Seja o primeiro!</Text>
+      <Text style={styles.text}>{i18n.t('commentSection.empty')}</Text>
     </View>
   )
 }

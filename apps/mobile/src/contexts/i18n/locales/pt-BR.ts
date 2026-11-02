@@ -183,7 +183,8 @@ const displayUserList = {
 }
 
 const commentSection = {
-  loadMore: 'Carregar mais'
+  loadMore: 'Carregar mais',
+  empty: 'Nenhum comentário foi feito. Seja o primeiro!'
 }
 
 const error = {
