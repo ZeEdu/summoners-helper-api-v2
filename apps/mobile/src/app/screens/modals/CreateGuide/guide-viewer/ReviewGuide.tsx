@@ -12,7 +12,8 @@ import SpellsSection from './SpellsSection';
 import ThreatsSection from './ThreatsSection';
 
 import { StepperFooter } from '../../../../../components/stepper';
-import { buildCustomButtonProps } from '../../../../../components/stepper/StepperFooter';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 import { AbilitiesProgressionDto } from '../forms/AbilitiesProgressionForm';
 import { BonusDto } from '../forms/BonusForm';
 import { GuideIntroductionDto } from '../forms/GuideIntroductionForm';
@@ -28,6 +29,7 @@ type GuideViewerProps = {
 
 export default function ReviewGuide({ handleConfirm }: GuideViewerProps) {
   const mainFormContext = useFormContext<CreateGuideFormDto>();
+  const i18n = useI18n()
 
   const guideIntroduction: GuideIntroductionDto = {
     title: mainFormContext.getValues('title'),
@@ -93,6 +95,7 @@ export default function ReviewGuide({ handleConfirm }: GuideViewerProps) {
             customNextButton={buildCustomButtonProps({
               children: 'Salvar',
               onPress: handleConfirm,
+              t: i18n.t
             })}
           />
         ) : null
