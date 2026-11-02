@@ -10,8 +10,9 @@ import AppSelectController from '../../../../../components/forms/app-select-cont
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 import { StepperFooter } from '../../../../../components/stepper';
-import { buildCustomButtonProps } from '../../../../../components/stepper/StepperFooter';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 
 const ThreatsSchema = CreateGuideFormSchema.pick({
   threats: true,
@@ -24,6 +25,7 @@ const resolver = zodResolver(ThreatsSchema);
 
 export default function ThreatsForm() {
   const dataDragon = useDataDragonContext();
+  const i18n = useI18n()
   const mainFormContext = useFormContext<CreateGuideFormDto>();
 
   const defaultValues: ThreatsDto = {
@@ -67,8 +69,8 @@ export default function ThreatsForm() {
             control={control}
             name={`threatsDescription`}
             inputOptions={{
-              label: 'Descrição das ameaças',
-              placeholder: 'Descrição da ameaças',
+              label: i18n.t('threatsForm.fields.description.label'),
+              placeholder: i18n.t('threatsForm.fields.description.placeholder'),
               multiline: true,
             }}
           />
@@ -84,14 +86,15 @@ export default function ThreatsForm() {
                     <AppSelectController
                       key={`${index}.threat`}
                       control={control}
-                      title={'Selecione uma ameaça'}
+                      title={i18n.t('threatsForm.fields.addThreat.select.label')}
                       options={championList.map(({ id, name }) => ({
                         value: id,
                         label: name,
                       }))}
-                      placeholder={'Selecione uma ameaça'}
+                      placeholder={i18n.t('threatsForm.fields.addThreat.description.placeholder')}
                       name={`threats.${index}.threat`}
                     />
+
                     <FormFieldErrors
                       fieldError={getErrorFromIndex(index)?.threat}
                     />
@@ -101,11 +104,12 @@ export default function ThreatsForm() {
                       control={control}
                       name={`threats.${index}.description`}
                       inputOptions={{
-                        label: 'Descrição da ameaça',
-                        placeholder: 'Descrição da ameaça',
+                        label: i18n.t('threatsForm.fields.addThreat.description.label'),
+                        placeholder: i18n.t('threatsForm.fields.addThreat.description.placeholder'),
                         multiline: true,
                       }}
                     />
+
                     <FormFieldErrors
                       fieldError={getErrorFromIndex(index)?.description}
                     />
@@ -115,7 +119,7 @@ export default function ThreatsForm() {
                         remove(index);
                       }}
                     >
-                      Remover ameaça
+                      {i18n.t('threatsForm.fields.removeThreatButton')}
                     </StyledButton>
                   </View>
                 );
@@ -124,12 +128,13 @@ export default function ThreatsForm() {
           </ScrollView>
         </View>
         <StyledButton style={styles.addThreat} onPress={appendThreat}>
-          Adicionar ameaça
+          {i18n.t('threatsForm.addThreatButton')}
         </StyledButton>
       </View>
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t
         })}
       />
     </View>

@@ -367,7 +367,27 @@ const secondaryRuneForm = {
     label: 'Descrição da runas',
     placeholder: 'Descrição da runas'
   }
+}
 
+const threatsForm = {
+  fields: {
+    description: {
+      label: 'Descrição das ameaças',
+      placeholder: 'Descrição das ameaças'
+    },
+    addThreat: {
+      select: {
+        title: 'Selecione uma ameaça',
+        placeholder: 'Selecione uma ameaça'
+      },
+      description: {
+        label: 'Descrição da ameaça',
+        placeholder: 'Descrição da ameaça'
+      }
+    },
+    removeThreatButton: 'Remover ameaça'
+  },
+  addThreatButton: 'Adicionar ameaça'
 }
 
 const changeLanguage = {
@@ -418,7 +438,8 @@ const ptBR = {
   bonusLabelShards,
   spellsForm,
   mainRuneForm,
-  secondaryRuneForm
+  secondaryRuneForm,
+  threatsForm
 }
 
 export default ptBR
