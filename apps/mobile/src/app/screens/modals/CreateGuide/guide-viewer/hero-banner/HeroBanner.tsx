@@ -8,7 +8,7 @@ import useI18n from '../../../../../../contexts/i18n/useI18n';
 
 type HeroBannerProps = {
   championId: string;
-  patchVersion: string;
+  patchVersion?: string;
   role: string;
 };
 
@@ -53,9 +53,12 @@ export default function HeroBanner({
           <Chip icon={'chart-areaspline'} style={styles.chip}>
             <Text style={styles.chipText}>{i18n.t(`heroBanner.difficulty`)}: {i18n.t(`difficulty.${champion.info.difficulty}`)}</Text>
           </Chip>
-          <Chip mode="flat" icon={'calendar-blank-outline'} style={styles.chip}>
-            <Text style={styles.chipText}>Patch: {patchVersion}</Text>
-          </Chip>
+          {
+            Boolean(patchVersion) && (
+              <Chip mode="flat" icon={'calendar-blank-outline'} style={styles.chip}>
+                <Text style={styles.chipText}>Patch: {patchVersion}</Text>
+              </Chip>)
+          }
         </View>
       </View>
     </View>
