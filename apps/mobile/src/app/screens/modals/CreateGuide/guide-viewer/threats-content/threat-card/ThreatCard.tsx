@@ -16,12 +16,12 @@ export default function ThreatCard({ threat, description }: Props) {
   const champion = dataDragon.getChampion(threat)
 
   return (
-    <Card style={{ backgroundColor: theme.colors.surfaceVariant }}>
+    <Card style={styles.card}>
       <Card.Content style={styles.cardContent}>
         <View>
           <ThreatImage championId={threat} />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
           <Text variant="titleMedium" style={styles.title}>{champion.name}</Text>
           <Text style={styles.description} variant="bodyMedium">{description}</Text>
         </View>
@@ -33,12 +33,18 @@ export default function ThreatCard({ threat, description }: Props) {
 
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
+    card: {
+      backgroundColor: colors.surfaceVariant
+    },
     cardContent: {
       flexDirection: 'row',
       gap: 8
     },
     title: {
       color: colors.primary
+    },
+    container: {
+      flex: 1
     },
     description: {
       flex: 1,
