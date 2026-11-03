@@ -493,6 +493,11 @@ const introductionSection = {
   champion: 'Campeão'
 }
 
+const itemsSection = {
+  header: 'Itens',
+  description: 'Descrição'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -554,7 +559,8 @@ const ptBR = {
   loadingFeedback,
   abilitiesProgressionSection,
   bonusSection,
-  introductionSection
+  introductionSection,
+  itemsSection
 }
 
 export default ptBR

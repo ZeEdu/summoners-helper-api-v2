@@ -3,6 +3,7 @@ import { Avatar, List, Text } from "react-native-paper";
 
 import FadeInView from "../../../../../components/animated/FadeInView";
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import Utils from "../../../../../utils/utils";
 import { ItemsDto } from "../forms/items-form/ItemsForm";
@@ -11,6 +12,7 @@ import { SectionProps } from "./sections.types";
 type ItemsSectionProps = SectionProps & { items: ItemsDto }
 
 export default function ItemsSection({ items, hideTitle = false }: ItemsSectionProps) {
+  const i18n = useI18n()
   return (
     <FadeInView>
       <List.Section>
@@ -19,7 +21,7 @@ export default function ItemsSection({ items, hideTitle = false }: ItemsSectionP
             !hideTitle ? (
               <List.Subheader>
                 <Text variant='headlineSmall'>
-                  Itens
+                  {i18n.t('itemsSection.header')}
                 </Text>
               </List.Subheader>
             ) : undefined
@@ -51,6 +53,8 @@ function ItemsSectionItem({ itemId }: { itemId: string }) {
 function ItemsRow({ items }: {
   items: ItemsDto['items']
 }) {
+  const i18n = useI18n()
+
   return (
     <View>
       {
@@ -66,7 +70,7 @@ function ItemsRow({ items }: {
                 itemsList
                   .map(({ itemId }) => <ItemsSectionItem key={itemId} itemId={itemId} />)
               }
-              <List.Item title={'Descrição'} description={description} />
+              <List.Item title={i18n.t('itemsSection.description')} description={description} />
             </List.Section>
           ))
       }
