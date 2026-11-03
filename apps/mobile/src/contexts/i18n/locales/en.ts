@@ -574,7 +574,8 @@ const general = {
 
 const screens = {
   Profile: 'Profile',
-  MyGuides: 'My Guides'
+  MyGuides: 'My Guides',
+  Home: 'Recent'
 }
 
 const enUS = {

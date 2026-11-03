@@ -11,7 +11,6 @@ import QuickSearchbar from './searchbar/QuickSearchbar';
 
 export default function RecentGuides() {
   const i18n = useI18n()
-
   const theme = useTheme()
   const styles = makeStyles(theme)
   const navigation = useNavigation()

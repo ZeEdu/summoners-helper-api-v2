@@ -12,7 +12,6 @@ import AppInputController from '../../../../components/forms/AppInputController'
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useDataDragonContext from '../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../contexts/i18n/useI18n';
-import useTranslateScreenName from '../../../../contexts/i18n/useTranslateScreenName';
 import { ApiService } from '../../../../services/api/api.service';
 import GuideListItem from './guide-list-item/GuideListItem';
 
@@ -40,8 +39,6 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export default function MyGuides() {
-  useTranslateScreenName('MyGuides')
-
   const authContext = useAuthContext();
   const dataDragonContext = useDataDragonContext();
   const i18n = useI18n()

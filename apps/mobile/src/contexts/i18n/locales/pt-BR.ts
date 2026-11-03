@@ -575,7 +575,8 @@ const general = {
 
 const screens = {
   Profile: 'Perfil',
-  MyGuides: 'Meus guias'
+  MyGuides: 'Meus guias',
+  Home: 'Recente'
 }
 
 const ptBR = {

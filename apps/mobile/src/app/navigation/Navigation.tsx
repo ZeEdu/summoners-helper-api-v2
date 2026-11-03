@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import useIsAuthenticated from '../../contexts/auth/useIsAuthenticated';
 import useIsNotAuthenticated from '../../contexts/auth/useIsSignedOut';
+import useI18n from '../../contexts/i18n/useI18n';
 import Login from '../screens/auth/login/Login';
 import Register from '../screens/auth/register/Register';
 import Search from '../screens/main/home/advanced-search/AdvancedSearch';
@@ -31,14 +32,12 @@ const MainTabs = createBottomTabNavigator({
     Home: {
       screen: HomeStack,
       options: {
-        title: 'Recente',
         tabBarIcon: ({ color }) => <Ionicons style={{ color }} name={'home'} />
       }
     },
     MyGuides: {
       screen: MyGuides,
       options: {
-        title: 'Meus guias',
         tabBarIcon: ({ color }) => <Ionicons style={{ color: color }} name={'list'} />
       }
     },
@@ -48,7 +47,12 @@ const MainTabs = createBottomTabNavigator({
         tabBarIcon: ({ color }) => <Ionicons style={{ color: color }} name={'person'} />
       }
     }
-  },
+  }
+}).with(({ Navigator }) => {
+  const i18n = useI18n()
+  return (
+    <Navigator screenOptions={({ route }) => ({ title: i18n.t(`screens.${route.name}`) })} />
+  )
 });
 
 const RootStack = createNativeStackNavigator({
@@ -66,19 +70,15 @@ const RootStack = createNativeStackNavigator({
       if: useIsAuthenticated,
       screens: {
         BindRiotAccount: {
-          options: { title: 'Vincular conta Riot' },
           screen: BindRiotAccount
         },
         CreateGuide: {
-          options: { title: 'Criar Guia' },
           screen: CreateGuide
         },
         ViewGuide: {
-          options: { title: 'Visualizar guia' },
           screen: ViewGuide
         },
         Report: {
-          options: { title: 'Denunciar' },
           screen: Report
         }
       },
