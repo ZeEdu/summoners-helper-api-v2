@@ -47,9 +47,7 @@ export default function StepperFooter({
               {
                 customNextButton ?
                   (
-                    <Button {...customNextButton}>
-                      {customNextButton.children}
-                    </Button>
+                    <Button {...customNextButton} />
                   ) :
                   (
                     <Button
