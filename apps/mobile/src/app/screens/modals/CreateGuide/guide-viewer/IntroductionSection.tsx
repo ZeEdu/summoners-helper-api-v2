@@ -4,6 +4,7 @@ import { Avatar, List, Text } from "react-native-paper";
 import FadeInView from "../../../../../components/animated/FadeInView";
 import Error from "../../../../../components/Error";
 import LoadingIndicator from "../../../../../components/LoadingIndicator";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import useChampionData from "../../../../../hooks/useChampion";
 import DataDragonService from "../../../../../services/data-dragon/data-dragon.service";
@@ -14,6 +15,7 @@ type IntroductionSectionProps = SectionProps & { guideIntroduction: GuideIntrodu
 
 export default function IntroductionSection({ guideIntroduction, hideTitle = false }: IntroductionSectionProps) {
   const usePatch = usePatchVersion()
+  const i18n = useI18n()
   const { championData, error, loading } = useChampionData(guideIntroduction.champion)
   const uri = DataDragonService.championThumbnail(guideIntroduction.champion, usePatch.version)
 

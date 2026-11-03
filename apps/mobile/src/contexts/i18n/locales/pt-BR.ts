@@ -278,6 +278,19 @@ const slotBonus = {
   TENACITY: 'Tenacidade',
 }
 
+const slotAltBonus = {
+  AdaptiveForce: 'Força Adaptativa',
+  AdaptiveForceScaling: 'Força Adaptativa por nível',
+  Armor: 'Armadura',
+  AttackSpeed: 'Velocidade de Ataque',
+  CDRScaling: 'Aceleração de Habilidade por nível',
+  HealthPlus: 'Vida',
+  HealthScaling: 'Vida por nível',
+  MagicRes: 'Aceleração de Habilidade',
+  MovementSpeed: 'Velocidade de Movimento',
+  Tenacity: 'Tenacidade',
+}
+
 const slotBonusDescription = {
   ADAPTIVE_FORCE: 'Aumenta o dano de ataque ou o poder de habilidade.',
   ADAPTIVE_FORCE_SCALING: 'Aumenta a força adaptativa por nível.',
@@ -462,6 +475,18 @@ const loadingFeedback = {
   text: 'Carregando dados do Data Dragon...'
 }
 
+const abilitiesProgressionSection = {
+  header: 'Progressão de abilidades'
+}
+
+const bonusSection = {
+  header: 'Bonus',
+  description: 'Descrição',
+  first: 'Primeiro bonus',
+  second: 'Segundo bonus',
+  third: 'Terceiro bonus'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -506,6 +531,7 @@ const ptBR = {
   progressionForm,
   bonusForm,
   slotBonus,
+  slotAltBonus,
   slotBonusDescription,
   bonusLabelShards,
   spellsForm,
@@ -519,7 +545,9 @@ const ptBR = {
   login,
   register,
   errorFeedback,
-  loadingFeedback
+  loadingFeedback,
+  abilitiesProgressionSection,
+  bonusSection
 }
 
 export default ptBR

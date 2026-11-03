@@ -4,6 +4,7 @@ import { List, MD3Theme, Text, useTheme } from "react-native-paper"
 import FadeInView from "../../../../../components/animated/FadeInView"
 import Error from "../../../../../components/Error"
 import LoadingIndicator from "../../../../../components/LoadingIndicator"
+import useI18n from "../../../../../contexts/i18n/useI18n"
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion"
 import useChampionData from "../../../../../hooks/useChampion"
 import { AbilitiesProgressionDto, indexToAbilityOption, keymapIndex, KeymapIndexType } from "../forms/AbilitiesProgressionForm"
@@ -20,6 +21,7 @@ export default function AbilitiesProgressionSection({
   abilitiesProgression,
   hideTitle = false
 }: AbilitiesProgressionSectionProps) {
+  const i18n = useI18n()
   const usePatch = usePatchVersion()
   const theme = useTheme()
   const styles = makeStyles(theme)
@@ -49,7 +51,7 @@ export default function AbilitiesProgressionSection({
                 !hideTitle ? (
                   <List.Subheader>
                     <Text variant='headlineSmall'>
-                      Progressão de abilidades
+                      {i18n.t('abilitiesProgressionSection.header')}
                     </Text>
                   </List.Subheader>
                 ) : undefined
