@@ -2,6 +2,7 @@ import { Card, List, MD3Theme, useTheme } from 'react-native-paper';
 import { MainRuneDto } from '../../forms/MainRunesForm';
 
 import { StyleSheet } from 'react-native';
+import useI18n from '../../../../../../contexts/i18n/useI18n';
 import { SecondaryRuneDto } from '../../forms/SecondaryRunesForm';
 import RunePathListItem from './main-path-list-item/MainPathListItem';
 import RuneListItem from './rune-list-item/RuneListItem';
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function RuneContent({ rune }: Props) {
+  const i18n = useI18n();
   const theme = useTheme();
   const styles = makeStyles(theme);
 
@@ -37,7 +39,7 @@ export default function RuneContent({ rune }: Props) {
   if (mainRuneTypeGuard(rune)) {
     runePath = rune.primaryRune;
     runePathDescription = rune.primaryRuneDescription;
-    title = 'Caminho Principal';
+    title = i18n.t('runesContent.mainRune');
     firstSlot = rune.primarySlots.first;
     secondSlot = rune.primarySlots.second;
     thirdSlot = rune.primarySlots.third;
@@ -45,7 +47,7 @@ export default function RuneContent({ rune }: Props) {
   } else if (secondaryRuneTypeGuard(rune)) {
     runePath = rune.secondaryRune;
     runePathDescription = rune.secondaryRuneDescription;
-    title = 'Caminho Secondário';
+    title = i18n.t('runesContent.secondaryRune');
     firstSlot = rune.secondarySlots.first;
     secondSlot = rune.secondarySlots.second;
     thirdSlot = rune.secondarySlots.third;
@@ -65,17 +67,17 @@ export default function RuneContent({ rune }: Props) {
             description={runePathDescription}
             title={title}
           />
-          <RuneListItem runeId={firstSlot} title={'Primeira Runa'} />
-          <RuneListItem runeId={secondSlot} title={'Segunda Runa'} />
+          <RuneListItem runeId={firstSlot} title={i18n.t('runesContent.first')} />
+          <RuneListItem runeId={secondSlot} title={i18n.t('runesContent.second')} />
           <RuneListItem
             runeId={thirdSlot}
-            title={'Terceira Runa'}
+            title={i18n.t('runesContent.third')}
             divider={fourthSlot ? true : false}
           />
           {fourthSlot && (
             <RuneListItem
               runeId={fourthSlot}
-              title={'Quarta Runa'}
+              title={i18n.t('runesContent.second')}
               divider={false}
             />
           )}

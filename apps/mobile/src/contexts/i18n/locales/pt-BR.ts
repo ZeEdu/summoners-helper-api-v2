@@ -584,6 +584,16 @@ const heroBanner = {
   difficulty: 'Dificuldade'
 }
 
+const runesContent = {
+  header: 'Runas',
+  mainRune: 'Caminho principal',
+  secondaryRune: 'Caminho Secondário',
+  first: 'Primeira Runa',
+  second: 'Segunda Runa',
+  third: 'Terceira Runa',
+  fourth: 'Quarta Runa',
+}
+
 const general = {
   yes: 'sim',
   no: 'não'
@@ -648,7 +658,8 @@ const ptBR = {
   viewGuide,
   progressionContent,
   heroBanner,
-  difficulty
+  difficulty,
+  runesContent
 }
 
 export default ptBR
