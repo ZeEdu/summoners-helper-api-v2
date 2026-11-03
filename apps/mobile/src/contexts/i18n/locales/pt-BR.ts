@@ -498,6 +498,24 @@ const itemsSection = {
   description: 'Descrição'
 }
 
+const runesSection = {
+  header: 'Runas',
+  mainRune: {
+    title: 'Caminho principal',
+    description: 'Descrição',
+    first: 'Primeira Runa',
+    second: 'Segunda Runa',
+    third: 'Quarta Runa',
+  },
+  secondaryRune: {
+    title: 'Caminho Secondário',
+    description: 'Descrição',
+    first: 'Primeira Runa',
+    second: 'Segunda Runa',
+    third: 'Quarta Runa',
+  },
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -560,7 +578,8 @@ const ptBR = {
   abilitiesProgressionSection,
   bonusSection,
   introductionSection,
-  itemsSection
+  itemsSection,
+  runesSection
 }
 
 export default ptBR

@@ -2,6 +2,7 @@ import { Avatar, List, Text } from "react-native-paper";
 
 import FadeInView from "../../../../../components/animated/FadeInView";
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 import { MainRuneDto } from "../forms/MainRunesForm";
 import { SecondaryRuneDto } from "../forms/SecondaryRunesForm";
 import { SectionProps } from "./sections.types";
@@ -9,6 +10,7 @@ import { SectionProps } from "./sections.types";
 type RunesSectionProps = SectionProps & { mainRune: MainRuneDto, secondaryRune: SecondaryRuneDto }
 
 export default function RunesSection({ mainRune, secondaryRune, hideTitle = false }: RunesSectionProps) {
+  const i18n = useI18n()
   return (
     <FadeInView>
       <List.Section>
@@ -16,24 +18,24 @@ export default function RunesSection({ mainRune, secondaryRune, hideTitle = fals
           !hideTitle ? (
             <List.Subheader>
               <Text variant='headlineSmall'>
-                Runas
+                {i18n.t('runesSection.header')}
               </Text>
             </List.Subheader>
           ) : undefined
         }
 
-        <RuneItem title='Caminho principal' runeId={mainRune.primaryRune} />
-        <RuneSlotItem title='Primeira Runa' runeSlotId={mainRune.primarySlots.first} />
-        <RuneSlotItem title='Segunda Runa' runeSlotId={mainRune.primarySlots.second} />
-        <RuneSlotItem title='Terceira Runa' runeSlotId={mainRune.primarySlots.third} />
-        <RuneSlotItem title='Quarta Runa' runeSlotId={mainRune.primarySlots.fourth} />
+        <RuneItem title={i18n.t('runesSection.mainRune.title')} runeId={mainRune.primaryRune} />
+        <RuneSlotItem title={i18n.t('runesSection.mainRune.description')} runeSlotId={mainRune.primarySlots.first} />
+        <RuneSlotItem title={i18n.t('runesSection.mainRune.first')} runeSlotId={mainRune.primarySlots.second} />
+        <RuneSlotItem title={i18n.t('runesSection.mainRune.second')} runeSlotId={mainRune.primarySlots.third} />
+        <RuneSlotItem title={i18n.t('runesSection.mainRune.third')} runeSlotId={mainRune.primarySlots.fourth} />
         <List.Item title={'Descrição'} description={mainRune.primaryRuneDescription} />
 
-        <RuneItem title='Caminho Secondário' runeId={secondaryRune.secondaryRune} />
-        <RuneSlotItem title='Primeira Runa' runeSlotId={secondaryRune.secondarySlots.first} />
-        <RuneSlotItem title='Segunda Runa' runeSlotId={secondaryRune.secondarySlots.second} />
-        <RuneSlotItem title='Terceira Runa' runeSlotId={secondaryRune.secondarySlots.third} />
-        <List.Item title={'Descrição'} description={secondaryRune.secondaryRuneDescription} />
+        <RuneItem title={i18n.t('runesSection.secondaryRune.title')} runeId={secondaryRune.secondaryRune} />
+        <RuneSlotItem title={i18n.t('runesSection.secondaryRune.description')} runeSlotId={secondaryRune.secondarySlots.first} />
+        <RuneSlotItem title={i18n.t('runesSection.secondaryRune.first')} runeSlotId={secondaryRune.secondarySlots.second} />
+        <RuneSlotItem title={i18n.t('runesSection.secondaryRune.second')} runeSlotId={secondaryRune.secondarySlots.third} />
+        <List.Item title={i18n.t('runesSection.secondaryRune.third')} description={secondaryRune.secondaryRuneDescription} />
       </List.Section>
     </FadeInView>
   )
