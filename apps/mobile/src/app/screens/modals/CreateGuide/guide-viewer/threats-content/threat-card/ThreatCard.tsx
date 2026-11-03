@@ -9,8 +9,6 @@ type Props = {
 }
 
 export default function ThreatCard({ threat, description }: Props) {
-  console.log({ description });
-
   const dataDragon = useDataDragonContext()
   const theme = useTheme()
   const styles = makeStyles(theme)
