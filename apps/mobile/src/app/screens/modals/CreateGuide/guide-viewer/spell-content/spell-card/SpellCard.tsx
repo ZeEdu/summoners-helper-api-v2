@@ -44,7 +44,9 @@ export default function SpellCard({ spell }: SpellCardProps) {
 
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
-    card: { backgroundColor: colors.secondaryContainer },
+    card: {
+      backgroundColor: colors.secondaryContainer
+    },
     image: {
       width: 48,
       height: 48,
@@ -52,6 +54,8 @@ const makeStyles = ({ colors }: MD3Theme) => {
       borderWidth: 2,
       borderColor: colors.onSecondaryContainer,
     },
-    title: { color: colors.onSecondaryContainer },
+    title: {
+      color: colors.onSecondaryContainer
+    },
   });
 };
