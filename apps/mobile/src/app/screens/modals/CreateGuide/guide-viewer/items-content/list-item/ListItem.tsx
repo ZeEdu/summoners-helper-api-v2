@@ -1,14 +1,14 @@
-import { Card, Icon, Text, useTheme } from 'react-native-paper';
+import { Image, StyleSheet, View } from 'react-native';
+import { Card, Icon, MD3Theme, Text, useTheme } from 'react-native-paper';
 import useDataDragonContext from '../../../../../../../contexts/data-dragon/useDataDragonContext';
 import Utils from '../../../../../../../utils/utils';
-import { Image, View } from 'react-native';
 
 type ListItemProps = {
   itemId: string;
 };
 
 export default function ListItem({ itemId }: ListItemProps) {
-  const theme = useTheme();
+  const styles = makeStyles(useTheme())
   const dataDragon = useDataDragonContext();
 
   const item = dataDragon.getItem(itemId);
@@ -21,26 +21,20 @@ export default function ListItem({ itemId }: ListItemProps) {
   return (
     <Card>
       <Card.Content>
-        <View style={{ flexDirection: 'row', gap: 12 }}>
+        <View style={styles.container}>
           <View>
             <Image
-              style={{
-                width: 48,
-                height: 48,
-                borderWidth: 2,
-                borderColor: theme.colors.onSurface,
-                borderRadius: 12,
-              }}
+              style={styles.image}
               source={{ uri }}
             />
           </View>
-          <View style={{ gap: 4 }}>
+          <View style={styles.descriptionContainer}>
             <Text variant="titleSmall">{itemName}</Text>
             <View
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+              style={styles.priceContainer}
             >
               <Icon size={18} source="gold" color={'#FFC83D'}></Icon>
-              <Text variant={'labelSmall'} style={{ color: '#FFC83D' }}>
+              <Text variant={'labelSmall'} style={styles.price}>
                 {gold}
               </Text>
             </View>
@@ -50,4 +44,31 @@ export default function ListItem({ itemId }: ListItemProps) {
       </Card.Content>
     </Card>
   );
+}
+
+const makeStyles = ({ colors }: MD3Theme) => {
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      gap: 12
+    },
+    image: {
+      width: 48,
+      height: 48,
+      borderWidth: 2,
+      borderColor: colors.onSurface,
+      borderRadius: 12,
+    },
+    descriptionContainer: {
+      gap: 4
+    },
+    priceContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8
+    },
+    price: {
+      color: '#FFC83D'
+    }
+  })
 }
