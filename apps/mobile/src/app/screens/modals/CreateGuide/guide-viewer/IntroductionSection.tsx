@@ -1,5 +1,7 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Avatar, List, Text } from "react-native-paper";
+
+import { getRoleLabel } from "@org/contracts";
 
 import FadeInView from "../../../../../components/animated/FadeInView";
 import Error from "../../../../../components/Error";
@@ -41,14 +43,14 @@ export default function IntroductionSection({ guideIntroduction, hideTitle = fal
                 !hideTitle ? (
                   <List.Subheader>
                     <Text variant='headlineSmall'>
-                      Informações Gerais
+                      {i18n.t('introductionSection.header')}
                     </Text>
                   </List.Subheader>
                 ) : undefined
               }
               <List.Item title={'Introdução'} description={guideIntroduction.introduction} />
-              <List.Item title={'Campeão'} description={championData.name} right={() => <Avatar.Image style={{ backgroundColor: 'transparent' }} source={{ uri }} size={48} />} />
-              {/* <List.Item title={'Função'} description={ROLES_LABEL[guideIntroduction.role]} /> */}
+              <List.Item title={'Campeão'} description={championData.name} right={() => <Avatar.Image style={styles.image} source={{ uri }} size={48} />} />
+              <List.Item title={'Função'} description={getRoleLabel(guideIntroduction.role)} />
             </List.Section>
           </FadeInView>
         )
@@ -56,3 +58,9 @@ export default function IntroductionSection({ guideIntroduction, hideTitle = fal
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  image: {
+    backgroundColor: 'transparent'
+  }
+})

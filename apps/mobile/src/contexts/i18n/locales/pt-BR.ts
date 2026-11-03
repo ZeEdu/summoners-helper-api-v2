@@ -487,6 +487,12 @@ const bonusSection = {
   third: 'Terceiro bonus'
 }
 
+const introductionSection = {
+  header: 'Informações Gerais',
+  intro: 'Introdução',
+  champion: 'Campeão'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -547,7 +553,8 @@ const ptBR = {
   errorFeedback,
   loadingFeedback,
   abilitiesProgressionSection,
-  bonusSection
+  bonusSection,
+  introductionSection
 }
 
 export default ptBR
