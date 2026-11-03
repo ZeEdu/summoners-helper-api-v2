@@ -63,7 +63,7 @@ export default function BonusForm() {
   const {
     control,
     formState: { errors },
-    handleSubmit,
+    handleSubmit
   } = useForm<BonusDto>({ resolver, defaultValues });
 
   const onSubmit = (formValues: BonusDto) => {
