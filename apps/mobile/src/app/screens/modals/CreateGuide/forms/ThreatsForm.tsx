@@ -89,7 +89,7 @@ const stepperContext = useStepperContext();
                     <AppSelectController
                       key={`${index}.threat`}
                       control={control}
-                      title={i18n.t('threatsForm.fields.addThreat.select.label')}
+                      title={i18n.t('threatsForm.fields.addThreat.select.title')}
                       options={championList.map(({ id, name }) => ({
                         value: id,
                         label: name,
