@@ -538,6 +538,19 @@ const changeLanguage = {
 const reviewGuide = {
   save: 'Salvar'
 }
+const viewGuide = {
+  reportGuide: 'Denunciar guia',
+  titles: {
+    intro: 'Introdução',
+    spells: 'Magias',
+    runes: 'Runas',
+    bonus: 'Bonus',
+    items: 'Itens',
+    progression: 'Progressão de Abilidades',
+    threats: 'Ameaças',
+    comments: 'Comentários'
+  }
+}
 
 const general = {
   yes: 'sim',
@@ -598,7 +611,8 @@ const ptBR = {
   runesSection,
   spellSection,
   threatsSection,
-  reviewGuide
+  reviewGuide,
+  viewGuide
 }
 
 export default ptBR
