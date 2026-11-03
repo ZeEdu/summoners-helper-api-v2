@@ -538,6 +538,7 @@ const changeLanguage = {
 const reviewGuide = {
   save: 'Salvar'
 }
+
 const viewGuide = {
   reportGuide: 'Denunciar guia',
   titles: {
@@ -550,6 +551,12 @@ const viewGuide = {
     threats: 'Ameaças',
     comments: 'Comentários'
   }
+}
+
+const progressionContent = {
+  loading: 'Carregando...',
+  error: 'Um erro ocorreu ao tentar carregar os dados'
+
 }
 
 const general = {
@@ -612,7 +619,8 @@ const ptBR = {
   spellSection,
   threatsSection,
   reviewGuide,
-  viewGuide
+  viewGuide,
+  progressionContent
 }
 
 export default ptBR

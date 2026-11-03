@@ -1,5 +1,6 @@
 import { FlatList, StyleSheet, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
+import useI18n from "../../../../../../contexts/i18n/useI18n";
 import useChampionData from "../../../../../../hooks/useChampion";
 import { AbilitiesProgressionDto } from "../../forms/AbilitiesProgressionForm";
 import SpellDescriptionCard from "./spell-description-card/SpellDescriptionCard";
@@ -12,13 +13,14 @@ type Props = {
 }
 
 export default function AbilitiesProgressionContent({ abilitiesProgression, championId }: Props) {
+  const i18n = useI18n()
   const { championData, error, loading } = useChampionData(championId)
 
   if (loading) {
     return (
       <View>
         <ActivityIndicator />
-        <Text>Carregando...</Text>
+        <Text>{i18n.t('progressionContent.loading')}</Text>
       </View>
     )
   }
@@ -27,7 +29,7 @@ export default function AbilitiesProgressionContent({ abilitiesProgression, cham
   if (!championData || error) {
     return (
       <View>
-        <Text>Um erro ocorreu ao tentar carregar os dados</Text>
+        <Text>{i18n.t('progressionContent.error')}</Text>
       </View>
     )
   }
