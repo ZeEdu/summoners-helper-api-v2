@@ -1,7 +1,9 @@
 import { Avatar, List, Text } from "react-native-paper";
 
+import React from "react";
 import FadeInView from "../../../../../components/animated/FadeInView";
 import useDataDragonContext from "../../../../../contexts/data-dragon/useDataDragonContext";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import { GuideSummonerSpellsDto } from "../forms/GuideSpellsForm";
 import { SectionProps } from "./sections.types";
@@ -12,6 +14,8 @@ export default function SpellsSection({
   guideSummonerSpells,
   hideTitle = false }: SpellsSectionProps
 ) {
+  const i18n = useI18n()
+
   return (
     <FadeInView>
       <List.Section>
@@ -19,22 +23,22 @@ export default function SpellsSection({
           !hideTitle ? (
             <List.Subheader>
               <Text variant='headlineSmall'>
-                Magias
+                {i18n.t('spellSection.header')}
               </Text>
             </List.Subheader>
           ) : undefined
         }
-        <SpellItem spellId={guideSummonerSpells.firstSpell} />
-        <SpellItem spellId={guideSummonerSpells.secondSpell} />
-        <List.Item title={'Descrição'} description={guideSummonerSpells.spellsDescription} />
+        <SpellItem spellId={guideSummonerSpells.firstSpell} title={i18n.t('spellSection.first')} />
+        <SpellItem spellId={guideSummonerSpells.secondSpell} title={i18n.t('spellSection.second')} />
+        <List.Item title={i18n.t('spellSection.description')} description={guideSummonerSpells.spellsDescription} />
       </List.Section>
     </FadeInView>
-
   )
 }
 
-function SpellItem({ spellId }: {
-  spellId: string
+function SpellItem({ spellId, title }: {
+  spellId: string,
+  title: string
 }) {
   const useDataDragon = useDataDragonContext();
   const usePatch = usePatchVersion()
@@ -46,7 +50,7 @@ function SpellItem({ spellId }: {
 
   return (
     <List.Item
-      title={'Segunda Magia'}
+      title={title}
       description={description}
       right={() => <Avatar.Image source={{ uri }} size={48} />}
     />

@@ -513,7 +513,14 @@ const runesSection = {
     first: 'Primeira Runa',
     second: 'Segunda Runa',
     third: 'Quarta Runa',
-  },
+  }
+}
+
+const spellSection = {
+  header: 'Magias',
+  description: 'Descrição',
+  first: 'Primeira Magia',
+  second: 'Segunda Magia',
 }
 
 const changeLanguage = {
@@ -579,7 +586,8 @@ const ptBR = {
   bonusSection,
   introductionSection,
   itemsSection,
-  runesSection
+  runesSection,
+  spellSection
 }
 
 export default ptBR
