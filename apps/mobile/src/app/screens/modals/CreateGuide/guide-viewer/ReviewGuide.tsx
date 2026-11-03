@@ -3,14 +3,8 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import AbilitiesProgressionSection from './AbilitiesProgressionSection';
-import BonusSection from './BonusSection';
-import IntroductionSection from './IntroductionSection';
-import ItemsSection from './ItemsSection';
-import RunesSection from './RunesSection';
-import SpellsSection from './SpellsSection';
-import ThreatsSection from './ThreatsSection';
 
+import { Text } from 'react-native-paper';
 import { StepperFooter } from '../../../../../components/stepper';
 import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import useI18n from '../../../../../contexts/i18n/useI18n';
@@ -22,6 +16,14 @@ import { ItemsDto } from '../forms/items-form/ItemsForm';
 import { MainRuneDto } from '../forms/MainRunesForm';
 import { SecondaryRuneDto } from '../forms/SecondaryRunesForm';
 import { ThreatsDto } from '../forms/ThreatsForm';
+import AbilitiesProgressionContent from './abilities-progression-content/AbilitiesProgressionContent';
+import BonusContent from './bonus-content/BonusContent';
+import ExpandableCard from './expandable-card/ExpandableCard';
+import HeroBanner from './hero-banner/HeroBanner';
+import ItemsContent from './items-content/ItemsContent';
+import RuneContent from './rune-content/RuneContent';
+import SpellContent from './spell-content/SpellContent';
+import ThreatsContent from './threats-content/ThreatsContent';
 
 type GuideViewerProps = {
   handleConfirm?: () => void
@@ -81,13 +83,75 @@ export default function ReviewGuide({ handleConfirm }: GuideViewerProps) {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <IntroductionSection guideIntroduction={guideIntroduction} />
-        <SpellsSection guideSummonerSpells={guideSummonerSpells} />
-        <RunesSection mainRune={mainRune} secondaryRune={secondaryRune} />
-        <BonusSection bonus={bonus} />
-        <ItemsSection items={items} />
-        <AbilitiesProgressionSection abilitiesProgression={abilitiesProgression} champion={guideIntroduction.champion} />
-        <ThreatsSection threats={threats} />
+        <HeroBanner championId={guideIntroduction.champion} role={guideIntroduction.role} />
+        <ExpandableCard
+          title={i18n.t('viewGuide.titles.intro')}
+          titleIcon="text-box-outline"
+        >
+          <Text
+            variant="bodyMedium"
+          >
+            {guideIntroduction.introduction}
+          </Text>
+        </ExpandableCard>
+
+        <ExpandableCard
+          title={i18n.t('viewGuide.titles.spells')}
+          titleIcon="creation"
+        >
+          <SpellContent
+            spells={guideSummonerSpells}
+          />
+        </ExpandableCard>
+
+        <ExpandableCard
+          title={i18n.t('viewGuide.titles.runes')}
+          titleIcon={'hexagram-outline'}
+        >
+          <RuneContent
+            rune={mainRune}
+          />
+          <RuneContent
+            rune={secondaryRune}
+          />
+        </ExpandableCard>
+
+        <ExpandableCard
+          title={i18n.t('viewGuide.titles.bonus')}
+          titleIcon={'shield-cross'}
+        >
+          <BonusContent
+            bonus={bonus}
+          />
+        </ExpandableCard>
+
+        <ExpandableCard
+          title={i18n.t('viewGuide.titles.items')}
+          titleIcon={'shopping'}
+        >
+          <ItemsContent
+            items={items}
+          />
+        </ExpandableCard>
+
+        <ExpandableCard
+          title={i18n.t('viewGuide.titles.progression')}
+          titleIcon={'chart-timeline-variant'}
+        >
+          <AbilitiesProgressionContent
+            abilitiesProgression={abilitiesProgression}
+            championId={guideIntroduction.champion}
+          />
+        </ExpandableCard>
+
+        <ExpandableCard
+          title={i18n.t('viewGuide.titles.threats')}
+          titleIcon={'alert-outline'}
+        >
+          <ThreatsContent
+            threats={threats}
+          />
+        </ExpandableCard>
       </ScrollView>
       {
         handleConfirm ? (
