@@ -523,6 +523,11 @@ const spellSection = {
   second: 'Segunda Magia',
 }
 
+const threatsSection = {
+  header: 'Ameaças',
+  description: 'Descrição das ameaças'
+}
+
 const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
@@ -587,7 +592,8 @@ const ptBR = {
   introductionSection,
   itemsSection,
   runesSection,
-  spellSection
+  spellSection,
+  threatsSection
 }
 
 export default ptBR

@@ -5,6 +5,7 @@ import { Avatar, List, Text } from "react-native-paper";
 import FadeInView from "../../../../../components/animated/FadeInView";
 import Error from "../../../../../components/Error";
 import LoadingIndicator from "../../../../../components/LoadingIndicator";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 import { usePatchVersion } from "../../../../../contexts/patchVersion/usePatchVersion";
 import useChampionData from "../../../../../hooks/useChampion";
 import DataDragonService from "../../../../../services/data-dragon/data-dragon.service";
@@ -14,6 +15,7 @@ import { SectionProps } from "./sections.types";
 type ThreatsSection = SectionProps & { threats: ThreatsDto }
 
 export default function ThreatsSection({ threats, hideTitle = false }: ThreatsSection) {
+  const i18n = useI18n()
   return (
     <FadeInView>
       <List.Section>
@@ -21,13 +23,13 @@ export default function ThreatsSection({ threats, hideTitle = false }: ThreatsSe
           !hideTitle ? (
             <List.Subheader>
               <Text variant='headlineSmall'>
-                Ameaças
+                {i18n.t('threatsSection.header')}
               </Text>
             </List.Subheader>
           ) : undefined
         }
 
-        <List.Item title={'Descrição das ameaças'} description={threats.threatsDescription} />
+        <List.Item title={i18n.t('threatsSection.description')} description={threats.threatsDescription} />
         {
           threats.threats
             .map(({ description, threat }) => (
@@ -36,7 +38,6 @@ export default function ThreatsSection({ threats, hideTitle = false }: ThreatsSe
         }
       </List.Section>
     </FadeInView>
-
   )
 }
 
