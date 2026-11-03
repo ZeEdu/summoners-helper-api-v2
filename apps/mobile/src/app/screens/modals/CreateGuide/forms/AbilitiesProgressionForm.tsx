@@ -133,7 +133,7 @@ export default function GuideAbilitiesProgressionForm({ champion }: Props) {
 
   const isSelected = (levelKey: LvlKey, index: number) => {
     const value = indexToAbilityOption[index as KeymapIndexType];
-    return getValues('abilitiesProgression')[levelKey] === value;
+    return getValues('abilitiesProgression')?.[levelKey] === value;
   };
 
   return (
