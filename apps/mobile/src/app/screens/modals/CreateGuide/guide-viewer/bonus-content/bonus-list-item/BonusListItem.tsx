@@ -14,8 +14,8 @@ export default function BonusListItem({ bonus }: Props) {
 
   const styles = makeStyles(useTheme())
 
-  const label = i18n.t(`slotAltBonus.${bonus}`)
-  const description = i18n.t(`slotBonusAltDescription.${bonus}`)
+  const label = i18n.t(`slotBonus.${bonus}`)
+  const description = i18n.t(`slotBonusDescription.${bonus}`)
   const shard = i18n.t(`bonusLabelShards.${bonus}`)
   const value = getBonusValue(bonus);
 

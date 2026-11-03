@@ -266,19 +266,6 @@ const bonusForm = {
 }
 
 const slotBonus = {
-  ADAPTIVE_FORCE: 'Força Adaptativa',
-  ADAPTIVE_FORCE_SCALING: 'Força Adaptativa por nível',
-  ARMOR: 'Armadura',
-  ATTACK_SPEED: 'Velocidade de Ataque',
-  CDR_SCALING: 'Aceleração de Habilidade por nível',
-  HEALTH: 'Vida',
-  HEALTH_SCALING: 'Vida por nível',
-  HASTE: 'Aceleração de Habilidade',
-  MOVEMENT_SPEED: 'Velocidade de Movimento',
-  TENACITY: 'Tenacidade',
-}
-
-const slotAltBonus = {
   AdaptiveForce: 'Força Adaptativa',
   AdaptiveForceScaling: 'Força Adaptativa por nível',
   Armor: 'Armadura',
@@ -292,19 +279,6 @@ const slotAltBonus = {
 }
 
 const slotBonusDescription = {
-  ADAPTIVE_FORCE: 'Aumenta o dano de ataque ou o poder de habilidade.',
-  ADAPTIVE_FORCE_SCALING: 'Aumenta a força adaptativa por nível.',
-  ARMOR: 'Reduz o dano físico recebido.',
-  ATTACK_SPEED: 'Aumenta a velocidade de ataque.',
-  CDR_SCALING: 'Reduz o tempo de recarga das habilidades.',
-  HEALTH: 'Aumenta a vida máxima.',
-  HEALTH_SCALING: 'Aumenta a vida por nível.',
-  HASTE: 'Permite usar habilidades com mais frequência.',
-  MOVEMENT_SPEED: 'Aumenta a velocidade de movimento.',
-  TENACITY: 'Reduz a duração dos efeitos de controle.',
-}
-
-const slotBonusAltDescription = {
   AdaptiveForce: 'Aumenta o dano de ataque ou o poder de habilidade.',
   AdaptiveForceScaling: 'Aumenta a força adaptativa por nível.',
   Armor: 'Reduz o dano físico recebido.',
@@ -318,16 +292,16 @@ const slotBonusAltDescription = {
 }
 
 const bonusLabelShards = {
-  ADAPTIVE_FORCE: 'DANO / PODER',
-  ADAPTIVE_FORCE_SCALING: 'DANO / PODER',
-  ARMOR: 'ARMADURA',
-  ATTACK_SPEED: 'VEL. ATAQUE',
-  CDR_SCALING: 'ACEL. HAB.',
-  HEALTH: 'VIDA',
-  HEALTH_SCALING: 'VIDA',
-  HASTE: 'ACEL. HAB.',
-  MOVEMENT_SPEED: 'VEL. MOV.',
-  TENACITY: 'TENACIDADE',
+  AdaptiveForce: 'DANO / PODER',
+  AdaptiveForceScaling: 'DANO / PODER',
+  Armor: 'ARMADURA',
+  AttackSpeed: 'VEL. ATAQUE',
+  CDRScaling: 'ACEL. HAB.',
+  HealthPlus: 'VIDA',
+  HealthScaling: 'VIDA',
+  MagicRes: 'ACEL. HAB.',
+  MovementSpeed: 'VEL. MOV.',
+  Tenacity: 'TENACIDADE',
 }
 
 const spellsForm = {
@@ -631,9 +605,7 @@ const ptBR = {
   progressionForm,
   bonusForm,
   slotBonus,
-  slotAltBonus,
   slotBonusDescription,
-  slotBonusAltDescription,
   bonusLabelShards,
   spellsForm,
   mainRuneForm,

@@ -28,7 +28,7 @@ export default function ThreatsForm() {
   const dataDragon = useDataDragonContext();
   const i18n = useI18n()
   const mainFormContext = useFormContext<CreateGuideFormDto>();
-const stepperContext = useStepperContext();
+  const stepperContext = useStepperContext();
 
   const defaultValues: ThreatsDto = {
     threatsDescription: mainFormContext.getValues('threatsDescription'),

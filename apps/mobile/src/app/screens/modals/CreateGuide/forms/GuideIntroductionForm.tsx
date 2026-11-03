@@ -14,6 +14,7 @@ import AppSelectController from '../../../../../components/forms/app-select-cont
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 
+import { useEffect } from 'react';
 import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
 import StepperFooter from '../../../../../components/stepper/StepperFooter';
@@ -72,6 +73,7 @@ export default function GuideIntroductionForm() {
     control,
     handleSubmit,
     formState: { errors },
+    setValue
   } = useForm<GuideIntroductionDto>({ resolver, defaultValues });
 
   const onSubmit = (formValues: GuideIntroductionDto) => {
@@ -82,6 +84,15 @@ export default function GuideIntroductionForm() {
   };
 
   const championList = dataDragon.lists.champions || [];
+
+  const watchMainForm = mainFormContext.watch(['champion', 'introduction', 'role', 'title'])
+
+  useEffect(() => {
+    setValue('champion', 'Ahri')
+    setValue('introduction', 'minha descricao')
+    setValue('role', ROLES.MID_LANE)
+    setValue('title', 'Titulo')
+  }, [watchMainForm])
 
   return (
     <View style={styles.container}>
