@@ -85,7 +85,6 @@ export function getBonus(key: string): SLOT_BONUS | undefined {
   return undefined
 }
 
-// TODO: MIGRA ISSO PARA DENTRO DA INTERNACIONALIZAÇÃO
 export const bonusValues: Record<string, number> = {
   ADAPTIVE_FORCE: 9,
   ADAPTIVE_FORCE_SCALING: 0,

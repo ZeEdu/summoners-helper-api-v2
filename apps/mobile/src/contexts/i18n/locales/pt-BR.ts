@@ -304,6 +304,19 @@ const slotBonusDescription = {
   TENACITY: 'Reduz a duração dos efeitos de controle.',
 }
 
+const slotBonusAltDescription = {
+  AdaptiveForce: 'Aumenta o dano de ataque ou o poder de habilidade.',
+  AdaptiveForceScaling: 'Aumenta a força adaptativa por nível.',
+  Armor: 'Reduz o dano físico recebido.',
+  AttackSpeed: 'Aumenta a velocidade de ataque.',
+  CDRScaling: 'Reduz o tempo de recarga das habilidades.',
+  HealthPlus: 'Aumenta a vida máxima.',
+  HealthScaling: 'Aumenta a vida por nível.',
+  MagicRes: 'Permite usar habilidades com mais frequência.',
+  MovementSpeed: 'Aumenta a velocidade de movimento.',
+  Tenacity: 'Reduz a duração dos efeitos de controle.',
+}
+
 const bonusLabelShards = {
   ADAPTIVE_FORCE: 'DANO / PODER',
   ADAPTIVE_FORCE_SCALING: 'DANO / PODER',
@@ -598,6 +611,7 @@ const ptBR = {
   slotBonus,
   slotAltBonus,
   slotBonusDescription,
+  slotBonusAltDescription,
   bonusLabelShards,
   spellsForm,
   mainRuneForm,
