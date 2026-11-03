@@ -21,7 +21,7 @@ const makeSlots = (slots: SLOT_BONUS[], t: (key: string) => string) => {
   return slots
     .map((key) => ({
       value: key,
-      label: t(`slotBonus.${key}`)
+      label: t(`slotAltBonus.${key}`)
     }))
 }
 

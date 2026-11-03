@@ -248,8 +248,8 @@ const progressionForm = {
 
 const bonusForm = {
   description: {
-    label: 'Progressão das abilidades',
-    placeholder: 'Descrição da Progressão das abilidades'
+    label: 'Descrição',
+    placeholder: 'Descrição dos bonus'
   },
   slotOne: {
     title: 'Selecione um bonus',
