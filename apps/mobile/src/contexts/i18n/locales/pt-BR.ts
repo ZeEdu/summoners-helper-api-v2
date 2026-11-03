@@ -569,7 +569,19 @@ const viewGuide = {
 const progressionContent = {
   loading: 'Carregando...',
   error: 'Um erro ocorreu ao tentar carregar os dados'
+}
 
+const difficulty = {
+  '1': 'Muito fácil',
+  '2': 'Fácil',
+  '3': 'Intermediário',
+  '4': 'Díficil',
+  '5': 'Muito Díficil'
+}
+
+const heroBanner = {
+  title: 'Guia',
+  difficulty: 'Dificuldade'
 }
 
 const general = {
@@ -634,7 +646,9 @@ const ptBR = {
   threatsSection,
   reviewGuide,
   viewGuide,
-  progressionContent
+  progressionContent,
+  heroBanner,
+  difficulty
 }
 
 export default ptBR

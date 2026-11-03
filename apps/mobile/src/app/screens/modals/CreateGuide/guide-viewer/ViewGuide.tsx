@@ -143,7 +143,7 @@ export default function ViewGuide({ route }: Props) {
   return (
     <StyledView style={{ height, flex: 1 }}>
       <ScrollView>
-        <HeroBanner championId={guide.champion} role={guide.role} />
+        <HeroBanner championId={guide.champion} role={guide.role} patchVersion={guide.patchVersion} />
         <ExpandableCard
           title={i18n.t('viewGuide.titles.intro')}
           titleIcon="text-box-outline"
