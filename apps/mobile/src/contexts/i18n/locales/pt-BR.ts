@@ -598,7 +598,7 @@ const ptBR = {
   runesSection,
   spellSection,
   threatsSection,
-  review: reviewGuide
+  reviewGuide
 }
 
 export default ptBR
