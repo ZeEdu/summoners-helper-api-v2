@@ -11,6 +11,7 @@ import AppInputController from '../../../../../components/forms/AppInputControll
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 import { StepperFooter } from '../../../../../components/stepper';
 import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
+import { useStepperContext } from '../../../../../components/stepper/context';
 import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../contexts/i18n/useI18n';
 
@@ -27,6 +28,7 @@ export default function ThreatsForm() {
   const dataDragon = useDataDragonContext();
   const i18n = useI18n()
   const mainFormContext = useFormContext<CreateGuideFormDto>();
+const stepperContext = useStepperContext();
 
   const defaultValues: ThreatsDto = {
     threatsDescription: mainFormContext.getValues('threatsDescription'),
@@ -55,6 +57,7 @@ export default function ThreatsForm() {
 
   const onSubmit = (formValues: ThreatsDto) => {
     mainFormContext.setValues(formValues, { shouldValidate: true });
+    stepperContext.nextStep()
   };
 
   const getErrorFromIndex = (index: number) => {
