@@ -51,7 +51,10 @@ const MainTabs = createBottomTabNavigator({
 }).with(({ Navigator }) => {
   const i18n = useI18n()
   return (
-    <Navigator screenOptions={({ route }) => ({ title: i18n.t(`screens.${route.name}`) })} />
+    <Navigator screenOptions={({ route }) => {
+      const title = i18n.t(`screens.${route.name}`)
+      return { title }
+    }} />
   )
 });
 

@@ -1,5 +1,6 @@
 import { PropsWithChildren, useCallback, useMemo, useState } from 'react'
 
+import SecureStoreService from '../../services/secure-store.service'
 import i18n from './config'
 import { I18nContext, I18nContextType } from './i18n.context'
 
@@ -9,6 +10,7 @@ export const I18nProvider = ({ children }: PropsWithChildren) => {
   const setLocale = useCallback((newLocale: string) => {
     i18n.locale = newLocale
     setLocaleState(newLocale)
+    SecureStoreService.set('lang', newLocale)
   }, [])
 
   const value: I18nContextType = useMemo(

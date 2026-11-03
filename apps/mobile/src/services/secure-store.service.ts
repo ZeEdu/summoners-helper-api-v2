@@ -1,25 +1,22 @@
 import * as SecureStore from 'expo-secure-store';
-import { Platform } from 'react-native';
+import Utils from '../utils/utils';
 
-const notMobile = () => {
-  return Platform.OS !== 'android' && Platform.OS !== 'ios';
-};
 const SecureStoreService = {
   get: async (key: string) => {
-    if (notMobile()) {
+    if (Utils.isWeb) {
       return localStorage.getItem(key);
     }
     return SecureStore.getItemAsync(key);
   },
   set: async (key: string, value: any) => {
-    if (notMobile()) {
+    if (Utils.isWeb) {
       localStorage.setItem(key, value);
       return;
     }
     await SecureStore.setItemAsync(key, value)
   },
   delete: async (key: string) => {
-    if (notMobile()) {
+    if (Utils.isWeb) {
       localStorage.removeItem(key);
       return;
     }
