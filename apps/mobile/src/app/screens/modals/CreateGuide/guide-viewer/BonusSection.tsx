@@ -1,15 +1,16 @@
 import React from "react";
 import { Avatar, List, Text } from "react-native-paper";
 
-import { SLOT_BONUS_LABELS } from "@org/contracts";
-
 import FadeInView from "../../../../../components/animated/FadeInView";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 import { BonusDto } from "../forms/BonusForm";
 import { SectionProps } from "./sections.types";
 
 type BonusSectionProps = SectionProps & { bonus: BonusDto }
 
 export default function BonusSection({ bonus, hideTitle = false }: BonusSectionProps) {
+  const i18n = useI18n()
+
   return (
     <FadeInView>
       <List.Section>
@@ -17,17 +18,16 @@ export default function BonusSection({ bonus, hideTitle = false }: BonusSectionP
           !hideTitle ? (
             <List.Subheader>
               <Text variant='headlineSmall'>
-                Bonus
-
+                {i18n.t('bonusSection.header')}
               </Text>
             </List.Subheader>
           ) : undefined
         }
 
-        <List.Item title={'Descrição'} description={bonus.bonusDescription} />
-        <BonusItem bonus={bonus.bonusSlotOne} title={'Primeiro Bonus'} />
-        <BonusItem bonus={bonus.bonusSlotTwo} title={'Segundo Bonus'} />
-        <BonusItem bonus={bonus.bonusSlotThree} title={'Terceiro Bonus'} />
+        <List.Item title={i18n.t('bonusSection.description')} description={bonus.bonusDescription} />
+        <BonusItem bonus={bonus.bonusSlotOne} title={i18n.t('bonusSection.first')} />
+        <BonusItem bonus={bonus.bonusSlotTwo} title={i18n.t('bonusSection.second')} />
+        <BonusItem bonus={bonus.bonusSlotThree} title={i18n.t('bonusSection.third')} />
       </List.Section>
     </FadeInView>
   )
@@ -37,8 +37,9 @@ function BonusItem({ bonus, title }: {
   bonus: string,
   title: string
 }) {
-  // @ts-ignore 
-  const label = SLOT_BONUS_LABELS[bonus]
+  const i18n = useI18n()
+
+  const label = i18n.t(`slotAltBonus.${bonus}`)
   const uri = `https://ddragon.leagueoflegends.com/cdn/img/perk-images/StatMods/StatMods${bonus}Icon.png`
 
   return (
