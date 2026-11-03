@@ -93,7 +93,7 @@ export default function ReviewGuide({ handleConfirm }: GuideViewerProps) {
         handleConfirm ? (
           <StepperFooter
             customNextButton={buildCustomButtonProps({
-              children: 'Salvar',
+              children: i18n.t('review.save'),
               onPress: handleConfirm,
               t: i18n.t
             })}

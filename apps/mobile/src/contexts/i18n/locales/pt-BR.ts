@@ -535,6 +535,10 @@ const changeLanguage = {
   action: 'Selecionar idioma'
 }
 
+const review = {
+  save: 'Salvar'
+}
+
 const general = {
   yes: 'sim',
   no: 'não'
@@ -593,7 +597,8 @@ const ptBR = {
   itemsSection,
   runesSection,
   spellSection,
-  threatsSection
+  threatsSection,
+  review
 }
 
 export default ptBR
