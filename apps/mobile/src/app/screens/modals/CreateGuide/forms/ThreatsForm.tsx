@@ -94,7 +94,7 @@ export default function ThreatsForm() {
                         value: id,
                         label: name,
                       }))}
-                      placeholder={i18n.t('threatsForm.fields.addThreat.description.placeholder')}
+                      placeholder={i18n.t('threatsForm.fields.addThreat.select.placeholder')}
                       name={`threats.${index}.threat`}
                     />
 

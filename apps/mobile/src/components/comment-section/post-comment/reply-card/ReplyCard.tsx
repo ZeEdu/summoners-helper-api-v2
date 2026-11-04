@@ -24,7 +24,7 @@ export default function ReplyCard({ replyTo }: Props) {
       mode="contained"
       style={styles.card}
     >
-      <Card.Title title={`${i18n.t('replyTo')} ${getCreatedBy(replyTo)}`} titleStyle={styles.authorText} />
+      <Card.Title title={`${i18n.t('replyCard.replyTo')} ${getCreatedBy(replyTo)}`} titleStyle={styles.authorText} />
       <Card.Content>
         <Text
           variant="bodyMedium"

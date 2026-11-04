@@ -114,7 +114,7 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
             compact
             onPress={() => setReplyTo(comment)}
           >
-            {i18n.t('reply')}
+            {i18n.t('comment.reply')}
           </Button>
 
           <Button
@@ -128,7 +128,7 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
               })
             }}
           >
-            {i18n.t('replies')}
+            {i18n.t('comment.replies')}
           </Button>
         </View>
       </Card.Content>

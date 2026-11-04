@@ -98,7 +98,7 @@ export default function GuideSummonerSpellsForm() {
               control={control}
               title={i18n.t('spellsForm.secondSpell.title')}
               options={buildSecondSpellOptions()}
-              placeholder={i18n.t('spellsForm.secondSpell.title')}
+              placeholder={i18n.t('spellsForm.secondSpell.placeholder')}
               name={'secondSpell'}
             />
             <FormFieldErrors fieldError={errors.secondSpell} />
