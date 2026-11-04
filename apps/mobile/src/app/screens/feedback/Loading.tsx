@@ -1,18 +1,16 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { MD3Colors, Text } from "react-native-paper";
+import { ActivityIndicator, StyleSheet } from "react-native";
 
 import { StyledView } from "@org/ui";
+import { Text } from "react-native-paper";
 import useI18n from "../../../contexts/i18n/useI18n";
 
-export default function Loading() {
+export default function Loading({ i18nKey }: { i18nKey: string }) {
   const i18n = useI18n()
 
   return (
     <StyledView style={styles.container}>
-      <View>
-        <ActivityIndicator animating={true} size={'large'} color={MD3Colors.primary100} />
-        <Text style={styles.text}>{i18n.t('loadingFeedback.text')}</Text>
-      </View>
+      <ActivityIndicator animating={true} size={'large'} />
+      <Text variant="labelSmall" style={styles.text}>{i18n.t(i18nKey ? `loadingFeedback.${i18nKey}` : 'loadingFeedback.default')}</Text>
     </StyledView>
   )
 }

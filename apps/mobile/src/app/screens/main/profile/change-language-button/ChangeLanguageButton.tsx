@@ -17,7 +17,7 @@ export default function ChangeLanguageButton() {
 
   const { control, handleSubmit } = useForm<FormDto>({
     defaultValues: {
-      language: i18n.locale
+      language: i18n.locale || 'pt'
     }
   })
 
@@ -27,8 +27,8 @@ export default function ChangeLanguageButton() {
     bottomSheetModalRef.current?.present()
   }, [])
 
-  const submit = (formValues: FormDto) => {
-    i18n.setLocale(formValues.language)
+  const submit = async (formValues: FormDto) => {
+    await i18n.setLocale(formValues.language)
     bottomSheetModalRef.current?.dismiss()
   }
 

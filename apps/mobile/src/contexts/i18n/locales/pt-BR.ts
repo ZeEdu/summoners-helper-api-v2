@@ -459,7 +459,8 @@ const errorFeedback = {
 }
 
 const loadingFeedback = {
-  text: 'Carregando dados do Data Dragon...'
+  default: 'Carregando dados...',
+  i18n: 'Carregando configurações de idioma...'
 }
 
 const abilitiesProgressionSection = {
@@ -576,7 +577,16 @@ const general = {
 const screens = {
   Profile: 'Perfil',
   MyGuides: 'Meus guias',
-  Home: 'Recente'
+  Home: 'Recente',
+
+  BindRiotAccount: 'Vincular conta Riot',
+  CreateGuide: 'Criar guia',
+  EditGuide: 'Editar guia',
+  ViewGuide: 'Visualizar guia',
+  Report: 'Denunciar',
+
+  Login: 'Login',
+  Register: 'Cadastro'
 }
 
 const ptBR = {

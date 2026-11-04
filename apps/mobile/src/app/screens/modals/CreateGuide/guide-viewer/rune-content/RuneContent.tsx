@@ -77,7 +77,7 @@ export default function RuneContent({ rune }: Props) {
           {fourthSlot && (
             <RuneListItem
               runeId={fourthSlot}
-              title={i18n.t('runesContent.second')}
+              title={i18n.t('runesContent.fourth')}
               divider={false}
             />
           )}
