@@ -63,7 +63,7 @@ const NoChampionSelected = () => {
   const i18n = useI18n()
   return (
     <View>
-      <Text>{i18n.t('progressionForm.description.label')}</Text>
+      <Text>{i18n.t('progressionForm.noChampionData')}</Text>
     </View>
   );
 };
