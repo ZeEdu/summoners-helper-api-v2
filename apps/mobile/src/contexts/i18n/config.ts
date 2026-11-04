@@ -12,6 +12,4 @@ const i18n = new I18n(translations)
 
 i18n.enableFallback = true
 
-i18n.missingTranslation.register('empty', (i18n, scope, options) => '')
-
 export default i18n

@@ -106,10 +106,10 @@ const RootStack = createNativeStackNavigator({
 }).with(({ Navigator }) => {
   const i18n = useI18n()
 
-  return <Navigator screenOptions={({ route }) => {
-    const title = i18n.t(`screens.${route.name}`, { missingBehavior: 'empty' }) // Solução temporária, para ignorar o MainTabs
-    return { title: title ?? route.name }
-  }} />
+  return <Navigator
+    screenOptions={({ route }) => ({
+      title: route.name === 'MainTabs' ? '' : i18n.t(`screens.${route.name}`)
+    })} />
 });
 
 export const Navigation = createStaticNavigation(RootStack)
