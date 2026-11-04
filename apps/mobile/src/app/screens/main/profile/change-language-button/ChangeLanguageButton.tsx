@@ -1,8 +1,8 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet"
-import React, { useCallback, useRef } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { StyleSheet, View } from "react-native"
-import { Button, MD3Theme, useTheme } from "react-native-paper"
+import { Button, MD3Theme, Snackbar, useTheme } from "react-native-paper"
 
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController"
 import useI18n from "../../../../../contexts/i18n/useI18n"
@@ -23,13 +23,25 @@ export default function ChangeLanguageButton() {
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
+  const [showSnackbar, setShowSnackbar] = useState(false)
+
   const presentBottomSheet = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
 
   const submit = async (formValues: FormDto) => {
-    await i18n.setLocale(formValues.language)
-    bottomSheetModalRef.current?.dismiss()
+    setShowSnackbar(false)
+
+    i18n.setLocale(formValues.language)
+      .then(() => {
+        bottomSheetModalRef.current?.dismiss()
+      }).catch(() => {
+        setShowSnackbar(true)
+      })
+  }
+
+  const closeSnackbar = () => {
+    setShowSnackbar(false)
   }
 
   const languageList = [
@@ -68,6 +80,17 @@ export default function ChangeLanguageButton() {
           </View>
         </BottomSheetView>
       </BottomSheetModal>
+
+      <Snackbar
+        visible={showSnackbar}
+        onDismiss={closeSnackbar}
+        action={{
+          label: 'OK',
+          onPress: closeSnackbar,
+        }}
+      >
+        {i18n.t(`changeLanguage.snackbar.error`)}
+      </Snackbar>
     </>
   )
 }

@@ -520,7 +520,10 @@ const changeLanguage = {
   anchor: 'Change language',
   placeholder: 'Change language',
   title: 'Language',
-  action: 'Select language'
+  action: 'Select language',
+  snackbar: {
+    error: 'It was not possible to change language'
+  }
 }
 
 const reviewGuide = {

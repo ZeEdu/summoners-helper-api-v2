@@ -521,7 +521,10 @@ const changeLanguage = {
   anchor: 'Trocar idioma',
   placeholder: 'Trocar idioma',
   title: 'Idioma',
-  action: 'Selecionar idioma'
+  action: 'Selecionar idioma',
+  snackbar: {
+    error: 'Não foi possível trocar de idioma'
+  }
 }
 
 const reviewGuide = {

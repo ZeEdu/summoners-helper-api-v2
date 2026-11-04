@@ -4,6 +4,7 @@ import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 're
 import Loading from '../../app/screens/feedback/Loading';
 import SecureStoreService from '../../services/secure-store.service';
 import i18n from './config';
+import I18N_CONSTANTS from './i18n.constants';
 import { I18nContext, I18nContextType } from './i18n.context';
 
 export const I18nProvider = ({ children }: PropsWithChildren) => {
@@ -18,16 +19,26 @@ export const I18nProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     const init = async () => {
-      const savedLang = await SecureStoreService.get('lang')
-      const deviceLang = getLocales()[0].languageCode
-      if (savedLang) {
-        i18n.locale = savedLang
-      } else {
-        i18n.locale = deviceLang ?? 'pt'
-      }
+      try {
+        const savedLang = await SecureStoreService.get('lang')
+        const deviceLang = getLocales()[0].languageCode
 
-      setLocaleState(i18n.locale)
-      setInitialized(true)
+        if (savedLang && I18N_CONSTANTS.isLanguageSupported(savedLang)) {
+          i18n.locale = savedLang
+        } else if (deviceLang && I18N_CONSTANTS.isLanguageSupported(deviceLang)) {
+          i18n.locale = deviceLang
+        } else {
+          i18n.locale = 'pt'
+        }
+        setLocaleState(i18n.locale)
+
+      } catch (error) {
+        console.log('[I18nProvider]: Failed to initialize i18n: ', error);
+        i18n.locale = 'pt'
+        setLocaleState(i18n.locale)
+      } finally {
+        setInitialized(true)
+      }
     }
 
     init()
