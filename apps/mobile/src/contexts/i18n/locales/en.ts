@@ -458,7 +458,7 @@ const errorFeedback = {
 }
 
 const loadingFeedback = {
-  text: 'Loading...',
+  default: 'Loading...',
   i18n: 'Loading language settings...'
 }
 
@@ -574,9 +574,9 @@ const general = {
 }
 
 const screens = {
-  Profile: 'Perfil',
-  MyGuides: 'Meus guias',
-  Home: 'Recente',
+  Profile: 'Profile',
+  MyGuides: 'My Guides',
+  Home: 'Recent',
 
   BindRiotAccount: 'Bind Riot Account',
   CreateGuide: 'Create Guide',

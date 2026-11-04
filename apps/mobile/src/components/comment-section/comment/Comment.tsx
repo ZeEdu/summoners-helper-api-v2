@@ -22,7 +22,7 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
   const [liked, setLiked] = useState(comment.liked || false)
   const [likeCount, setLikeCount] = useState(comment.likeCount)
 
-  let createdBy = 'Deletado'
+  let createdBy = i18n.t('comment.deletedUser')
   if (comment.createdBy && 'username' in comment.createdBy) {
     createdBy = comment.createdBy.username
   }

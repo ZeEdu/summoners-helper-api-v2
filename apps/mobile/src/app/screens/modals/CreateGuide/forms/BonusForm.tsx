@@ -26,7 +26,7 @@ const makeSlots = (slots: SLOT_BONUS[], t: (key: string) => string) => {
 }
 
 const makeSlotOne = (t: (key: string) => string) => {
-  return makeSlots([SLOT_BONUS.HEALTH, SLOT_BONUS.ATTACK_SPEED, SLOT_BONUS.HASTE], t)
+  return makeSlots([SLOT_BONUS.ADAPTIVE_FORCE, SLOT_BONUS.ATTACK_SPEED, SLOT_BONUS.HASTE], t)
 }
 
 const makeSlotTwo = (t: (key: string) => string) => {

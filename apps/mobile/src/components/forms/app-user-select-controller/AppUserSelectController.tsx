@@ -83,7 +83,7 @@ export default function AppUserSelectController<T extends FieldValues>({ control
               </TouchableRipple>
               <Portal>
                 <Dialog visible={modal} onDismiss={closeModal}>
-                  <Dialog.Title>{i18n.t('userPicker.title')}Selecione o usuário</Dialog.Title>
+                  <Dialog.Title>{i18n.t('userPicker.title')}</Dialog.Title>
                   <Dialog.Content>
                     <View>
                       <Searchbar
