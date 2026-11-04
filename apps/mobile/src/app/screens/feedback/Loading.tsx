@@ -4,7 +4,11 @@ import { StyledView } from "@org/ui";
 import { Text } from "react-native-paper";
 import useI18n from "../../../contexts/i18n/useI18n";
 
-export default function Loading({ i18nKey }: { i18nKey: string }) {
+type Props = {
+  i18nKey?: string
+}
+
+export default function Loading({ i18nKey }: Props) {
   const i18n = useI18n()
 
   return (
