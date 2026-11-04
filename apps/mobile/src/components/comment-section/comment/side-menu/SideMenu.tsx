@@ -1,7 +1,9 @@
 import { useState } from "react"
 import { View } from "react-native"
 import { IconButton, Menu } from "react-native-paper"
-import { ISerializedComment } from "../../../../../../../libs/contracts/src"
+
+import { ISerializedComment } from "@org/contracts"
+
 import useI18n from "../../../../contexts/i18n/useI18n"
 
 type Props = {
