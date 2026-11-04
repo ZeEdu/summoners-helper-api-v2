@@ -57,7 +57,7 @@ type FilterOutputDto = z.output<typeof customGuidesPaginationSchema>;
 
 const resolver = zodResolver(customGuidesPaginationSchema);
 
-// TODO: Botar o filtro dentro de um accordion ou algo do tipoi
+// TODO: Botar o filtro dentro de um accordion ou algo do tipo
 export default function Search() {
   const useDataDragon = useDataDragonContext();
   const patchVersion = usePatchVersion();
@@ -203,7 +203,7 @@ export default function Search() {
         <FlatList
           contentContainerStyle={styles.flatlistContentContainer}
           ListEmptyComponent={() => {
-            const message = isFromSearch ? 'Nenhum guia encontrado' : 'Atualize o filtro para encontrar um guia'
+            const message = isFromSearch ? i18n.t('advancedSearch.listEmpty.fromSearch') : i18n.t('advancedSearch.listEmpty.empty')
             return (
               <View>
                 <Text>{message}</Text>

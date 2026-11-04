@@ -208,7 +208,8 @@ const replyCard = {
 
 const comment = {
   reply: 'Responder',
-  replies: 'Respostas'
+  replies: 'Respostas',
+  deletedUser: 'Deletado'
 }
 
 const sideMenu = {

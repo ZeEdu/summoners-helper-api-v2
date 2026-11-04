@@ -176,7 +176,7 @@ export default function CreateGuide({ route }: Props) {
             },
           }}
         >
-          {error ?? i18n.t('createGuide.snack.success')}
+          {error || i18n.t('createGuide.snack.success')}
         </Snackbar>
       </Portal>
     </>
