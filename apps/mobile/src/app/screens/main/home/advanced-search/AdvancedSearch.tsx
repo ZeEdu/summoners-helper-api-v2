@@ -67,7 +67,7 @@ export default function Search() {
   const [guides, setGuides] = useState<GuideDto[]>([]);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(false);
 
   const [isFromSearch, setIsFromSearch] = useState(false)
 
@@ -86,7 +86,7 @@ export default function Search() {
 
   const getGuides = async (values: FilterOutputDto) => {
     setLoading(true);
-    setError('');
+    setError(false);
     setIsFromSearch(false)
 
     if (values.deprecatedPatchVersion) {
@@ -113,7 +113,7 @@ export default function Search() {
         setIsFromSearch(true)
       })
       .catch(() => {
-        setError(i18n.t('advancedSearch.error'));
+        setError(true);
       })
       .finally(() => {
         setLoading(false);
@@ -127,7 +127,7 @@ export default function Search() {
   const handleReset = () => {
     reset();
     setGuides([]);
-    setError('');
+    setError(false);
   };
 
   const loadMore = async () => {
