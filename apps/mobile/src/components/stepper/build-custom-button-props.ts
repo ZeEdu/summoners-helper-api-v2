@@ -6,9 +6,9 @@ type ButtonPropsWithOptionalChildren = Omit<ButtonProps, 'children'> & {
   t: (key: string) => string,
 }
 
-export const buildCustomButtonProps = (buttonProps: ButtonPropsWithOptionalChildren): ButtonProps => {
+export const buildCustomButtonProps = ({ t, ...buttonProps }: ButtonPropsWithOptionalChildren): ButtonProps => {
   return {
-    children: buttonProps.t('stepper.footer.next'),
+    children: t('stepper.footer.next'),
     mode: "contained",
     style: styles.footerButton,
     ...buttonProps,
