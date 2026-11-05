@@ -222,7 +222,7 @@ export default function Search() {
               />
             );
           }}
-          ListFooterComponent={() => <Button onPress={loadMore}>{i18n.t('advancedSearch.loadMore')}</Button>}
+          ListFooterComponent={guides.length > 0 ? <Button onPress={loadMore}>{i18n.t('advancedSearch.loadMore')}</Button> : null}
         />
       </View>
     </StyledView>
