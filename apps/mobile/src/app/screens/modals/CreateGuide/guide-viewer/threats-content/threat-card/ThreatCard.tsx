@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native"
 import { Card, MD3Theme, Text, useTheme } from "react-native-paper"
-import useDataDragonContext from "../../../../../../../contexts/data-dragon/useDataDragonContext"
+import useDataDragon from "../../../../../../../contexts/data-dragon/useDataDragonContext"
 import ThreatImage from "./threat-image/ThreatImage"
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 }
 
 export default function ThreatCard({ threat, description }: Props) {
-  const dataDragon = useDataDragonContext()
+  const dataDragon = useDataDragon()
   const theme = useTheme()
   const styles = makeStyles(theme)
 

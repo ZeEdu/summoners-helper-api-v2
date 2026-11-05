@@ -1,6 +1,6 @@
 import { Image, StyleSheet, View } from 'react-native';
 import { Card, Icon, MD3Theme, Text, useTheme } from 'react-native-paper';
-import useDataDragonContext from '../../../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext';
 import Utils from '../../../../../../../utils/utils';
 
 type ListItemProps = {
@@ -9,7 +9,7 @@ type ListItemProps = {
 
 export default function ListItem({ itemId }: ListItemProps) {
   const styles = makeStyles(useTheme())
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
 
   const item = dataDragon.getItem(itemId);
   const uri = `https://ddragon.leagueoflegends.com/cdn/${dataDragon.getPatch()}/img/item/${item.image.full}`;

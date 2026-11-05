@@ -1,7 +1,7 @@
 import { Image, StyleSheet } from 'react-native';
 import { Card, MD3Theme, Text, useTheme } from 'react-native-paper';
 
-import useDataDragonContext from '../../../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext';
 
 type SpellCardProps = {
   spell: string;
@@ -9,7 +9,7 @@ type SpellCardProps = {
 
 export default function SpellCard({ spell }: SpellCardProps) {
   const theme = useTheme();
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
 
   const { name, description } = dataDragon.getSpell(spell);
 

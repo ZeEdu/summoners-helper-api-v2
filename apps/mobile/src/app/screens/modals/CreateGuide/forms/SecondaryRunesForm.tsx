@@ -12,7 +12,7 @@ import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
 import StepperFooter from '../../../../../components/stepper/StepperFooter';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../contexts/i18n/useI18n';
 
 export const secondaryRuneSchema = CreateGuideFormSchema.pick({
@@ -26,7 +26,7 @@ export type SecondaryRuneDto = z.infer<typeof secondaryRuneSchema>;
 const resolver = zodResolver(secondaryRuneSchema);
 
 export default function GuideSecondaryRunesForm() {
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const i18n = useI18n()
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();

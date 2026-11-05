@@ -20,7 +20,7 @@ import AppUserSelectController from '../../../../../components/forms/app-user-se
 import AppInputController from '../../../../../components/forms/AppInputController';
 import AppSwitchController from '../../../../../components/forms/AppSwitchController';
 import GuideCard from '../../../../../components/GuideCard';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../contexts/i18n/useI18n';
 import { usePatchVersion } from '../../../../../contexts/patchVersion/usePatchVersion';
 import { ApiService } from '../../../../../services/api/api.service';
@@ -59,7 +59,7 @@ const resolver = zodResolver(customGuidesPaginationSchema);
 
 // TODO: Botar o filtro dentro de um accordion ou algo do tipo
 export default function Search() {
-  const useDataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const patchVersion = usePatchVersion();
   const navigation = useNavigation();
   const i18n = useI18n()
@@ -71,7 +71,7 @@ export default function Search() {
 
   const [isFromSearch, setIsFromSearch] = useState(false)
 
-  const championList = useDataDragon.lists.champions;
+  const championList = dataDragon.lists.champions;
 
   const defaultQuery: FilterInputDto = { offset: 0 };
 

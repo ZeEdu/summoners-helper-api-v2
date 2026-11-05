@@ -18,7 +18,7 @@ import { useEffect } from 'react';
 import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
 import StepperFooter from '../../../../../components/stepper/StepperFooter';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../contexts/i18n/useI18n';
 
 const ROLE_OPTIONS: { value: string; label: string }[] = [
@@ -57,7 +57,7 @@ const resolver = zodResolver(GuideIntroductionSchema);
 
 export default function GuideIntroductionForm() {
   const i18n = useI18n()
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();

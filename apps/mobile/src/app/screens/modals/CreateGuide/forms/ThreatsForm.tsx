@@ -12,7 +12,7 @@ import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 import { StepperFooter } from '../../../../../components/stepper';
 import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../contexts/i18n/useI18n';
 
 const ThreatsSchema = CreateGuideFormSchema.pick({
@@ -25,7 +25,7 @@ export type ThreatsDto = z.infer<typeof ThreatsSchema>;
 const resolver = zodResolver(ThreatsSchema);
 
 export default function ThreatsForm() {
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const i18n = useI18n()
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();

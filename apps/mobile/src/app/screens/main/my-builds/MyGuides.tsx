@@ -10,7 +10,7 @@ import { StyledButton, StyledView } from '@org/ui';
 import AppSelectController from '../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../components/forms/AppInputController';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import useDataDragonContext from '../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../contexts/i18n/useI18n';
 import { ApiService } from '../../../../services/api/api.service';
 import GuideListItem from './guide-list-item/GuideListItem';
@@ -40,7 +40,7 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
 
 export default function MyGuides() {
   const authContext = useAuthContext();
-  const dataDragonContext = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const i18n = useI18n()
 
   const navigation = useNavigation()
@@ -114,7 +114,7 @@ export default function MyGuides() {
     getBuilds()
   }
 
-  const championList = dataDragonContext.lists.champions;
+  const championList = dataDragon.lists.champions;
 
   const editGuide = (guide: GuideDto) => {
     navigation.navigate('CreateGuide', { guide });

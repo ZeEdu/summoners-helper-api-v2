@@ -11,7 +11,7 @@ import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
 import StepperFooter from '../../../../../components/stepper/StepperFooter';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../contexts/i18n/useI18n';
 
 const GuideSummonerSpellsSchema = CreateGuideFormSchema.pick({
@@ -35,7 +35,7 @@ const resolver = zodResolver(GuideSummonerSpellsSchema);
 export default function GuideSummonerSpellsForm() {
   const i18n = useI18n()
 
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const spellsList = dataDragon.lists?.spells || [];
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();

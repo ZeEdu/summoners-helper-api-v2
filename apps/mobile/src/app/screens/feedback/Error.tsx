@@ -3,11 +3,11 @@ import { Button, Text } from "react-native-paper"
 
 import { StyledView } from "@org/ui"
 
-import useDataDragonContext from "../../../contexts/data-dragon/useDataDragonContext"
 import useI18n from "../../../contexts/i18n/useI18n"
+import useDataDragon from "../../../contexts/data-dragon/useDataDragonContext"
 
 export default function Error() {
-  const useDataDragon = useDataDragonContext()
+  const dataDragon = useDataDragon()
   const i18n = useI18n()
 
   return (
@@ -15,7 +15,7 @@ export default function Error() {
       <View>
         <Text style={styles.text}>{i18n.t('errorFeedback.text')}</Text>
         <Button mode='contained' onPress={() => {
-          useDataDragon.reload()
+          dataDragon.reload()
         }}
         >
           {i18n.t('errorFeedback.button')}

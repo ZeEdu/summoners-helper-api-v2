@@ -3,7 +3,7 @@ import { Chip, MD3Theme, Text, useTheme } from 'react-native-paper';
 
 import { getRoleLabel } from '@org/contracts';
 
-import useDataDragonContext from '../../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../../contexts/i18n/useI18n';
 
 type HeroBannerProps = {
@@ -21,7 +21,7 @@ export default function HeroBanner({
   const theme = useTheme();
   const styles = makeStyles(theme);
 
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const champion = dataDragon.getChampion(championId);
 
   const uri = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championId}_0.jpg`;

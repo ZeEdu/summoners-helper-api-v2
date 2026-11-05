@@ -1,7 +1,7 @@
 import { ChampionDataDragonSpell } from "@org/contracts";
 import { Image, StyleSheet, View } from "react-native";
 import { Card, MD3Theme, Text, useTheme } from "react-native-paper";
-import useDataDragonContext from "../../../../../../../../contexts/data-dragon/useDataDragonContext";
+import useDataDragon from "../../../../../../../../contexts/data-dragon/useDataDragonContext";
 import { keymapIndex, KeymapIndexType } from "../../../../forms/AbilitiesProgressionForm";
 
 type Props = {
@@ -14,7 +14,7 @@ export default function AbilitiesProgressionHeader({
 }: Props) {
   const theme = useTheme()
   const styles = makeStyles(theme)
-  const dataDragon = useDataDragonContext()
+  const dataDragon = useDataDragon()
 
   return (
     <Card style={styles.card}>

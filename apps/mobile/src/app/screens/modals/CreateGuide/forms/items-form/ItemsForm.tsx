@@ -26,7 +26,7 @@ import { StepperFooter } from '../../../../../../components/stepper';
 import { buildCustomButtonProps } from '../../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../../components/stepper/context';
 import { ItemDetailsWithId } from '../../../../../../contexts/data-dragon/data-dragon.context';
-import useDataDragonContext from '../../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../../contexts/data-dragon/useDataDragonContext';
 import useI18n from '../../../../../../contexts/i18n/useI18n';
 import { usePatchVersion } from '../../../../../../contexts/patchVersion/usePatchVersion';
 import Utils from '../../../../../../utils/utils';
@@ -43,7 +43,7 @@ export type ItemsDto = z.infer<typeof ItemsSchema>;
 const resolver = zodResolver(ItemsSchema);
 
 export default function ItemsForm() {
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const i18n = useI18n();
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
