@@ -4,41 +4,45 @@ import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 're
 import Loading from '../../app/screens/feedback/Loading';
 import SecureStoreService from '../../services/secure-store.service';
 import i18n from './config';
+import LocalePersistenceError from './errors/localePersistenceError';
 import I18N_CONSTANTS from './i18n.constants';
-import { I18nContext, I18nContextType } from './i18n.context';
+import { I18nContext, I18nContextType, SupportedLanguages } from './i18n.context';
 
 export const I18nProvider = ({ children }: PropsWithChildren) => {
-  const [locale, setLocaleState] = useState<string | null>(null)
+  const [locale, setLocaleState] = useState<SupportedLanguages | null>(null)
   const [initialized, setInitialized] = useState(false)
 
-  const setLocale = useCallback(async (newLocale: string) => {
+  const setLocale = useCallback(async (newLocale: SupportedLanguages) => {
     i18n.locale = newLocale
     setLocaleState(newLocale)
-    await SecureStoreService.set('lang', newLocale)
+
+    try {
+      await SecureStoreService.set(I18N_CONSTANTS.STORE_KEY, newLocale)
+    } catch (_) {
+      throw new LocalePersistenceError()
+    }
   }, [])
 
   useEffect(() => {
     const init = async () => {
-      try {
-        const savedLang = await SecureStoreService.get('lang')
-        const deviceLang = getLocales()[0].languageCode
+      const savedLang = await SecureStoreService.get(I18N_CONSTANTS.STORE_KEY).catch((error) => {
+        console.log('[I18nProvider]: Não foi possível carregar o locale salvo:', error);
+        return undefined
+      })
+      const deviceLang = getLocales()[0].languageCode
 
-        if (savedLang && I18N_CONSTANTS.isLanguageSupported(savedLang)) {
-          i18n.locale = savedLang
-        } else if (deviceLang && I18N_CONSTANTS.isLanguageSupported(deviceLang)) {
-          i18n.locale = deviceLang
-        } else {
-          i18n.locale = 'pt'
-        }
-        setLocaleState(i18n.locale)
-
-      } catch (error) {
-        console.log('[I18nProvider]: Failed to initialize i18n: ', error);
-        i18n.locale = 'pt'
-        setLocaleState(i18n.locale)
-      } finally {
-        setInitialized(true)
+      let locale: SupportedLanguages
+      if (savedLang && I18N_CONSTANTS.isSupportedLanguage(savedLang)) {
+        locale = savedLang
+      } else if (deviceLang && I18N_CONSTANTS.isSupportedLanguage(deviceLang)) {
+        locale = i18n.locale = deviceLang
+      } else {
+        locale = I18N_CONSTANTS.SUPPORTED_LANGUAGES.pt
       }
+
+      i18n.locale = locale
+      setLocaleState(locale)
+      setInitialized(true)
     }
 
     init()

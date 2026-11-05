@@ -522,9 +522,10 @@ const changeLanguage = {
   placeholder: 'Trocar idioma',
   title: 'Idioma',
   action: 'Selecionar idioma',
-  snackbar: {
-    error: 'Não foi possível trocar de idioma'
-  }
+  saveLangErrors: {
+    change: 'Não foi possível trocar o idioma',
+    persistence: 'Não foi possível salvar a troca de idioma'
+  },
 }
 
 const reviewGuide = {

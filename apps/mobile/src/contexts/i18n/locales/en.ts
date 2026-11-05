@@ -521,6 +521,10 @@ const changeLanguage = {
   placeholder: 'Change language',
   title: 'Language',
   action: 'Select language',
+  saveLangErrors: {
+    change: 'Could not change language preference',
+    persistence: 'Could not save language preference'
+  },
   snackbar: {
     error: 'It was not possible to change language'
   }

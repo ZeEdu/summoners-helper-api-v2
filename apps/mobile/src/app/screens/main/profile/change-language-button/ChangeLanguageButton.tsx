@@ -5,9 +5,12 @@ import { StyleSheet, View } from "react-native"
 import { Button, MD3Theme, Snackbar, useTheme } from "react-native-paper"
 
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController"
+import LocalePersistenceError from "../../../../../contexts/i18n/errors/localePersistenceError"
+import I18N_CONSTANTS from "../../../../../contexts/i18n/i18n.constants"
+import { SupportedLanguages } from "../../../../../contexts/i18n/i18n.context"
 import useI18n from "../../../../../contexts/i18n/useI18n"
 
-type FormDto = { language: string }
+type FormDto = { language: SupportedLanguages }
 
 export default function ChangeLanguageButton() {
   const i18n = useI18n()
@@ -17,25 +20,28 @@ export default function ChangeLanguageButton() {
 
   const { control, handleSubmit } = useForm<FormDto>({
     defaultValues: {
-      language: i18n.locale || 'pt'
+      language: i18n.locale || I18N_CONSTANTS.SUPPORTED_LANGUAGES.pt
     }
   })
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
   const [showSnackbar, setShowSnackbar] = useState(false)
+  const [persistenceError, setPersistenceError] = useState(false)
 
   const presentBottomSheet = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
 
-  const submit = async (formValues: FormDto) => {
+  const submit = (formValues: FormDto) => {
     setShowSnackbar(false)
+    setPersistenceError(false)
 
     i18n.setLocale(formValues.language)
       .then(() => {
         bottomSheetModalRef.current?.dismiss()
-      }).catch(() => {
+      }).catch((error) => {
+        setPersistenceError(error instanceof LocalePersistenceError)
         setShowSnackbar(true)
       })
   }
@@ -47,11 +53,11 @@ export default function ChangeLanguageButton() {
   const languageList = [
     {
       label: 'Português',
-      value: 'pt'
+      value: I18N_CONSTANTS.SUPPORTED_LANGUAGES.pt
     },
     {
       label: 'English',
-      value: 'en'
+      value: I18N_CONSTANTS.SUPPORTED_LANGUAGES.en
     }
   ]
 
@@ -89,7 +95,7 @@ export default function ChangeLanguageButton() {
           onPress: closeSnackbar,
         }}
       >
-        {i18n.t(`changeLanguage.snackbar.error`)}
+        {i18n.t(`changeLanguage.saveLangErrors.${persistenceError ? 'persistence' : 'change'}`)}
       </Snackbar>
     </>
   )
