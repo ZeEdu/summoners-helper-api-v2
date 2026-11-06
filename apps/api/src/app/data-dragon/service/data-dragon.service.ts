@@ -5,9 +5,13 @@ import { RunesReforgedDataDragon } from '../../ddragon/dto/runes-reforged-data.d
 import { SummonerSpell, SummonerSpellDataDragon } from '../../ddragon/dto/spell.dto';
 
 import { ChampionDataDragon, RunesReforgedSlots } from '@org/contracts';
+import { SupportedLanguages } from '../../decorators/language.decorator';
 
 const BASE_URL = `https://ddragon.leagueoflegends.com/cdn`
-const LANGUAGE = 'pt_BR'
+const LANGUAGE_SELECTOR: Record<SupportedLanguages, string> = {
+  pt: 'pt_BR',
+  en: 'en_US'
+}
 
 const ENDPOINTS = {
   champions: 'champion',
@@ -19,8 +23,8 @@ const ENDPOINTS = {
   items: 'item',
 }
 
-const buildUrl = (endpoint: string, patchVersion: string) => {
-  return `${BASE_URL}/${patchVersion}/data/${LANGUAGE}/${endpoint}.json`;
+const buildUrl = (endpoint: string, patchVersion: string, language: SupportedLanguages) => {
+  return `${BASE_URL}/${patchVersion}/data/${LANGUAGE_SELECTOR[language]}/${endpoint}.json`;
 }
 
 @Injectable()
@@ -34,14 +38,16 @@ export class DataDragonService {
     return { patch }
   }
 
-  async getAssets() {
+  async getAssets(language: SupportedLanguages) {
+    console.log({ language });
+
     const { patch } = await this.getPatchVersion()
 
-    const champions = await this.champions(patch)
-    const runes = await this.runes(patch)
+    const champions = await this.champions(patch, language)
+    const runes = await this.runes(patch, language)
     const runeSlots = this.runesSlots(runes.list)
-    const spells = await this.spells(patch)
-    const items = await this.items(patch)
+    const spells = await this.spells(patch, language)
+    const items = await this.items(patch, language)
 
     return {
       data: {
@@ -64,21 +70,23 @@ export class DataDragonService {
     }
   }
 
-  async champion(championId: string, patchVersion?: string) {
+  async champion(championId: string, patchVersion?: string, language: SupportedLanguages = 'pt') {
     let patch = patchVersion
     if (!patch) {
       const getPatch = await this.getPatchVersion()
       patch = getPatch.patch
     }
 
-    const url = buildUrl(ENDPOINTS.champion(championId), patch);
+    const url = buildUrl(ENDPOINTS.champion(championId), patch, language);
     const init: RequestInit = { method: 'GET' };
 
     return fetch(url, init).then(response => response.json()).then((response: ChampionDataDragon) => response)
   }
 
-  private async champions(patchVersion: string) {
-    const url = buildUrl(ENDPOINTS.champions, patchVersion);
+  private async champions(patchVersion: string, language: SupportedLanguages) {
+    const url = buildUrl(ENDPOINTS.champions, patchVersion, language);
+    console.log({ url });
+
     const init: RequestInit = { method: 'GET' };
 
     const json = await fetch(url, init).then(response => response.json()).then((response: ChampionsDataDragon) => response)
@@ -88,8 +96,8 @@ export class DataDragonService {
     return { list, map }
   }
 
-  private async spells(patchVersion: string) {
-    const url = buildUrl(ENDPOINTS.spells, patchVersion);
+  private async spells(patchVersion: string, language: SupportedLanguages) {
+    const url = buildUrl(ENDPOINTS.spells, patchVersion, language);
     const init: RequestInit = { method: 'GET' };
 
     const json = await fetch(url, init).then(response => response.json()).then((response: SummonerSpellDataDragon) => response)
@@ -103,8 +111,8 @@ export class DataDragonService {
     return { list, map }
   }
 
-  private async runes(patchVersion: string) {
-    const url = buildUrl(ENDPOINTS.runes, patchVersion);
+  private async runes(patchVersion: string, language: SupportedLanguages) {
+    const url = buildUrl(ENDPOINTS.runes, patchVersion, language);
     const init: RequestInit = { method: 'GET' };
 
     const json = await fetch(url, init).then(response => response.json()).then((response: RunesReforgedDataDragon[]) => response)
@@ -132,8 +140,8 @@ export class DataDragonService {
   }
 
 
-  private async items(patchVersion: string) {
-    const url = buildUrl(ENDPOINTS.items, patchVersion);
+  private async items(patchVersion: string, language: SupportedLanguages) {
+    const url = buildUrl(ENDPOINTS.items, patchVersion, language);
     const init: RequestInit = { method: 'GET' };
 
     const json = await fetch(url, init).then(response => response.json()).then((response: ItemsDataDragon) => response)

@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import z from 'zod';
+import { GetLang, SupportedLanguages } from '../../decorators/language.decorator';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { DataDragonService } from '../service/data-dragon.service';
 
@@ -13,8 +14,8 @@ type ChampionAssetsDto = z.infer<typeof championAssetsSchema>
 export class DataDragonController {
   constructor(private dataDragonService: DataDragonService) { }
   @Get('assets')
-  getAssets() {
-    return this.dataDragonService.getAssets()
+  getAssets(@GetLang() language: SupportedLanguages) {
+    return this.dataDragonService.getAssets(language)
   }
 
   @Get('champion/:championId')
