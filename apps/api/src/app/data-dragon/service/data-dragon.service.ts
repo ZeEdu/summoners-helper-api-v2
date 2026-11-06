@@ -4,8 +4,7 @@ import { ItemsDataDragon } from '../../ddragon/dto/item.dto';
 import { RunesReforgedDataDragon } from '../../ddragon/dto/runes-reforged-data.dragon';
 import { SummonerSpell, SummonerSpellDataDragon } from '../../ddragon/dto/spell.dto';
 
-import { ChampionDataDragon, RunesReforgedSlots } from '@org/contracts';
-import { SupportedLanguages } from '../../decorators/language.decorator';
+import { ChampionDataDragon, RunesReforgedSlots, SupportedLanguages } from '@org/contracts';
 
 const BASE_URL = `https://ddragon.leagueoflegends.com/cdn`
 const LANGUAGE_SELECTOR: Record<SupportedLanguages, string> = {
@@ -39,8 +38,6 @@ export class DataDragonService {
   }
 
   async getAssets(language: SupportedLanguages) {
-    console.log({ language });
-
     const { patch } = await this.getPatchVersion()
 
     const champions = await this.champions(patch, language)
@@ -85,8 +82,6 @@ export class DataDragonService {
 
   private async champions(patchVersion: string, language: SupportedLanguages) {
     const url = buildUrl(ENDPOINTS.champions, patchVersion, language);
-    console.log({ url });
-
     const init: RequestInit = { method: 'GET' };
 
     const json = await fetch(url, init).then(response => response.json()).then((response: ChampionsDataDragon) => response)
