@@ -3,6 +3,8 @@ import { AuthEvents } from "../../auth-events";
 import { API_CONSTANTS } from "../../services/api/api.constants";
 import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
 
+import I18N_CONSTANTS from "../../contexts/i18n/i18n.constants";
+import SecureStoreService from "../../services/secure-store.service";
 import Utils from "../utils";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -186,6 +188,15 @@ export const customFetch = async <T = unknown>(
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  const language = await SecureStoreService.get(I18N_CONSTANTS.STORE_KEY).catch(() => {
+    console.log('[customFetch] não foi possivel carregar o locale');
+    return undefined
+  })
+
+  if (language) {
+    init.headers = mergeHeaders(init.headers, { 'x-lang': language })
+  }
 
   let response: Response;
   try {
