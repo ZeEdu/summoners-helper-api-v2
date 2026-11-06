@@ -11,8 +11,8 @@ import * as argon2 from 'argon2';
 import { randomUUID } from 'crypto';
 import { I18nService } from 'nestjs-i18n';
 
-import { UsersService } from '../../users/service/users.service';
 import { I18nTranslations } from '../../../generated/i18n.generated';
+import { UsersService } from '../../users/service/users.service';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +51,7 @@ export class AuthService {
     }
 
     if (!user.isSystemAdmin) {
-      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.unauthorized'));
+      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.systemAdmin'));
     }
 
     return user
