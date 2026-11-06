@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 
 import { UserDtoWithPuuid } from '@org/contracts';
@@ -77,7 +77,7 @@ export class DataDragonTransformerService {
     );
 
     if (!userFromParticipants) {
-      throw new Error(
+      throw new ServiceUnavailableException(
         this.i18n.t('ddragon.errors.matchInfo.participantNotFound', {
           args: { puuid },
         }),
