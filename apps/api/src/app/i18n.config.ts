@@ -16,8 +16,8 @@ const config: I18nOptions = {
   },
   resolvers: [
     { use: QueryResolver, options: ['lang'] },
-    AcceptLanguageResolver,
     new HeaderResolver(['x-lang']),
+    AcceptLanguageResolver,
   ],
   typesOutputPath: Utils.isTest
     ? undefined
