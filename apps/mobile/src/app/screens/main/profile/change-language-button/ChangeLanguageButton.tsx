@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native"
 import { Button, MD3Theme, Snackbar, useTheme } from "react-native-paper"
 
 import AppSelectController from "../../../../../components/forms/app-select-controller/AppSelectController"
+import useDataDragon from "../../../../../contexts/data-dragon/useDataDragonContext"
 import LocalePersistenceError from "../../../../../contexts/i18n/errors/localePersistenceError"
 import I18N_CONSTANTS from "../../../../../contexts/i18n/i18n.constants"
 import { SupportedLanguages } from "../../../../../contexts/i18n/i18n.context"
@@ -14,6 +15,7 @@ type FormDto = { language: SupportedLanguages }
 
 export default function ChangeLanguageButton() {
   const i18n = useI18n()
+  const dataDragon = useDataDragon()
 
   const theme = useTheme()
   const styles = makeStyles(theme)
@@ -39,6 +41,7 @@ export default function ChangeLanguageButton() {
 
     i18n.setLocale(formValues.language)
       .then(() => {
+        dataDragon.reload()
         bottomSheetModalRef.current?.dismiss()
       }).catch((error) => {
         setPersistenceError(error instanceof LocalePersistenceError)

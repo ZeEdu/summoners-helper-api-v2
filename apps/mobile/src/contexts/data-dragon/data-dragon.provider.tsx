@@ -1,4 +1,5 @@
 import { PropsWithChildren, useEffect, useState } from "react";
+import Loading from "../../app/screens/feedback/Loading";
 import { ApiService } from "../../services/api/api.service";
 import { usePatchVersion } from "../patchVersion/usePatchVersion";
 import { DataDragonContext, DataDragonContextType, DataDragonLists, DataDragonMaps } from "./data-dragon.context";
@@ -9,8 +10,8 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const [dataDragonLists, setDataDragonLists] = useState<DataDragonLists>({ champions: [], items: [], runes: [], runeSlots: [], spells: [] })
-  const [dataDragonMaps, setDataDragonMaps] = useState<DataDragonMaps>({ champions: {}, items: {}, runes: {}, runeSlots: {}, spells: {} })
+  const [lists, setLists] = useState<DataDragonLists>({ champions: [], items: [], runes: [], runeSlots: [], spells: [] })
+  const [maps, setMaps] = useState<DataDragonMaps>({ champions: {}, items: {}, runes: {}, runeSlots: {}, spells: {} })
 
   const [patchVersion, setPatchVersion] = useState<string>('')
 
@@ -21,10 +22,11 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
 
     setLoading(true)
     setError(undefined)
+
     ApiService.DataDragon.assets()
       .then(({ version, data }) => {
-        setDataDragonLists(data.lists)
-        setDataDragonMaps(data.maps)
+        setLists(data.lists)
+        setMaps(data.maps)
         setPatchVersion(version)
       })
       .catch(() => {
@@ -41,23 +43,23 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
   }
 
   const getChampion = (id: string) => {
-    return dataDragonMaps.champions[id]
+    return maps.champions[id]
   }
 
   const getRuneSlots = (id: string) => {
-    return dataDragonMaps.runeSlots[id]
+    return maps.runeSlots[id]
   }
 
   const getSpell = (id: string) => {
-    return dataDragonMaps.spells[id]
+    return maps.spells[id]
   }
 
   const getRune = (id: string) => {
-    return dataDragonMaps.runes[id]
+    return maps.runes[id]
   }
 
   const getItem = (id: string) => {
-    return dataDragonMaps.items[id]
+    return maps.items[id]
   }
 
   const getPatch = () => {
@@ -71,8 +73,8 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
   const value: DataDragonContextType = {
     loading,
     error,
-    lists: dataDragonLists,
-    maps: dataDragonMaps,
+    lists,
+    maps,
     reload,
     getChampion,
     getSpell,
@@ -84,7 +86,7 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
 
   return (
     <DataDragonContext.Provider value={value}>
-      {children}
+      {loading ? <Loading i18nKey={'dataDragon'} /> : children}
     </DataDragonContext.Provider>
   )
 }
