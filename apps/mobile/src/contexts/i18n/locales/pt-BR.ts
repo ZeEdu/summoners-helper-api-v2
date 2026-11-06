@@ -461,7 +461,8 @@ const errorFeedback = {
 
 const loadingFeedback = {
   default: 'Carregando dados...',
-  i18n: 'Carregando configurações de idioma...'
+  i18n: 'Carregando configurações de idioma...',
+  dataDragon: 'Carregando os dados do Data Dragon...'
 }
 
 const abilitiesProgressionSection = {

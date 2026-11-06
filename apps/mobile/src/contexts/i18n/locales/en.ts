@@ -460,7 +460,8 @@ const errorFeedback = {
 
 const loadingFeedback = {
   default: 'Loading...',
-  i18n: 'Loading language settings...'
+  i18n: 'Loading language settings...',
+  dataDragon: 'Loading Data Dragon...'
 }
 
 const abilitiesProgressionSection = {
