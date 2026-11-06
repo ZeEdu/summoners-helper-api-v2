@@ -11,6 +11,8 @@ import {
 import { Response } from 'express';
 
 import { CreateUserDto, createUserSchema, UserDto } from '@org/contracts';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../../generated/i18n.generated';
 import { Public } from '../../decorators/public.decorator';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { IsAdminGuard } from '../../guards/is-admin.guard';
@@ -25,7 +27,10 @@ const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private i18nService: I18nService<I18nTranslations>
+  ) { }
 
   @Post('web/register')
   @Public()
@@ -110,7 +115,7 @@ export class AuthController {
     const refreshToken = user.refreshToken;
 
     if (!refreshToken) {
-      throw new UnauthorizedException('Token necessário não informado');
+      throw new UnauthorizedException(this.i18nService.t('auth.errors.notFound.token'));
     }
     const tokens = await this.authService.refreshToken(userId, refreshToken);
 
@@ -127,7 +132,7 @@ export class AuthController {
     const userId = user.id;
     const refreshToken = user.refreshToken;
     if (!refreshToken) {
-      throw new UnauthorizedException('Token necessário não informado');
+      throw new UnauthorizedException(this.i18nService.t('auth.errors.notFound.token'));
     }
 
     const tokens = await this.authService.refreshToken(userId, refreshToken);

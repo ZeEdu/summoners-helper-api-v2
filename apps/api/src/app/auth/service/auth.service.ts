@@ -12,6 +12,7 @@ import { randomUUID } from 'crypto';
 import { I18nService } from 'nestjs-i18n';
 
 import { UsersService } from '../../users/service/users.service';
+import { I18nTranslations } from '../../../generated/i18n.generated';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    private i18n: I18nService,
+    private i18n: I18nService<I18nTranslations>,
   ) { }
 
   async validateUser(email: string, password: string): Promise<UserDto> {

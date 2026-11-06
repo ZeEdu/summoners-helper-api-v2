@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { RIOT_SERVERS, UserDtoWithPuuid } from '@org/contracts';
 import { Model } from 'mongoose';
 import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../../generated/i18n.generated';
 import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
 import { ChampionsDataDragonDetails } from '../../ddragon/dto/champion.dto';
 import { ItemDetails } from '../../ddragon/dto/item.dto';
@@ -117,7 +118,7 @@ export class RiotApiService implements IRiotApiService {
     @InjectModel(RiotApiErrorLogger.name)
     private riotApiErrorLoggerModel: Model<RiotApiErrorLogger>,
     private readonly riotApiUtilsService: RiotApiUtilsService,
-    private i18n: I18nService,
+    private i18n: I18nService<I18nTranslations>,
     private dataDragonTransformerService: DataDragonTransformerService,
   ) { }
 

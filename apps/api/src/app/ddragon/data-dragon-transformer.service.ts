@@ -3,6 +3,7 @@ import { I18nService } from 'nestjs-i18n';
 
 import { UserDtoWithPuuid } from '@org/contracts';
 
+import { I18nTranslations } from '../../generated/i18n.generated';
 import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface';
 import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface';
 import { Match } from '../riot-api/interfaces/match.interface';
@@ -15,7 +16,7 @@ import { SummonersSpellLookup } from './lookups/summoner-spell.lookup';
 
 @Injectable()
 export class DataDragonTransformerService {
-  constructor(private i18n: I18nService) { }
+  constructor(private i18n: I18nService<I18nTranslations>) { }
 
   transformChampionsMastery(
     championMastery: ChampionMastery,
