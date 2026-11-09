@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto, IUser } from '@org/contracts';
 import { Model } from 'mongoose';
+import { I18nContext } from 'nestjs-i18n';
 import { AppModule } from '../app.module';
 import { User, UserDocument } from '../users/schema/user.schema';
 import cookieParser = require('cookie-parser');
@@ -12,6 +13,15 @@ import request = require('supertest');
 describe('AuthController e2e', () => {
   let app: INestApplication;
   let userModel: Model<UserDocument>;
+
+
+  // const createExpectedMessage = (key: string) => `translated:${key}`
+  const t = jest.fn((key: string) => `translated:${key}`)
+
+  const i18nContext = {
+    lang: 'pt',
+    t,
+  } as unknown as I18nContext
 
   function extractCookie(headers: Record<string, string[]>, name: string): string {
     const cookies = headers['set-cookie'] as string[];
@@ -116,7 +126,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "username"
             });
           });
@@ -132,14 +142,10 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
+
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": "Nome de usuário é obrigátorio",
-              "path": "username"
-            });
-            expect(body.message).toContainEqual({
-              "code": "too_small",
-              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "message": "Informe pelo menos 6 caracteres.",
               "path": "username"
             });
           })
@@ -157,7 +163,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "username"
             });
           });
@@ -175,7 +181,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "message": "Informe pelo menos 6 caracteres.",
               "path": "username"
             });
           });
@@ -184,7 +190,7 @@ describe('AuthController e2e', () => {
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                username: faker.string.alpha(17),
+                username: faker.string.alpha(33),
                 password: faker.internet.password({ prefix: '1!Ab' }),
                 email: faker.internet.email(),
               })
@@ -193,7 +199,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": "O nome de usuário deve ter no máximo 16 caracteres",
+              "message": "Informe no máximo 32 caracteres.",
               "path": "username"
             });
           });
@@ -212,7 +218,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "password"
             });
           });
@@ -228,19 +234,15 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
+
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": "Senha é obrigátoria",
-              "path": "password"
-            });
-            expect(body.message).toContainEqual({
-              "code": "too_small",
-              "message": "A senha deve ter no mínimo 8 caracteres",
+              "message": "Informe pelo menos 8 caracteres.",
               "path": "password"
             });
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "message": "A senha deve ter ao menos uma letra maiúscula e minúscula.",
               "path": "password"
             });
           });
@@ -258,7 +260,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "password"
             });
           });
@@ -276,7 +278,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": "A senha deve ter no mínimo 8 caracteres",
+              "message": "Informe pelo menos 8 caracteres.",
               "path": "password"
             });
           });
@@ -294,7 +296,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": "A senha deve ter no máximo 64 caracteres",
+              "message": "Informe no máximo 64 caracteres.",
               "path": "password"
             });
           });
@@ -312,7 +314,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "message": "A senha deve ter ao menos uma letra maiúscula e minúscula.",
               "path": "password"
             });
           });
@@ -331,7 +333,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Email deve ser válido",
+              "message": "Tipo de dado inválido.",
               "path": "email"
             });
           });
@@ -349,7 +351,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": "Email deve ser válido",
+              "message": "Informe um endereço de e-mail válido.",
               "path": "email"
             });
           });
@@ -369,7 +371,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": "Email deve ser válido",
+              "message": "Informe um endereço de e-mail válido.",
               "path": "email"
             });
           });
@@ -409,7 +411,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "username"
             })
           });
@@ -427,12 +429,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": "Nome de usuário é obrigátorio",
-              "path": "username"
-            })
-            expect(body.message).toContainEqual({
-              "code": "too_small",
-              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "message": "Informe pelo menos 6 caracteres.",
               "path": "username"
             })
           })
@@ -450,7 +447,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "username"
             })
           });
@@ -468,7 +465,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": "O nome de usuário deve ter pelo menos 5 caracteres",
+              "message": "Informe pelo menos 6 caracteres.",
               "path": "username"
             })
           });
@@ -477,7 +474,7 @@ describe('AuthController e2e', () => {
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                username: faker.string.alpha(17),
+                username: faker.string.alpha(33),
                 password: faker.internet.password({ prefix: '1!Ab' }),
                 email: faker.internet.email(),
               })
@@ -486,7 +483,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": "O nome de usuário deve ter no máximo 16 caracteres",
+              "message": "Informe no máximo 32 caracteres.",
               "path": "username"
             })
           });
@@ -505,7 +502,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "password"
             })
           });
@@ -521,21 +518,16 @@ describe('AuthController e2e', () => {
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
-            expect(body.message).toContainEqual({
-              "code": "too_small",
-              "message": "Senha é obrigátoria",
-              "path": "password"
-            })
 
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": "A senha deve ter no mínimo 8 caracteres",
+              "message": "Informe pelo menos 8 caracteres.",
               "path": "password"
             })
 
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": "A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)",
+              "message": "A senha deve ter ao menos uma letra maiúscula e minúscula.",
               "path": "password"
             })
           });
@@ -553,7 +545,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Formato inválido",
+              "message": "Tipo de dado inválido.",
               "path": "password"
             })
           });
@@ -571,7 +563,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_small",
-              "message": 'A senha deve ter no mínimo 8 caracteres',
+              "message": 'Informe pelo menos 8 caracteres.',
               "path": "password"
             })
           });
@@ -589,7 +581,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": 'A senha deve ter no máximo 64 caracteres',
+              "message": 'Informe no máximo 64 caracteres.',
               "path": "password"
             })
           });
@@ -607,7 +599,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": 'A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)',
+              "message": 'A senha deve ter ao menos uma letra maiúscula e minúscula.',
               "path": "password"
             })
           });
@@ -626,7 +618,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_type",
-              "message": "Email deve ser válido",
+              "message": "Tipo de dado inválido.",
               "path": "email"
             })
           });
@@ -644,7 +636,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": "Email deve ser válido",
+              "message": "Informe um endereço de e-mail válido.",
               "path": "email"
             })
           });
@@ -664,7 +656,7 @@ describe('AuthController e2e', () => {
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "invalid_format",
-              "message": "Email deve ser válido",
+              "message": "Informe um endereço de e-mail válido.",
               "path": "email"
             })
           });
