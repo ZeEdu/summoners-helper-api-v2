@@ -12,8 +12,8 @@ export const createUserSchema = z.object({
 
   username: z
     .string()
-    .min(5)
-    .max(16),
+    .min(6)
+    .max(32),
 
   password: z
     .string()
