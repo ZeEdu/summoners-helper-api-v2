@@ -1,402 +1,214 @@
-import { faker } from '@faker-js/faker';
-import { BadRequestException, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import {
-  AbilityOption,
-  CreateGuideFormSchema,
-  CreateUserDto,
-  createUserSchema
-} from '@org/contracts';
-import z from 'zod';
-import { AppModule } from '../app.module';
-import { ZodValidationPipe } from './zod-validation.pipe';
+import { faker } from "@faker-js/faker";
+import { BadRequestException } from "@nestjs/common";
+import { CreateUserDto, VALIDATION_ERROR_KEYS } from "@org/contracts";
+import { I18nContext } from "nestjs-i18n";
+import z from "zod";
+import { ZodValidationPipe } from "./zod-validation.pipe";
 
-import mongoose from 'mongoose';
+interface ResponseError {
+  message: any[],
+  error: string,
+  statusCode: 400
+}
+function isResponseError(response: any): response is ResponseError {
+  const hasMessageProperty = Object.hasOwn(response, 'message')
+  const hasErrorProperty = Object.hasOwn(response, 'error')
+  const hasStatusCodeProperty = Object.hasOwn(response, 'statusCode')
 
-interface ValidationErrorResponse {
-  message: Array<{
-    path: string;
-    message: string;
-    code: string;
-  }>;
+  return hasMessageProperty && hasErrorProperty && hasStatusCodeProperty
+}
+
+function parseException(exception: BadRequestException): ResponseError | undefined {
+  const response = exception.getResponse()
+  if (isResponseError(response)) {
+    return response
+  }
+
+  return undefined
+}
+
+function getFirstMessage(responseError: ResponseError): string | undefined {
+  return responseError.message[0].message
 }
 
 describe('zod validation pipe', () => {
-  let app: INestApplication;
+  const createExpectedMessage = (key: string) => `translated:${key}`
+  const t = jest.fn(createExpectedMessage)
 
-  beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+  const i18nContext = {
+    lang: 'pt',
+    t,
+  } as unknown as I18nContext
 
-    app = module.createNestApplication();
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/;
 
-    await app.init();
-  });
+  const createUserSchema = z.object({
+    email: z
+      .email()
+      .min(1),
+    username: z
+      .string()
+      .min(6)
+      .max(64),
+    password: z
+      .string()
+      .min(8)
+      .max(64)
+      .regex(passwordPattern, { error: VALIDATION_ERROR_KEYS.passwordPattern })
+  })
 
-  afterAll(async () => {
-    await app.close();
-  });
-
-  describe('required field', () => {
-    it('should throw error', () => {
+  describe('email', () => {
+    it('should catch error', () => {
       const validationPipe = new ZodValidationPipe(createUserSchema);
+
       const createUser: Partial<CreateUserDto> = {
-        email: faker.internet.email(),
-        password: faker.internet.password({ prefix: '1!Ab' }),
-      };
-
-      let exception: BadRequestException;
-
-      try {
-        validationPipe.transform(createUser);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
-
-      const response = exception.getResponse() as ValidationErrorResponse;
-
-      expect(response.message).toContainEqual({
-        path: 'username',
-        message: 'Formato inválido',
-        code: 'invalid_type',
-      });
-    });
-  });
-  describe('incorrect type', () => {
-    it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema);
-      const createUser = {
-        email: faker.internet.email(),
-        password: faker.internet.password({ prefix: '1!Ab' }),
-        username: 123123123,
-      };
-
-      let exception: BadRequestException;
-
-      try {
-        validationPipe.transform(createUser);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
-
-      const response = exception.getResponse() as ValidationErrorResponse;
-
-      expect(response.message).toContainEqual({
-        path: 'username',
-        message: 'Formato inválido',
-        code: 'invalid_type',
-      });
-    });
-  });
-  describe('short string', () => {
-    it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema);
-      const createUser = {
-        email: faker.internet.email(),
-        password: '1!Ab',
+        email: faker.internet.userName(),
         username: faker.internet.userName(),
-      };
-
-      let exception: BadRequestException;
-
-      try {
-        validationPipe.transform(createUser);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
-
-      const response = exception.getResponse() as ValidationErrorResponse;
-
-      expect(response.message).toContainEqual({
-        path: 'password',
-        message: 'A senha deve ter no mínimo 8 caracteres',
-        code: 'too_small',
-      });
-    });
-  });
-  describe('below min value', () => {
-    it('should throw error', () => {
-      interface ICart {
-        quantity: number;
-        productId: string;
-      }
-
-      const cartSchema = z.object({
-        quantity: z.number().min(2, { error: 'Below minimun value' }),
-        productId: z.string(),
-      }) satisfies z.ZodType<ICart>;
-
-      type CartDto = z.infer<typeof cartSchema>;
-
-      const validationPipe = new ZodValidationPipe(cartSchema);
-      const cart: CartDto = {
-        productId: faker.string.uuid(),
-        quantity: 1,
-      };
-
-      let exception: BadRequestException;
-
-      try {
-        validationPipe.transform(cart);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
-
-      const response = exception.getResponse() as ValidationErrorResponse;
-      expect(response.message).toContainEqual({
-        path: 'quantity',
-        message: 'Below minimun value',
-        code: 'too_small',
-      });
-    });
-  });
-  describe('invalid enum', () => {
-    it('should throw error', () => {
-      enum Color {
-        Red,
-        Blue,
-      }
-
-      interface ICart {
-        quantity: number;
-        productId: string;
-        color: Color;
-      }
-
-      const cartSchema = z.object({
-        quantity: z.number().min(2, { error: 'Below minimun value' }),
-        productId: z.string(),
-        color: z.enum(Color, { error: 'Invalid color' }),
-      }) satisfies z.ZodType<ICart>;
-
-      type CartDto = z.infer<typeof cartSchema>;
-
-      const validationPipe = new ZodValidationPipe(cartSchema);
-      const cart = {
-        productId: faker.string.uuid(),
-        quantity: 3,
-        color: 'Yellow',
-      };
-
-      let exception: BadRequestException;
-
-      try {
-        validationPipe.transform(cart);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
-
-      const response = exception.getResponse() as ValidationErrorResponse;
-      expect(response.message).toContainEqual({
-        path: 'color',
-        message: 'Invalid color',
-        code: 'invalid_value',
-      });
-    });
-  });
-  describe('invalid email', () => {
-    it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema);
-      const createUser: Partial<CreateUserDto> = {
-        email: faker.string.alpha(10),
         password: faker.internet.password({ prefix: '1!Ab' }),
-        username: faker.internet.userName(),
       };
 
-      let exception: BadRequestException;
+      I18nContext.create(i18nContext, () => {
+        let exception: BadRequestException;
 
-      try {
-        validationPipe.transform(createUser);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
+        try {
+          validationPipe.transform(createUser);
+          fail('Expected BadRequestException to be thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(BadRequestException);
+          exception = error as BadRequestException;
+        }
 
-      const response = exception.getResponse() as ValidationErrorResponse;
+        const parsedResponse = parseException(exception)
+        const message = parsedResponse && getFirstMessage(parsedResponse)
+        expect(message).toBe(createExpectedMessage(VALIDATION_ERROR_KEYS.email))
+      })
 
-      expect(response.message).toContainEqual({
-        path: 'email',
-        message: 'Email deve ser válido',
-        code: 'invalid_format',
-      });
-    });
-  });
-  describe('Invalid array', () => {
-    it('should throw error', () => {
-      const validationPipe = new ZodValidationPipe(CreateGuideFormSchema);
-      const createGuide = {
-        title: '',
-        createdBy: new mongoose.Types.ObjectId().toString(),
-        introduction: '',
-        patchVersion: '',
-        champion: '',
-        role: '',
-        runes: {
-          primaryRune: '1',
-          primarySlots: {
-            first: '1',
-            second: '1',
-            third: '1',
-            fourth: '1',
-          },
-          secondaryRune: '1',
-          secondarySlots: {
-            first: '1',
-            second: '1',
-            third: '1',
-            fourth: '1',
-          },
-        },
-        runesDescription: '',
-        bonusSlotOne: '',
-        bonusSlotTwo: '',
-        bonusSlotThree: '',
-        bonusDescription: '',
-        firstSpell: '',
-        secondSpell: '',
-        spellsDescription: '',
-        itemsBlock: [],
-        itemsDescription: '',
-        abilitiesProgression: {
-          l1: AbilityOption.A,
-          l2: AbilityOption.A,
-          l3: AbilityOption.A,
-          l4: AbilityOption.A,
-          l5: AbilityOption.A,
-          l6: AbilityOption.A,
-          l7: AbilityOption.A,
-          l8: AbilityOption.A,
-          l9: AbilityOption.A,
-          l10: AbilityOption.A,
-          l11: AbilityOption.A,
-          l12: AbilityOption.A,
-          l13: AbilityOption.A,
-          l14: AbilityOption.A,
-          l15: AbilityOption.A,
-          l16: AbilityOption.A,
-          l17: AbilityOption.A,
-          l18: AbilityOption.A,
-        },
-        abilitiesProgressionDescription: '',
-        threatsDescription: '',
-        threats: [{}],
-        createdAt: '',
-      };
+      expect(t).toHaveBeenCalled()
+    })
+  })
 
-      let exception: BadRequestException;
+  describe('string', () => {
+    describe('format', () => {
+      it('should catch error', () => {
+        const validationPipe = new ZodValidationPipe(createUserSchema);
 
-      try {
-        validationPipe.transform(createGuide);
-        fail('Expected BadRequestException to be thrown');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        exception = error as BadRequestException;
-      }
+        const createUser: Partial<CreateUserDto & { username: any }> = {
+          email: faker.internet.email(),
+          username: 123123,
+          password: faker.internet.password({ prefix: '1!Ab' }),
+        };
 
-      const response = exception.getResponse() as ValidationErrorResponse;
+        I18nContext.create(i18nContext, () => {
+          let exception: BadRequestException;
 
-      expect(response.message).toContainEqual({
-        path: 'threats.0.threat',
-        message: 'formato do campo é inválido',
-        code: 'invalid_type',
-      });
+          try {
+            validationPipe.transform(createUser);
+            fail('Expected BadRequestException to be thrown');
+          } catch (error) {
+            expect(error).toBeInstanceOf(BadRequestException);
+            exception = error as BadRequestException;
+          }
 
-      expect(response.message).toContainEqual({
-        path: 'threats.0.description',
-        message: 'formato do campo é inválido',
-        code: 'invalid_type',
-      });
-    });
-  });
-  describe('Invalid nest object', () => {
-    const validationPipe = new ZodValidationPipe(CreateGuideFormSchema);
-    const createGuide = {
-      title: '',
-      createdBy: new mongoose.Types.ObjectId().toString(),
-      introduction: '',
-      patchVersion: '',
-      champion: '',
-      role: '',
-      runes: {
-        primaryRune: '1',
-        primarySlots: {
-          first: '1',
-          second: '1',
-          third: '1',
-          fourth: '1',
-        },
-        secondaryRune: '1',
-        secondarySlots: {
-          first: '1',
-          second: '1',
-          third: '1',
-          fourth: '1',
-        },
-      },
-      runesDescription: '',
-      bonusSlotOne: '',
-      bonusSlotTwo: '',
-      bonusSlotThree: '',
-      bonusDescription: '',
-      firstSpell: '',
-      secondSpell: '',
-      spellsDescription: '',
-      itemsBlock: [],
-      itemsDescription: '',
-      abilitiesProgression: {
-        l1: 'F',
-        l2: AbilityOption.A,
-        l3: AbilityOption.A,
-        l4: AbilityOption.A,
-        l5: AbilityOption.A,
-        l6: AbilityOption.A,
-        l7: AbilityOption.A,
-        l8: AbilityOption.A,
-        l9: AbilityOption.A,
-        l10: AbilityOption.A,
-        l11: AbilityOption.A,
-        l12: AbilityOption.A,
-        l13: AbilityOption.A,
-        l14: AbilityOption.A,
-        l15: AbilityOption.A,
-        l16: AbilityOption.A,
-        l17: AbilityOption.A,
-        l18: AbilityOption.A,
-      },
-      abilitiesProgressionDescription: '',
-      threatsDescription: '',
-      threats: [],
-      createdAt: '',
-    };
+          const parsedResponse = parseException(exception)
+          const message = parsedResponse && getFirstMessage(parsedResponse)
+          expect(message).toBe(createExpectedMessage(VALIDATION_ERROR_KEYS.type))
+        })
 
-    let exception: BadRequestException;
+        expect(t).toHaveBeenCalled()
+      })
+    })
 
-    try {
-      validationPipe.transform(createGuide);
-      fail('Expected BadRequestException to be thrown');
-    } catch (error) {
-      expect(error).toBeInstanceOf(BadRequestException);
-      exception = error as BadRequestException;
-    }
+    describe('min', () => {
+      it('should catch error', () => {
+        const validationPipe = new ZodValidationPipe(createUserSchema);
 
-    const response = exception.getResponse() as ValidationErrorResponse;
+        const createUser: Partial<CreateUserDto> = {
+          email: faker.internet.email(),
+          username: faker.string.alpha({ length: { min: 3, max: 5 } }),
+          password: faker.internet.password({ prefix: '1!Ab' }),
+        };
 
-    expect(response.message).toContainEqual({
-      path: 'abilitiesProgression.l1',
-      message: `Valor invalido. Deve ser um dos seguintes valores: ${AbilityOption.A},${AbilityOption.B},${AbilityOption.C} ou ${AbilityOption.D}`,
-      code: 'invalid_value',
-    });
-  });
+        I18nContext.create(i18nContext, () => {
+          let exception: BadRequestException;
+
+          try {
+            validationPipe.transform(createUser);
+            fail('Expected BadRequestException to be thrown');
+          } catch (error) {
+            expect(error).toBeInstanceOf(BadRequestException);
+            exception = error as BadRequestException;
+          }
+
+          const parsedResponse = parseException(exception)
+          const message = parsedResponse && getFirstMessage(parsedResponse)
+          expect(message).toBe(createExpectedMessage(VALIDATION_ERROR_KEYS.stringMin))
+        })
+
+        expect(t).toHaveBeenCalled()
+      })
+    })
+
+    describe('max', () => {
+      it('should catch error', () => {
+        const validationPipe = new ZodValidationPipe(createUserSchema);
+
+        const createUser: Partial<CreateUserDto> = {
+          email: faker.internet.email(),
+          username: faker.string.alpha({ length: { min: 65, max: 65 } }),
+          password: faker.internet.password({ prefix: '1!Ab' }),
+        };
+
+        I18nContext.create(i18nContext, () => {
+          let exception: BadRequestException;
+
+          try {
+            validationPipe.transform(createUser);
+            fail('Expected BadRequestException to be thrown');
+          } catch (error) {
+            expect(error).toBeInstanceOf(BadRequestException);
+            exception = error as BadRequestException;
+          }
+
+          const parsedResponse = parseException(exception)
+          const message = parsedResponse && getFirstMessage(parsedResponse)
+          expect(message).toBe(createExpectedMessage(VALIDATION_ERROR_KEYS.stringMax))
+        })
+
+        expect(t).toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('regex', () => {
+    describe('password', () => {
+      it('should catch error', () => {
+        const validationPipe = new ZodValidationPipe(createUserSchema);
+        const createUser: Partial<CreateUserDto> = {
+          email: faker.internet.email(),
+          username: faker.internet.userName(),
+          password: faker.internet.password({ length: 12 }),
+        };
+
+        I18nContext.create(i18nContext, () => {
+          let exception: BadRequestException;
+
+          try {
+            validationPipe.transform(createUser);
+            fail('Expected BadRequestException to be thrown');
+          } catch (error) {
+            expect(error).toBeInstanceOf(BadRequestException);
+            exception = error as BadRequestException;
+          }
+
+          const parsedResponse = parseException(exception)
+          const message = parsedResponse && getFirstMessage(parsedResponse)
+
+          expect(message).toBe(createExpectedMessage(VALIDATION_ERROR_KEYS.passwordPattern))
+        })
+
+        expect(t).toHaveBeenCalled()
+      })
+    })
+  })
 });

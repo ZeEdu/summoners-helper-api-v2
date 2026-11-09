@@ -41,7 +41,6 @@ export function isAbilityOption(value: string): value is AbilityOption {
   return ['a', 'b', 'c', 'd'].includes(value)
 }
 
-
 export function getAbilityOption(value: string): AbilityOption | null {
   if (isAbilityOption(value)) {
     return value

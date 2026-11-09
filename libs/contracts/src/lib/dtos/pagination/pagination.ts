@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { VALIDATION_ERROR_KEYS } from '../../validation/validation';
 
 z.object({
   limit: z.preprocess(Number, z.number().nonnegative()),
@@ -14,7 +15,7 @@ const offsetSchema = z
   .nonnegative()
   .optional();
 
-const sortEnum = z.enum(['desc', 'asc', ''])
+const sortEnum = z.enum(['desc', 'asc', ''], { error: VALIDATION_ERROR_KEYS.enum })
 
 const sortSchema = z
   .record(z.string(), sortEnum)

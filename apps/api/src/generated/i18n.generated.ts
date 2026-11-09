@@ -12,6 +12,7 @@ export type I18nTranslations = {
             };
             "validate": {
                 "unauthorized": string;
+                "systemAdmin": string;
             };
             "register": {
                 "emailInUse": string;
