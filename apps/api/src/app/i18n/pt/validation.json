@@ -4,6 +4,7 @@
   "passwordPattern": "A senha deve ter ao menos uma letra maiúscula e minúscula.",
   "objectId": "Informe um identificador válido.",
   "type": "Tipo de dado inválido.",
+  "invalid": "Informe um valor válido",
   "string.min": "Informe pelo menos {minimum} caracteres.",
   "string.max": "Informe no máximo {maximum} caracteres.",
   "number.min": "O valor deve ser maior ou igual a {minimum}.",

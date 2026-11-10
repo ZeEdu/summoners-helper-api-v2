@@ -1,9 +1,8 @@
 import z from 'zod';
 
 import { AbilityOption } from '../../enums';
-import { VALIDATION_ERROR_KEYS } from '../../validation/validation';
 
-export const enumAbilitiesOption = z.enum(AbilityOption, { error: VALIDATION_ERROR_KEYS.enum });
+export const enumAbilitiesOption = z.enum(AbilityOption);
 
 export const abilitiesProgressionSchema = z.object({
   l1: enumAbilitiesOption,

@@ -4,22 +4,19 @@ export const VALIDATION_ERROR_KEYS = {
   reportTargetRequired: 'validation.reportTargetRequired',
   passwordPattern: 'validation.passwordPattern',
   objectId: 'validation.objectId',
-
   type: 'validation.type',
-
   stringMin: 'validation.string.min',
   stringMax: 'validation.string.max',
   numberMin: 'validation.number.min',
   numberMax: 'validation.number.max',
   arrayMin: 'validation.array.min',
   arrayMax: 'validation.array.max',
+  invalid: 'validation.invalid',
   email: 'validation.email',
   regex: 'validation.regex',
-
   format: 'validation.format',
   default: 'validation.default'
 } as const
-
 
 export function isValidCustomError(message: string) {
   const validationValuesSet: Set<string> = new Set(Object.values(VALIDATION_ERROR_KEYS))
@@ -38,23 +35,30 @@ type ZodIssueDescriptorInputType = {
   message: string,
   origin: string,
   minimum?: number,
-  maximum?: number
+  maximum?: number,
+  path: PropertyKey[]
+  params: Record<string, any>
 }
 
-export function zodIssueDescriptorInputNormalizer(issue: any): ZodIssueDescriptorInputType {
+export function zodIssueDescriptorInputNormalizer(issue: Record<string, any>): ZodIssueDescriptorInputType {
   return {
-    code: issue.code,
-    format: issue.format,
-    message: issue.message,
-    origin: issue.origin,
-    minimum: issue.minimum,
-    maximum: issue.maximum
+    code: issue['code'],
+    format: issue['format'],
+    message: issue['message'],
+    origin: issue['origin'],
+    minimum: issue['minimum'],
+    maximum: issue['maximum'],
+    path: issue['path'],
+    params: issue['params']
   }
 }
 
 export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): ValidationMessageDescriptor {
   let key: string = VALIDATION_ERROR_KEYS.default
   let params = undefined
+
+  const isPassword = issue.path.find((p) => p === 'password')
+  const isCustomError = issue.params?.['validation'] && isValidCustomError(issue.params['validation'])
 
   switch (issue.code) {
     case 'invalid_type':
@@ -66,7 +70,7 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           key = VALIDATION_ERROR_KEYS.email
           break
         case 'regex':
-          if (issue.message === VALIDATION_ERROR_KEYS.passwordPattern) {
+          if (isPassword) {
             key = VALIDATION_ERROR_KEYS.passwordPattern
           } else {
             key = VALIDATION_ERROR_KEYS.regex
@@ -135,8 +139,13 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           break
       }
       break
+    // Currently, `invalid_value` is only used by z.enum() in our schemas.
+    // Revisit this assumption if z.literal() or other schemas using this issue code are introduced.
+    case 'invalid_value':
+      key = VALIDATION_ERROR_KEYS.invalid
+      break
     case 'custom':
-      key = isValidCustomError(issue.message) ? issue.message : VALIDATION_ERROR_KEYS.default
+      key = isCustomError ? issue.params['validation'] : VALIDATION_ERROR_KEYS.default
       break
     default:
       key = VALIDATION_ERROR_KEYS.default

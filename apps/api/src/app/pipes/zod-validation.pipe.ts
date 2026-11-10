@@ -12,7 +12,7 @@ export class ZodValidationPipe implements PipeTransform {
     const result = this.schema.safeParse(value)
 
     if (!result.success) {
-      const error = result.error.issues.map(issue => {
+      const error = result.error.issues.map((issue: Record<string, any>) => {
         // Formatar a issue
         const input = zodIssueDescriptorInputNormalizer(issue)
         const formatedZodError = zodIssueDescriptor(input)

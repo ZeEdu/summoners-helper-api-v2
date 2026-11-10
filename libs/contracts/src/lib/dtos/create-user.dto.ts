@@ -1,9 +1,7 @@
 import z from 'zod';
 import { ICreateUserDto } from '../types';
-import { VALIDATION_ERROR_KEYS } from '../validation/validation';
 
-const passwordPattern =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/;
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]+$/;
 
 export const createUserSchema = z.object({
   email: z
@@ -19,7 +17,7 @@ export const createUserSchema = z.object({
     .string()
     .min(8)
     .max(64)
-    .regex(passwordPattern, { error: VALIDATION_ERROR_KEYS.passwordPattern })
+    .regex(passwordPattern)
 
 }) satisfies z.ZodType<ICreateUserDto>;
 

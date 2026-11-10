@@ -4,6 +4,7 @@
   "passwordPattern": "The password does not meet the security requirements.",
   "objectId": "Please provide a valid identifier.",
   "type": "Invalid data type.",
+  "invalid": "Provide a valid value",
   "string.min": "Please enter at least {minimum} characters.",
   "string.max": "Please enter no more than {maximum} characters.",
   "number.min": "The value must be greater than or equal to {minimum}.",

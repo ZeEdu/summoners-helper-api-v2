@@ -15,7 +15,7 @@ import {
 
 import {
   CreateReportDto,
-  CreateReportSchema,
+  createReportSchema,
   REPORT_ACTION_TAKEN,
   REPORT_STATUS,
   reportPagination,
@@ -69,7 +69,7 @@ export class ReportController {
   @Post('')
   async create(
     @CurrentUser() user: UserDto,
-    @Body(new ZodValidationPipe(CreateReportSchema)) body: CreateReportDto,
+    @Body(new ZodValidationPipe(createReportSchema)) body: CreateReportDto,
   ) {
     const createdAt = new Date()
     const reportedBy = user.id;
