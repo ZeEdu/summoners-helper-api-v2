@@ -4,7 +4,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto, IUser } from '@org/contracts';
 import { Model } from 'mongoose';
-import { I18nContext } from 'nestjs-i18n';
 import { AppModule } from '../app.module';
 import { User, UserDocument } from '../users/schema/user.schema';
 import cookieParser = require('cookie-parser');
@@ -14,17 +13,35 @@ describe('AuthController e2e', () => {
   let app: INestApplication;
   let userModel: Model<UserDocument>;
 
+  function createFakeUserPayload(defaultProperties?: Partial<CreateUserDto>) {
+    const uniqueId = faker.string.uuid().slice(0, 12);
+    return {
+      username: `user_${uniqueId}`,
+      password: 'TestPass123',
+      email: `user_${uniqueId}@example.com`,
+      ...defaultProperties
+    }
+  }
 
-  // const createExpectedMessage = (key: string) => `translated:${key}`
-  const t = jest.fn((key: string) => `translated:${key}`)
+  function extractRefreshTokenFromCookies(cookies: string) {
+    const refreshToken = cookies.split(';').find((c) => c.startsWith('refresh_token'))
 
-  const i18nContext = {
-    lang: 'pt',
-    t,
-  } as unknown as I18nContext
+    if (!refreshToken) {
+      throw new Error('refreshToken not found')
+    }
 
-  function extractCookie(headers: Record<string, string[]>, name: string): string {
-    const cookies = headers['set-cookie'] as string[];
+    return refreshToken
+  }
+
+  function extractCookiesFromRequest(headers: {
+    [index: string]: string;
+  }, name: string): string {
+    const cookies = headers['set-cookie'] ?? [];
+
+    if (!Array.isArray(cookies)) {
+      throw new Error('Not a valid format')
+    }
+
     if (!cookies) {
       throw new Error('No set-cookie found')
     }
@@ -38,37 +55,45 @@ describe('AuthController e2e', () => {
   }
 
   function transformCookie(cookie: string) {
-    return cookie
-      .split(';')
-      .map((cookieProperty) => {
-        const fields = cookieProperty.split('=');
+    const transformEntries = cookie.split(';').map((property) => {
+      const separatorIndex = property.indexOf('=')
 
-        const key = fields[0].trim().toLowerCase().replace(/-/g, '_');
-        const value = fields[1] ?? true;
+      const key = (separatorIndex > -1 ? property
+        .slice(0, separatorIndex) : property)
+        .trim()
+        .toLocaleLowerCase()
+        .replace(/-/g, '_')
 
-        return { [key]: value };
-      })
-      .reduce((previous, current) => ({ ...previous, ...current }), {});
+      const value = separatorIndex === -1 ? true : property.slice(separatorIndex + 1).trim()
+      return [key, value]
+    })
+
+    return Object.fromEntries(transformEntries)
   }
 
-  function getCookieFromHeader(headers: Record<string, string>) {
-    if (!headers['set-cookie']?.[0]) {
-      return null
+  function getCookiesFromHeader(headers: {
+    [index: string]: string;
+  }) {
+    const cookies = headers['set-cookie'] ?? []
+    if (!Array.isArray(cookies)) {
+      throw new Error('Not a valid format')
     }
 
-    const refreshTokenCookie = headers['set-cookie'][0];
-    return transformCookie(refreshTokenCookie);
+    const refreshTokenCookie = cookies.find(cookie => cookie.startsWith('refresh_token='))
+    return refreshTokenCookie ? transformCookie(refreshTokenCookie) : null
   }
 
-  function checkRefreshCookieOnResponse(headers: Record<string, string>) {
-    const cookie = getCookieFromHeader(headers)
+  function validateCookiesOnResponse(headers: {
+    [index: string]: string;
+  }) {
+    const cookies = getCookiesFromHeader(headers)
 
-    expect(cookie?.refresh_token).toBeDefined();
-    expect(cookie?.max_age).toBeDefined();
-    expect(cookie?.path).toBeDefined();
-    expect(cookie?.expires).toBeDefined();
-    expect(cookie?.httponly).toBeDefined();
-    expect(cookie?.samesite).toBeDefined();
+    expect(cookies?.refresh_token).toBeDefined();
+    expect(cookies?.max_age).toBeDefined();
+    expect(cookies?.path).toBeDefined();
+    expect(cookies?.expires).toBeDefined();
+    expect(cookies?.httponly).toBeDefined();
+    expect(cookies?.samesite).toBeDefined();
   }
 
   beforeAll(async () => {
@@ -77,7 +102,6 @@ describe('AuthController e2e', () => {
     }).compile();
 
     userModel = module.get<Model<UserDocument>>(getModelToken(User.name));
-    await userModel.deleteMany();
 
     app = module.createNestApplication();
 
@@ -91,14 +115,14 @@ describe('AuthController e2e', () => {
     await app.close();
   });
 
+  beforeEach(async () => {
+    await userModel.deleteMany();
+  })
+
   describe('register', () => {
     describe('mobile', () => {
       it('POST /auth/mobile/register → retorna accessToken', async () => {
-        const createUserPayload: CreateUserDto = {
-          username: faker.string.alpha(16),
-          password: faker.internet.password({ prefix: '1!Ab' }),
-          email: faker.internet.email(),
-        };
+        const createUserPayload = createFakeUserPayload()
 
         await request(app.getHttpServer())
           .post('/auth/mobile/register')
@@ -107,7 +131,7 @@ describe('AuthController e2e', () => {
           .expect((response) => {
             expect(response.body.accessToken).toBeDefined();
             expect(response.body.refreshToken).toBeDefined();
-            const cookie = getCookieFromHeader(response.headers);
+            const cookie = getCookiesFromHeader(response.headers);
             expect(cookie?.refresh_token).toBeUndefined();
           })
       });
@@ -115,11 +139,13 @@ describe('AuthController e2e', () => {
       describe('with error', () => {
         describe('username', () => {
           it('without username', async () => {
+            const createUserPayload = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
+                ...createUserPayload,
+                username: undefined
               })
               .expect(400);
 
@@ -132,13 +158,11 @@ describe('AuthController e2e', () => {
           });
 
           it('with empty string', async () => {
+            const createUser = createFakeUserPayload({ username: '' })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
-              .send({
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
-                username: ''
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
@@ -151,12 +175,13 @@ describe('AuthController e2e', () => {
           })
 
           it('with a non string username', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                username: faker.number.int({ min: 10_000, max: 20_000 }),
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
+                ...createUser,
+                username: faker.number.int({ min: 10_000, max: 20_000 })
               })
               .expect(400);
 
@@ -169,13 +194,11 @@ describe('AuthController e2e', () => {
           });
 
           it('without minimal length', async () => {
+            const createUser = createFakeUserPayload({ username: faker.string.alpha(4) })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
-              .send({
-                username: 'inva',
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
@@ -187,19 +210,17 @@ describe('AuthController e2e', () => {
           });
 
           it('with over maximum length', async () => {
+            const createUser = createFakeUserPayload({ username: faker.string.alpha(65) })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
-              .send({
-                username: faker.string.alpha(33),
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": "Informe no máximo 32 caracteres.",
+              "message": "Informe no máximo 64 caracteres.",
               "path": "username"
             });
           });
@@ -207,11 +228,13 @@ describe('AuthController e2e', () => {
 
         describe('password', () => {
           it('with empty field', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
+                ...createUser,
+                password: undefined
               })
               .expect(400);
 
@@ -224,12 +247,13 @@ describe('AuthController e2e', () => {
           });
 
           it('with empty string', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                password: '',
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
+                ...createUser,
+                password: ''
               })
               .expect(400);
 
@@ -248,12 +272,13 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid type format', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
+                ...createUser,
                 password: faker.number.int({ min: 10_000, max: 20_000 }),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
               })
               .expect(400);
 
@@ -266,13 +291,11 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid minimal length', async () => {
+            const createUser = createFakeUserPayload({ password: 'Abc1' })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
-              .send({
-                password: faker.internet.password({ prefix: '1!Ab', length: 6 }),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
@@ -284,30 +307,30 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid maximum length', async () => {
+            const createUser = createFakeUserPayload({ password: 'Abc1234' + 'x'.repeat(122) })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
-              .send({
-                password: faker.internet.password({ prefix: '1!Ab', length: 65 }),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": "Informe no máximo 64 caracteres.",
+              "message": "Informe no máximo 128 caracteres.",
               "path": "password"
             });
           });
 
           it('with invalid pattern', async () => {
+            const createUser = createFakeUserPayload()
+            const invalidPassword = 'adasdasdasd'
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                password: faker.internet.password(),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
+                ...createUser,
+                password: invalidPassword
               })
               .expect(400);
 
@@ -322,11 +345,13 @@ describe('AuthController e2e', () => {
 
         describe('email', () => {
           it('with empty field', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                username: faker.string.alpha(16),
-                password: faker.internet.password({ prefix: '1!Ab' }),
+                ...createUser,
+                email: undefined
               })
               .expect(400);
 
@@ -339,12 +364,13 @@ describe('AuthController e2e', () => {
           });
 
           it('with empty string', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
               .send({
-                email: '',
-                username: faker.string.alpha(16),
-                password: faker.internet.password({ prefix: '1!Ab' }),
+                ...createUser,
+                email: ''
               })
               .expect(400);
 
@@ -357,11 +383,7 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid format', async () => {
-            const createUserPayload = {
-              username: faker.string.alpha(16),
-              password: faker.internet.password({ prefix: '1!Ab' }),
-              email: faker.word.verb({ length: 16 }),
-            };
+            const createUserPayload = createFakeUserPayload({ email: faker.string.alpha(16) })
 
             const { body } = await request(app.getHttpServer())
               .post('/auth/mobile/register')
@@ -381,11 +403,7 @@ describe('AuthController e2e', () => {
 
     describe('web', () => {
       it('POST /auth/web/register → retorna accessToken', async () => {
-        const createUserPayload: CreateUserDto = {
-          username: faker.string.alpha(16),
-          password: faker.internet.password({ prefix: '1!Ab' }),
-          email: faker.internet.email(),
-        };
+        const createUserPayload = createFakeUserPayload();
 
         await request(app.getHttpServer())
           .post('/auth/web/register')
@@ -393,18 +411,20 @@ describe('AuthController e2e', () => {
           .expect(201)
           .expect((response) => {
             expect(response.body.accessToken).toBeDefined();
-            checkRefreshCookieOnResponse(response.headers);
+            validateCookiesOnResponse(response.headers);
           })
       });
 
       describe('with error', () => {
         describe('username', () => {
           it('without username', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
+                ...createUser,
+                username: undefined
               })
               .expect(400);
 
@@ -417,11 +437,12 @@ describe('AuthController e2e', () => {
           });
 
           it('with empty string', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
+                ...createUser,
                 username: ''
               })
               .expect(400);
@@ -435,12 +456,13 @@ describe('AuthController e2e', () => {
           })
 
           it('with a non string username', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                username: faker.number.int({ min: 10_000, max: 20_000 }),
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
+                ...createUser,
+                username: faker.number.int({ min: 10_000, max: 20_000 })
               })
               .expect(400);
 
@@ -453,12 +475,13 @@ describe('AuthController e2e', () => {
           });
 
           it('without minimal length', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                username: 'inva',
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
+                ...createUser,
+                username: 'inva'
               })
               .expect(400);
 
@@ -471,19 +494,17 @@ describe('AuthController e2e', () => {
           });
 
           it('with over maximum length', async () => {
+            const createUser = createFakeUserPayload({ username: faker.string.alpha(65) })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
-              .send({
-                username: faker.string.alpha(33),
-                password: faker.internet.password({ prefix: '1!Ab' }),
-                email: faker.internet.email(),
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": "Informe no máximo 32 caracteres.",
+              "message": "Informe no máximo 64 caracteres.",
               "path": "username"
             })
           });
@@ -491,11 +512,13 @@ describe('AuthController e2e', () => {
 
         describe('password', () => {
           it('with empty field', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
+                ...createUser,
+                password: undefined
               })
               .expect(400);
 
@@ -508,12 +531,13 @@ describe('AuthController e2e', () => {
           });
 
           it('with empty string', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                password: '',
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
+                ...createUser,
+                password: ''
               })
               .expect(400);
 
@@ -533,12 +557,13 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid type format', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                password: faker.number.int({ min: 10_000, max: 20_000 }),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
+                ...createUser,
+                password: faker.number.int({ min: 10_000, max: 20_000 })
               })
               .expect(400);
 
@@ -551,13 +576,11 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid minimal length', async () => {
+            const createUser = createFakeUserPayload({ password: 'Abc1' })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
-              .send({
-                password: faker.internet.password({ prefix: '1!Ab', length: 6 }),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
@@ -569,30 +592,29 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid maximum length', async () => {
+            const createUser = createFakeUserPayload({ password: 'Abc1234' + 'x'.repeat(122) })
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
-              .send({
-                password: faker.internet.password({ prefix: '1!Ab', length: 65 }),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
-              })
+              .send(createUser)
               .expect(400);
 
             expect(body.error).toBe('Bad Request');
             expect(body.message).toContainEqual({
               "code": "too_big",
-              "message": 'Informe no máximo 64 caracteres.',
+              "message": 'Informe no máximo 128 caracteres.',
               "path": "password"
             })
           });
 
           it('with invalid pattern', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                password: faker.internet.password(),
-                username: faker.string.alpha(16),
-                email: faker.internet.email(),
+                ...createUser,
+                password: 'adasdasdasd'
               })
               .expect(400);
 
@@ -607,11 +629,13 @@ describe('AuthController e2e', () => {
 
         describe('email', () => {
           it('with empty field', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                username: faker.string.alpha(16),
-                password: faker.internet.password({ prefix: '1!Ab' }),
+                ...createUser,
+                email: undefined
               })
               .expect(400);
 
@@ -624,12 +648,13 @@ describe('AuthController e2e', () => {
           });
 
           it('with empty string', async () => {
+            const createUser = createFakeUserPayload()
+
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
               .send({
-                email: '',
-                username: faker.string.alpha(16),
-                password: faker.internet.password({ prefix: '1!Ab' }),
+                ...createUser,
+                email: ''
               })
               .expect(400);
 
@@ -642,11 +667,7 @@ describe('AuthController e2e', () => {
           });
 
           it('with invalid format', async () => {
-            const createUserPayload = {
-              username: faker.string.alpha(16),
-              password: faker.internet.password({ prefix: '1!Ab' }),
-              email: faker.word.verb({ length: 16 }),
-            };
+            const createUserPayload = createFakeUserPayload({ email: faker.string.alpha(16) })
 
             const { body } = await request(app.getHttpServer())
               .post('/auth/web/register')
@@ -668,19 +689,12 @@ describe('AuthController e2e', () => {
   describe('login', () => {
     describe('mobile', () => {
       it('POST /auth/mobile/login → retorna accessToken e refreshToken', async () => {
-        const createUserPayload: CreateUserDto = {
-          username: faker.string.alpha(16),
-          password: faker.internet.password({ prefix: '1!Ab' }),
-          email: faker.internet.email(),
-        };
+        const createUserPayload = createFakeUserPayload()
 
         await request(app.getHttpServer())
           .post('/auth/mobile/register')
           .send(createUserPayload)
           .expect(201)
-          .catch((err) => {
-            console.log({ err });
-          });
 
         const response = await request(app.getHttpServer())
           .post('/auth/mobile/login')
@@ -693,25 +707,18 @@ describe('AuthController e2e', () => {
         expect(response.body.accessToken).toBeDefined()
         expect(response.body.refreshToken).toBeDefined()
 
-        const cookie = getCookieFromHeader(response.headers)
+        const cookie = getCookiesFromHeader(response.headers)
         expect(cookie?.refresh_token).toBeUndefined()
       });
 
       describe('with error', () => {
         it('with wrong email', async () => {
-          const createUserPayload: CreateUserDto = {
-            username: faker.string.alpha(16),
-            password: faker.internet.password({ prefix: '1!Ab' }),
-            email: faker.internet.email(),
-          };
+          const createUserPayload = createFakeUserPayload()
 
           await request(app.getHttpServer())
             .post('/auth/mobile/register')
             .send(createUserPayload)
             .expect(201)
-            .catch((err) => {
-              console.log({ err });
-            });
 
           await request(app.getHttpServer())
             .post('/auth/mobile/login')
@@ -726,19 +733,12 @@ describe('AuthController e2e', () => {
             });
         });
         it('with wrong password', async () => {
-          const createUserPayload: CreateUserDto = {
-            username: faker.string.alpha(16),
-            password: faker.internet.password({ prefix: '1!Ab' }),
-            email: faker.internet.email(),
-          };
+          const createUserPayload = createFakeUserPayload()
 
           await request(app.getHttpServer())
             .post('/auth/mobile/register')
             .send(createUserPayload)
             .expect(201)
-            .catch((err) => {
-              console.log({ err });
-            });
 
           await request(app.getHttpServer())
             .post('/auth/mobile/login')
@@ -757,19 +757,12 @@ describe('AuthController e2e', () => {
 
     describe('web', () => {
       it('POST /auth/web/login → retorna accessToken', async () => {
-        const createUserPayload: CreateUserDto = {
-          username: faker.string.alpha(16),
-          password: faker.internet.password({ prefix: '1!Ab' }),
-          email: faker.internet.email(),
-        };
+        const createUserPayload = createFakeUserPayload()
 
         await request(app.getHttpServer())
           .post('/auth/web/register')
           .send(createUserPayload)
           .expect(201)
-          .catch((err) => {
-            console.log({ err });
-          });
 
         const response = await request(app.getHttpServer())
           .post('/auth/web/login')
@@ -779,24 +772,17 @@ describe('AuthController e2e', () => {
           })
           .expect(201);
 
-        checkRefreshCookieOnResponse(response.headers);
+        validateCookiesOnResponse(response.headers);
       });
 
       describe('with error', () => {
         it('with wrong email', async () => {
-          const createUserPayload: CreateUserDto = {
-            username: faker.string.alpha(16),
-            password: faker.internet.password({ prefix: '1!Ab' }),
-            email: faker.internet.email(),
-          };
+          const createUserPayload = createFakeUserPayload()
 
           await request(app.getHttpServer())
             .post('/auth/web/register')
             .send(createUserPayload)
             .expect(201)
-            .catch((err) => {
-              console.log({ err });
-            });
 
           await request(app.getHttpServer())
             .post('/auth/web/login')
@@ -811,19 +797,12 @@ describe('AuthController e2e', () => {
             });
         });
         it('with wrong password', async () => {
-          const createUserPayload: CreateUserDto = {
-            username: faker.string.alpha(16),
-            password: faker.internet.password({ prefix: '1!Ab' }),
-            email: faker.internet.email(),
-          };
+          const createUserPayload = createFakeUserPayload();
 
           await request(app.getHttpServer())
             .post('/auth/web/register')
             .send(createUserPayload)
             .expect(201)
-            .catch((err) => {
-              console.log({ err });
-            });
 
           await request(app.getHttpServer())
             .post('/auth/web/login')
@@ -843,16 +822,12 @@ describe('AuthController e2e', () => {
 
   describe('logout', () => {
     it('POST /auth/logout → remove o refreshToken do usuário', async () => {
-      const createUserPayload: CreateUserDto = {
-        username: faker.string.alpha(16),
-        password: faker.internet.password({ prefix: '1!Ab' }),
-        email: faker.internet.email(),
-      };
+      const createUserPayload = createFakeUserPayload()
 
       const createUserResponse = await request(app.getHttpServer())
         .post('/auth/web/register')
         .send(createUserPayload)
-        .expect(201);
+        .expect(201)
 
       const logoutResponse = await request(app.getHttpServer())
         .post('/auth/logout')
@@ -868,8 +843,8 @@ describe('AuthController e2e', () => {
 
       expect(storedUser.refreshToken).toBeNull();
 
-      const refreshTokenCookie = extractCookie(
-        logoutResponse.headers as unknown as Record<string, string[]>,
+      const refreshTokenCookie = extractCookiesFromRequest(
+        logoutResponse.headers,
         'refresh_token',
       );
       const token = refreshTokenCookie?.split(';')[0]
@@ -881,11 +856,7 @@ describe('AuthController e2e', () => {
   describe('refresh', () => {
     describe('mobile', () => {
       it('POST /auth/mobile/refresh-token → deve atualizar o refresh-token', async () => {
-        const createUserPayload: CreateUserDto = {
-          username: faker.string.alpha(16),
-          password: faker.internet.password({ prefix: '1!Ab' }),
-          email: faker.internet.email(),
-        };
+        const createUserPayload = createFakeUserPayload()
 
         const registerUserResponse = await request(app.getHttpServer())
           .post('/auth/mobile/register')
@@ -903,24 +874,20 @@ describe('AuthController e2e', () => {
           .send({ 'refreshToken': registerUserResponse.body.refreshToken })
           .expect(201);
 
-        const updateRefreshTokenUser = (await userModel
+        const updateRefreshTokenUser = await userModel
           .findOne({
             email: createUserPayload.email,
           })
-          .lean()) as IUser;
+          .lean<IUser>();
 
         expect(oldRefreshTokenUser.refreshToken).not.toBe(
-          updateRefreshTokenUser.refreshToken,
+          updateRefreshTokenUser?.refreshToken,
         );
       });
     })
     describe('web', () => {
       it('POST /auth/web/refresh-token → deve atualizar o refresh-token', async () => {
-        const createUserPayload: CreateUserDto = {
-          username: faker.string.alpha(16),
-          password: faker.internet.password({ prefix: '1!Ab' }),
-          email: faker.internet.email(),
-        };
+        const createUserPayload = createFakeUserPayload()
 
         const registerUserResponse = await request(app.getHttpServer())
           .post('/auth/web/register')
@@ -933,27 +900,28 @@ describe('AuthController e2e', () => {
           })
           .lean()) as IUser;
 
-        const refreshToken = extractCookie(
-          registerUserResponse.headers as unknown as Record<string, string[]>,
+        const cookies = extractCookiesFromRequest(
+          registerUserResponse.headers,
           'refresh_token',
         );
 
+        const refreshCookie = extractRefreshTokenFromCookies(cookies)
+
         await request(app.getHttpServer())
           .post('/auth/web/refresh')
-          .set('Cookie', refreshToken)
+          .set('Cookie', refreshCookie)
           .expect(201);
 
-        const updateRefreshTokenUser = (await userModel
+        const updateRefreshTokenUser = await userModel
           .findOne({
             email: createUserPayload.email,
           })
-          .lean()) as IUser;
+          .lean()
 
-        expect(oldRefreshTokenUser.refreshToken).not.toBe(
-          updateRefreshTokenUser.refreshToken,
-        );
+        expect(oldRefreshTokenUser.refreshToken).toBeDefined();
+        expect(updateRefreshTokenUser?.refreshToken).toBeDefined();
+        expect(oldRefreshTokenUser.refreshToken).not.toBe(updateRefreshTokenUser?.refreshToken)
       });
     })
-
   });
 });
