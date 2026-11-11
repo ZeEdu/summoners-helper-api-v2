@@ -9,6 +9,7 @@ interface ResponseError {
   error: string,
   statusCode: 400
 }
+
 function isResponseError(response: any): response is ResponseError {
   const hasMessageProperty = Object.hasOwn(response, 'message')
   const hasErrorProperty = Object.hasOwn(response, 'error')
@@ -46,7 +47,7 @@ describe('zod validation pipe', () => {
       const createUser: Partial<CreateUserDto> = {
         email: faker.internet.userName(),
         username: faker.internet.userName(),
-        password: faker.internet.password({ prefix: '1!Ab' }),
+        password: faker.internet.password({ prefix: '1Ab' }),
       };
 
       I18nContext.create(i18nContext, () => {
@@ -77,7 +78,7 @@ describe('zod validation pipe', () => {
         const createUser: Partial<CreateUserDto & { username: any }> = {
           email: faker.internet.email(),
           username: 123123,
-          password: faker.internet.password({ prefix: '1!Ab' }),
+          password: faker.internet.password({ prefix: '1Ab' }),
         };
 
         I18nContext.create(i18nContext, () => {
@@ -107,7 +108,7 @@ describe('zod validation pipe', () => {
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.string.alpha({ length: { min: 3, max: 5 } }),
-          password: faker.internet.password({ prefix: '1!Ab' }),
+          password: faker.internet.password({ prefix: '1Ab' }),
         };
 
         I18nContext.create(i18nContext, () => {
@@ -137,7 +138,7 @@ describe('zod validation pipe', () => {
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.string.alpha({ length: { min: 65, max: 65 } }),
-          password: faker.internet.password({ prefix: '1!Ab' }),
+          password: faker.internet.password({ prefix: '1Ab' }),
         };
 
         I18nContext.create(i18nContext, () => {
@@ -168,7 +169,7 @@ describe('zod validation pipe', () => {
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.internet.userName(),
-          password: faker.internet.password({ length: 12 }),
+          password: 'a'.repeat(128),
         };
 
         I18nContext.create(i18nContext, () => {
@@ -210,8 +211,6 @@ describe('zod validation pipe', () => {
             validationPipe.transform(createUser);
             fail('Expected BadRequestException to be thrown');
           } catch (error) {
-            console.log({ error });
-
             expect(error).toBeInstanceOf(BadRequestException);
             exception = error as BadRequestException;
           }

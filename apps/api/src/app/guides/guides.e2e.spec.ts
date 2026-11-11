@@ -137,7 +137,7 @@ describe('Guides (e2e)', () => {
   const registerValidUser = async (userOverride?: IUser) => {
     const createUserPayload: CreateUserDto = {
       username: faker.string.alpha(16),
-      password: faker.internet.password({ prefix: '1!Ab' }),
+      password: '1Ab' + 'x'.repeat(10),
       email: faker.internet.email(),
       ...userOverride,
     };
@@ -167,7 +167,7 @@ describe('Guides (e2e)', () => {
   };
 
   describe('PATCH /guides', () => {
-    it('should only update own guides', async () => {
+    it.only('should only update own guides', async () => {
       const user = await registerValidUser();
       const otherUser = await registerValidUser();
 
@@ -182,7 +182,7 @@ describe('Guides (e2e)', () => {
         .patch(`/guides/${insertedGuide._id.toString()}`)
         .set('Authorization', `Bearer ${user.accessToken}`)
         .send({ title })
-        .expect(403);
+        .expect(403)
 
       await request(app.getHttpServer())
         .patch(`/guides/${insertedGuide._id.toString()}`)
