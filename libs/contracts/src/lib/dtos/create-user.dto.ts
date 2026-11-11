@@ -1,7 +1,7 @@
 import z from 'zod';
 import { ICreateUserDto } from '../types';
 
-const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]+$/;
+export const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/;
 
 export const createUserSchema = z.object({
   email: z
@@ -11,12 +11,12 @@ export const createUserSchema = z.object({
   username: z
     .string()
     .min(6)
-    .max(32),
+    .max(64),
 
   password: z
     .string()
     .min(8)
-    .max(64)
+    .max(128)
     .regex(passwordPattern)
 
 }) satisfies z.ZodType<ICreateUserDto>;
