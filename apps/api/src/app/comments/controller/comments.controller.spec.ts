@@ -9,10 +9,8 @@ import { CommentLike, CommentLikeSchema } from '../schema/like.schema';
 import { CommentsService } from '../service/comments.service';
 import { CommentsController } from './comments.controller';
 
-
 describe('CommentsController', () => {
   let controller: CommentsController;
-
   let mongodb: MongoMemoryServer;
 
   beforeAll(async () => {

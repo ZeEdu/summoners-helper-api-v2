@@ -8,8 +8,9 @@ import { JwtGuard } from '../../guards/jwt.guard';
 import { GuidesService } from '../../guides/service/guides.service';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import CommentsFilters from '../comments.filters';
-import { HasLikedCommentGuard } from '../guards/has-liked-comment.guard';
-import { HasNotLikedCommentGuard } from '../guards/has-not-liked-comment.guard';
+import { HasLikedCommentGuard } from '../guards/has-liked-comment/has-liked-comment.guard';
+import { HasNotLikedCommentGuard } from '../guards/has-not-liked-comment/has-not-liked-comment.guard';
+import { IsCreatorOrAdmin } from '../guards/is-creator-or-admin/is-creator-or-admin.guard';
 import { CommentsService } from '../service/comments.service';
 
 @Controller('comments')
@@ -105,6 +106,7 @@ export class CommentsController {
 
   // Must creator or admin
   @Delete(':commentId')
+  @UseGuards(IsCreatorOrAdmin)
   async remove(
     @Param('commentId')
     commentId: string
