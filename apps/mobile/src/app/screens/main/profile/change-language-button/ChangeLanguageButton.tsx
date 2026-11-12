@@ -13,7 +13,11 @@ import useI18n from "../../../../../contexts/i18n/useI18n"
 
 type FormDto = { language: SupportedLanguages }
 
-export default function ChangeLanguageButton() {
+type Props = {
+  showCurrentLanguageAsButtonText?: boolean
+}
+
+export default function ChangeLanguageButton({ showCurrentLanguageAsButtonText }: Props) {
   const i18n = useI18n()
   const dataDragon = useDataDragon()
 
@@ -55,24 +59,25 @@ export default function ChangeLanguageButton() {
 
   const languageList = [
     {
-      label: 'Português',
+      label: I18N_CONSTANTS.SUPPORTED_LANGUAGES_LABELS.pt,
       value: I18N_CONSTANTS.SUPPORTED_LANGUAGES.pt
     },
     {
-      label: 'English',
+      label: I18N_CONSTANTS.SUPPORTED_LANGUAGES_LABELS.en,
       value: I18N_CONSTANTS.SUPPORTED_LANGUAGES.en
     }
   ]
 
+  const languageLabels = i18n.locale && I18N_CONSTANTS.SUPPORTED_LANGUAGES_LABELS[i18n.locale]
+
   return (
     <>
       <Button mode='contained' onPress={presentBottomSheet}>
-        {i18n.t('changeLanguage.anchor')}
+        {showCurrentLanguageAsButtonText ? languageLabels : i18n.t('changeLanguage.anchor')}
       </Button>
       <BottomSheetModal
         ref={bottomSheetModalRef}
         backgroundStyle={styles.background}
-        handleStyle={styles.handle}
       >
         <BottomSheetView>
           <View style={styles.container}>
@@ -111,9 +116,6 @@ const makeStyles = ({ colors }: MD3Theme) => {
     },
     background: {
       backgroundColor: colors.secondaryContainer
-    },
-    handle: {
-      backgroundColor: colors.onSecondaryContainer
     }
   })
 }

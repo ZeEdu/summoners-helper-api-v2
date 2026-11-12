@@ -56,9 +56,7 @@ const formSchema = z.object({
   observation: z.string().min(3),
 }).refine(
   (value) => !!(value.comment || value.guide),
-  {
-    error: VALIDATION_ERROR_KEYS.reportTargetRequired
-  }
+  { params: { validation: VALIDATION_ERROR_KEYS.reportTargetRequired } }
 )
 
 type FormDto = z.infer<typeof formSchema>

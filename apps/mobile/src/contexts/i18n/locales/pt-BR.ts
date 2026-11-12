@@ -1,3 +1,27 @@
+const validation = {
+  enum: "Selecione uma opção válida.",
+  reportTargetRequired: "A denúncia deve estar associada a um comentário ou a um guia.",
+  passwordPattern: "A senha deve ter ao menos uma letra maiúscula e minúscula.",
+  objectId: "Informe um identificador válido.",
+  type: "Tipo de dado inválido.",
+  string: {
+    min: "Informe pelo menos {{minimum}} caracteres.",
+    max: "Informe no máximo {{maximum}} caracteres.",
+  },
+  number: {
+    min: "O valor deve ser maior ou igual a {{minimum}}.",
+    max: "O valor deve ser menor ou igual a {{maximum}}.",
+  },
+  array: {
+    min: "Selecione pelo menos {{minimum}} itens.",
+    max: "Selecione no máximo {{maximum}} itens.",
+  },
+  email: "Informe um endereço de e-mail válido.",
+  regex: "O valor não corresponde ao formato exigido.",
+  format: "O formato informado é inválido.",
+  default: "O valor informado é inválido."
+}
+
 const profile = {
   header: {
     text: 'Perfil do Summoner\'s Helper'
@@ -648,7 +672,8 @@ const ptBR = {
   progressionContent,
   heroBanner,
   difficulty,
-  runesContent
+  runesContent,
+  validation
 }
 
 export default ptBR

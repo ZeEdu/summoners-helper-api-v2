@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Alert, StyleSheet, View } from 'react-native';
@@ -7,18 +6,21 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { CreateUserDto, createUserSchema } from '@org/contracts';
 import { StyledButton } from '@org/ui';
 
+import { useNavigation } from '@react-navigation/native';
 import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
 import AppInputController from '../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
 import { useAuthContext } from '../../../../contexts/auth/useAuth';
 import useI18n from '../../../../contexts/i18n/useI18n';
-
-const resolver = zodResolver(createUserSchema);
+import useZodResolver from '../../../../hooks/useZodResolver';
+import ChangeLanguageButton from '../../main/profile/change-language-button/ChangeLanguageButton';
 
 export default function Register() {
-  const i18n = useI18n();
-  const authContext = useAuthContext();
+  const i18n = useI18n()
+  const authContext = useAuthContext()
+  const navigation = useNavigation()
 
+  const resolver = useZodResolver(createUserSchema)
   const {
     control,
     handleSubmit,
@@ -28,7 +30,7 @@ export default function Register() {
     defaultValues: {
       email: faker.internet.email(),
       username: faker.string.alpha(16),
-      password: faker.internet.password({ prefix: '1!Ab' }),
+      password: '1Ab' + 'x'.repeat(5),
     },
   });
 
@@ -36,6 +38,13 @@ export default function Register() {
   const [apiErrors, setApiErrors] = useState<ApiErrorsType | undefined>(
     undefined,
   );
+
+  navigation.setOptions({
+    headerRight: () => (
+      <View style={{ padding: 16 }}>
+        <ChangeLanguageButton showCurrentLanguageAsButtonText={true} />
+      </View>)
+  })
 
   const onSubmit = async (formData: CreateUserDto) => {
     console.log({ formData });

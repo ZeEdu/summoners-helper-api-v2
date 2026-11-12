@@ -1,3 +1,27 @@
+const validation = {
+  enum: "Please select a valid option.",
+  reportTargetRequired: "The report must be associated with either a comment or a guide.",
+  passwordPattern: "The password does not meet the security requirements.",
+  objectId: "Please provide a valid identifier.",
+  type: "Invalid data type.",
+  string: {
+    min: "Please enter at least {minimum} characters.",
+    max: "Please enter no more than {maximum} characters.",
+  },
+  number: {
+    min: "The value must be greater than or equal to {minimum}.",
+    max: "The value must be less than or equal to {maximum}.",
+  },
+  array: {
+    min: "Please select at least {minimum} items.",
+    max: "Please select no more than {maximum} items.",
+  },
+  email: "Please enter a valid email address.",
+  regex: "The value does not match the required pattern.",
+  format: "The provided format is invalid.",
+  default: "The provided value is invalid."
+}
+
 const profile = {
   header: {
     text: 'Summoner\'s Helper Profile'
@@ -650,7 +674,8 @@ const enUS = {
   progressionContent,
   heroBanner,
   difficulty,
-  runesContent
+  runesContent,
+  validation
 }
 
 export default enUS
