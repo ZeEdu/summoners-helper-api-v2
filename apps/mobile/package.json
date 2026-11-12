@@ -54,7 +54,8 @@
     "react-native-gesture-handler": "*",
     "react-native-reanimated-skeleton": "*",
     "react-native-paper-dates": "*",
-    "expo-localization": "*"
+    "expo-localization": "*",
+    "i18n-js": "*"
   },
   "devDependencies": {}
 }
