@@ -15,7 +15,7 @@ import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n.generated';
 import { Public } from '../../decorators/public.decorator';
 import { CurrentUser } from '../../decorators/user.decorator';
-import { IsAdminGuard } from '../../guards/is-admin.guard';
+import { IsAdminGuard } from '../../guards/is-admin/is-admin.guard';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { LocalGuard } from '../../guards/local.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
