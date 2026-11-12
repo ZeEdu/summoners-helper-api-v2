@@ -1,10 +1,11 @@
-import { FlatList, View } from "react-native"
+import { FlatList, StyleSheet, View } from "react-native"
 import { Divider, List, Text } from "react-native-paper"
 
 import { IUser } from "@org/contracts"
 
-import Error from "../../Error"
-import LoadingIndicator from "../../LoadingIndicator"
+import useI18n from "../../../../contexts/i18n/useI18n"
+import Error from "../../../Error"
+import LoadingIndicator from "../../../LoadingIndicator"
 
 export default function DisplayUserList({
   users,
@@ -19,9 +20,11 @@ export default function DisplayUserList({
   isSearchResult: boolean,
   onChange: (...event: any[]) => void
 }) {
+  const i18n = useI18n()
+
   if (loading) {
     return (
-      <View style={{ height: 240, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={style.container}>
         <LoadingIndicator />
       </View>
     )
@@ -29,7 +32,7 @@ export default function DisplayUserList({
 
   if (error) {
     return (
-      <View style={{ height: 240, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={style.container}>
         <Error />
       </View>
     )
@@ -38,9 +41,9 @@ export default function DisplayUserList({
   return (
     <FlatList
       ListEmptyComponent={() => {
-        const message = isSearchResult ? 'Nenhum usuário encontrado' : 'Busque por um usuário'
+        const message = isSearchResult ? i18n.t('displayUserList.notFound') : i18n.t('displayUserList.idle')
         return (
-          <View style={{ height: 240, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={style.container}>
             <Text>{message}</Text>
           </View>
         )
@@ -60,3 +63,11 @@ export default function DisplayUserList({
     />
   )
 }
+
+const style = StyleSheet.create({
+  container: {
+    height: 240,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+})

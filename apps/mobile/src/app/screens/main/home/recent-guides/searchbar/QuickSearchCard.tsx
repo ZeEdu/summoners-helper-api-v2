@@ -1,4 +1,4 @@
-import { Image } from "react-native"
+import { Image, StyleSheet } from "react-native"
 import { Card } from "react-native-paper"
 
 import { GuideDto } from "@org/contracts"
@@ -13,6 +13,7 @@ type QuickSearchCardProps = {
 
 export default function QuickSearchCard({ guide, navigateToGuide }: QuickSearchCardProps) {
   const usePatch = usePatchVersion()
+  const uri = DataDragonService.championThumbnail(guide.champion, usePatch.version)
 
   return (
     <Card onPress={() => {
@@ -23,10 +24,17 @@ export default function QuickSearchCard({ guide, navigateToGuide }: QuickSearchC
         subtitle={guide.introduction}
         left={() => (
           <Image
-            style={{ width: 48, height: 48 }}
-            source={{ uri: DataDragonService.championThumbnail(guide.champion, usePatch.version) }}
+            style={style.imageDimension}
+            source={{ uri }}
           />)}
       />
     </Card>
   )
 }
+
+const style = StyleSheet.create({
+  imageDimension: {
+    width: 48,
+    height: 48
+  }
+})

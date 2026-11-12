@@ -15,6 +15,7 @@ import { StyledView } from '@org/ui';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { Stepper, StepperItem } from '../../../../components/stepper';
 import { StepperProvider } from '../../../../components/stepper/context';
+import useI18n from '../../../../contexts/i18n/useI18n';
 import { ApiService } from '../../../../services/api/api.service';
 import GuideAbilitiesProgressionForm from './forms/AbilitiesProgressionForm';
 import BonusForm from './forms/BonusForm';
@@ -47,6 +48,7 @@ export default function CreateGuide({ route }: Props) {
   const [error, setError] = useState('');
 
   const navigation = useNavigation()
+  const i18n = useI18n()
 
   const defaultValues = route.params.guide ?? {}
 
@@ -65,8 +67,8 @@ export default function CreateGuide({ route }: Props) {
     const guideId = route.params.guide?.id
 
     createRequest(value, guideId)
-      .catch((err) => {
-        setError('Salvamento falhou. Tente novamente.');
+      .catch(() => {
+        setError(i18n.t('createGuide.error'));
       })
       .finally(() => {
         setLoading(false);
@@ -88,78 +90,12 @@ export default function CreateGuide({ route }: Props) {
 
   const setValuesOnForm = () => {
     methods.setValues(
-      {
-        "title": "Segundo",
-        "introduction": "asdasd",
-        "champion": "Aatrox",
-        "role": "TOP_LANE",
-        "bonusSlotOne": "ADAPTIVE",
-        "bonusSlotTwo": "ADAPTIVE",
-        "bonusSlotThree": "BASE_HEALTH",
-        "bonusDescription": "asdasd",
-        "primaryRune": "8100",
-        "primarySlots": {
-          "first": "8112",
-          "second": "8126",
-          "third": "8137",
-          "fourth": "8105"
-        },
-        "primaryRuneDescription": "asdasdasd",
-        "secondaryRune": "8300",
-        "secondarySlots": {
-          "first": "8304",
-          "second": "8306",
-          "third": "8321"
-        },
-        "secondaryRuneDescription": "asdasdasd",
-        "firstSpell": "SummonerBarrier",
-        "secondSpell": "SummonerBoost",
-        "spellsDescription": "asdasda",
-        "items": [
-          {
-            "rowName": "asdasdasdasd",
-            "itemsList": [
-              {
-                "itemId": "1001"
-              }
-            ],
-            "description": "adasdasd"
-          }
-        ],
-        "itemsDescription": "asdasdasd",
-        "abilitiesProgression": {
-          "l1": AbilityOption.A,
-          "l2": AbilityOption.A,
-          "l3": AbilityOption.A,
-          "l4": AbilityOption.A,
-          "l5": AbilityOption.A,
-          "l6": AbilityOption.A,
-          "l7": AbilityOption.A,
-          "l8": AbilityOption.A,
-          "l9": AbilityOption.A,
-          "l10": AbilityOption.A,
-          "l11": AbilityOption.A,
-          "l12": AbilityOption.A,
-          "l13": AbilityOption.A,
-          "l14": AbilityOption.A,
-          "l15": AbilityOption.A,
-          "l16": AbilityOption.A,
-          "l17": AbilityOption.A,
-          "l18": AbilityOption.A,
-        },
-        "abilitiesProgressionDescription": "asdasdas",
-        "threatsDescription": "asdasdasd",
-        "threats": [
-          {
-            "threat": "Akali",
-            "description": "asdasdasd"
-          }
-        ]
-      },
+      DEFAULT_VALUES,
       { shouldValidate: true },
     );
   };
 
+  // TODO: Criar uma forma de diferenciar o ambiente em que está rodando o projeto
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -176,7 +112,7 @@ export default function CreateGuide({ route }: Props) {
             style={style.headerButton}
             onPress={methods.handleSubmit(onSubmit)}
           >
-            {loading ? 'Salvando...' : 'Salvar'}
+            {loading ? i18n.t('createGuide.saveButton.loading') : i18n.t('createGuide.saveButton.text')}
           </Button>
         </>
       ),
@@ -185,38 +121,38 @@ export default function CreateGuide({ route }: Props) {
 
   return (
     <>
-      <StyledView style={{ ...style.container, height: height }}>
+      <StyledView style={{ ...style.container, height }}>
         {
           <FormProvider {...methods}>
             <StepperProvider>
               <Stepper>
-                <StepperItem title="Introdução">
+                <StepperItem title={i18n.t('createGuide.steppers.intro')}>
                   <GuideIntroductionForm />
                 </StepperItem>
-                <StepperItem title="Magias">
+                <StepperItem title={i18n.t('createGuide.steppers.spells')}>
                   <GuideSummonerSpellsForm />
                 </StepperItem>
-                <StepperItem title="Runas Principais">
+                <StepperItem title={i18n.t('createGuide.steppers.primaryRunes')}>
                   <GuideMainRunesForm secondaryRune={secondaryRune} />
                 </StepperItem>
-                <StepperItem title="Runas Secondárias">
+                <StepperItem title={i18n.t('createGuide.steppers.secondaryRunes')}>
                   <GuideSecondaryRunesForm />
                 </StepperItem>
-                <StepperItem title="Bonus">
+                <StepperItem title={i18n.t('createGuide.steppers.bonus')}>
                   <BonusForm />
                 </StepperItem>
-                <StepperItem title="Itens">
+                <StepperItem title={i18n.t('createGuide.steppers.items')}>
                   <ItemSelectionProvider>
                     <ItemsForm />
                   </ItemSelectionProvider>
                 </StepperItem>
-                <StepperItem title="Progressão de Habilidades">
+                <StepperItem title={i18n.t('createGuide.steppers.progression')}>
                   <GuideAbilitiesProgressionForm champion={watchChampion} />
                 </StepperItem>
-                <StepperItem title="Ameaças">
+                <StepperItem title={i18n.t('createGuide.steppers.threats')}>
                   <ThreatsForm />
                 </StepperItem>
-                <StepperItem title="Revisão">
+                <StepperItem title={i18n.t('createGuide.steppers.review')}>
                   <ReviewGuide handleConfirm={methods.handleSubmit(onSubmit)} />
                 </StepperItem>
               </Stepper>
@@ -232,16 +168,15 @@ export default function CreateGuide({ route }: Props) {
             if (!error) {
               navigation.goBack();
             }
-
           }}
           action={{
-            label: 'Fechar',
+            label: i18n.t('createGuide.snack.close'),
             onPress: () => {
               setShowSnack(false);
             },
           }}
         >
-          {error ? error : 'Salvo com sucesso!'}
+          {error || i18n.t('createGuide.snack.success')}
         </Snackbar>
       </Portal>
     </>
@@ -257,3 +192,72 @@ export const style = StyleSheet.create({
     flex: 1,
   }
 });
+
+const DEFAULT_VALUES = {
+  "title": "Segundo",
+  "introduction": "asdasd",
+  "champion": "Aatrox",
+  "role": "TOP_LANE",
+  "bonusSlotOne": "HealthPlus",
+  "bonusSlotTwo": "MovementSpeed",
+  "bonusSlotThree": "HealthPlus",
+  "bonusDescription": "asdasd",
+  "primaryRune": "8100",
+  "primarySlots": {
+    "first": "8112",
+    "second": "8126",
+    "third": "8137",
+    "fourth": "8105"
+  },
+  "primaryRuneDescription": "asdasdasd",
+  "secondaryRune": "8300",
+  "secondarySlots": {
+    "first": "8304",
+    "second": "8306",
+    "third": "8321"
+  },
+  "secondaryRuneDescription": "asdasdasd",
+  "firstSpell": "SummonerBarrier",
+  "secondSpell": "SummonerBoost",
+  "spellsDescription": "asdasda",
+  "items": [
+    {
+      "rowName": "asdasdasdasd",
+      "itemsList": [
+        {
+          "itemId": "1001"
+        }
+      ],
+      "description": "adasdasd"
+    }
+  ],
+  "itemsDescription": "asdasdasd",
+  "abilitiesProgression": {
+    "l1": AbilityOption.A,
+    "l2": AbilityOption.A,
+    "l3": AbilityOption.A,
+    "l4": AbilityOption.A,
+    "l5": AbilityOption.A,
+    "l6": AbilityOption.A,
+    "l7": AbilityOption.A,
+    "l8": AbilityOption.A,
+    "l9": AbilityOption.A,
+    "l10": AbilityOption.A,
+    "l11": AbilityOption.A,
+    "l12": AbilityOption.A,
+    "l13": AbilityOption.A,
+    "l14": AbilityOption.A,
+    "l15": AbilityOption.A,
+    "l16": AbilityOption.A,
+    "l17": AbilityOption.A,
+    "l18": AbilityOption.A,
+  },
+  "abilitiesProgressionDescription": "asdasdas",
+  "threatsDescription": "asdasdasd",
+  "threats": [
+    {
+      "threat": "Akali",
+      "description": "asdasdasd"
+    }
+  ]
+}

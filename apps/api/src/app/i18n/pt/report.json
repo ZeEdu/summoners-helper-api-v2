@@ -1,0 +1,9 @@
+{
+  "errors": {
+    "notFound": "Denuncia não foi encontrada",
+    "already": {
+      "archived": "Denuncia já se encontra arquivada",
+      "dismissed": "Denuncia já se encontra arquivada"
+    }
+  }
+}

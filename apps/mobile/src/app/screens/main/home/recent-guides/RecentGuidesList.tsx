@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Button, MD3Theme, useTheme } from "react-native-paper";
 
@@ -9,12 +9,15 @@ import FadeInView from "../../../../../components/animated/FadeInView";
 import Error from "../../../../../components/Error";
 import GuideCard from "../../../../../components/GuideCard";
 import LoadingIndicator from "../../../../../components/LoadingIndicator";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 import { ApiService } from "../../../../../services/api/api.service";
+
 
 export default function RecentGuidesList() {
   const theme = useTheme()
   const styles = makeStyle(theme)
   const navigation = useNavigation()
+  const i18n = useI18n()
 
   const [guides, setGuides] = useState<GuideDto[]>([])
   const [loading, setLoading] = useState(false)
@@ -41,7 +44,7 @@ export default function RecentGuidesList() {
           });
         })
         .catch(() => {
-          setError('Erro ao buscar builds');
+          setError(i18n.t('recentGuidesList.error'));
         })
         .finally(() => {
           setLoading(false);
@@ -70,11 +73,12 @@ export default function RecentGuidesList() {
         {
           loading && <LoadingIndicator />
         }
+
         {
           Boolean(error) ? (
             <Error>
               <Button onPress={reload}>
-                Ops! Um erro ocorreu... Clique para tentar novamente!
+                {i18n.t('recentGuidesList.reload')}
               </Button>
             </Error>
           ) : null
@@ -86,11 +90,13 @@ export default function RecentGuidesList() {
               <FlatList
                 contentContainerStyle={styles.flatListContainer}
                 data={guides}
-                ListFooterComponent={() => (<View>
-                  <Button onPress={loadMore}>
-                    Carregar mais
-                  </Button>
-                </View>)}
+                ListFooterComponent={() => (
+                  <View>
+                    <Button onPress={loadMore}>
+                      {i18n.t('recentGuidesList.loadMore')}
+                    </Button>
+                  </View>
+                )}
                 renderItem={({ item: guide }) => (
                   <GuideCard
                     onPress={() => {

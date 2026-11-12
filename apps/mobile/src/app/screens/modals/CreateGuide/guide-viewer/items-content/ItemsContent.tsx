@@ -28,7 +28,6 @@ export default function ItemsContent({ items }: Props) {
         }}
       />
     </View>
-
   );
 }
 

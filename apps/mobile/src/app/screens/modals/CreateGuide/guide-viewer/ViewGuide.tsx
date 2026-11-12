@@ -11,10 +11,11 @@ import { MainRuneDto } from '../forms/MainRunesForm';
 import { SecondaryRuneDto } from '../forms/SecondaryRunesForm';
 import { ThreatsDto } from '../forms/ThreatsForm';
 
-import { GuideDto } from '@org/contracts';
+import { GuideDto, ISerializedComment } from '@org/contracts';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import CommentSection from '../../../../../components/comment-section/CommentSection';
 import { useAuthContext } from '../../../../../contexts/auth/useAuth';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 import AbilitiesProgressionContent from './abilities-progression-content/AbilitiesProgressionContent';
 import BonusContent from './bonus-content/BonusContent';
 import ExpandableCard from './expandable-card/ExpandableCard';
@@ -29,6 +30,7 @@ type Props = StaticScreenProps<{
 }>;
 
 export default function ViewGuide({ route }: Props) {
+  const i18n = useI18n();
   const { user } = useAuthContext();
   const { guide } = route.params;
 
@@ -105,9 +107,13 @@ export default function ViewGuide({ route }: Props) {
         closeMenu();
         navigation.navigate('Report', { guide });
       },
-      title: 'Denunciar guia',
+      title: i18n.t('viewGuide.reportGuide'),
       id: 'report-guide',
     });
+  }
+
+  const reportComment = (comment: ISerializedComment) => {
+    navigation.navigate('Report', { comment })
   }
 
   useEffect(() => {
@@ -137,9 +143,9 @@ export default function ViewGuide({ route }: Props) {
   return (
     <StyledView style={{ height, flex: 1 }}>
       <ScrollView>
-        <HeroBanner championId={guide.champion} role={guide.role} />
+        <HeroBanner championId={guide.champion} role={guide.role} patchVersion={guide.patchVersion} />
         <ExpandableCard
-          title="Introdução"
+          title={i18n.t('viewGuide.titles.intro')}
           titleIcon="text-box-outline"
         >
           <Text
@@ -150,7 +156,7 @@ export default function ViewGuide({ route }: Props) {
         </ExpandableCard>
 
         <ExpandableCard
-          title="Magias"
+          title={i18n.t('viewGuide.titles.spells')}
           titleIcon="creation"
         >
           <SpellContent
@@ -159,7 +165,7 @@ export default function ViewGuide({ route }: Props) {
         </ExpandableCard>
 
         <ExpandableCard
-          title={'Runas'}
+          title={i18n.t('viewGuide.titles.runes')}
           titleIcon={'hexagram-outline'}
         >
           <RuneContent
@@ -171,7 +177,7 @@ export default function ViewGuide({ route }: Props) {
         </ExpandableCard>
 
         <ExpandableCard
-          title={'Bonus'}
+          title={i18n.t('viewGuide.titles.bonus')}
           titleIcon={'shield-cross'}
         >
           <BonusContent
@@ -180,7 +186,7 @@ export default function ViewGuide({ route }: Props) {
         </ExpandableCard>
 
         <ExpandableCard
-          title={'Itens'}
+          title={i18n.t('viewGuide.titles.items')}
           titleIcon={'shopping'}
         >
           <ItemsContent
@@ -189,7 +195,7 @@ export default function ViewGuide({ route }: Props) {
         </ExpandableCard>
 
         <ExpandableCard
-          title={'Progressão de Abilidades'}
+          title={i18n.t('viewGuide.titles.progression')}
           titleIcon={'chart-timeline-variant'}
         >
           <AbilitiesProgressionContent
@@ -199,7 +205,7 @@ export default function ViewGuide({ route }: Props) {
         </ExpandableCard>
 
         <ExpandableCard
-          title={'Ameaças'}
+          title={i18n.t('viewGuide.titles.threats')}
           titleIcon={'alert-outline'}
         >
           <ThreatsContent
@@ -208,10 +214,11 @@ export default function ViewGuide({ route }: Props) {
         </ExpandableCard>
 
         <ExpandableCard
-          title={'Comentários'}
+          title={i18n.t('viewGuide.titles.comments')}
           titleIcon='comment-multiple-outline'
         >
           <CommentSection
+            reportComment={reportComment}
             guideId={guide.id}
           />
         </ExpandableCard>

@@ -117,9 +117,7 @@ export const GuideSchemaShape = z.object({
 
   // Abilities Progression
   abilitiesProgression: abilitiesProgressionSchema,
-  abilitiesProgressionDescription: z.string({
-    error: 'formato do campo é inválido',
-  }),
+  abilitiesProgressionDescription: z.string(),
 
   threatsDescription: z
     .string()

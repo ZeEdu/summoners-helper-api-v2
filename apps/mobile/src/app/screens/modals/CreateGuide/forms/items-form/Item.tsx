@@ -10,6 +10,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 
+import useI18n from '../../../../../../contexts/i18n/useI18n';
 import { usePatchVersion } from '../../../../../../contexts/patchVersion/usePatchVersion';
 
 type ItemProps = {
@@ -19,6 +20,7 @@ type ItemProps = {
 };
 
 export default function ArrayItem({ itemId, index, removeItem }: ItemProps) {
+  const i18n = useI18n();
   const theme = useTheme();
   const styles = makeStyles(theme);
 
@@ -44,13 +46,13 @@ export default function ArrayItem({ itemId, index, removeItem }: ItemProps) {
 
       <Portal>
         <Dialog visible={visible} onDismiss={() => setVisible(false)}>
-          <Dialog.Title>Tem certeza?</Dialog.Title>
+          <Dialog.Title>{i18n.t('itemDialog.title')}</Dialog.Title>
           <Dialog.Content>
-            <Text variant="bodyMedium">O item será removido da lista</Text>
+            <Text variant="bodyMedium">{i18n.t('itemDialog.content')}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setVisible(false)}>Cancelar</Button>
-            <Button onPress={() => removeItem(index)}>Tenho certeza</Button>
+            <Button onPress={() => setVisible(false)}>{i18n.t('itemDialog.cancel')}</Button>
+            <Button onPress={() => removeItem(index)}>{i18n.t('itemDialog.remove')}</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

@@ -1,6 +1,6 @@
+import { FlatList, StyleSheet } from 'react-native';
+import { Card, MD3Theme, Text, useTheme } from 'react-native-paper';
 import ListItem from '../list-item/ListItem';
-import { Card, Text, useTheme } from 'react-native-paper';
-import { FlatList } from 'react-native';
 
 type ItemsSectionProps = {
   rowName: string;
@@ -15,16 +15,17 @@ export default function ItemSection({
   itemsList,
   description,
 }: ItemsSectionProps) {
-  const theme = useTheme();
+  const styles = makeStyles(useTheme())
+
   return (
-    <Card style={{ backgroundColor: theme.colors.surfaceVariant }}>
+    <Card style={styles.card}>
       <Card.Title
         title={rowName}
         titleVariant={'titleMedium'}
-        titleStyle={{ color: theme.colors.primary }}
+        titleStyle={styles.title}
       />
       <Card.Content>
-        <Text variant={'bodySmall'} style={{ marginBottom: 8 }}>
+        <Text variant={'bodySmall'} style={styles.description}>
           {description}
         </Text>
         <FlatList
@@ -35,4 +36,18 @@ export default function ItemSection({
       </Card.Content>
     </Card>
   );
+}
+
+const makeStyles = ({ colors }: MD3Theme) => {
+  return StyleSheet.create({
+    card: {
+      backgroundColor: colors.surfaceVariant
+    },
+    title: {
+      color: colors.primary
+    },
+    description: {
+      marginBottom: 8
+    }
+  })
 }

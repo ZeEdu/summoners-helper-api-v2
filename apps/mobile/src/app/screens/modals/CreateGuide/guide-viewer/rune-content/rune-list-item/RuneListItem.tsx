@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   Divider,
   Icon,
@@ -8,10 +9,9 @@ import {
   Text,
   useTheme,
 } from 'react-native-paper';
-import useDataDragonContext from '../../../../../../../contexts/data-dragon/useDataDragonContext';
-import utils from '../../../../../../../utils/utils';
 import FadeInView from '../../../../../../../components/animated/FadeInView';
-import { StyleSheet } from 'react-native';
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext';
+import utils from '../../../../../../../utils/utils';
 
 type Props = {
   runeId: string;
@@ -22,7 +22,7 @@ type Props = {
 export default function RuneListItem({ runeId, title, divider = true }: Props) {
   const [expanded, setExpanded] = useState(false);
   const theme = useTheme();
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
 
   const getBaseURI = (endpoint: string) => {
     return `https://ddragon.leagueoflegends.com/cdn/img/${endpoint}`;

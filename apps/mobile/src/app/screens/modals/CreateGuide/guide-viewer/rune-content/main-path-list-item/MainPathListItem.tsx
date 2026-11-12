@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import {
   Divider,
@@ -7,9 +8,8 @@ import {
   Text,
   useTheme,
 } from 'react-native-paper';
-import useDataDragonContext from '../../../../../../../contexts/data-dragon/useDataDragonContext';
-import { useState } from 'react';
 import FadeInView from '../../../../../../../components/animated/FadeInView';
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext';
 
 type Props = {
   title: string;
@@ -24,7 +24,7 @@ export default function RunePathListItem({
   description,
   divider = true,
 }: Props) {
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const theme = useTheme();
 
   const [expanded, setExpanded] = useState(false);

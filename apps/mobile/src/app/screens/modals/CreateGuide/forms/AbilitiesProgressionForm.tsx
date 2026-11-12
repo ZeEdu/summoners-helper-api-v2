@@ -15,10 +15,10 @@ import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter, {
-  buildCustomButtonProps,
-} from '../../../../../components/stepper/StepperFooter';
+import StepperFooter from '../../../../../components/stepper/StepperFooter';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 import { usePatchVersion } from '../../../../../contexts/patchVersion/usePatchVersion';
 import useChampionData from '../../../../../hooks/useChampion';
 import Error from '../../../feedback/Error';
@@ -60,9 +60,10 @@ export const indexToAbilityOption = {
 };
 
 const NoChampionSelected = () => {
+  const i18n = useI18n()
   return (
     <View>
-      <Text>Nenhum campeão selecionado</Text>
+      <Text>{i18n.t('progressionForm.noChampionData')}</Text>
     </View>
   );
 };
@@ -74,6 +75,7 @@ type Props = {
 export default function GuideAbilitiesProgressionForm({ champion }: Props) {
   const { championData, loading, error } = useChampionData(champion);
 
+  const i18n = useI18n()
   const theme = useTheme();
   const styles = makeStyles(theme);
 
@@ -131,7 +133,7 @@ export default function GuideAbilitiesProgressionForm({ champion }: Props) {
 
   const isSelected = (levelKey: LvlKey, index: number) => {
     const value = indexToAbilityOption[index as KeymapIndexType];
-    return getValues('abilitiesProgression')[levelKey] === value;
+    return getValues('abilitiesProgression')?.[levelKey] === value;
   };
 
   return (
@@ -141,8 +143,8 @@ export default function GuideAbilitiesProgressionForm({ champion }: Props) {
           control={control}
           name={'abilitiesProgressionDescription'}
           inputOptions={{
-            label: 'Progressão das abilidades',
-            placeholder: 'Descrição da Progressão das abilidades',
+            label: i18n.t('progressionForm.description.label'),
+            placeholder: i18n.t('progressionForm.description.placeholder'),
             multiline: true,
           }}
         />
@@ -209,6 +211,7 @@ export default function GuideAbilitiesProgressionForm({ champion }: Props) {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t
         })}
       />
     </View>

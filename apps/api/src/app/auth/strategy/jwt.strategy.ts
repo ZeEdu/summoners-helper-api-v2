@@ -6,6 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { UserDto } from '@org/contracts';
 
+import { I18nTranslations } from '../../../generated/i18n.generated';
 import { UsersService } from '../../users/service/users.service';
 
 interface JwtPayload {
@@ -20,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly configService: ConfigService,
     private usersService: UsersService,
-    private i18n: I18nService,
+    private i18n: I18nService<I18nTranslations>,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

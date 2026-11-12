@@ -9,11 +9,11 @@ import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter, {
-  buildCustomButtonProps,
-} from '../../../../../components/stepper/StepperFooter';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import StepperFooter from '../../../../../components/stepper/StepperFooter';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 
 export const secondaryRuneSchema = CreateGuideFormSchema.pick({
   secondaryRune: true,
@@ -26,7 +26,9 @@ export type SecondaryRuneDto = z.infer<typeof secondaryRuneSchema>;
 const resolver = zodResolver(secondaryRuneSchema);
 
 export default function GuideSecondaryRunesForm() {
-  const dataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
+  const i18n = useI18n()
+
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
 
@@ -125,9 +127,9 @@ export default function GuideSecondaryRunesForm() {
       <View style={styles.content}>
         <AppSelectController
           control={control}
-          title={'Caminho Principal'}
+          title={i18n.t('secondaryRuneForm.secondaryRune.title')}
           options={buildSecondaryRunePathOptions()}
-          placeholder={'Selecione um caminho'}
+          placeholder={i18n.t('secondaryRuneForm.secondaryRune.placeholder')}
           name={`secondaryRune`}
         />
         <FormFieldErrors fieldError={errors.secondaryRune} />
@@ -135,27 +137,27 @@ export default function GuideSecondaryRunesForm() {
           <>
             <AppSelectController
               control={control}
-              title={'Primeira Runa'}
+              title={i18n.t('secondaryRuneForm.first.title')}
               options={runeSlots && buildSecondaryRuneSlotsOptions('first')}
-              placeholder={'Selecione a primeira runa'}
+              placeholder={i18n.t('secondaryRuneForm.first.placeholder')}
               name={`secondarySlots.first`}
             />
             <FormFieldErrors fieldError={errors.secondarySlots?.first} />
 
             <AppSelectController
               control={control}
-              title={'Segunda Runa'}
+              title={i18n.t('secondaryRuneForm.second.title')}
               options={runeSlots && buildSecondaryRuneSlotsOptions('second')}
-              placeholder={'Selecione a segunda runa'}
+              placeholder={i18n.t('secondaryRuneForm.second.placeholder')}
               name={`secondarySlots.second`}
             />
             <FormFieldErrors fieldError={errors.secondarySlots?.second} />
 
             <AppSelectController
               control={control}
-              title={'Terceira Runa'}
+              title={i18n.t('secondaryRuneForm.third.title')}
               options={runeSlots && buildSecondaryRuneSlotsOptions('third')}
-              placeholder={'Selecione a terceira runa'}
+              placeholder={i18n.t('secondaryRuneForm.third.placeholder')}
               name={`secondarySlots.third`}
             />
             <FormFieldErrors fieldError={errors.secondarySlots?.third} />
@@ -164,8 +166,8 @@ export default function GuideSecondaryRunesForm() {
               control={control}
               name={'secondaryRuneDescription'}
               inputOptions={{
-                label: 'Descrição da runas',
-                placeholder: 'Descrição da runas',
+                label: i18n.t('secondaryRuneForm.description.label'),
+                placeholder: i18n.t('secondaryRuneForm.description.placeholder'),
                 multiline: true,
               }}
             />
@@ -176,6 +178,7 @@ export default function GuideSecondaryRunesForm() {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t
         })}
       />
     </View>

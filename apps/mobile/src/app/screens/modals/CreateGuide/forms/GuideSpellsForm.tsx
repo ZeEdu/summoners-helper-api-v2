@@ -8,11 +8,11 @@ import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
 import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter, {
-  buildCustomButtonProps,
-} from '../../../../../components/stepper/StepperFooter';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import StepperFooter from '../../../../../components/stepper/StepperFooter';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 
 const GuideSummonerSpellsSchema = CreateGuideFormSchema.pick({
   firstSpell: true,
@@ -33,7 +33,9 @@ export type GuideSummonerSpellsDto = z.infer<typeof GuideSummonerSpellsSchema>;
 const resolver = zodResolver(GuideSummonerSpellsSchema);
 
 export default function GuideSummonerSpellsForm() {
-  const dataDragon = useDataDragonContext();
+  const i18n = useI18n()
+
+  const dataDragon = useDataDragon();
   const spellsList = dataDragon.lists?.spells || [];
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();
@@ -85,18 +87,18 @@ export default function GuideSummonerSpellsForm() {
           <>
             <AppSelectController
               control={control}
-              title={'Selecione uma magia'}
+              title={i18n.t('spellsForm.firstSpell.title')}
               options={buildFirstSpellOptions()}
-              placeholder={'Selecione uma magia'}
+              placeholder={i18n.t('spellsForm.firstSpell.placeholder')}
               name={'firstSpell'}
             />
             <FormFieldErrors fieldError={errors.firstSpell} />
 
             <AppSelectController
               control={control}
-              title={'Selecione uma segunda magia'}
+              title={i18n.t('spellsForm.secondSpell.title')}
               options={buildSecondSpellOptions()}
-              placeholder={'Selecione uma segunda magia'}
+              placeholder={i18n.t('spellsForm.secondSpell.placeholder')}
               name={'secondSpell'}
             />
             <FormFieldErrors fieldError={errors.secondSpell} />
@@ -107,8 +109,8 @@ export default function GuideSummonerSpellsForm() {
           control={control}
           name={'spellsDescription'}
           inputOptions={{
-            label: 'Descrição das magias',
-            placeholder: 'Descreva o uso das magias',
+            label: i18n.t('spellsForm.description.label'),
+            placeholder: i18n.t('spellsForm.description.placeholder'),
             multiline: true,
           }}
         />
@@ -118,6 +120,7 @@ export default function GuideSummonerSpellsForm() {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t
         })}
       />
     </View>

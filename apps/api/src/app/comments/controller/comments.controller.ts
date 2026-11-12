@@ -1,6 +1,8 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 
 import { commentPagination, CommentPaginationDto, CreateCommentDto, createCommentFormSchema, CreateCommentFormType, createCommentReplyFormSchema, CreateCommentReplyFormType, CreateCommentReplyType, UserDto } from '@org/contracts';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../../generated/i18n.generated';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { GuidesService } from '../../guides/service/guides.service';
@@ -15,7 +17,8 @@ import { CommentsService } from '../service/comments.service';
 export class CommentsController {
   constructor(
     private commentsService: CommentsService,
-    private guidesService: GuidesService
+    private guidesService: GuidesService,
+    private i18nService: I18nService<I18nTranslations>,
   ) { }
 
   @Get('')
@@ -39,7 +42,7 @@ export class CommentsController {
   ) {
     const guideExists = await this.guidesService.getById(body.guide)
     if (!guideExists) {
-      throw new BadRequestException('Guia não existe')
+      throw new BadRequestException(this.i18nService.t('comments.errors.post.guideDoNotExists'))
     }
 
     const comment: CreateCommentDto = {
@@ -61,12 +64,12 @@ export class CommentsController {
   ) {
     const originalNotRemoved = await this.commentsService.notRemoved(body.replyTo)
     if (!originalNotRemoved) {
-      throw new BadRequestException('Comentário original foi removido')
+      throw new BadRequestException(this.i18nService.t('comments.errors.reply.opRemoved'))
     }
 
     const guideExists = await this.guidesService.getById(body.guide)
     if (!guideExists) {
-      throw new BadRequestException('Guia não existe')
+      throw new BadRequestException(this.i18nService.t('comments.errors.reply.guideDoNotExists'))
     }
 
     const reply: CreateCommentReplyType = {

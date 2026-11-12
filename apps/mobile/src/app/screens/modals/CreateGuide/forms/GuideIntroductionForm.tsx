@@ -14,11 +14,12 @@ import AppSelectController from '../../../../../components/forms/app-select-cont
 import AppInputController from '../../../../../components/forms/AppInputController';
 import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
 
+import { useEffect } from 'react';
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
 import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter, {
-  buildCustomButtonProps,
-} from '../../../../../components/stepper/StepperFooter';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import StepperFooter from '../../../../../components/stepper/StepperFooter';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 
 const ROLE_OPTIONS: { value: string; label: string }[] = [
   {
@@ -55,7 +56,8 @@ export type GuideIntroductionDto = z.infer<typeof GuideIntroductionSchema>;
 const resolver = zodResolver(GuideIntroductionSchema);
 
 export default function GuideIntroductionForm() {
-  const dataDragon = useDataDragonContext();
+  const i18n = useI18n()
+  const dataDragon = useDataDragon();
 
   const mainFormContext = useFormContext<CreateGuideFormDto>();
   const stepperContext = useStepperContext();
@@ -71,6 +73,7 @@ export default function GuideIntroductionForm() {
     control,
     handleSubmit,
     formState: { errors },
+    setValue
   } = useForm<GuideIntroductionDto>({ resolver, defaultValues });
 
   const onSubmit = (formValues: GuideIntroductionDto) => {
@@ -82,6 +85,15 @@ export default function GuideIntroductionForm() {
 
   const championList = dataDragon.lists.champions || [];
 
+  const watchMainForm = mainFormContext.watch(['champion', 'introduction', 'role', 'title'])
+
+  useEffect(() => {
+    setValue('champion', 'Ahri')
+    setValue('introduction', 'minha descricao')
+    setValue('role', ROLES.MID_LANE)
+    setValue('title', 'Titulo')
+  }, [watchMainForm])
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -89,8 +101,8 @@ export default function GuideIntroductionForm() {
           control={control}
           name={'title'}
           inputOptions={{
-            label: 'Titulo',
-            placeholder: 'Titulo',
+            label: i18n.t('introForm.title.label'),
+            placeholder: i18n.t('introForm.title.placeholder'),
           }}
         />
         <FormFieldErrors fieldError={errors.title} />
@@ -99,8 +111,8 @@ export default function GuideIntroductionForm() {
           control={control}
           name={'introduction'}
           inputOptions={{
-            label: 'Introdução',
-            placeholder: 'Introdução',
+            label: i18n.t('introForm.intro.label'),
+            placeholder: i18n.t('introForm.intro.placeholder'),
             multiline: true,
           }}
         />
@@ -108,21 +120,21 @@ export default function GuideIntroductionForm() {
 
         <AppSelectController
           control={control}
-          title={'Selecione um campeão'}
+          title={i18n.t('introForm.champion.title')}
           options={championList.map(({ id, name }) => ({
             value: id,
             label: name,
           }))}
-          placeholder={'Selecione um campeão'}
+          placeholder={i18n.t('introForm.champion.placeholder')}
           name={'champion'}
         />
         <FormFieldErrors fieldError={errors.champion} />
 
         <AppSelectController
           control={control}
-          title={'Selecione um role'}
+          title={i18n.t('introForm.role.title')}
           options={ROLE_OPTIONS}
-          placeholder={'Selecione um role'}
+          placeholder={i18n.t('introForm.role.placeholder')}
           name={'role'}
         />
         <FormFieldErrors fieldError={errors.role} />
@@ -130,6 +142,7 @@ export default function GuideIntroductionForm() {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
+          t: i18n.t,
         })}
       />
     </View>

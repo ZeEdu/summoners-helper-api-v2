@@ -11,6 +11,7 @@ import * as argon2 from 'argon2';
 import { randomUUID } from 'crypto';
 import { I18nService } from 'nestjs-i18n';
 
+import { I18nTranslations } from '../../../generated/i18n.generated';
 import { UsersService } from '../../users/service/users.service';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    private i18n: I18nService,
+    private i18n: I18nService<I18nTranslations>,
   ) { }
 
   async validateUser(email: string, password: string): Promise<UserDto> {
@@ -50,7 +51,7 @@ export class AuthService {
     }
 
     if (!user.isSystemAdmin) {
-      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.unauthorized'));
+      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.systemAdmin'));
     }
 
     return user

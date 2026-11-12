@@ -1,9 +1,7 @@
 import z from "zod";
 import { REPORT_REASON } from "../../enums";
 
-export const enumReportReason = z.enum(REPORT_REASON, {
-  error: 'Valor inválido'
-})
+export const enumReportReason = z.enum(REPORT_REASON)
 
 export const ReportShape = z.object({
   reportedBy: z.string(),

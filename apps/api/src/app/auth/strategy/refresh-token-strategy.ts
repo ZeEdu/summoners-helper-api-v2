@@ -11,6 +11,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { UserDto } from '@org/contracts';
 
+import { I18nTranslations } from '../../../generated/i18n.generated';
 import { UsersService } from '../../users/service/users.service';
 
 type RefreshTokenPayload = {
@@ -32,7 +33,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   constructor(
     private configService: ConfigService,
     private usersService: UsersService,
-    private i18n: I18nService,
+    private i18n: I18nService<I18nTranslations>,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([

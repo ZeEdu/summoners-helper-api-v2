@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { PropsWithChildren, ReactNode, useEffect } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import useI18n from "../../contexts/i18n/useI18n";
 import { useStepperContext } from "./context";
 
 type StepperProps = PropsWithChildren & {
@@ -11,8 +12,10 @@ type StepperProps = PropsWithChildren & {
 export default function Stepper({
   children
 }: StepperProps) {
+  const i18n = useI18n()
+
   if (!Array.isArray(children)) {
-    throw new Error('Deve passar mais de um elemento')
+    throw new Error(i18n.t('stepper.error'))
   }
 
   const stepperContext = useStepperContext()
@@ -34,10 +37,16 @@ export default function Stepper({
   }, [stepperContext.stepperIndex])
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
+    <View style={styles.flex}>
+      <View style={styles.flex}>
         {childrenMap[stepperContext.stepperIndex]}
       </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1
+  }
+})

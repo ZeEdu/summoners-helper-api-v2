@@ -143,7 +143,7 @@ describe('Comments e2e', () => {
   const registerValidUser = async (userOverride?: IUser) => {
     const createUserPayload: CreateUserDto = {
       username: faker.string.alpha(16),
-      password: faker.internet.password({ prefix: '1!Ab' }),
+      password: '1Ab' + 'x'.repeat(10),
       email: faker.internet.email(),
       ...userOverride,
     };

@@ -7,6 +7,7 @@ import { GuideDto } from "@org/contracts"
 
 import Error from "../../../../../../components/Error"
 import LoadingIndicator from "../../../../../../components/LoadingIndicator"
+import useI18n from "../../../../../../contexts/i18n/useI18n"
 import useGuideQuickSearch from "../../../../../../hooks/useQuickSearch"
 import QuickSearchCard from "./QuickSearchCard"
 
@@ -19,6 +20,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
   const styles = makeStyles(theme)
   const [searchQuery, setSearchQuery] = useState('')
   const navigation = useNavigation()
+  const i18n = useI18n()
 
   const { guides, loading, error, reset } = useGuideQuickSearch(searchQuery)
 
@@ -60,11 +62,11 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
             value={searchQuery}
             onChangeText={setSearchQuery}
             onFocus={updateAnchor}
-            placeholder='Busque por um guia'
+            placeholder={i18n.t('quickSearchbar.searchbarPlaceholder')}
             onClearIconPress={clear}
           />
         </View>
-        <View style={{ alignItems: 'flex-end', paddingVertical: 4 }}>
+        <View style={styles.advancedSearchButtonContainer}>
           <Button icon='cog' onPress={() => {
             navigation.navigate('MainTabs', {
               screen: 'Home',
@@ -73,7 +75,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
               }
             })
           }}>
-            Busca avançada
+            {i18n.t('quickSearchbar.advancedSearchButton')}
           </Button>
         </View>
       </View>
@@ -116,7 +118,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
                   <Surface
                     style={styles.noResultsSurface}>
                     <Text style={styles.textAlignCenter}>
-                      Nenhum resultado encontrado
+                      {i18n.t('quickSearchbar.emptyText')}
                     </Text>
                   </Surface>
                 ) : null
@@ -124,7 +126,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
             }
           </View>
         </View>
-      </Portal >
+      </Portal>
     </View >
   )
 }
@@ -135,6 +137,10 @@ const makeStyles = ({ roundness, colors }: MD3Theme) => {
       borderRadius: roundness,
       marginTop: 8,
       paddingVertical: 16
+    },
+    advancedSearchButtonContainer: {
+      alignItems: 'flex-end',
+      paddingVertical: 4
     },
     contentContainerStyle: {
       padding: 8,

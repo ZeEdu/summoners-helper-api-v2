@@ -1,4 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { SUPPORTED_LANGUAGES } from '@org/contracts';
+
 import { DataDragonService } from './data-dragon.service';
 
 describe('DataDragonService', () => {
@@ -15,7 +18,7 @@ describe('DataDragonService', () => {
   });
 
   it('should be defined', async () => {
-    const response = await service.getAssets()
+    const response = await service.getAssets(SUPPORTED_LANGUAGES.pt)
     expect(response).toHaveProperty('data')
     expect(response).toHaveProperty('version')
 

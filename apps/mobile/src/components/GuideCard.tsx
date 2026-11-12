@@ -18,15 +18,13 @@ export default function GuideCard({ guide, onPress, cardTitleRight }: GuideCardP
   const usePatch = usePatchVersion()
 
   const styles = makeStyles(useTheme())
+  const uri = DataDragonService.championThumbnail(guide.champion, usePatch.version)
 
   return (
     <Card onPress={onPress}>
       <Card.Title
         title={guide.title}
-        left={() => {
-          const uri = DataDragonService.championThumbnail(guide.champion, usePatch.version)
-          return <Image style={styles.cardTitleImage} source={{ uri }} />
-        }}
+        left={() => <Image style={styles.cardTitleImage} source={{ uri }} />}
         right={cardTitleRight}
       />
       <Card.Content>

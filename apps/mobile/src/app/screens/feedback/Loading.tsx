@@ -1,15 +1,31 @@
-import { ActivityIndicator, View } from "react-native";
-import { MD3Colors, Text } from "react-native-paper";
+import { ActivityIndicator, StyleSheet } from "react-native";
 
 import { StyledView } from "@org/ui";
+import { Text } from "react-native-paper";
+import useI18n from "../../../contexts/i18n/useI18n";
 
-export default function Loading() {
+type Props = {
+  i18nKey?: string
+}
+
+export default function Loading({ i18nKey }: Props) {
+  const i18n = useI18n()
+
   return (
-    <StyledView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <View>
-        <ActivityIndicator animating={true} size={'large'} color={MD3Colors.primary100} />
-        <Text style={{ padding: 16 }}>Carregando dados do Data Dragon...</Text>
-      </View>
+    <StyledView style={styles.container}>
+      <ActivityIndicator animating={true} size={'large'} />
+      <Text variant="labelSmall" style={styles.text}>{i18n.t(i18nKey ? `loadingFeedback.${i18nKey}` : 'loadingFeedback.default')}</Text>
     </StyledView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  text: {
+    padding: 16
+  }
+})

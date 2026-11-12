@@ -5,8 +5,9 @@ import { Button, Dialog, Divider, Portal, Searchbar, TextInput, TouchableRipple 
 
 import { IUser } from "@org/contracts";
 
+import useI18n from "../../../contexts/i18n/useI18n";
 import useSearchUsers from "../../../hooks/useSearchUsers";
-import DisplayUserList from "./DisplayUserList";
+import DisplayUserList from "./display-user-list/DisplayUserList";
 
 interface AppUserSelectProps<
   T extends FieldValues,
@@ -18,6 +19,8 @@ interface AppUserSelectProps<
 }
 
 export default function AppUserSelectController<T extends FieldValues>({ control, name, label, placeholder, reset }: AppUserSelectProps<T>) {
+  const i18n = useI18n()
+
   const [draftValue, setDraftValue] = useState('')
   const [searchbarInput, setSearchbarInput] = useState('')
   const { users, loading, error, isSearchResult } = useSearchUsers(searchbarInput)
@@ -80,11 +83,11 @@ export default function AppUserSelectController<T extends FieldValues>({ control
               </TouchableRipple>
               <Portal>
                 <Dialog visible={modal} onDismiss={closeModal}>
-                  <Dialog.Title>Selecione o usuário</Dialog.Title>
+                  <Dialog.Title>{i18n.t('userPicker.title')}</Dialog.Title>
                   <Dialog.Content>
                     <View>
                       <Searchbar
-                        placeholder='Busque pelo usuário aqui'
+                        placeholder={i18n.t('userPicker.searchbar')}
                         value={searchbarInput}
                         onChangeText={setSearchbarInput}
                         onClearIconPress={() => setSearchbarInput('')}
@@ -94,7 +97,7 @@ export default function AppUserSelectController<T extends FieldValues>({ control
                     <DisplayUserList loading={loading} error={error} isSearchResult={isSearchResult} users={users} onChange={handleOnChange} />
                   </Dialog.Content>
                   <Dialog.Actions>
-                    <Button onPress={closeModal}>Cancelar</Button>
+                    <Button onPress={closeModal}>{i18n.t('userPicker.cancel')}</Button>
                   </Dialog.Actions>
                 </Dialog>
               </Portal>

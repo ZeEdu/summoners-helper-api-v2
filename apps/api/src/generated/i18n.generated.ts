@@ -7,8 +7,12 @@ import type { Path } from "nestjs-i18n";
 export type I18nTranslations = {
     "auth": {
         "errors": {
+            "notFound": {
+                "token": string;
+            };
             "validate": {
                 "unauthorized": string;
+                "systemAdmin": string;
             };
             "register": {
                 "emailInUse": string;
@@ -16,6 +20,17 @@ export type I18nTranslations = {
             };
             "refresh": {
                 "forbidden": string;
+            };
+        };
+    };
+    "comments": {
+        "errors": {
+            "post": {
+                "guideDoNotExists": string;
+            };
+            "reply": {
+                "opRemoved": string;
+                "guideDoNotExists": string;
             };
         };
     };
@@ -30,6 +45,15 @@ export type I18nTranslations = {
         "errors": {
             "validate": {
                 "userNotFound": string;
+            };
+        };
+    };
+    "report": {
+        "errors": {
+            "notFound": string;
+            "already": {
+                "archived": string;
+                "dismissed": string;
             };
         };
     };

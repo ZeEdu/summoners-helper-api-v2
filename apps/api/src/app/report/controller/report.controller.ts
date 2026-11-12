@@ -15,7 +15,7 @@ import {
 
 import {
   CreateReportDto,
-  CreateReportSchema,
+  createReportSchema,
   REPORT_ACTION_TAKEN,
   REPORT_STATUS,
   reportPagination,
@@ -23,6 +23,8 @@ import {
   UserDto,
 } from '@org/contracts';
 
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../../generated/i18n.generated';
 import { CommentsService } from '../../comments/service/comments.service';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
@@ -36,7 +38,8 @@ export class ReportController {
   constructor(
     private reportService: ReportService,
     private guideService: GuidesService,
-    private commentService: CommentsService
+    private commentService: CommentsService,
+    private i18nService: I18nService<I18nTranslations>
   ) { }
 
   @Get('')
@@ -66,7 +69,7 @@ export class ReportController {
   @Post('')
   async create(
     @CurrentUser() user: UserDto,
-    @Body(new ZodValidationPipe(CreateReportSchema)) body: CreateReportDto,
+    @Body(new ZodValidationPipe(createReportSchema)) body: CreateReportDto,
   ) {
     const createdAt = new Date()
     const reportedBy = user.id;
@@ -80,11 +83,11 @@ export class ReportController {
   ) {
     const report = await this.reportService.getById(reportId);
     if (!report) {
-      throw new BadRequestException('Denuncia não foi encontrada');
+      throw new BadRequestException(this.i18nService.t('report.errors.notFound'));
     }
 
     if (report.status === REPORT_STATUS.ARCHIVED) {
-      throw new BadRequestException('Denuncia já se encontra arquivada');
+      throw new BadRequestException(this.i18nService.t('report.errors.already.archived'));
     }
 
     await this.reportService.patch(report.id, {
@@ -99,7 +102,7 @@ export class ReportController {
   ) {
     const report = await this.reportService.getById(reportId);
     if (!report) {
-      throw new BadRequestException('Denuncia não foi encontrada');
+      throw new BadRequestException(this.i18nService.t('report.errors.notFound'));
     }
 
     if (report.guide) {
@@ -119,11 +122,11 @@ export class ReportController {
   ) {
     const report = await this.reportService.getById(reportId);
     if (!report) {
-      throw new BadRequestException('Denuncia não foi encontrada');
+      throw new BadRequestException(this.i18nService.t('report.errors.notFound'));
     }
 
     if (report.actionTaken === REPORT_ACTION_TAKEN.DISMISS) {
-      throw new BadRequestException('Denuncia já foi descartada');
+      throw new BadRequestException(this.i18nService.t('report.errors.already.dismissed'));
     }
 
     if (report.guide) {

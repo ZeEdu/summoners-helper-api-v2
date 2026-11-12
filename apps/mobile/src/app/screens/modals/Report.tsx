@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native"
 import { Button, Dialog, MD3Theme, Portal, Snackbar, Text, useTheme } from "react-native-paper"
 import z from 'zod'
 
-import { enumReportReason, GuideDto, ISerializedComment, REPORT_REASON } from "@org/contracts"
+import { enumReportReason, GuideDto, ISerializedComment, REPORT_REASON, VALIDATION_ERROR_KEYS } from "@org/contracts"
 import { StyledButton, StyledView } from "@org/ui"
 
 import AppSelectController from "../../../components/forms/app-select-controller/AppSelectController"
@@ -50,15 +50,13 @@ const reasonsList = [
 ]
 
 const formSchema = z.object({
-  comment: z.string({ error: 'Valor inválido' }).optional(),
-  guide: z.string({ error: 'Valor inválido' }).optional(),
+  comment: z.string().optional(),
+  guide: z.string().optional(),
   reason: enumReportReason,
-  observation: z.string({ error: 'Valor inválido' }).min(3, { error: 'Deve ter ao menos 3 caracteres' }),
+  observation: z.string().min(3),
 }).refine(
   (value) => !!(value.comment || value.guide),
-  {
-    error: '`guide` ou `comment` devem ser fornecidos'
-  }
+  { params: { validation: VALIDATION_ERROR_KEYS.reportTargetRequired } }
 )
 
 type FormDto = z.infer<typeof formSchema>

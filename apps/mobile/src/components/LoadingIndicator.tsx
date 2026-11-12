@@ -8,4 +8,3 @@ export default function LoadingIndicator() {
     <ActivityIndicator animating={true} color={theme.colors.primary} />
   )
 }
-

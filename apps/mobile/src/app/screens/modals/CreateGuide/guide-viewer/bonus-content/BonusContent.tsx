@@ -1,27 +1,19 @@
-import { BonusDto } from '../../forms/BonusForm';
+import { StyleSheet } from 'react-native';
 import {
   Card,
-  Chip,
-  Divider,
-  Icon,
   List,
   MD3Theme,
-  Text,
-  useTheme,
+  useTheme
 } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
-import {
-  getBonusDescription,
-  getBonusLabel,
-  getBonusLabelsShard,
-  getBonusValue,
-} from '@org/contracts';
 
-type Prop = {
+import { BonusDto } from '../../forms/BonusForm';
+import BonusListItem from './bonus-list-item/BonusListItem';
+
+type Props = {
   bonus: BonusDto;
 };
 
-export default function BonusContent({ bonus }: Prop) {
+export default function BonusContent({ bonus }: Props) {
   const theme = useTheme();
   const styles = makeStyles(theme);
 
@@ -60,66 +52,3 @@ const makeStyles = ({ colors }: MD3Theme) => {
     },
   });
 };
-
-type BonusListItemProp = {
-  bonus: string;
-};
-
-function BonusListItem({ bonus }: BonusListItemProp) {
-  const theme = useTheme();
-
-  const label = getBonusLabel(bonus);
-  const description = getBonusDescription(bonus);
-  const shard = getBonusLabelsShard(bonus);
-  const value = getBonusValue(bonus);
-
-  try {
-    console.log({ value });
-  } catch (e) {
-    console.log({ e });
-  }
-  const uri = `https://ddragon.leagueoflegends.com/cdn/img/perk-images/StatMods/StatMods${bonus}Icon.png`;
-
-  return (
-    <>
-      <List.Item
-        style={{ paddingRight: 0 }}
-        title={label}
-        description={description}
-        descriptionNumberOfLines={5}
-        left={() => <Icon size={32} source={{ uri }} />}
-        right={() => (
-          <View
-            style={{
-              alignItems: 'center',
-              width: 92,
-              justifyContent: 'center',
-            }}
-          >
-            <Chip
-              mode="flat"
-              style={{
-                width: 64,
-                backgroundColor: theme.colors.inverseSurface,
-              }}
-              textStyle={{
-                textAlign: 'center',
-                color: theme.colors.inverseOnSurface,
-              }}
-            >
-              +{value}
-            </Chip>
-            <Text
-              variant="labelSmall"
-              numberOfLines={2}
-              style={{ textAlign: 'center', marginTop: 4 }}
-            >
-              {shard}
-            </Text>
-          </View>
-        )}
-      />
-      <Divider />
-    </>
-  );
-}

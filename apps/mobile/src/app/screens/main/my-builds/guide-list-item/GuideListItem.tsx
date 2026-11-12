@@ -2,6 +2,7 @@ import { GuideDto } from "@org/contracts";
 import { useState } from "react";
 import { IconButton, Menu } from "react-native-paper";
 import GuideCard from "../../../../../components/GuideCard";
+import useI18n from "../../../../../contexts/i18n/useI18n";
 
 type GuideListItemProps = {
   guide: GuideDto,
@@ -10,6 +11,8 @@ type GuideListItemProps = {
 }
 
 export default function GuideListItem({ guide, editGuide, viewGuide }: GuideListItemProps) {
+  const i18n = useI18n()
+
   const [showMenu, setShowMenu] = useState(false)
 
   const openMenu = () => {
@@ -40,8 +43,8 @@ export default function GuideListItem({ guide, editGuide, viewGuide }: GuideList
           onDismiss={hideMenu}
           anchor={<IconButton icon={'dots-vertical'} onPress={openMenu} />}
         >
-          <Menu.Item title={'Visualizar'} onPress={view} />
-          <Menu.Item title={'Editar guia'} onPress={edit} />
+          <Menu.Item title={i18n.t('guideListItem.view')} onPress={view} />
+          <Menu.Item title={i18n.t('guideListItem.edit')} onPress={edit} />
         </Menu>
       }} />
   )

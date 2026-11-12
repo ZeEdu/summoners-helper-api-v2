@@ -5,10 +5,12 @@ import { MD3Theme, Text, useTheme } from 'react-native-paper';
 import { GuideDto } from '@org/contracts';
 import { StyledView } from '@org/ui';
 
+import useI18n from '../../../../../contexts/i18n/useI18n';
 import RecentGuidesList from './RecentGuidesList';
 import QuickSearchbar from './searchbar/QuickSearchbar';
 
 export default function RecentGuides() {
+  const i18n = useI18n()
   const theme = useTheme()
   const styles = makeStyles(theme)
   const navigation = useNavigation()
@@ -19,12 +21,9 @@ export default function RecentGuides() {
 
   return (
     <StyledView style={styles.container}>
-      <View style={{
-        margin: 16,
-        marginBottom: 0
-      }}>
+      <View style={styles.header}>
         <Text variant="displaySmall">
-          Guias Recentes
+          {i18n.t('recentGuides.title')}
         </Text>
       </View>
       <View style={styles.searchbarWrapper}>
@@ -42,6 +41,10 @@ const makeStyles = ({ colors, roundness }: MD3Theme) => {
     container: {
       flex: 1,
       backgroundColor: colors.background
+    },
+    header: {
+      margin: 16,
+      marginBottom: 0
     },
     searchbarWrapper: {
       margin: 16,

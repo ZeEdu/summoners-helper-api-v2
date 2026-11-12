@@ -1,7 +1,7 @@
 import { ChampionDataDragonSpell } from "@org/contracts";
 import { Image, StyleSheet, View } from "react-native";
 import { Card, Chip, MD3Theme, Text, useTheme } from "react-native-paper";
-import useDataDragonContext from "../../../../../../../contexts/data-dragon/useDataDragonContext";
+import useDataDragon from "../../../../../../../contexts/data-dragon/useDataDragonContext";
 import { keymapIndex, KeymapIndexType } from "../../../forms/AbilitiesProgressionForm";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 export default function SpellDescriptionCard({ spell, index, championId }: Props) {
   const theme = useTheme()
   const styles = makeStyles(theme)
-  const dataDragon = useDataDragonContext()
+  const dataDragon = useDataDragon()
 
   const keymap = keymapIndex[index as KeymapIndexType];
   const uri = `https://ddragon.leagueoflegends.com/cdn/${dataDragon.getPatch()}/img/spell/${championId}${keymap.toUpperCase()}.png`;

@@ -20,7 +20,8 @@ import AppUserSelectController from '../../../../../components/forms/app-user-se
 import AppInputController from '../../../../../components/forms/AppInputController';
 import AppSwitchController from '../../../../../components/forms/AppSwitchController';
 import GuideCard from '../../../../../components/GuideCard';
-import useDataDragonContext from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
+import useI18n from '../../../../../contexts/i18n/useI18n';
 import { usePatchVersion } from '../../../../../contexts/patchVersion/usePatchVersion';
 import { ApiService } from '../../../../../services/api/api.service';
 
@@ -56,19 +57,21 @@ type FilterOutputDto = z.output<typeof customGuidesPaginationSchema>;
 
 const resolver = zodResolver(customGuidesPaginationSchema);
 
+// TODO: Botar o filtro dentro de um accordion ou algo do tipo
 export default function Search() {
-  const useDataDragon = useDataDragonContext();
+  const dataDragon = useDataDragon();
   const patchVersion = usePatchVersion();
   const navigation = useNavigation();
+  const i18n = useI18n()
 
   const [guides, setGuides] = useState<GuideDto[]>([]);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(false);
 
   const [isFromSearch, setIsFromSearch] = useState(false)
 
-  const championList = useDataDragon.lists.champions;
+  const championList = dataDragon.lists.champions;
 
   const defaultQuery: FilterInputDto = { offset: 0 };
 
@@ -83,7 +86,7 @@ export default function Search() {
 
   const getGuides = async (values: FilterOutputDto) => {
     setLoading(true);
-    setError('');
+    setError(false);
     setIsFromSearch(false)
 
     if (values.deprecatedPatchVersion) {
@@ -110,7 +113,7 @@ export default function Search() {
         setIsFromSearch(true)
       })
       .catch(() => {
-        setError('Erro ao buscar builds');
+        setError(true);
       })
       .finally(() => {
         setLoading(false);
@@ -124,7 +127,7 @@ export default function Search() {
   const handleReset = () => {
     reset();
     setGuides([]);
-    setError('');
+    setError(false);
   };
 
   const loadMore = async () => {
@@ -143,88 +146,84 @@ export default function Search() {
       <View>
         <AppSelectController
           control={control}
-          title={'Campeão'}
-          options={championList.map(({ id, name }) => ({
-            value: id,
-            label: name,
-          }))}
-          placeholder={'Selecione um campeão'}
+          title={i18n.t('advancedSearch.form.fields.champion.title')}
+          options={championList
+            .map(({ id, name }) => ({
+              value: id,
+              label: name,
+            }))}
+          placeholder={i18n.t('advancedSearch.form.fields.champion.placeholder')}
           name={'champion'}
         />
+
         <AppInputController
           control={control}
           inputOptions={{
-            placeholder: 'Busque pelo título',
-            label: 'Busque pelo título',
+            placeholder: i18n.t('advancedSearch.form.fields.title.placeholder'),
+            label: i18n.t('advancedSearch.form.fields.title.label'),
           }}
           name={'title'}
         />
+
         <AppSelectController
           control={control}
           name={'role'}
           options={ROLE_OPTIONS}
-          title={'Role do campeão'}
-          placeholder={'Busque de acordo com a role do campeão'}
+          title={i18n.t('advancedSearch.form.fields.role.title')}
+          placeholder={i18n.t('advancedSearch.form.fields.role.placeholder')}
         />
 
         <AppUserSelectController
           control={control}
           name='createdBy'
-          label={'Criador do guia'}
-          placeholder={'Busquem por quem criou o guia'}
+          label={i18n.t('advancedSearch.form.fields.createdBy.title')}
+          placeholder={i18n.t('advancedSearch.form.fields.createdBy.placeholder')}
           reset={resetCreatedByField}
         />
 
         <AppSwitchController
           control={control}
           name={'deprecatedPatchVersion'}
-          label='Buscar guias desatualizados'
+          label={i18n.t('advancedSearch.form.fields.deprecatedPatch.label')}
         />
 
         <View
-          style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}
+          style={styles.filterButtons}
         >
           <StyledButton mode={'outlined'} onPress={handleReset}>
-            Limpar
+            {i18n.t('advancedSearch.form.actions.clear')}
           </StyledButton>
-          <StyledButton onPress={onSubmit}>Buscar</StyledButton>
+          <StyledButton onPress={onSubmit}>{i18n.t('advancedSearch.form.actions.submit')}</StyledButton>
         </View>
       </View>
 
-
       <View style={styles.list}>
-        {loading ? <Text>Carregando...</Text> : undefined}
-        {error ? <Text>Um erro ocorreu...</Text> : undefined}
-        {guides.length ? (
-          <FlatList
-            contentContainerStyle={styles.flatlistContentContainer}
-            ListEmptyComponent={() => {
-              const message = isFromSearch ? 'Nenhum guia encontrado' : 'Atualize o filtro para encontrar um guia'
-              return (
-                <View>
-                  <Text>{message}</Text>
-                </View>
-              )
-            }}
-            data={guides}
-            keyExtractor={({ id }) => id}
-            renderItem={({ item: guide }) => {
-              return (
-                <GuideCard
-                  onPress={() => {
-                    navigation.navigate('ViewGuide', { guide });
-                  }}
-                  guide={guide}
-                />
-              );
-            }}
-            ListFooterComponent={() => {
-              return <Button onPress={loadMore}>Carregar mais</Button>;
-            }}
-          />
-        ) : (
-          <Text>Atualize o filtro para encontrar um guia</Text>
-        )}
+        {loading && <Text>{i18n.t('advancedSearch.feedback.loading')}</Text>}
+        {error && <Text>{i18n.t('advancedSearch.feedback.error')}</Text>}
+        <FlatList
+          contentContainerStyle={styles.flatlistContentContainer}
+          ListEmptyComponent={() => {
+            const message = isFromSearch ? i18n.t('advancedSearch.listEmpty.fromSearch') : i18n.t('advancedSearch.listEmpty.empty')
+            return (
+              <View>
+                <Text>{message}</Text>
+              </View>
+            )
+          }}
+          data={guides}
+          keyExtractor={({ id }) => id}
+          renderItem={({ item: guide }) => {
+            return (
+              <GuideCard
+                onPress={() => {
+                  navigation.navigate('ViewGuide', { guide });
+                }}
+                guide={guide}
+              />
+            );
+          }}
+          ListFooterComponent={guides.length > 0 ? <Button onPress={loadMore}>{i18n.t('advancedSearch.loadMore')}</Button> : null}
+        />
       </View>
     </StyledView>
   );
@@ -236,7 +235,11 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 8,
   },
-  filterButtons: {},
+  filterButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8
+  },
   switch: {
     paddingVertical: 24,
     flexDirection: 'row',

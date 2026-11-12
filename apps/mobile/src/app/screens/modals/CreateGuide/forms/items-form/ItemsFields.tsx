@@ -8,6 +8,7 @@ import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { Icon, TextInput, useTheme } from 'react-native-paper';
 
 import FormFieldErrors from '../../../../../../components/forms/FormFieldErrors';
+import useI18n from '../../../../../../contexts/i18n/useI18n';
 import { useItemSelectionContext } from './context/useItemSelectionContext';
 import ArrayItem from './Item';
 import { ItemsDto } from './ItemsForm';
@@ -27,6 +28,7 @@ type ItemType = 'add' | 'item';
 type ListItem = { type: ItemType; itemId?: string };
 
 export default function ItemsField({ id, index }: ItemsFieldProps) {
+  const i18n = useI18n();
   const theme = useTheme();
 
   const {
@@ -72,7 +74,7 @@ export default function ItemsField({ id, index }: ItemsFieldProps) {
           render={({ field: { onChange, onBlur, value } }) => {
             return (
               <TextInput
-                placeholder="Nome do bloco de itens"
+                placeholder={i18n.t('itemsFields.block.name')}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -122,7 +124,7 @@ export default function ItemsField({ id, index }: ItemsFieldProps) {
             return (
               <TextInput
                 multiline={true}
-                placeholder="Descrição do bloco de itens"
+                placeholder={i18n.t('itemsFields.block.description')}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}

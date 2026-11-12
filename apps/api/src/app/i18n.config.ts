@@ -12,16 +12,16 @@ const config: I18nOptions = {
   fallbackLanguage: 'pt',
   loaderOptions: {
     path: path.join(__dirname, 'i18n'),
-    watch: !Utils.isTest,
+    watch: !Utils.isProduction,
   },
   resolvers: [
     { use: QueryResolver, options: ['lang'] },
-    AcceptLanguageResolver,
     new HeaderResolver(['x-lang']),
+    AcceptLanguageResolver,
   ],
   typesOutputPath: Utils.isTest
     ? undefined
-    : path.join(process.cwd(), 'generated/i18n.generated.ts'),
+    : path.join(process.cwd(), 'apps/api/src/generated/i18n.generated.ts'),
 };
 
 export const I18N = { config };

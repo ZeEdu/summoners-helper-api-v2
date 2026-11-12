@@ -1,24 +1,37 @@
-import { View } from "react-native"
+import { StyleSheet, View } from "react-native"
 import { Button, Text } from "react-native-paper"
 
 import { StyledView } from "@org/ui"
 
-import useDataDragonContext from "../../../contexts/data-dragon/useDataDragonContext"
+import useI18n from "../../../contexts/i18n/useI18n"
+import useDataDragon from "../../../contexts/data-dragon/useDataDragonContext"
 
 export default function Error() {
-  const useDataDragon = useDataDragonContext()
+  const dataDragon = useDataDragon()
+  const i18n = useI18n()
 
   return (
-    <StyledView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <StyledView style={styles.container}>
       <View>
-        <Text style={{ padding: 16 }}>O carregamento dos dados do Data Dragon falhou...</Text>
+        <Text style={styles.text}>{i18n.t('errorFeedback.text')}</Text>
         <Button mode='contained' onPress={() => {
-          useDataDragon.reload()
+          dataDragon.reload()
         }}
         >
-          Tentar novamente!
+          {i18n.t('errorFeedback.button')}
         </Button>
       </View>
     </StyledView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  text: {
+    padding: 16
+  }
+})

@@ -1,7 +1,9 @@
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { I18nModule } from 'nestjs-i18n';
 import { GuidesModule } from '../../guides/guides.module';
+import { I18N } from '../../i18n.config';
 import { Comment, CommentSchema } from '../schema/comment.schema';
 import { CommentLike, CommentLikeSchema } from '../schema/like.schema';
 import { CommentsService } from '../service/comments.service';
@@ -32,6 +34,7 @@ describe('CommentsController', () => {
           { name: Comment.name, schema: CommentSchema },
           { name: CommentLike.name, schema: CommentLikeSchema },
         ]),
+        I18nModule.forRoot(I18N.config)
       ]
     }).compile();
 
