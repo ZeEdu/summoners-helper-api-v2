@@ -140,3 +140,5 @@ cache/
 
 __screenshots__/
 apps/api/src/generated/i18n.generated.ts
+generate-code-review.ps1
+run-tests.ps1
