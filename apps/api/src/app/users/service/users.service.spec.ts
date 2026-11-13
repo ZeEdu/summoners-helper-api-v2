@@ -324,7 +324,7 @@ describe('UsersService', () => {
         expect(model.countDocuments).toHaveBeenCalled();
         expect(result.count).toEqual(expectedCountDocuments);
         expect(mockLimit).toHaveBeenCalledWith(pagination.limit);
-        expect(mockSkip).toHaveBeenCalledWith(pagination.offset);
+        expect(mockSkip).toHaveBeenCalledWith(pagination.offset * pagination.limit);
       });
 
       describe('should use default values for pagination when used without arguments', () => {

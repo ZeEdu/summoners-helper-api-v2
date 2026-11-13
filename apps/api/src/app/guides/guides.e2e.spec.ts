@@ -168,7 +168,7 @@ describe('Guides (e2e)', () => {
   };
 
   describe('PATCH /guides', () => {
-    it.only('should only update own guides', async () => {
+    it('should only update own guides', async () => {
       const user = await registerValidUser();
       const otherUser = await registerValidUser();
 
