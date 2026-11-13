@@ -32,7 +32,7 @@ export class GuidesService {
     const guides = await this.guideModel
       .find(filter)
       .limit(limit)
-      .skip(offset * 10)
+      .skip(offset * limit)
       .lean<IGuide[]>();
 
     return { guides: guides.map(ResponseMappers.guide), count };
