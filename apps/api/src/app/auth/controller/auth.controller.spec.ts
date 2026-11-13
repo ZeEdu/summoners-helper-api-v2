@@ -3,11 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateUserDto, IUser } from '@org/contracts';
 import { Response } from 'express';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Model } from 'mongoose';
 import { I18nModule, I18nService } from 'nestjs-i18n';
+
+import { CreateUserDto, IUser } from '@org/contracts';
+
 import { I18N } from '../../i18n.config';
 import ResponseMappers from '../../response-mappers';
 import { RiotApiModule } from '../../riot-api/riot-api.module';
@@ -246,7 +248,7 @@ describe('AuthController', () => {
       expect(rawRefreshToken!).toBeDefined();
 
       await controller.webRefreshToken(
-        ResponseMappers.user({ ...createdUser, refreshToken: rawRefreshToken! }),
+        ResponseMappers.userWithRefreshToken({ ...createdUser, refreshToken: rawRefreshToken! }),
         getTypedMockedResponse(),
       );
 
