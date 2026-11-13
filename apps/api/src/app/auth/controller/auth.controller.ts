@@ -98,7 +98,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     response.clearCookie('refresh_token', {
-      path: Utils.isProduction ? '/auth/refresh' : '/',
+      path: Utils.isProduction ? '/api/auth/web/refresh' : '/',
     });
     await this.authService.logout(user.id);
   }
@@ -145,7 +145,7 @@ export class AuthController {
       secure: Utils.isProduction,
       sameSite: 'strict',
       maxAge: SEVEN_DAYS,
-      path: Utils.isProduction ? '/auth/refresh' : '/',
+      path: Utils.isProduction ? '/api/auth/web/refresh' : '/',
     });
   }
 }
