@@ -2,15 +2,18 @@ import { faker } from '@faker-js/faker';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
 import { Model } from 'mongoose';
 import nock from 'nock';
+import cookieParser = require('cookie-parser');
+import request = require('supertest');
+
+import { CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+
 import { AppModule } from '../app.module';
+import TestsHelpers from '../helpers/tests.helpers';
 import { User, UserDocument } from '../users/schema/user.schema';
 import { RiotApiErrorLogger } from './schema/riot-api-error-logger.schema';
 import { RiotApiUtilsService } from './service/riot-api.utils.service';
-import cookieParser = require('cookie-parser');
-import request = require('supertest');
 
 describe('Riot API errors (e2e)', () => {
   let app: INestApplication;
@@ -61,7 +64,7 @@ describe('Riot API errors (e2e)', () => {
   const registerValidUser = async (userOverride?: IUser) => {
     const createUserPayload: CreateUserDto = {
       username: faker.string.alpha(16),
-      password: '1Ab' + 'x'.repeat(10),
+      password: TestsHelpers.validPassword,
       email: faker.internet.email(),
       ...userOverride,
     };
