@@ -23,7 +23,6 @@ import {
 import { CurrentUser } from '../../decorators/user.decorator';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
-import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
 import { IsGuideCreatorGuard } from '../../riot-api/guards/is-guide-creator.guard';
 import { Utils } from '../../utils';
 import { PatchGuideDto } from '../dto/patch-guide.dto';
@@ -52,7 +51,6 @@ export class GuidesController {
   }
 
   @Post('')
-  @UseGuards(HasRiotInfoGuard)
   async createGuide(
     @CurrentUser() user: UserDtoWithPuuid,
     @Body(new ZodValidationPipe(CreateGuideFormSchema))
@@ -93,7 +91,7 @@ export class GuidesController {
   }
 
   @Patch(':guideId')
-  // @UseGuards(IsAdmin)
+  @UseGuards(IsGuideCreatorGuard)
   block(@Param('guideId') guideId: string) {
     return this.guidesService.block(guideId)
   }
