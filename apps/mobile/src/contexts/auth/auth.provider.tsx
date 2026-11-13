@@ -8,6 +8,9 @@ import { ApiService } from '../../services/api/api.service';
 import { AuthTokenStorageService } from '../../services/auth-token-storage.service';
 import { ThemeStorageService } from '../../services/theme-storage.service';
 import { AuthContext, AuthContextType } from './auth.context';
+import LogoutError from './errors/logout-error';
+import TokenDeletionError from './errors/token-deletion-error';
+import TokenNotFoundError from './errors/token-not-found-error';
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -35,11 +38,31 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const logout = async () => {
-    await ApiService.Auth.logout();
-    await AuthTokenStorageService.delete();
+  const logout = useCallback(async () => {
     setUser(undefined);
-  };
+
+    let accessToken
+    try {
+      const tokens = await AuthTokenStorageService.get()
+      accessToken = tokens.accessToken
+    } catch (err) {
+      throw new TokenNotFoundError()
+    }
+
+    try {
+      await AuthTokenStorageService.delete();
+    } catch (error) {
+      throw new TokenDeletionError()
+    }
+
+    if (accessToken) {
+      try {
+        await ApiService.Auth.logout(accessToken);
+      } catch (error) {
+        throw new LogoutError()
+      }
+    }
+  }, []);
 
   const register = useCallback(async (createUserDto: ICreateUserDto) => {
     let accessToken: string;
