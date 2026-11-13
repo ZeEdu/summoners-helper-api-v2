@@ -15,7 +15,7 @@ import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n.generated';
 import { Public } from '../../decorators/public.decorator';
 import { CurrentUser } from '../../decorators/user.decorator';
-import { IsAdminGuard } from '../../guards/is-admin.guard';
+import { IsAdminGuard } from '../../guards/is-admin/is-admin.guard';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { LocalGuard } from '../../guards/local.guard';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
@@ -98,7 +98,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     response.clearCookie('refresh_token', {
-      path: Utils.isProduction ? '/auth/refresh' : '/',
+      path: Utils.isProduction ? '/api/auth/web/refresh' : '/',
     });
     await this.authService.logout(user.id);
   }
@@ -145,7 +145,7 @@ export class AuthController {
       secure: Utils.isProduction,
       sameSite: 'strict',
       maxAge: SEVEN_DAYS,
-      path: Utils.isProduction ? '/auth/refresh' : '/',
+      path: Utils.isProduction ? '/api/auth/web/refresh' : '/',
     });
   }
 }

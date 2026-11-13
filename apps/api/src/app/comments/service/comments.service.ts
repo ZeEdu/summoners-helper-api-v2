@@ -70,13 +70,13 @@ export class CommentsService {
     const update: Partial<IComment> = {
       content: undefined,
       createdBy: undefined,
-      removedAt: new Date()
+      removedAt: new Date(),
+      removed: true
     }
     await this.commentModel.updateOne(filter, update)
   }
 
   async like(commentId: string, userId: string) {
-
     await this.commentLikeModel.insertOne(
       {
         comment: commentId,
@@ -112,7 +112,15 @@ export class CommentsService {
   }
 
   async likedComment(commentId: string, userId: string) {
-    return this.commentLikeModel.exists({ comment: commentId, user: userId })
+    return this.commentLikeModel
+      .exists({ comment: commentId, user: userId })
+      .then((like) => !!like)
+  }
+
+  async checkCreatedComment(commentId: string, userId: string) {
+    return this.commentModel
+      .exists({ comment: commentId, user: userId })
+      .then((exists) => !exists)
   }
 
   async block(commentId: string) {

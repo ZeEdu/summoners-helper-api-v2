@@ -1,4 +1,4 @@
-import { IsAdminGuard } from '../../guards/is-admin.guard';
+import { IsAdminGuard } from '../../guards/is-admin/is-admin.guard';
 import { GuidesService } from '../../guides/service/guides.service';
 
 import {
@@ -33,7 +33,7 @@ import ReportFilters from '../report.filters';
 import { ReportService } from '../service/report.service';
 
 @Controller('report')
-@UseGuards(JwtGuard, IsAdminGuard)
+@UseGuards(JwtGuard)
 export class ReportController {
   constructor(
     private reportService: ReportService,
@@ -43,6 +43,7 @@ export class ReportController {
   ) { }
 
   @Get('')
+  @UseGuards(IsAdminGuard)
   get(
     @Query(new ZodValidationPipe(reportPagination)) pagination: ReportPaginationDto,
   ) {
@@ -53,6 +54,7 @@ export class ReportController {
   }
 
   @Get('count')
+  @UseGuards(IsAdminGuard)
   getCount(
     @Query(new ZodValidationPipe(reportPagination)) pagination: ReportPaginationDto,
   ) {
@@ -60,6 +62,7 @@ export class ReportController {
   }
 
   @Get(':reportId')
+  @UseGuards(IsAdminGuard)
   getById(
     @Param('reportId') reportId: string
   ) {
@@ -78,6 +81,7 @@ export class ReportController {
   }
 
   @Patch('archive/:reportId')
+  @UseGuards(IsAdminGuard)
   async archive(
     @Param('reportId') reportId: string
   ) {
@@ -97,6 +101,7 @@ export class ReportController {
   }
 
   @Patch('block/:reportId')
+  @UseGuards(IsAdminGuard)
   async block(
     @Param('reportId') reportId: string
   ) {
@@ -117,6 +122,7 @@ export class ReportController {
   }
 
   @Patch('unblock/:reportId')
+  @UseGuards(IsAdminGuard)
   async unblock(
     @Param('reportId') reportId: string
   ) {

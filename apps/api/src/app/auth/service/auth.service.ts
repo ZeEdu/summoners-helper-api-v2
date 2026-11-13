@@ -103,7 +103,7 @@ export class AuthService {
   }
 
   async refreshToken(userId: string, refreshToken: string) {
-    const user = await this.usersService.findOneById(userId);
+    const user = await this.usersService.findOneByIdWithRefreshToken(userId);
     if (!user || !user.refreshToken) {
       throw new ForbiddenException(
         this.i18n.t('auth.errors.refresh.forbidden'),

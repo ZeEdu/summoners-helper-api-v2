@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { AuthenticatedRequest } from "../../types";
-import { CommentsService } from "../service/comments.service";
+import { AuthenticatedRequest } from "../../../types";
+import { CommentsService } from "../../service/comments.service";
 
 @Injectable()
 export class HasNotLikedCommentGuard implements CanActivate {
@@ -13,6 +13,5 @@ export class HasNotLikedCommentGuard implements CanActivate {
 
     return this.commentsService
       .likedComment(commentId.toString(), user.id)
-      .then((like) => like === null)
   }
 }

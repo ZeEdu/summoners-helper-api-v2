@@ -6,14 +6,15 @@ import cookieParser from 'cookie-parser';
 import { Model } from 'mongoose';
 import request = require('supertest');
 
+import { AbilityOption, CreateGuideDto, CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
+
 import { RiotApiFixtures } from '../__fixtures__/riot-api.fixtures';
 import { AppModule } from '../app.module';
 import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
 import { Guide, GuideDocument } from '../guides/schema/guide.schema';
+import TestsHelpers from '../helpers/tests.helpers';
 import { RiotApiService } from '../riot-api/service/riot-api.service';
 import { User } from '../users/schema/user.schema';
-
-import { AbilityOption, CreateGuideDto, CreateUserDto, IUser, RIOT_SERVERS } from '@org/contracts';
 import { Comment, CommentDocument } from './schema/comment.schema';
 import { CommentLike, CommentLikeDocument } from './schema/like.schema';
 
@@ -143,7 +144,7 @@ describe('Comments e2e', () => {
   const registerValidUser = async (userOverride?: IUser) => {
     const createUserPayload: CreateUserDto = {
       username: faker.string.alpha(16),
-      password: '1Ab' + 'x'.repeat(10),
+      password: TestsHelpers.validPassword,
       email: faker.internet.email(),
       ...userOverride,
     };

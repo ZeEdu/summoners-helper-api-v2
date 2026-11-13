@@ -4,6 +4,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { IUser, RIOT_SERVERS } from '@org/contracts';
 
 export type IUserWithPassword = IUser & { password: string };
+export type IUserWithRefreshToken = IUser & { refreshToken: string };
 export type IUserWithPuuid = IUser & { puuid: string };
 
 export type UserDocument = HydratedDocument<User>;

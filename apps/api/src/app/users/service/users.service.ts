@@ -13,12 +13,13 @@ import {
   UpdateUserProfileDto,
   UserDto,
   UserDtoWithPassword,
-  UserDtoWithPuuid
+  UserDtoWithPuuid,
+  UserDtoWithRefreshToken
 } from '@org/contracts';
 
 import ResponseMappers from '../../response-mappers';
 import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import { IUserWithPassword, IUserWithPuuid, SENSIBLE_FIELDS, User } from '../schema/user.schema';
+import { IUserWithPassword, IUserWithPuuid, IUserWithRefreshToken, SENSIBLE_FIELDS, User } from '../schema/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -89,6 +90,14 @@ export class UsersService {
     }
   }
 
+  async findOneByIdWithRefreshToken(id: string): Promise<UserDtoWithRefreshToken | undefined> {
+    const user = await this.userModel.findById(id).lean<IUserWithRefreshToken>();
+
+    if (user) {
+      return ResponseMappers.userWithRefreshToken(user)
+    }
+  }
+
   async create(user: CreateUserDto): Promise<UserDto> {
     const createdUser = await new this.userModel(user).save();
     return ResponseMappers.user(createdUser)
@@ -119,7 +128,9 @@ export class UsersService {
     filter?: QueryFilter<User>,
     pagination?: PaginationDto,
   ): Promise<{ count: number; users: UserDto[] }> {
-    const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};
+    const limit = pagination?.limit || DEFAULT_LIMIT;
+    const offset = pagination?.offset || DEFAULT_OFFSET;
+
     filter = filter || {};
 
     const safeFilter = { ...filter };
@@ -129,7 +140,7 @@ export class UsersService {
     const users = await this.userModel
       .find(safeFilter)
       .limit(limit)
-      .skip(offset)
+      .skip(offset * limit)
       .lean<IUser[]>();
 
     return { users: users.map(ResponseMappers.user), count };

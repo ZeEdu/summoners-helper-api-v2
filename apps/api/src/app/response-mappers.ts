@@ -1,14 +1,12 @@
-import { GuideDto, IComment, IGuide, IPopulatedReport, IPopulatedReportDto, ISerializedComment, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid } from "@org/contracts";
+import { GuideDto, IComment, IGuide, IPopulatedReport, IPopulatedReportDto, ISerializedComment, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid, UserDtoWithRefreshToken } from "@org/contracts";
 import { Types } from "mongoose";
-import { IUserWithPassword, IUserWithPuuid } from "./users/schema/user.schema";
+import { IUserWithPassword, IUserWithPuuid, IUserWithRefreshToken } from "./users/schema/user.schema";
 
 function user(user: IUser): UserDto {
   return {
     id: user._id.toString(),
     username: user.username,
     email: user.email,
-    password: user.password,
-    refreshToken: user.refreshToken,
     gameName: user.gameName,
     tagLine: user.tagLine,
     server: user.server,
@@ -17,33 +15,25 @@ function user(user: IUser): UserDto {
   }
 }
 
-function userWithPassword(user: IUserWithPassword): UserDtoWithPassword {
+function userWithRefreshToken(userData: IUserWithRefreshToken): UserDtoWithRefreshToken {
   return {
-    id: user._id.toString(),
-    username: user.username,
-    email: user.email,
-    password: user.password,
-    refreshToken: user.refreshToken,
-    gameName: user.gameName,
-    tagLine: user.tagLine,
-    server: user.server,
-    puuid: user.puuid,
-    isSystemAdmin: user.isSystemAdmin
+    ...user(userData),
+    refreshToken: userData.refreshToken
   }
 }
 
-function userWithPuuid(user: IUserWithPuuid): UserDtoWithPuuid {
+function userWithPassword(userData: IUserWithPassword): UserDtoWithPassword {
   return {
-    id: user._id.toString(),
-    username: user.username,
-    email: user.email,
-    password: user.password,
-    refreshToken: user.refreshToken,
-    gameName: user.gameName,
-    tagLine: user.tagLine,
-    server: user.server,
-    puuid: user.puuid,
-    isSystemAdmin: user.isSystemAdmin
+    ...user(userData),
+    password: userData.password
+  }
+}
+
+function userWithPuuid(userData: IUserWithPuuid): UserDtoWithPuuid {
+  return {
+    ...user(userData),
+    puuid: userData.puuid,
+
   }
 }
 
@@ -119,6 +109,7 @@ const ResponseMappers = {
   user,
   userWithPassword,
   userWithPuuid,
+  userWithRefreshToken,
   guide,
   populatedGuide,
   populatedReport,

@@ -18,6 +18,6 @@ export interface UserDto extends Omit<IUser, '_id'> {
   id: string;
 }
 
-
 export type UserDtoWithPuuid = UserDto & { puuid: string };
 export type UserDtoWithPassword = UserDto & { password: string }
+export type UserDtoWithRefreshToken = UserDto & { refreshToken: string }

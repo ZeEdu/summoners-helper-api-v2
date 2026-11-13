@@ -2,6 +2,8 @@ import { faker } from "@faker-js/faker";
 import { BadRequestException } from "@nestjs/common";
 import { CreateReportDto, createReportSchema, CreateUserDto, createUserSchema, REPORT_REASON, UpdateUserProfileDto, updateUserProfileSchema, VALIDATION_ERROR_KEYS } from "@org/contracts";
 import { I18nContext } from "nestjs-i18n";
+
+import TestsHelpers from '../../app/helpers/tests.helpers';
 import { ZodValidationPipe } from "./zod-validation.pipe";
 
 interface ResponseError {
@@ -47,7 +49,7 @@ describe('zod validation pipe', () => {
       const createUser: Partial<CreateUserDto> = {
         email: faker.internet.userName(),
         username: faker.internet.userName(),
-        password: faker.internet.password({ prefix: '1Ab' }),
+        password: TestsHelpers.validPassword,
       };
 
       I18nContext.create(i18nContext, () => {
@@ -78,7 +80,7 @@ describe('zod validation pipe', () => {
         const createUser: Partial<CreateUserDto & { username: any }> = {
           email: faker.internet.email(),
           username: 123123,
-          password: faker.internet.password({ prefix: '1Ab' }),
+          password: TestsHelpers.validPassword,
         };
 
         I18nContext.create(i18nContext, () => {
@@ -108,7 +110,7 @@ describe('zod validation pipe', () => {
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.string.alpha({ length: { min: 3, max: 5 } }),
-          password: faker.internet.password({ prefix: '1Ab' }),
+          password: TestsHelpers.validPassword,
         };
 
         I18nContext.create(i18nContext, () => {
@@ -138,7 +140,7 @@ describe('zod validation pipe', () => {
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.string.alpha({ length: { min: 65, max: 65 } }),
-          password: faker.internet.password({ prefix: '1Ab' }),
+          password: TestsHelpers.validPassword,
         };
 
         I18nContext.create(i18nContext, () => {

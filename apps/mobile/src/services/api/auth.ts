@@ -3,7 +3,6 @@ import { ICreateUserDto, ILoginUserDto } from '@org/contracts';
 
 import { customFetch } from '../../utils/customFetch/customFetch';
 import Utils from '../../utils/utils';
-import { AuthTokenStorageService } from '../auth-token-storage.service';
 import { API_CONSTANTS } from './api.constants';
 
 const AUTH_ENDPOINT = 'auth';
@@ -26,19 +25,14 @@ export const Auth = {
       init,
     );
   },
-  logout: async () => {
+  logout: async (accessToken: string) => {
     const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/logout`;
-    const tokens = await AuthTokenStorageService.get();
-
-    if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
-    }
 
     const init: RequestInit = {
       method: 'POST',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${tokens.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     };
 

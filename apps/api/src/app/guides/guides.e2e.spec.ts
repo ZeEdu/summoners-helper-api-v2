@@ -11,6 +11,7 @@ import { AbilityOption, CreateGuideDto, CreateUserDto, IUser, RIOT_SERVERS } fro
 import { RiotApiFixtures } from '../__fixtures__/riot-api.fixtures';
 import { AppModule } from '../app.module';
 import { DataDragonTransformerService } from '../ddragon/data-dragon-transformer.service';
+import TestsHelpers from '../helpers/tests.helpers';
 import { RiotApiService } from '../riot-api/service/riot-api.service';
 import { User } from '../users/schema/user.schema';
 import { Guide, GuideDocument } from './schema/guide.schema';
@@ -137,7 +138,7 @@ describe('Guides (e2e)', () => {
   const registerValidUser = async (userOverride?: IUser) => {
     const createUserPayload: CreateUserDto = {
       username: faker.string.alpha(16),
-      password: '1Ab' + 'x'.repeat(10),
+      password: TestsHelpers.validPassword,
       email: faker.internet.email(),
       ...userOverride,
     };
@@ -167,7 +168,7 @@ describe('Guides (e2e)', () => {
   };
 
   describe('PATCH /guides', () => {
-    it.only('should only update own guides', async () => {
+    it('should only update own guides', async () => {
       const user = await registerValidUser();
       const otherUser = await registerValidUser();
 

@@ -74,6 +74,6 @@ export const appConfig: ApplicationConfig = {
 function isAuthenticationError(error: unknown): boolean {
   return (
     error instanceof HttpErrorResponse &&
-    error.status === 401
+    [401, 403].includes(error.status)
   );
 }
