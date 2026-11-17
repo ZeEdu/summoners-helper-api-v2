@@ -2,6 +2,7 @@ import React from 'react';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Viewport from '../components/Viewport';
 import AuthProvider from '../contexts/auth/auth.provider';
 import DataDragonProvider from '../contexts/data-dragon/data-dragon.provider';
 import { I18nProvider } from '../contexts/i18n/i18n.provider';
@@ -21,11 +22,13 @@ export const App = () => {
         <DataDragonProvider>
           <ThemeProvider>
             <AuthProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <BottomSheetModalProvider>
-                  <AppNavigation />
-                </BottomSheetModalProvider>
-              </GestureHandlerRootView>
+              <Viewport>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <BottomSheetModalProvider>
+                    <AppNavigation />
+                  </BottomSheetModalProvider>
+                </GestureHandlerRootView>
+              </Viewport>
             </AuthProvider>
           </ThemeProvider>
         </DataDragonProvider>
