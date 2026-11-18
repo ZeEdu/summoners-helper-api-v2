@@ -6,7 +6,9 @@
     "start": "nx run-many --target=serve --projects=mobile,api",
     "start:admin": "nx run-many --target=serve --projects=admin,api",
     "test-api": "nx test api --runInBand --detectOpenHandles --skip-nx-cache --verbose",
-    "start-android": "nx run mobile:run-android"
+    "start-android": "nx run mobile:run-android",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "private": true,
   "devDependencies": {
@@ -83,7 +85,7 @@
     "mongodb-memory-server": "^11.2.0",
     "nock": "^14.0.15",
     "nx": "23.0.1",
-    "prettier": "^3.8.1",
+    "prettier": "3.10.1",
     "react-native-svg": "15.15.3",
     "react-test-renderer": "19.2.0",
     "supertest": "^7.2.2",

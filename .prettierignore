@@ -6,3 +6,27 @@
 .nx/self-healing
 .angular
 generated/
+
+# Dependencies
+node_modules/
+
+# Nx / build artifacts
+.nx/
+dist/
+coverage/
+build/
+
+# Expo / native generated files
+apps/mobile/android/
+apps/mobile/ios/
+apps/mobile/.expo/
+
+# Data Dragon assets
+apps/api/src/assets/
+
+# Generated files
+*.generated.ts
+*.generated.js
+
+# Package lock
+package-lock.json
