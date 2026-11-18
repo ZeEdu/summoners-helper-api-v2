@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 import { Button, Portal, Snackbar } from 'react-native-paper';
 
 import {
@@ -47,6 +47,8 @@ export default function CreateGuide({ route }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+
+  const { height } = useWindowDimensions();
   const navigation = useNavigation()
   const i18n = useI18n()
 
@@ -85,8 +87,6 @@ export default function CreateGuide({ route }: Props) {
     control: methods.control,
     name: 'secondaryRune',
   });
-
-  const { height } = Dimensions.get('window');
 
   const setValuesOnForm = () => {
     methods.setValues(

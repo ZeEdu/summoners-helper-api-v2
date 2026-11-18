@@ -1,6 +1,6 @@
 import { StyledView } from '@org/ui';
 import { useEffect, useState } from 'react';
-import { Dimensions, ScrollView } from 'react-native';
+import { ScrollView, useWindowDimensions } from 'react-native';
 import { IconButton, Menu, Text } from 'react-native-paper';
 import { AbilitiesProgressionDto } from '../forms/AbilitiesProgressionForm';
 import { BonusDto } from '../forms/BonusForm';
@@ -30,9 +30,11 @@ type Props = StaticScreenProps<{
 }>;
 
 export default function ViewGuide({ route }: Props) {
+  const { guide } = route.params;
+
   const i18n = useI18n();
   const { user } = useAuthContext();
-  const { guide } = route.params;
+  const { height } = useWindowDimensions();
 
   const [showMenu, setShowMenu] = useState(false);
   const navigation = useNavigation();
@@ -94,8 +96,6 @@ export default function ViewGuide({ route }: Props) {
     threats: guide.threats,
     threatsDescription: guide.threatsDescription,
   };
-
-  const { height } = Dimensions.get('window');
 
   const isGuideCreator = guide.createdBy.toString() === user?.id;
 
