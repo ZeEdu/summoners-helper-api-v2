@@ -1,17 +1,16 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Button, MD3Theme, useTheme } from "react-native-paper";
+import { useNavigation } from '@react-navigation/native'
+import React, { useEffect, useState } from 'react'
+import { FlatList, StyleSheet, View } from 'react-native'
+import { Button, MD3Theme, useTheme } from 'react-native-paper'
 
-import { GuideDto, GuidePaginationDto } from "@org/contracts";
+import { GuideDto, GuidePaginationDto } from '@org/contracts'
 
-import FadeInView from "../../../../../components/animated/FadeInView";
-import Error from "../../../../../components/Error";
-import GuideCard from "../../../../../components/GuideCard";
-import LoadingIndicator from "../../../../../components/LoadingIndicator";
-import useI18n from "../../../../../contexts/i18n/useI18n";
-import { ApiService } from "../../../../../services/api/api.service";
-
+import FadeInView from '../../../../../components/animated/FadeInView'
+import Error from '../../../../../components/Error'
+import GuideCard from '../../../../../components/GuideCard'
+import LoadingIndicator from '../../../../../components/LoadingIndicator'
+import useI18n from '../../../../../contexts/i18n/useI18n'
+import { ApiService } from '../../../../../services/api/api.service'
 
 export default function RecentGuidesList() {
   const theme = useTheme()
@@ -31,25 +30,25 @@ export default function RecentGuidesList() {
 
   useEffect(() => {
     const getBuilds = async () => {
-      setLoading(true);
-      setError('');
+      setLoading(true)
+      setError('')
 
       ApiService.Guides.get(query)
         .then(({ guides }) => {
           setGuides((previous) => {
-            if (query.offset && (query.offset > 0)) {
+            if (query.offset && query.offset > 0) {
               return previous.concat(guides)
             }
             return guides
-          });
+          })
         })
         .catch(() => {
-          setError(i18n.t('recentGuidesList.error'));
+          setError(i18n.t('recentGuidesList.error'))
         })
         .finally(() => {
-          setLoading(false);
-        });
-    };
+          setLoading(false)
+        })
+    }
 
     getBuilds()
   }, [query])
@@ -70,45 +69,35 @@ export default function RecentGuidesList() {
   return (
     <View style={styles.container}>
       <View style={styles.body}>
-        {
-          loading && <LoadingIndicator />
-        }
+        {loading && <LoadingIndicator />}
 
-        {
-          error ? (
-            <Error>
-              <Button onPress={reload}>
-                {i18n.t('recentGuidesList.reload')}
-              </Button>
-            </Error>
-          ) : null
-        }
+        {error ? (
+          <Error>
+            <Button onPress={reload}>{i18n.t('recentGuidesList.reload')}</Button>
+          </Error>
+        ) : null}
 
-        {
-          guides.length ? (
-            <FadeInView style={styles.fadeInView}>
-              <FlatList
-                contentContainerStyle={styles.flatListContainer}
-                data={guides}
-                ListFooterComponent={() => (
-                  <View>
-                    <Button onPress={loadMore}>
-                      {i18n.t('recentGuidesList.loadMore')}
-                    </Button>
-                  </View>
-                )}
-                renderItem={({ item: guide }) => (
-                  <GuideCard
-                    onPress={() => {
-                      navigation.navigate("ViewGuide", { guide })
-                    }}
-                    guide={guide}
-                  />
-                )}
-              />
-            </FadeInView>
-          ) : null
-        }
+        {guides.length ? (
+          <FadeInView style={styles.fadeInView}>
+            <FlatList
+              contentContainerStyle={styles.flatListContainer}
+              data={guides}
+              ListFooterComponent={() => (
+                <View>
+                  <Button onPress={loadMore}>{i18n.t('recentGuidesList.loadMore')}</Button>
+                </View>
+              )}
+              renderItem={({ item: guide }) => (
+                <GuideCard
+                  onPress={() => {
+                    navigation.navigate('ViewGuide', { guide })
+                  }}
+                  guide={guide}
+                />
+              )}
+            />
+          </FadeInView>
+        ) : null}
       </View>
     </View>
   )
@@ -117,17 +106,17 @@ export default function RecentGuidesList() {
 const makeStyle = ({ roundness }: MD3Theme) => {
   return StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     body: {
       flex: 1,
-      borderRadius: roundness
+      borderRadius: roundness,
     },
     fadeInView: {
-      flex: 1
+      flex: 1,
     },
     flatListContainer: {
       rowGap: 8,
-    }
+    },
   })
 }

@@ -1,11 +1,11 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core'
 
-import { getBonusLabel } from "@org/contracts";
+import { getBonusLabel } from '@org/contracts'
 
 @Component({
   selector: 'app-bonus',
   templateUrl: './bonus.html',
-  styleUrl: './bonus.scss'
+  styleUrl: './bonus.scss',
 })
 export class Bonus {
   @Input({ required: true }) bonus: string

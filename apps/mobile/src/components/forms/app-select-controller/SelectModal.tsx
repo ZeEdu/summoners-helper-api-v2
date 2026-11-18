@@ -1,44 +1,52 @@
-import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { Button, Checkbox, Divider, MD3Theme, Text, useTheme } from 'react-native-paper';
+import React from 'react'
+import { FlatList, StyleSheet, View } from 'react-native'
+import { Button, Checkbox, Divider, MD3Theme, Text, useTheme } from 'react-native-paper'
 
 type Props = {
-  title: string,
-  options: { value: string, label: string, disabled?: boolean }[],
-  value: any,
-  onChange: (...event: any[]) => void,
-  dismiss: () => void,
-  multiSelect?: boolean,
-  okText?: string,
+  title: string
+  options: { value: string; label: string; disabled?: boolean }[]
+  value: any
+  onChange: (...event: any[]) => void
+  dismiss: () => void
+  multiSelect?: boolean
+  okText?: string
   cancelText?: string
 }
 
-export default function SelectModal({ title, options, value, onChange, dismiss, multiSelect = false, okText }: Props) {
+export default function SelectModal({
+  title,
+  options,
+  value,
+  onChange,
+  dismiss,
+  multiSelect = false,
+  okText,
+}: Props) {
   const theme = useTheme()
   const styles = makeStyles(theme)
 
   const computeNewValue = (oldValue: any, toggleValue: any) => {
     if (multiSelect) {
-      const current = oldValue ?? {};
+      const current = oldValue ?? {}
 
       if (current[toggleValue]) {
-        const { [toggleValue]: _, ...newValue } = current;
-        return newValue;
+        const { [toggleValue]: _, ...newValue } = current
+        return newValue
       }
 
       const newValue = {
         ...current,
         [toggleValue]: true,
-      };
+      }
 
-      return newValue;
+      return newValue
     }
 
     if (toggleValue === oldValue) {
       return undefined
     }
 
-    return toggleValue;
+    return toggleValue
   }
 
   const toggleCheckbox = (toggleValue: any) => {
@@ -47,9 +55,7 @@ export default function SelectModal({ title, options, value, onChange, dismiss, 
   }
 
   const getCheckboxStatus = (key: any) => {
-    const checked = typeof value === 'object'
-      ? value?.[key]
-      : value === key
+    const checked = typeof value === 'object' ? value?.[key] : value === key
 
     return checked ? 'checked' : 'unchecked'
   }
@@ -58,19 +64,24 @@ export default function SelectModal({ title, options, value, onChange, dismiss, 
     <View>
       <Text style={styles.title}>{title}</Text>
       <Divider />
-      <FlatList style={{ maxHeight: 400 }} data={options} renderItem={({ item }) => {
-        const { label, value, disabled } = item
+      <FlatList
+        style={{ maxHeight: 400 }}
+        data={options}
+        renderItem={({ item }) => {
+          const { label, value, disabled } = item
 
-        return <Checkbox.Item
-          disabled={disabled}
-          label={label}
-          key={value}
-          status={getCheckboxStatus(value)}
-          onPress={() => {
-            toggleCheckbox(value)
-          }}
-        />
-      }}
+          return (
+            <Checkbox.Item
+              disabled={disabled}
+              label={label}
+              key={value}
+              status={getCheckboxStatus(value)}
+              onPress={() => {
+                toggleCheckbox(value)
+              }}
+            />
+          )
+        }}
       />
       <Divider />
       <View style={styles.actionButtons}>
@@ -81,7 +92,8 @@ export default function SelectModal({ title, options, value, onChange, dismiss, 
 }
 
 const makeStyles = ({ fonts }: MD3Theme) => {
-  const { fontFamily, fontSize, fontWeight, letterSpacing, lineHeight, fontStyle } = fonts.titleLarge
+  const { fontFamily, fontSize, fontWeight, letterSpacing, lineHeight, fontStyle } =
+    fonts.titleLarge
   return StyleSheet.create({
     title: {
       marginHorizontal: 16,
@@ -91,13 +103,13 @@ const makeStyles = ({ fonts }: MD3Theme) => {
       fontWeight,
       letterSpacing,
       lineHeight,
-      fontStyle
+      fontStyle,
     },
     actionButtons: {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'flex-end',
-      marginTop: 8
-    }
+      marginTop: 8,
+    },
   })
 }

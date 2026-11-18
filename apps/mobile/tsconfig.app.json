@@ -2,13 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "files": [
-    "../../node_modules/@nx/expo/typings/svg.d.ts"
-  ],
+  "files": ["../../node_modules/@nx/expo/typings/svg.d.ts"],
   "exclude": [
     "**/*.test.ts",
     "**/*.spec.ts",
@@ -24,12 +20,5 @@
     "src/**/*.spec.ts",
     "src/**/*.test.ts"
   ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

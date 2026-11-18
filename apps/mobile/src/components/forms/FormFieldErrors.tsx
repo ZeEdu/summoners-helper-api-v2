@@ -1,8 +1,8 @@
-import { FieldError } from "react-hook-form"
-import { StyleSheet, View } from "react-native"
+import { FieldError } from 'react-hook-form'
+import { StyleSheet, View } from 'react-native'
 
-import { StyledText } from "@org/ui"
-import { MD3Theme, useTheme } from "react-native-paper"
+import { StyledText } from '@org/ui'
+import { MD3Theme, useTheme } from 'react-native-paper'
 
 export default function FormFieldErrors({ fieldError }: { fieldError: FieldError | undefined }) {
   const theme = useTheme()
@@ -23,10 +23,10 @@ const makeStyles = ({ colors, fonts }: MD3Theme) => {
   return StyleSheet.create({
     container: {
       margin: 8,
-      marginLeft: 0
+      marginLeft: 0,
     },
     text: {
-      color: colors.error
-    }
+      color: colors.error,
+    },
   })
 }

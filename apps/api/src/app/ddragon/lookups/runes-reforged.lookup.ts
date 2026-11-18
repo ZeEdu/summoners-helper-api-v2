@@ -1,12 +1,10 @@
-import { RunesReforgedDataDragon } from '../dto/runes-reforged-data.dragon';
+import { RunesReforgedDataDragon } from '../dto/runes-reforged-data.dragon'
 
-const runesJSON: RunesReforgedDataDragon[] = require(
-  `../../../assets/ddragon/runesReforged.json`,
-);
+const runesJSON: RunesReforgedDataDragon[] = require(`../../../assets/ddragon/runesReforged.json`)
 
 const flatRunes = runesJSON
   .map((rune) => rune.slots.map((slot) => slot.runes.map((rune) => rune)))
-  .flat(2);
+  .flat(2)
 
 const RUNE_SLOTS = flatRunes.reduce(
   (previousValue, currentValue) => ({
@@ -14,7 +12,7 @@ const RUNE_SLOTS = flatRunes.reduce(
     [currentValue.id]: currentValue,
   }),
   {},
-);
+)
 
 const MAIN_RUNES = runesJSON.reduce(
   (previousValue, currentValue) => ({
@@ -22,13 +20,13 @@ const MAIN_RUNES = runesJSON.reduce(
     [currentValue.id]: currentValue,
   }),
   {},
-);
+)
 
 function getMainRuneById(runeId: number) {
-  return MAIN_RUNES[runeId];
+  return MAIN_RUNES[runeId]
 }
 function getRuneSlotById(runeSlotId: number) {
-  return RUNE_SLOTS[runeSlotId];
+  return RUNE_SLOTS[runeSlotId]
 }
 
-export const RunesLookup = { getMainRuneById, getRuneSlotById };
+export const RunesLookup = { getMainRuneById, getRuneSlotById }

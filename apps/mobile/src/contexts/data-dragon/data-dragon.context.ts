@@ -1,43 +1,43 @@
-import { createContext } from "react";
-import { ChampionsDataDragonDetails } from "../../dtos/champion.dto";
-import { ItemDetails } from "../../dtos/item.dto";
-import { RunesReforgedDataDragon, RunesReforgedSlots } from "../../dtos/runes-reforged.dto";
-import { SummonerSpell } from "../../dtos/spell.dto";
+import { createContext } from 'react'
+import { ChampionsDataDragonDetails } from '../../dtos/champion.dto'
+import { ItemDetails } from '../../dtos/item.dto'
+import { RunesReforgedDataDragon, RunesReforgedSlots } from '../../dtos/runes-reforged.dto'
+import { SummonerSpell } from '../../dtos/spell.dto'
 
 export interface ItemDetailsWithId extends ItemDetails {
   id: string
 }
 
 export type DataDragonLists = {
-  champions: ChampionsDataDragonDetails[],
-  spells: SummonerSpell[],
-  runes: RunesReforgedDataDragon[],
-  runeSlots: RunesReforgedSlots[],
+  champions: ChampionsDataDragonDetails[]
+  spells: SummonerSpell[]
+  runes: RunesReforgedDataDragon[]
+  runeSlots: RunesReforgedSlots[]
   items: ItemDetailsWithId[]
 }
 
 export type DataDragonMaps = {
   champions: Record<string, ChampionsDataDragonDetails>
-  spells: Record<string, SummonerSpell>,
-  runes: Record<string, RunesReforgedDataDragon>,
-  runeSlots: Record<string, RunesReforgedSlots>,
-  items: Record<string, ItemDetails>,
+  spells: Record<string, SummonerSpell>
+  runes: Record<string, RunesReforgedDataDragon>
+  runeSlots: Record<string, RunesReforgedSlots>
+  items: Record<string, ItemDetails>
 }
 
 export type DataDragonContextType = {
-  loading: boolean;
-  error: string | undefined;
-  lists: DataDragonLists;
-  maps: DataDragonMaps;
+  loading: boolean
+  error: string | undefined
+  lists: DataDragonLists
+  maps: DataDragonMaps
 
-  reload: () => void;
+  reload: () => void
 
-  getChampion: (id: string) => ChampionsDataDragonDetails;
-  getSpell: (id: string) => SummonerSpell;
-  getRune: (id: string) => RunesReforgedDataDragon;
-  getRuneSlots: (id: string) => RunesReforgedSlots;
-  getItem: (id: string) => ItemDetails;
-  getPatch: () => string;
+  getChampion: (id: string) => ChampionsDataDragonDetails
+  getSpell: (id: string) => SummonerSpell
+  getRune: (id: string) => RunesReforgedDataDragon
+  getRuneSlots: (id: string) => RunesReforgedSlots
+  getItem: (id: string) => ItemDetails
+  getPatch: () => string
 }
 
 export const DataDragonContext = createContext<DataDragonContextType | undefined>(undefined)

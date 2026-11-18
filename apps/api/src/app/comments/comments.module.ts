@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { GuidesModule } from '../guides/guides.module';
-import { CommentsController } from './controller/comments.controller';
-import { Comment, CommentSchema } from './schema/comment.schema';
-import { CommentLike, CommentLikeSchema } from './schema/like.schema';
-import { CommentsService } from './service/comments.service';
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
+import { GuidesModule } from '../guides/guides.module'
+import { CommentsController } from './controller/comments.controller'
+import { Comment, CommentSchema } from './schema/comment.schema'
+import { CommentLike, CommentLikeSchema } from './schema/like.schema'
+import { CommentsService } from './service/comments.service'
 
 @Module({
   providers: [CommentsService],
@@ -12,8 +12,8 @@ import { CommentsService } from './service/comments.service';
   imports: [
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: CommentLike.name, schema: CommentLikeSchema }]),
-    GuidesModule
+    GuidesModule,
   ],
-  exports: [CommentsService]
+  exports: [CommentsService],
 })
-export class CommentsModule { }
+export class CommentsModule {}

@@ -1,8 +1,8 @@
-import z from 'zod';
+import z from 'zod'
 
-import { AbilityOption } from '../../enums';
+import { AbilityOption } from '../../enums'
 
-export const enumAbilitiesOption = z.enum(AbilityOption);
+export const enumAbilitiesOption = z.enum(AbilityOption)
 
 export const abilitiesProgressionSchema = z.object({
   l1: enumAbilitiesOption,
@@ -23,84 +23,48 @@ export const abilitiesProgressionSchema = z.object({
   l16: enumAbilitiesOption,
   l17: enumAbilitiesOption,
   l18: enumAbilitiesOption,
-});
+})
 
 export const itemSchema = z.object({
   itemId: z.string(),
-});
+})
 
 export const itemsSchema = z.object({
-  rowName: z
-    .string()
-    .min(1),
-  itemsList: z
-    .array(itemSchema)
-    .min(1),
-  description: z
-    .string()
-    .min(1),
-});
+  rowName: z.string().min(1),
+  itemsList: z.array(itemSchema).min(1),
+  description: z.string().min(1),
+})
 
 export const GuideSchemaShape = z.object({
   patchVersion: z.string(),
   createdAt: z.string(),
   createdBy: z.string(),
 
-  title: z
-    .string()
-    .min(1),
-  introduction: z
-    .string()
-    .min(1),
-  champion: z
-    .string()
-    .min(1),
-  role: z
-    .string()
-    .min(1),
+  title: z.string().min(1),
+  introduction: z.string().min(1),
+  champion: z.string().min(1),
+  role: z.string().min(1),
 
   // Bonus
-  bonusSlotOne: z
-    .string()
-    .min(1),
-  bonusSlotTwo: z
-    .string()
-    .min(1),
-  bonusSlotThree: z
-    .string()
-    .min(1),
-  bonusDescription: z
-    .string()
-    .min(1),
+  bonusSlotOne: z.string().min(1),
+  bonusSlotTwo: z.string().min(1),
+  bonusSlotThree: z.string().min(1),
+  bonusDescription: z.string().min(1),
 
   primaryRune: z.string(),
   primarySlots: z.object({
-    first: z
-      .string()
-      .min(1),
-    second: z
-      .string()
-      .min(1),
-    third: z
-      .string()
-      .min(1),
-    fourth: z
-      .string()
-      .min(1),
+    first: z.string().min(1),
+    second: z.string().min(1),
+    third: z.string().min(1),
+    fourth: z.string().min(1),
   }),
   primaryRuneDescription: z.string(),
 
   secondaryRune: z.string(),
   secondarySlots: z.object({
-    first: z
-      .string()
-      .min(1),
-    second: z
-      .string()
-      .min(1),
-    third: z
-      .string()
-      .min(1),
+    first: z.string().min(1),
+    second: z.string().min(1),
+    third: z.string().min(1),
   }),
   secondaryRuneDescription: z.string(),
 
@@ -111,27 +75,19 @@ export const GuideSchemaShape = z.object({
 
   // Items
   items: z.array(itemsSchema),
-  itemsDescription: z
-    .string()
-    .min(1),
+  itemsDescription: z.string().min(1),
 
   // Abilities Progression
   abilitiesProgression: abilitiesProgressionSchema,
   abilitiesProgressionDescription: z.string(),
 
-  threatsDescription: z
-    .string()
-    .min(1),
+  threatsDescription: z.string().min(1),
   threats: z.array(
     z.object({
-      threat: z
-        .string()
-        .min(1),
-      description: z
-        .string()
-        .min(1),
+      threat: z.string().min(1),
+      description: z.string().min(1),
     }),
   ),
-});
+})
 
-export type CreateGuideDto = z.infer<typeof GuideSchemaShape>;
+export type CreateGuideDto = z.infer<typeof GuideSchemaShape>

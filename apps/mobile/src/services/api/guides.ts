@@ -1,27 +1,25 @@
-import { CreateGuideFormDto, GuideDto, GuidePaginationDto, IGuide } from '@org/contracts';
+import { CreateGuideFormDto, GuideDto, GuidePaginationDto, IGuide } from '@org/contracts'
 
-import { customFetch } from '../../utils/customFetch/customFetch';
-import { AuthTokenStorageService } from '../auth-token-storage.service';
-import { API_CONSTANTS } from './api.constants';
+import { customFetch } from '../../utils/customFetch/customFetch'
+import { AuthTokenStorageService } from '../auth-token-storage.service'
+import { API_CONSTANTS } from './api.constants'
 
-const ENDPOINT = 'guides';
+const ENDPOINT = 'guides'
 
 const buildQueryStringFromDto = (query: Record<string, any | undefined>) => {
   return Object.entries(query)
-    .filter(
-      ([_, value]) => value !== undefined && value !== null && value !== '',
-    )
+    .filter(([_, value]) => value !== undefined && value !== null && value !== '')
     .map(([key, value]) => `${key}=${value}`)
-    .join('&');
-};
+    .join('&')
+}
 
 export const Guides = {
   create: async (createGuideDto: CreateGuideFormDto): Promise<IGuide> => {
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`;
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -32,20 +30,17 @@ export const Guides = {
       },
       credentials: 'include',
       body: JSON.stringify(createGuideDto),
-    };
+    }
 
-    return customFetch<IGuide>(url, init);
+    return customFetch<IGuide>(url, init)
   },
 
-  patch: async (
-    guideId: string,
-    createGuideDto: CreateGuideFormDto,
-  ): Promise<IGuide> => {
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/${guideId}`;
+  patch: async (guideId: string, createGuideDto: CreateGuideFormDto): Promise<IGuide> => {
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/${guideId}`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -56,20 +51,20 @@ export const Guides = {
       },
       credentials: 'include',
       body: JSON.stringify(createGuideDto),
-    };
+    }
 
-    return customFetch<IGuide>(url, init);
+    return customFetch<IGuide>(url, init)
   },
 
   get: async (
     guidePagination: GuidePaginationDto,
   ): Promise<{ guides: GuideDto[]; count: number }> => {
-    const queryParams = buildQueryStringFromDto(guidePagination);
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}?${queryParams}`;
+    const queryParams = buildQueryStringFromDto(guidePagination)
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}?${queryParams}`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -78,11 +73,11 @@ export const Guides = {
         Authorization: `Bearer ${tokens.accessToken}`,
         'Content-Type': 'application/json',
       },
-    };
+    }
 
-    return customFetch(url, init);
+    return customFetch(url, init)
   },
-};
+}
 
 // TODO Criar uma função que deve ser chamada sempre que o fetch falhar e for uma erro de token invalido
 // Nesse cenário devesse atualizar os tokens

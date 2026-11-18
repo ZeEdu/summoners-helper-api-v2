@@ -1,6 +1,23 @@
-import { GuideDto, IComment, IGuide, IPopulatedReport, IPopulatedReportDto, ISerializedComment, IUser, PopulatedGuideDto, UserDto, UserDtoWithPassword, UserDtoWithPuuid, UserDtoWithRefreshToken } from "@org/contracts";
-import { Types } from "mongoose";
-import { IUserWithPassword, IUserWithPuuid, IUserWithRefreshToken } from "./users/schema/user.schema";
+import {
+  GuideDto,
+  IComment,
+  IGuide,
+  IPopulatedReport,
+  IPopulatedReportDto,
+  ISerializedComment,
+  IUser,
+  PopulatedGuideDto,
+  UserDto,
+  UserDtoWithPassword,
+  UserDtoWithPuuid,
+  UserDtoWithRefreshToken,
+} from '@org/contracts'
+import { Types } from 'mongoose'
+import {
+  IUserWithPassword,
+  IUserWithPuuid,
+  IUserWithRefreshToken,
+} from './users/schema/user.schema'
 
 function user(user: IUser): UserDto {
   return {
@@ -11,21 +28,21 @@ function user(user: IUser): UserDto {
     tagLine: user.tagLine,
     server: user.server,
     puuid: user.puuid,
-    isSystemAdmin: user.isSystemAdmin
+    isSystemAdmin: user.isSystemAdmin,
   }
 }
 
 function userWithRefreshToken(userData: IUserWithRefreshToken): UserDtoWithRefreshToken {
   return {
     ...user(userData),
-    refreshToken: userData.refreshToken
+    refreshToken: userData.refreshToken,
   }
 }
 
 function userWithPassword(userData: IUserWithPassword): UserDtoWithPassword {
   return {
     ...user(userData),
-    password: userData.password
+    password: userData.password,
   }
 }
 
@@ -33,7 +50,6 @@ function userWithPuuid(userData: IUserWithPuuid): UserDtoWithPuuid {
   return {
     ...user(userData),
     puuid: userData.puuid,
-
   }
 }
 
@@ -41,7 +57,7 @@ function guide(guide: IGuide): GuideDto {
   return {
     ...guide,
     createdBy: guide.createdBy.toString(),
-    id: guide._id.toString()
+    id: guide._id.toString(),
   }
 }
 
@@ -49,7 +65,7 @@ function populatedGuide(guide: IGuide): PopulatedGuideDto {
   return {
     ...guide,
     id: guide._id.toString(),
-    createdBy: user(guide.createdBy as IUser)
+    createdBy: user(guide.createdBy as IUser),
   }
 }
 
@@ -63,7 +79,7 @@ function populatedReport(report: IPopulatedReport): IPopulatedReportDto {
     status: report.status,
     actionTaken: report.actionTaken,
     ...(!!report.guide && { guide: populatedGuide(report.guide) }),
-    ...(!!report.comment && { comment: comment(report.comment) })
+    ...(!!report.comment && { comment: comment(report.comment) }),
   }
 }
 
@@ -72,7 +88,7 @@ function isUserDto(user: IUser | Types.ObjectId | UserDto): user is UserDto {
 }
 
 function isPopulatedUser(user: IUser | Types.ObjectId | UserDto): user is IUser {
-  return !('equals' in user) && ('_id' in user)
+  return !('equals' in user) && '_id' in user
 }
 
 function isPopulatedGuide(guide: Types.ObjectId | IGuide): guide is IGuide {
@@ -93,8 +109,8 @@ function comment(comment: IComment): ISerializedComment {
   const content = comment.blocked ? comment.content : 'Comentário bloquado pela moderação'
 
   return {
-    createdBy: (commentCreatedBy ?? comment.createdBy),
-    guide: (commentGuide ?? comment.guide),
+    createdBy: commentCreatedBy ?? comment.createdBy,
+    guide: commentGuide ?? comment.guide,
     id: comment._id.toString(),
     createdAt: comment.createdAt,
     removed: comment.removed,
@@ -113,7 +129,7 @@ const ResponseMappers = {
   guide,
   populatedGuide,
   populatedReport,
-  comment
-};
+  comment,
+}
 
 export default ResponseMappers

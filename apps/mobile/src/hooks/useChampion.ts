@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react"
-import { ChampionDataDragon, ChampionsDataDragonDetailsSolo } from "../dtos/champion.dto"
-import { customFetch } from "../utils/customFetch/customFetch"
+import { useEffect, useState } from 'react'
+import { ChampionDataDragon, ChampionsDataDragonDetailsSolo } from '../dtos/champion.dto'
+import { customFetch } from '../utils/customFetch/customFetch'
 
 export default function useChampionData(championId: string) {
-  const [championData, setChampionData] = useState<ChampionsDataDragonDetailsSolo | undefined>(undefined)
+  const [championData, setChampionData] = useState<ChampionsDataDragonDetailsSolo | undefined>(
+    undefined,
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
@@ -23,7 +25,6 @@ export default function useChampionData(championId: string) {
         .finally(() => {
           setLoading(false)
         })
-
     }
     if (championId) {
       getChampion()

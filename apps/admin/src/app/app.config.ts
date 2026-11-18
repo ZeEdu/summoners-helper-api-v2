@@ -1,20 +1,20 @@
-import { HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http'
 import {
   ApplicationConfig,
   inject,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
-} from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { catchError, EMPTY, of, switchMap, tap } from 'rxjs';
+} from '@angular/core'
+import { provideRouter } from '@angular/router'
+import { catchError, EMPTY, of, switchMap, tap } from 'rxjs'
 
-import { appRoutes } from './app.routes';
-import { AuthTokenStorageService } from './auth/service/auth-token-storage.service';
-import { AuthService } from './auth/service/auth.service';
-import { SessionService } from './auth/service/session.service';
-import { DataDragonService } from './data-dragon/data-dragon.service';
-import { authInterceptor } from './interceptors/auth-interceptor/auth-interceptor';
-import { errorInterceptor } from './interceptors/error-interceptor/error-interceptor';
+import { appRoutes } from './app.routes'
+import { AuthTokenStorageService } from './auth/service/auth-token-storage.service'
+import { AuthService } from './auth/service/auth.service'
+import { SessionService } from './auth/service/session.service'
+import { DataDragonService } from './data-dragon/data-dragon.service'
+import { authInterceptor } from './interceptors/auth-interceptor/auth-interceptor'
+import { errorInterceptor } from './interceptors/error-interceptor/error-interceptor'
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,17 +22,17 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideAppInitializer(() => {
-      const authTokenStorageService = inject(AuthTokenStorageService);
+      const authTokenStorageService = inject(AuthTokenStorageService)
 
-      const { accessToken } = authTokenStorageService.get();
+      const { accessToken } = authTokenStorageService.get()
 
       if (accessToken) {
-        const authService = inject(AuthService);
-        const sessionService = inject(SessionService);
+        const authService = inject(AuthService)
+        const sessionService = inject(SessionService)
 
         const clearSession = () => {
-          authTokenStorageService.delete();
-          sessionService.removeUser();
+          authTokenStorageService.delete()
+          sessionService.removeUser()
         }
 
         return authService.refreshToken().pipe(
@@ -41,7 +41,7 @@ export const appConfig: ApplicationConfig = {
               clearSession()
             }
 
-            return of(null);
+            return of(null)
           }),
           switchMap((user) => {
             if (user) {
@@ -51,29 +51,26 @@ export const appConfig: ApplicationConfig = {
                     clearSession()
                   }
 
-                  return of(null);
+                  return of(null)
                 }),
                 tap((user) => {
                   if (user) {
-                    sessionService.setUser(user);
+                    sessionService.setUser(user)
                   }
                 }),
-              );
+              )
             }
-            return EMPTY;
+            return EMPTY
           }),
-        );
+        )
       }
 
-      return of(null);
+      return of(null)
     }),
     provideAppInitializer(() => inject(DataDragonService).load()),
   ],
-};
+}
 
 function isAuthenticationError(error: unknown): boolean {
-  return (
-    error instanceof HttpErrorResponse &&
-    [401, 403].includes(error.status)
-  );
+  return error instanceof HttpErrorResponse && [401, 403].includes(error.status)
 }

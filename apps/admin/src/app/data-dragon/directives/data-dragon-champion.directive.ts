@@ -1,40 +1,34 @@
-import { afterNextRender, Directive, ElementRef, inject, Renderer2 } from "@angular/core";
-import { interval, Subject, takeUntil } from "rxjs";
-import { DataDragonService } from "../data-dragon.service";
+import { afterNextRender, Directive, ElementRef, inject, Renderer2 } from '@angular/core'
+import { interval, Subject, takeUntil } from 'rxjs'
+import { DataDragonService } from '../data-dragon.service'
 
 @Directive({
-  selector: '[appChampionName]'
+  selector: '[appChampionName]',
 })
 export class ChampionNameDirective {
   private dataDragonService = inject(DataDragonService)
 
-  private readonly element: ElementRef<HTMLParagraphElement | HTMLSpanElement> = inject(ElementRef<HTMLParagraphElement | HTMLSpanElement>);
+  private readonly element: ElementRef<HTMLParagraphElement | HTMLSpanElement> = inject(
+    ElementRef<HTMLParagraphElement | HTMLSpanElement>,
+  )
   private readonly renderer = inject(Renderer2)
 
   private loadedValue = new Subject<void>()
 
-  constructor(
-  ) {
+  constructor() {
     afterNextRender(() => {
       this.startLoop()
       const championId = this.element.nativeElement.innerText
       if (championId && typeof championId === 'string') {
-        this.dataDragonService
-          .champion(championId)
-          .subscribe((champion) => {
-            this.loadedValue.next()
+        this.dataDragonService.champion(championId).subscribe((champion) => {
+          this.loadedValue.next()
 
-            const textContent = champion?.name || championId
-            this.renderer.setProperty(
-              this.element.nativeElement,
-              'textContent',
-              textContent
-            )
-          })
+          const textContent = champion?.name || championId
+          this.renderer.setProperty(this.element.nativeElement, 'textContent', textContent)
+        })
       }
     })
   }
-
 
   startLoop() {
     let dotCount = 1
@@ -42,15 +36,13 @@ export class ChampionNameDirective {
     interval(150)
       .pipe(takeUntil(this.loadedValue))
       .subscribe(() => {
-        const traillingDots = Array.from({ length: dotCount }).map(() => '.').join('')
+        const traillingDots = Array.from({ length: dotCount })
+          .map(() => '.')
+          .join('')
 
-        dotCount = (dotCount < 4) ? (dotCount + 1) : 1
+        dotCount = dotCount < 4 ? dotCount + 1 : 1
 
-        this.renderer.setProperty(
-          this.element.nativeElement,
-          'textContent',
-          traillingDots
-        )
+        this.renderer.setProperty(this.element.nativeElement, 'textContent', traillingDots)
       })
   }
 }

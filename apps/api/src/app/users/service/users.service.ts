@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, QueryOptions } from 'mongoose';
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model, QueryFilter, QueryOptions } from 'mongoose'
 
 import {
   CreateUserDto,
@@ -14,60 +14,54 @@ import {
   UserDto,
   UserDtoWithPassword,
   UserDtoWithPuuid,
-  UserDtoWithRefreshToken
-} from '@org/contracts';
+  UserDtoWithRefreshToken,
+} from '@org/contracts'
 
-import ResponseMappers from '../../response-mappers';
-import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import { IUserWithPassword, IUserWithPuuid, IUserWithRefreshToken, SENSIBLE_FIELDS, User } from '../schema/user.schema';
+import ResponseMappers from '../../response-mappers'
+import { RiotApiService } from '../../riot-api/service/riot-api.service'
+import {
+  IUserWithPassword,
+  IUserWithPuuid,
+  IUserWithRefreshToken,
+  SENSIBLE_FIELDS,
+  User,
+} from '../schema/user.schema'
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly riotApiService: RiotApiService,
-  ) { }
+  ) {}
 
   async findOneByEmail(email: User['email']): Promise<UserDto | undefined> {
-    const user = await this.userModel.findOne({ email }).lean<IUser>();
+    const user = await this.userModel.findOne({ email }).lean<IUser>()
     if (user) {
       return ResponseMappers.user(user)
     }
   }
 
-  async findOneByEmailWithPuuid(
-    email: User['email'],
-  ): Promise<UserDtoWithPuuid | undefined> {
-    const user = await this.userModel
-      .findOne({ email })
-      .select('+puuid')
-      .lean<IUserWithPuuid>()
+  async findOneByEmailWithPuuid(email: User['email']): Promise<UserDtoWithPuuid | undefined> {
+    const user = await this.userModel.findOne({ email }).select('+puuid').lean<IUserWithPuuid>()
 
     if (user) {
       return ResponseMappers.userWithPuuid(user)
     }
   }
 
-  async findOneByIdWithPuuid(
-    id: string,
-  ): Promise<UserDtoWithPuuid | undefined> {
-    const user = await this.userModel
-      .findById(id)
-      .select('+puuid')
-      .lean<IUserWithPuuid>()
+  async findOneByIdWithPuuid(id: string): Promise<UserDtoWithPuuid | undefined> {
+    const user = await this.userModel.findById(id).select('+puuid').lean<IUserWithPuuid>()
 
     if (user) {
       return ResponseMappers.userWithPuuid(user)
     }
   }
 
-  async findOneByEmailWithPassword(
-    email: User['email'],
-  ): Promise<UserDtoWithPassword | undefined> {
+  async findOneByEmailWithPassword(email: User['email']): Promise<UserDtoWithPassword | undefined> {
     const user = await this.userModel
       .findOne({ email })
       .select('+password')
-      .lean<IUserWithPassword>();
+      .lean<IUserWithPassword>()
 
     if (user) {
       return ResponseMappers.userWithPassword(user)
@@ -75,7 +69,7 @@ export class UsersService {
   }
 
   async findOneByUsername(username: User['username']): Promise<UserDto | undefined> {
-    const user = await this.userModel.findOne({ username }).lean<IUser>();
+    const user = await this.userModel.findOne({ username }).lean<IUser>()
 
     if (user) {
       return ResponseMappers.user(user)
@@ -83,7 +77,7 @@ export class UsersService {
   }
 
   async findOneById(id: string): Promise<UserDto | undefined> {
-    const user = await this.userModel.findById(id).lean<IUser>();
+    const user = await this.userModel.findById(id).lean<IUser>()
 
     if (user) {
       return ResponseMappers.user(user)
@@ -91,7 +85,7 @@ export class UsersService {
   }
 
   async findOneByIdWithRefreshToken(id: string): Promise<UserDtoWithRefreshToken | undefined> {
-    const user = await this.userModel.findById(id).lean<IUserWithRefreshToken>();
+    const user = await this.userModel.findById(id).lean<IUserWithRefreshToken>()
 
     if (user) {
       return ResponseMappers.userWithRefreshToken(user)
@@ -99,7 +93,7 @@ export class UsersService {
   }
 
   async create(user: CreateUserDto): Promise<UserDto> {
-    const createdUser = await new this.userModel(user).save();
+    const createdUser = await new this.userModel(user).save()
     return ResponseMappers.user(createdUser)
   }
 
@@ -108,7 +102,7 @@ export class UsersService {
     updatedUserInformation: Partial<UpdateUserDto>,
     queryOptions?: QueryOptions<User>,
   ): Promise<UserDto | undefined> {
-    const { returnDocument = 'after' } = queryOptions || {};
+    const { returnDocument = 'after' } = queryOptions || {}
 
     const options = {
       ...queryOptions,
@@ -117,7 +111,7 @@ export class UsersService {
 
     const updatedUser = await this.userModel
       .findByIdAndUpdate(userId, updatedUserInformation, options)
-      .lean<IUser>();
+      .lean<IUser>()
 
     if (updatedUser) {
       return ResponseMappers.user(updatedUser)
@@ -128,49 +122,46 @@ export class UsersService {
     filter?: QueryFilter<User>,
     pagination?: PaginationDto,
   ): Promise<{ count: number; users: UserDto[] }> {
-    const limit = pagination?.limit || DEFAULT_LIMIT;
-    const offset = pagination?.offset || DEFAULT_OFFSET;
+    const limit = pagination?.limit || DEFAULT_LIMIT
+    const offset = pagination?.offset || DEFAULT_OFFSET
 
-    filter = filter || {};
+    filter = filter || {}
 
-    const safeFilter = { ...filter };
-    SENSIBLE_FIELDS.forEach((field) => delete safeFilter[field]);
+    const safeFilter = { ...filter }
+    SENSIBLE_FIELDS.forEach((field) => delete safeFilter[field])
 
-    const count = await this.userModel.countDocuments(safeFilter);
+    const count = await this.userModel.countDocuments(safeFilter)
     const users = await this.userModel
       .find(safeFilter)
       .limit(limit)
       .skip(offset * limit)
-      .lean<IUser[]>();
+      .lean<IUser[]>()
 
-    return { users: users.map(ResponseMappers.user), count };
+    return { users: users.map(ResponseMappers.user), count }
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {
-    await this.userModel.updateOne({ _id: userId }, { refreshToken });
+    await this.userModel.updateOne({ _id: userId }, { refreshToken })
   }
 
   async removeRefreshToken(userId: string) {
-    await this.userModel.updateOne({ _id: userId }, { refreshToken: null });
+    await this.userModel.updateOne({ _id: userId }, { refreshToken: null })
   }
 
-  async updateUserWithRiotData(
-    user: UserDto,
-    updateProfileDto: UpdateUserProfileDto,
-  ) {
+  async updateUserWithRiotData(user: UserDto, updateProfileDto: UpdateUserProfileDto) {
     const accountData = await this.riotApiService.getAccountByRiotId(
       updateProfileDto.gameName,
       updateProfileDto.tagLine,
-    );
+    )
 
     const updateData: UpdateUserDto = {
       puuid: accountData.puuid,
       tagLine: accountData.tagLine,
       gameName: accountData.gameName,
       server: updateProfileDto.server,
-    };
+    }
 
-    return this.update(user.id, updateData);
+    return this.update(user.id, updateData)
   }
 
   async getTopMasteries(user: UserDtoWithPuuid, count: number) {
@@ -178,10 +169,10 @@ export class UsersService {
       user.puuid,
       count,
       user.server || RIOT_SERVERS.br1,
-    );
+    )
   }
 
   async getLastFiveMatches(user: UserDtoWithPuuid) {
-    return this.riotApiService.getLastFiveMatches(user.puuid);
+    return this.riotApiService.getLastFiveMatches(user.puuid)
   }
 }

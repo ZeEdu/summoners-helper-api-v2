@@ -1,5 +1,5 @@
-import z from "zod"
-import { paginationSchema } from "./pagination"
+import z from 'zod'
+import { paginationSchema } from './pagination'
 
 export const commentPagination = paginationSchema.safeExtend({
   id: z.string().optional(),

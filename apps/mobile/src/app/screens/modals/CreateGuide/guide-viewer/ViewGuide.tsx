@@ -1,64 +1,64 @@
-import { StyledView } from '@org/ui';
-import { useEffect, useState } from 'react';
-import { ScrollView, useWindowDimensions } from 'react-native';
-import { IconButton, Menu, Text } from 'react-native-paper';
-import { AbilitiesProgressionDto } from '../forms/AbilitiesProgressionForm';
-import { BonusDto } from '../forms/BonusForm';
-import { GuideIntroductionDto } from '../forms/GuideIntroductionForm';
-import { GuideSummonerSpellsDto } from '../forms/GuideSpellsForm';
-import { ItemsDto } from '../forms/items-form/ItemsForm';
-import { MainRuneDto } from '../forms/MainRunesForm';
-import { SecondaryRuneDto } from '../forms/SecondaryRunesForm';
-import { ThreatsDto } from '../forms/ThreatsForm';
+import { StyledView } from '@org/ui'
+import { useEffect, useState } from 'react'
+import { ScrollView, useWindowDimensions } from 'react-native'
+import { IconButton, Menu, Text } from 'react-native-paper'
+import { AbilitiesProgressionDto } from '../forms/AbilitiesProgressionForm'
+import { BonusDto } from '../forms/BonusForm'
+import { GuideIntroductionDto } from '../forms/GuideIntroductionForm'
+import { GuideSummonerSpellsDto } from '../forms/GuideSpellsForm'
+import { ItemsDto } from '../forms/items-form/ItemsForm'
+import { MainRuneDto } from '../forms/MainRunesForm'
+import { SecondaryRuneDto } from '../forms/SecondaryRunesForm'
+import { ThreatsDto } from '../forms/ThreatsForm'
 
-import { GuideDto, ISerializedComment } from '@org/contracts';
-import { StaticScreenProps, useNavigation } from '@react-navigation/native';
-import CommentSection from '../../../../../components/comment-section/CommentSection';
-import { useAuthContext } from '../../../../../contexts/auth/useAuth';
-import useI18n from '../../../../../contexts/i18n/useI18n';
-import AbilitiesProgressionContent from './abilities-progression-content/AbilitiesProgressionContent';
-import BonusContent from './bonus-content/BonusContent';
-import ExpandableCard from './expandable-card/ExpandableCard';
-import HeroBanner from './hero-banner/HeroBanner';
-import ItemsContent from './items-content/ItemsContent';
-import RuneContent from './rune-content/RuneContent';
-import SpellContent from './spell-content/SpellContent';
-import ThreatsContent from './threats-content/ThreatsContent';
+import { GuideDto, ISerializedComment } from '@org/contracts'
+import { StaticScreenProps, useNavigation } from '@react-navigation/native'
+import CommentSection from '../../../../../components/comment-section/CommentSection'
+import { useAuthContext } from '../../../../../contexts/auth/useAuth'
+import useI18n from '../../../../../contexts/i18n/useI18n'
+import AbilitiesProgressionContent from './abilities-progression-content/AbilitiesProgressionContent'
+import BonusContent from './bonus-content/BonusContent'
+import ExpandableCard from './expandable-card/ExpandableCard'
+import HeroBanner from './hero-banner/HeroBanner'
+import ItemsContent from './items-content/ItemsContent'
+import RuneContent from './rune-content/RuneContent'
+import SpellContent from './spell-content/SpellContent'
+import ThreatsContent from './threats-content/ThreatsContent'
 
 type Props = StaticScreenProps<{
-  guide: GuideDto;
-}>;
+  guide: GuideDto
+}>
 
 export default function ViewGuide({ route }: Props) {
-  const { guide } = route.params;
+  const { guide } = route.params
 
-  const i18n = useI18n();
-  const { user } = useAuthContext();
-  const { height } = useWindowDimensions();
+  const i18n = useI18n()
+  const { user } = useAuthContext()
+  const { height } = useWindowDimensions()
 
-  const [showMenu, setShowMenu] = useState(false);
-  const navigation = useNavigation();
+  const [showMenu, setShowMenu] = useState(false)
+  const navigation = useNavigation()
 
   const openMenu = () => {
-    setShowMenu(true);
-  };
+    setShowMenu(true)
+  }
 
   const closeMenu = () => {
-    setShowMenu(false);
-  };
+    setShowMenu(false)
+  }
 
   const guideIntroduction: GuideIntroductionDto = {
     title: guide.title,
     introduction: guide.introduction,
     champion: guide.champion,
     role: guide.role,
-  };
+  }
 
   const guideSummonerSpells: GuideSummonerSpellsDto = {
     firstSpell: guide.firstSpell,
     secondSpell: guide.secondSpell,
     spellsDescription: guide.spellsDescription,
-  };
+  }
 
   const mainRune: MainRuneDto = {
     primaryRune: guide.primaryRune,
@@ -67,49 +67,49 @@ export default function ViewGuide({ route }: Props) {
       fourth: guide.primarySlots.fourth!,
     },
     primaryRuneDescription: guide.primaryRuneDescription,
-  };
+  }
 
   const secondaryRune: SecondaryRuneDto = {
     secondaryRune: guide.secondaryRune,
     secondarySlots: guide.secondarySlots,
     secondaryRuneDescription: guide.secondaryRuneDescription,
-  };
+  }
 
   const bonus: BonusDto = {
     bonusDescription: guide.bonusDescription,
     bonusSlotOne: guide.bonusSlotOne,
     bonusSlotTwo: guide.bonusSlotTwo,
     bonusSlotThree: guide.bonusSlotThree,
-  };
+  }
 
   const items: ItemsDto = {
     items: guide.items,
     itemsDescription: guide.itemsDescription,
-  };
+  }
 
   const abilitiesProgression: AbilitiesProgressionDto = {
     abilitiesProgression: guide.abilitiesProgression,
     abilitiesProgressionDescription: guide.abilitiesProgressionDescription,
-  };
+  }
 
   const threats: ThreatsDto = {
     threats: guide.threats,
     threatsDescription: guide.threatsDescription,
-  };
+  }
 
-  const isGuideCreator = guide.createdBy.toString() === user?.id;
+  const isGuideCreator = guide.createdBy.toString() === user?.id
 
-  const menuItems: { onPress: () => void; title: string; id: string }[] = [];
+  const menuItems: { onPress: () => void; title: string; id: string }[] = []
 
   if (!isGuideCreator) {
     menuItems.push({
       onPress: () => {
-        closeMenu();
-        navigation.navigate('Report', { guide });
+        closeMenu()
+        navigation.navigate('Report', { guide })
       },
       title: i18n.t('viewGuide.reportGuide'),
       id: 'report-guide',
-    });
+    })
   }
 
   const reportComment = (comment: ISerializedComment) => {
@@ -119,79 +119,52 @@ export default function ViewGuide({ route }: Props) {
   useEffect(() => {
     const navigationOptions: any = {
       title: guideIntroduction.title,
-    };
+    }
 
     if (menuItems.length > 0) {
       navigationOptions.headerRight = () => (
         <Menu
           visible={showMenu}
           onDismiss={closeMenu}
-          anchor={
-            <IconButton onPress={openMenu} icon={'dots-vertical'} size={24} />
-          }
+          anchor={<IconButton onPress={openMenu} icon={'dots-vertical'} size={24} />}
         >
           {menuItems.map(({ id, ...props }) => (
             <Menu.Item {...props} key={id} />
           ))}
         </Menu>
-      );
+      )
     }
 
-    navigation.setOptions(navigationOptions);
-  }, [navigation, showMenu]);
+    navigation.setOptions(navigationOptions)
+  }, [navigation, showMenu])
 
   return (
     <StyledView style={{ height, flex: 1 }}>
       <ScrollView>
-        <HeroBanner championId={guide.champion} role={guide.role} patchVersion={guide.patchVersion} />
-        <ExpandableCard
-          title={i18n.t('viewGuide.titles.intro')}
-          titleIcon="text-box-outline"
-        >
-          <Text
-            variant="bodyMedium"
-          >
-            {guideIntroduction.introduction}
-          </Text>
+        <HeroBanner
+          championId={guide.champion}
+          role={guide.role}
+          patchVersion={guide.patchVersion}
+        />
+        <ExpandableCard title={i18n.t('viewGuide.titles.intro')} titleIcon="text-box-outline">
+          <Text variant="bodyMedium">{guideIntroduction.introduction}</Text>
         </ExpandableCard>
 
-        <ExpandableCard
-          title={i18n.t('viewGuide.titles.spells')}
-          titleIcon="creation"
-        >
-          <SpellContent
-            spells={guideSummonerSpells}
-          />
+        <ExpandableCard title={i18n.t('viewGuide.titles.spells')} titleIcon="creation">
+          <SpellContent spells={guideSummonerSpells} />
         </ExpandableCard>
 
-        <ExpandableCard
-          title={i18n.t('viewGuide.titles.runes')}
-          titleIcon={'hexagram-outline'}
-        >
-          <RuneContent
-            rune={mainRune}
-          />
-          <RuneContent
-            rune={secondaryRune}
-          />
+        <ExpandableCard title={i18n.t('viewGuide.titles.runes')} titleIcon={'hexagram-outline'}>
+          <RuneContent rune={mainRune} />
+          <RuneContent rune={secondaryRune} />
         </ExpandableCard>
 
-        <ExpandableCard
-          title={i18n.t('viewGuide.titles.bonus')}
-          titleIcon={'shield-cross'}
-        >
-          <BonusContent
-            bonus={bonus}
-          />
+        <ExpandableCard title={i18n.t('viewGuide.titles.bonus')} titleIcon={'shield-cross'}>
+          <BonusContent bonus={bonus} />
         </ExpandableCard>
 
-        <ExpandableCard
-          title={i18n.t('viewGuide.titles.items')}
-          titleIcon={'shopping'}
-        >
-          <ItemsContent
-            items={items}
-          />
+        <ExpandableCard title={i18n.t('viewGuide.titles.items')} titleIcon={'shopping'}>
+          <ItemsContent items={items} />
         </ExpandableCard>
 
         <ExpandableCard
@@ -204,25 +177,17 @@ export default function ViewGuide({ route }: Props) {
           />
         </ExpandableCard>
 
-        <ExpandableCard
-          title={i18n.t('viewGuide.titles.threats')}
-          titleIcon={'alert-outline'}
-        >
-          <ThreatsContent
-            threats={threats}
-          />
+        <ExpandableCard title={i18n.t('viewGuide.titles.threats')} titleIcon={'alert-outline'}>
+          <ThreatsContent threats={threats} />
         </ExpandableCard>
 
         <ExpandableCard
           title={i18n.t('viewGuide.titles.comments')}
-          titleIcon='comment-multiple-outline'
+          titleIcon="comment-multiple-outline"
         >
-          <CommentSection
-            reportComment={reportComment}
-            guideId={guide.id}
-          />
+          <CommentSection reportComment={reportComment} guideId={guide.id} />
         </ExpandableCard>
       </ScrollView>
     </StyledView>
-  );
+  )
 }

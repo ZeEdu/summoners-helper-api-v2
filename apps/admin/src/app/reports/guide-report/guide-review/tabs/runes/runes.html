@@ -2,9 +2,7 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>
-        <span class="title">
-          Runa Principal - {{mainRuneName}}
-        </span>
+        <span class="title"> Runa Principal - {{mainRuneName}} </span>
       </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
@@ -16,17 +14,13 @@
       <mat-divider />
       <app-rune-slot [runeSlotId]="guide.primarySlots.fourth!" />
       <mat-divider />
-      <p>
-        {{guide.primaryRuneDescription}}
-      </p>
+      <p>{{guide.primaryRuneDescription}}</p>
     </mat-card-content>
   </mat-card>
 
   <mat-card>
     <mat-card-header>
-      <mat-card-title>
-        Runa Secondária - {{mainRuneName}}
-      </mat-card-title>
+      <mat-card-title> Runa Secondária - {{mainRuneName}} </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-content">
       <app-rune-slot [runeSlotId]="guide.secondarySlots.first" />
@@ -35,9 +29,7 @@
       <mat-divider />
       <app-rune-slot [runeSlotId]="guide.secondarySlots.third" />
       <mat-divider />
-      <p>
-        {{guide.primaryRuneDescription}}
-      </p>
+      <p>{{guide.primaryRuneDescription}}</p>
     </mat-card-content>
   </mat-card>
 </div>

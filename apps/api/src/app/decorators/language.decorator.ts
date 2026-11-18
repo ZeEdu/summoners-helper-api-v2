@@ -1,7 +1,7 @@
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { AcceptLanguageResolver, HeaderResolver } from "nestjs-i18n";
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import { AcceptLanguageResolver, HeaderResolver } from 'nestjs-i18n'
 
-import { isSupportedLanguage, SUPPORTED_LANGUAGES } from "@org/contracts";
+import { isSupportedLanguage, SUPPORTED_LANGUAGES } from '@org/contracts'
 
 export const GetLang = createParamDecorator(async (data: unknown, ctx: ExecutionContext) => {
   const headerResolver = new HeaderResolver(['x-lang'])

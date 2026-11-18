@@ -1,34 +1,41 @@
-import { useCallback, useEffect, useRef, useState } from "react"
-import { Pressable, StyleSheet, TextInputContentSizeChangeEvent, View } from "react-native"
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Pressable, StyleSheet, TextInputContentSizeChangeEvent, View } from 'react-native'
 
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { createCommentFormSchema, CreateCommentFormType, ISerializedComment } from "@org/contracts"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { createCommentFormSchema, CreateCommentFormType, ISerializedComment } from '@org/contracts'
 
-import { useForm } from "react-hook-form"
-import { Button, Icon, MD3Theme, Text, useTheme } from "react-native-paper"
-import { useAuthContext } from "../../../contexts/auth/useAuth"
-import useI18n from "../../../contexts/i18n/useI18n"
-import { ApiService } from "../../../services/api/api.service"
-import AppInputController from "../../forms/AppInputController"
-import ReplyCard from "./reply-card/ReplyCard"
+import { useForm } from 'react-hook-form'
+import { Button, Icon, MD3Theme, Text, useTheme } from 'react-native-paper'
+import { useAuthContext } from '../../../contexts/auth/useAuth'
+import useI18n from '../../../contexts/i18n/useI18n'
+import { ApiService } from '../../../services/api/api.service'
+import AppInputController from '../../forms/AppInputController'
+import ReplyCard from './reply-card/ReplyCard'
 
 type Props = {
-  guideId: string;
-  addComment: (comment: ISerializedComment) => void,
+  guideId: string
+  addComment: (comment: ISerializedComment) => void
   addReply: (comment: ISerializedComment, replyTo: ISerializedComment) => void
-  replyTo: ISerializedComment | null,
-  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>;
+  replyTo: ISerializedComment | null
+  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
   setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
 }
 
 const resolver = zodResolver(createCommentFormSchema)
 
-const MIN_HEIGHT = 40;
-const MAX_HEIGHT = 160;
+const MIN_HEIGHT = 40
+const MAX_HEIGHT = 160
 
-export default function PostComment({ guideId, addComment, replyTo, setReplyTo, addReply, setShowRepliesTo }: Props) {
+export default function PostComment({
+  guideId,
+  addComment,
+  replyTo,
+  setReplyTo,
+  addReply,
+  setShowRepliesTo,
+}: Props) {
   const authContext = useAuthContext()
   const i18n = useI18n()
   const theme = useTheme()
@@ -38,8 +45,8 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
     resolver,
     defaultValues: {
       guide: guideId,
-      content: ''
-    }
+      content: '',
+    },
   })
 
   const [height, setHeight] = useState(56)
@@ -47,25 +54,20 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
   const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
+    bottomSheetModalRef.current?.present()
     bottomSheetModalRef.current?.expand()
-  }, []);
+  }, [])
 
-  const handleContentSizeChange = (
-    event: TextInputContentSizeChangeEvent
-  ) => {
-    const contentHeight = event.nativeEvent.contentSize.height;
+  const handleContentSizeChange = (event: TextInputContentSizeChangeEvent) => {
+    const contentHeight = event.nativeEvent.contentSize.height
 
-    const nextHeight = Math.min(
-      Math.max(contentHeight, MIN_HEIGHT),
-      MAX_HEIGHT,
-    );
+    const nextHeight = Math.min(Math.max(contentHeight, MIN_HEIGHT), MAX_HEIGHT)
 
-    setHeight(nextHeight);
-  };
+    setHeight(nextHeight)
+  }
 
   const handleOnDismiss = () => {
     setReplyTo(null)
@@ -76,11 +78,10 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
       setLoading(true)
       setError('')
 
-      ApiService.Comments
-        .reply({
-          ...formValues,
-          replyTo: replyToComment.id
-        })
+      ApiService.Comments.reply({
+        ...formValues,
+        replyTo: replyToComment.id,
+      })
         .then((comment) => {
           comment.createdBy = authContext.user
           addReply(comment, replyToComment)
@@ -93,7 +94,8 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
         })
         .catch(() => {
           setError(i18n.t('postComment.error'))
-        }).finally(() => {
+        })
+        .finally(() => {
           setLoading(false)
         })
     }
@@ -102,8 +104,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
       setLoading(true)
       setError('')
 
-      ApiService.Comments
-        .create(formValues)
+      ApiService.Comments.create(formValues)
         .then((comment) => {
           comment.createdBy = authContext.user
           if (replyTo) {
@@ -118,7 +119,8 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
         })
         .catch(() => {
           setError(i18n.t('postComment.error'))
-        }).finally(() => {
+        })
+        .finally(() => {
           setLoading(false)
         })
     }
@@ -128,7 +130,6 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
     } else {
       createPost()
     }
-
   }
 
   useEffect(() => {
@@ -139,10 +140,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
 
   return (
     <View>
-      <Button
-        onPress={handlePresentModalPress}
-        mode="contained"
-      >
+      <Button onPress={handlePresentModalPress} mode="contained">
         Comentar
       </Button>
       <BottomSheetModal
@@ -157,9 +155,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
           </Text>
           <View>
             {replyTo && <ReplyCard replyTo={replyTo} />}
-            <View
-              style={styles.form}
-            >
+            <View style={styles.form}>
               <AppInputController
                 control={control}
                 inputOptions={{
@@ -168,10 +164,10 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
                   multiline: true,
                   style: {
                     height,
-                    flex: 1
-                  }
+                    flex: 1,
+                  },
                 }}
-                name={"content"}
+                name={'content'}
               />
               <Pressable
                 onPress={handleSubmit(onSubmit)}
@@ -186,11 +182,7 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
                   opacity: loading ? 0.5 : 1,
                 }}
               >
-                <Icon
-                  source="send"
-                  size={24}
-                  color={theme.colors.onPrimary}
-                />
+                <Icon source="send" size={24} color={theme.colors.onPrimary} />
               </Pressable>
             </View>
           </View>
@@ -203,23 +195,23 @@ export default function PostComment({ guideId, addComment, replyTo, setReplyTo, 
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     background: {
-      backgroundColor: colors.surfaceVariant
+      backgroundColor: colors.surfaceVariant,
     },
     handle: {
-      backgroundColor: colors.onSurfaceVariant
+      backgroundColor: colors.onSurfaceVariant,
     },
     bottomSheet: {
       flex: 1,
       gap: 8,
       display: 'flex',
       alignItems: 'stretch',
-      marginHorizontal: 16
+      marginHorizontal: 16,
     },
     form: {
       flex: 1,
       gap: 8,
       flexDirection: 'row',
       alignItems: 'center',
-    }
+    },
   })
-};
+}

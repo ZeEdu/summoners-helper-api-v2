@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native'
+import { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 import {
   Avatar,
   Button,
@@ -12,60 +12,60 @@ import {
   Snackbar,
   Text,
   useTheme,
-} from 'react-native-paper';
+} from 'react-native-paper'
 
-import { StyledView } from '@org/ui';
+import { StyledView } from '@org/ui'
 
-import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount';
-import useI18n from '../../../../contexts/i18n/useI18n';
-import { useThemeContext } from '../../../../providers/theme.provider';
-import ChangeLanguageButton from './change-language-button/ChangeLanguageButton';
+import { useAuthContext } from '../../../../contexts/auth/useAuth'
+import useUserHasRiotBindedAccount from '../../../../contexts/auth/useUserHasRiotBindedAccount'
+import useI18n from '../../../../contexts/i18n/useI18n'
+import { useThemeContext } from '../../../../providers/theme.provider'
+import ChangeLanguageButton from './change-language-button/ChangeLanguageButton'
 
 export default function Profile() {
-  const i18n = useI18n();
-  const theme = useTheme();
-  const navigation = useNavigation();
+  const i18n = useI18n()
+  const theme = useTheme()
+  const navigation = useNavigation()
 
-  const themeContext = useThemeContext();
+  const themeContext = useThemeContext()
 
-  const authContext = useAuthContext();
-  const styles = makeStyles(theme);
-  const userHasRiotBindedAccount = useUserHasRiotBindedAccount();
+  const authContext = useAuthContext()
+  const styles = makeStyles(theme)
+  const userHasRiotBindedAccount = useUserHasRiotBindedAccount()
 
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
+  const [isDialogVisible, setIsDialogVisible] = useState(false)
+  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false)
 
-  const { username, email, gameName, tagLine, server } = authContext.user!;
-  const avatarTextLabel = username.slice(0, 2).toUpperCase() || '';
+  const { username, email, gameName, tagLine, server } = authContext.user!
+  const avatarTextLabel = username.slice(0, 2).toUpperCase() || ''
 
   const handleLogOut = async () => {
     try {
-      await authContext.logout();
+      await authContext.logout()
     } catch {
-      showSnackbar();
+      showSnackbar()
     }
-  };
+  }
 
   const toggleTheme = () => {
     themeContext.toggleTheme()
   }
 
   const showDialog = () => {
-    setIsDialogVisible(true);
-  };
+    setIsDialogVisible(true)
+  }
 
   const closeDialog = () => {
-    setIsDialogVisible(false);
-  };
+    setIsDialogVisible(false)
+  }
 
   const showSnackbar = () => {
-    setIsSnackbarVisible(true);
-  };
+    setIsSnackbarVisible(true)
+  }
 
   const closeSnackbar = () => {
-    setIsSnackbarVisible(false);
-  };
+    setIsSnackbarVisible(false)
+  }
 
   return (
     <>
@@ -135,26 +135,19 @@ export default function Profile() {
                 <Text variant="labelMedium" style={styles.itemTitleText}>
                   {i18n.t('profile.riotAccount.server')}
                 </Text>
-                <Text variant="bodyLarge">
-                  {server && i18n.t(`riot.server.${server}`)}
-                </Text>
+                <Text variant="bodyLarge">{server && i18n.t(`riot.server.${server}`)}</Text>
               </View>
             </Card>
           ) : (
             <Card mode="outlined">
               <View style={styles.bindRiotAccountContainer}>
-                <Text variant="titleLarge">
-                  {i18n.t('profile.bindAccount.title')}
-                </Text>
+                <Text variant="titleLarge">{i18n.t('profile.bindAccount.title')}</Text>
 
                 <Text variant="labelMedium" style={styles.bindAccountHelpText}>
                   {i18n.t('profile.bindAccount.hint')}
                 </Text>
 
-                <Button
-                  mode="contained"
-                  onPress={() => navigation.navigate('BindRiotAccount')}
-                >
+                <Button mode="contained" onPress={() => navigation.navigate('BindRiotAccount')}>
                   {i18n.t('profile.bindAccount.button')}
                 </Button>
               </View>
@@ -163,7 +156,7 @@ export default function Profile() {
         </View>
 
         <View style={styles.actionButtons}>
-          <Button mode='contained' onPress={toggleTheme}>
+          <Button mode="contained" onPress={toggleTheme}>
             {i18n.t('profile.toggleTheme')}
           </Button>
           <ChangeLanguageButton />
@@ -180,27 +173,16 @@ export default function Profile() {
       </StyledView>
 
       <Portal>
-        <Dialog
-          visible={isDialogVisible}
-          onDismiss={closeDialog}
-        >
-          <Dialog.Title>
-            {i18n.t('profile.logout.title')}
-          </Dialog.Title>
+        <Dialog visible={isDialogVisible} onDismiss={closeDialog}>
+          <Dialog.Title>{i18n.t('profile.logout.title')}</Dialog.Title>
 
           <Dialog.Content>
-            <Text variant="bodyMedium">
-              {i18n.t('profile.logout.content')}
-            </Text>
+            <Text variant="bodyMedium">{i18n.t('profile.logout.content')}</Text>
           </Dialog.Content>
 
           <Dialog.Actions>
-            <Button onPress={closeDialog}>
-              {i18n.t('general.no').toUpperCase()}
-            </Button>
-            <Button onPress={handleLogOut}>
-              {i18n.t('general.yes').toUpperCase()}
-            </Button>
+            <Button onPress={closeDialog}>{i18n.t('general.no').toUpperCase()}</Button>
+            <Button onPress={handleLogOut}>{i18n.t('general.yes').toUpperCase()}</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -211,14 +193,14 @@ export default function Profile() {
         action={{
           label: 'OK',
           onPress: () => {
-            closeSnackbar();
+            closeSnackbar()
           },
         }}
       >
         {i18n.t('profile.snackbar')}
       </Snackbar>
     </>
-  );
+  )
 }
 
 const makeStyles = ({ colors }: MD3Theme) => {
@@ -229,14 +211,14 @@ const makeStyles = ({ colors }: MD3Theme) => {
       height: '100%',
     },
     userInfoContainer: {
-      gap: 16
+      gap: 16,
     },
     profileHeader: {
       flexDirection: 'row',
       gap: 16,
     },
     actionButtons: {
-      gap: 16
+      gap: 16,
     },
     title: { color: colors.primary },
     changeRiotAccountButton: {
@@ -268,5 +250,5 @@ const makeStyles = ({ colors }: MD3Theme) => {
     divider: {
       backgroundColor: colors.onSurfaceVariant,
     },
-  });
-};
+  })
+}

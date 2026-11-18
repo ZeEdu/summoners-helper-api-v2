@@ -1,36 +1,43 @@
-import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common'
 
-import { UpdateUserProfileDto, updateUserProfileSchema, UserDto, UserDtoWithPuuid, UsersPaginationDto, usersPaginationSchema } from '@org/contracts';
+import {
+  UpdateUserProfileDto,
+  updateUserProfileSchema,
+  UserDto,
+  UserDtoWithPuuid,
+  UsersPaginationDto,
+  usersPaginationSchema,
+} from '@org/contracts'
 
-import { CurrentUser } from '../../decorators/user.decorator';
-import { JwtGuard } from '../../guards/jwt.guard';
-import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
-import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { UsersService } from '../service/users.service';
-import UserPagination from '../user.pagination.dto';
+import { CurrentUser } from '../../decorators/user.decorator'
+import { JwtGuard } from '../../guards/jwt.guard'
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe'
+import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard'
+import { UsersService } from '../service/users.service'
+import UserPagination from '../user.pagination.dto'
 
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) { }
+  constructor(private usersService: UsersService) {}
 
   @Get()
   async getAllUsers(
     @Query(new ZodValidationPipe(usersPaginationSchema))
     pagination: UsersPaginationDto,
   ): Promise<{
-    count: number;
-    users: UserDto[];
+    count: number
+    users: UserDto[]
   }> {
-    const filter = UserPagination.filter(pagination);
+    const filter = UserPagination.filter(pagination)
 
-    const { offset, limit } = pagination;
-    return this.usersService.getAllUsers(filter, { offset, limit });
+    const { offset, limit } = pagination
+    return this.usersService.getAllUsers(filter, { offset, limit })
   }
 
   @Get('me')
   async getMe(@CurrentUser() user: UserDtoWithPuuid) {
-    return this.usersService.findOneByIdWithPuuid(user.id);
+    return this.usersService.findOneByIdWithPuuid(user.id)
   }
 
   @Patch('update-profile')
@@ -40,7 +47,7 @@ export class UsersController {
     @Body(new ZodValidationPipe(updateUserProfileSchema))
     updateProfileDto: UpdateUserProfileDto,
   ) {
-    await this.usersService.updateUserWithRiotData(user, updateProfileDto);
+    await this.usersService.updateUserWithRiotData(user, updateProfileDto)
     return {}
   }
 
@@ -48,13 +55,13 @@ export class UsersController {
   @Get('top-masteries')
   @UseGuards(HasRiotInfoGuard)
   async getTopMasteries(@CurrentUser() user: UserDtoWithPuuid) {
-    return this.usersService.getTopMasteries(user, 5);
+    return this.usersService.getTopMasteries(user, 5)
   }
 
   @Get('last-five-matches')
   @UseGuards(HasRiotInfoGuard)
   async getLastFiveMatches(@CurrentUser() user: UserDtoWithPuuid) {
-    return this.usersService.getLastFiveMatches(user);
+    return this.usersService.getLastFiveMatches(user)
   }
 
   @Get()
@@ -62,12 +69,12 @@ export class UsersController {
     @Query(new ZodValidationPipe(usersPaginationSchema))
     pagination: UsersPaginationDto,
   ): Promise<{
-    count: number;
-    users: UserDto[];
+    count: number
+    users: UserDto[]
   }> {
-    const filter = UserPagination.quickSearch(pagination);
+    const filter = UserPagination.quickSearch(pagination)
 
-    const { offset, limit } = pagination;
-    return this.usersService.getAllUsers(filter, { offset, limit });
+    const { offset, limit } = pagination
+    return this.usersService.getAllUsers(filter, { offset, limit })
   }
 }

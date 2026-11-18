@@ -1,35 +1,28 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PassportStrategy } from '@nestjs/passport';
-import { Request } from 'express';
-import { I18nService } from 'nestjs-i18n';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { PassportStrategy } from '@nestjs/passport'
+import { Request } from 'express'
+import { I18nService } from 'nestjs-i18n'
+import { ExtractJwt, Strategy } from 'passport-jwt'
 
-import { UserDto } from '@org/contracts';
+import { UserDto } from '@org/contracts'
 
-import { I18nTranslations } from '../../../generated/i18n.generated';
-import { UsersService } from '../../users/service/users.service';
+import { I18nTranslations } from '../../../generated/i18n.generated'
+import { UsersService } from '../../users/service/users.service'
 
 type RefreshTokenPayload = {
-  sub: string;
-  email: string;
-  iat: number;
-  exp: number;
-};
+  sub: string
+  email: string
+  iat: number
+  exp: number
+}
 
 function fromCookie(req: Request) {
   return (req.cookies as Record<string, string>)?.refresh_token ?? null
 }
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(
-  Strategy,
-  'jwt-refresh',
-) {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(
     private configService: ConfigService,
     private usersService: UsersService,
@@ -38,11 +31,11 @@ export class RefreshTokenStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         fromCookie,
-        ExtractJwt.fromBodyField('refreshToken')
+        ExtractJwt.fromBodyField('refreshToken'),
       ]),
       secretOrKey: configService.getOrThrow('JWT_REFRESH_SECRET'),
       passReqToCallback: true,
-    });
+    })
   }
 
   getFromCookies(req: Request) {
@@ -54,19 +47,17 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: RefreshTokenPayload): Promise<UserDto> {
-    const refreshToken = this.getFromCookies(req) || this.getFromBody(req);
+    const refreshToken = this.getFromCookies(req) || this.getFromBody(req)
 
     if (!refreshToken) {
-      throw new ForbiddenException();
+      throw new ForbiddenException()
     }
 
-    const user = await this.usersService.findOneByEmail(payload.email);
+    const user = await this.usersService.findOneByEmail(payload.email)
     if (!user) {
-      throw new UnauthorizedException(
-        this.i18n.t('passport-strategy.errors.validate.userNotFound'),
-      );
+      throw new UnauthorizedException(this.i18n.t('passport-strategy.errors.validate.userNotFound'))
     }
 
-    return { ...user, refreshToken };
+    return { ...user, refreshToken }
   }
 }

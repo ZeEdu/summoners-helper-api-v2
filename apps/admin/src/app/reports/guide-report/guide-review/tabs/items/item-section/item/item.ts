@@ -1,20 +1,17 @@
-import { Component, inject, Input, OnInit, SecurityContext } from "@angular/core";
-import { DomSanitizer } from "@angular/platform-browser";
+import { Component, inject, Input, OnInit, SecurityContext } from '@angular/core'
+import { DomSanitizer } from '@angular/platform-browser'
 
-import { ItemDetails } from "@org/contracts";
+import { ItemDetails } from '@org/contracts'
 
-import { MatCard, MatCardContent } from "@angular/material/card";
-import { GuideReviewUtils } from "../../../../guide-review.utils";
-import { DataDragonService } from "../../../../../../../data-dragon/data-dragon.service";
+import { MatCard, MatCardContent } from '@angular/material/card'
+import { GuideReviewUtils } from '../../../../guide-review.utils'
+import { DataDragonService } from '../../../../../../../data-dragon/data-dragon.service'
 
 @Component({
   selector: 'app-item',
   templateUrl: './item.html',
   styleUrl: './item.scss',
-  imports: [
-    MatCard,
-    MatCardContent
-  ]
+  imports: [MatCard, MatCardContent],
 })
 export class Item implements OnInit {
   @Input({ required: true }) itemId: string

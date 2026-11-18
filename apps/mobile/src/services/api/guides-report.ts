@@ -1,18 +1,18 @@
-import { CreateReportDto, IGuide } from '@org/contracts';
+import { CreateReportDto, IGuide } from '@org/contracts'
 
-import { customFetch } from '../../utils/customFetch/customFetch';
-import { AuthTokenStorageService } from '../auth-token-storage.service';
-import { API_CONSTANTS } from './api.constants';
+import { customFetch } from '../../utils/customFetch/customFetch'
+import { AuthTokenStorageService } from '../auth-token-storage.service'
+import { API_CONSTANTS } from './api.constants'
 
-const ENDPOINT = 'report';
+const ENDPOINT = 'report'
 
 export const Report = {
   create: async (createGuideReportDto: CreateReportDto): Promise<IGuide> => {
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`;
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -23,11 +23,11 @@ export const Report = {
       },
       credentials: 'include',
       body: JSON.stringify(createGuideReportDto),
-    };
+    }
 
-    return customFetch(url, init);
-  }
-};
+    return customFetch(url, init)
+  },
+}
 
 // TODO Criar uma função que deve ser chamada sempre que o fetch falhar e for uma erro de token invalido
 // Nesse cenário devesse atualizar os tokens

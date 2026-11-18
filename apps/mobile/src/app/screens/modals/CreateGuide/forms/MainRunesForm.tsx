@@ -1,46 +1,46 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext, useWatch } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
-import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useFormContext, useWatch } from 'react-hook-form'
+import { StyleSheet, View } from 'react-native'
+import z from 'zod'
 
-import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts'
 
-import { useEffect } from 'react';
-import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
-import AppInputController from '../../../../../components/forms/AppInputController';
-import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
-import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
-import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter from '../../../../../components/stepper/StepperFooter';
-import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
-import useI18n from '../../../../../contexts/i18n/useI18n';
+import { useEffect } from 'react'
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController'
+import AppInputController from '../../../../../components/forms/AppInputController'
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors'
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props'
+import { useStepperContext } from '../../../../../components/stepper/context'
+import StepperFooter from '../../../../../components/stepper/StepperFooter'
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext'
+import useI18n from '../../../../../contexts/i18n/useI18n'
 
 export const mainRuneSchema = CreateGuideFormSchema.pick({
   primaryRune: true,
   primarySlots: true,
   primaryRuneDescription: true,
-});
+})
 
-export type MainRuneDto = z.infer<typeof mainRuneSchema>;
+export type MainRuneDto = z.infer<typeof mainRuneSchema>
 
-const resolver = zodResolver(mainRuneSchema);
+const resolver = zodResolver(mainRuneSchema)
 
 type Props = {
-  secondaryRune: string;
-};
+  secondaryRune: string
+}
 
 export default function GuideMainRunesForm({ secondaryRune }: Props) {
-  const dataDragon = useDataDragon();
+  const dataDragon = useDataDragon()
   const i18n = useI18n()
 
-  const mainFormContext = useFormContext<CreateGuideFormDto>();
-  const stepperContext = useStepperContext();
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
+  const stepperContext = useStepperContext()
 
   const defaultValues: MainRuneDto = {
     primaryRune: mainFormContext.getValues('primaryRune'),
     primarySlots: mainFormContext.getValues('primarySlots'),
     primaryRuneDescription: mainFormContext.getValues('primaryRuneDescription'),
-  };
+  }
 
   const {
     control,
@@ -48,56 +48,54 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
     formState: { errors },
     getValues,
     setValues,
-  } = useForm<MainRuneDto>({ resolver, defaultValues });
+  } = useForm<MainRuneDto>({ resolver, defaultValues })
 
   const primaryRune = useWatch<MainRuneDto>({
     control,
     name: 'primaryRune',
-  });
+  })
 
-  const runeList = dataDragon.lists?.runes || [];
-  const runeMap = dataDragon.maps?.runes || {};
+  const runeList = dataDragon.lists?.runes || []
+  const runeMap = dataDragon.maps?.runes || {}
 
   const buildMainRunesOptions = () => {
     return runeList
       .filter((rune) => rune.id.toString() !== secondaryRune)
-      .map(({ id, name }) => ({ value: id.toString(), label: name }));
-  };
+      .map(({ id, name }) => ({ value: id.toString(), label: name }))
+  }
 
-  const buildFirstRunesOptions = (
-    slot: 'first' | 'second' | 'third' | 'forth',
-  ) => {
-    const currentPrimaryRunes = getValues('primaryRune');
+  const buildFirstRunesOptions = (slot: 'first' | 'second' | 'third' | 'forth') => {
+    const currentPrimaryRunes = getValues('primaryRune')
     if (!currentPrimaryRunes) {
-      return [];
+      return []
     }
 
-    let index: number;
+    let index: number
     if (slot === 'first') {
-      index = 0;
+      index = 0
     } else if (slot === 'second') {
-      index = 1;
+      index = 1
     } else if (slot === 'third') {
-      index = 2;
+      index = 2
     } else {
-      index = 3;
+      index = 3
     }
 
-    const { slots } = runeMap[currentPrimaryRunes];
+    const { slots } = runeMap[currentPrimaryRunes]
     return slots[index].runes.map(({ id, name }) => ({
       value: id.toString(),
       label: name,
-    }));
-  };
+    }))
+  }
 
   const onSubmit = (formValues: MainRuneDto) => {
-    mainFormContext.setValues(formValues, { shouldValidate: true });
-    stepperContext.nextStep();
-  };
+    mainFormContext.setValues(formValues, { shouldValidate: true })
+    stepperContext.nextStep()
+  }
 
   useEffect(() => {
     if (primaryRune === defaultValues.primaryRune) {
-      return;
+      return
     }
 
     setValues({
@@ -107,8 +105,8 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
         third: '',
         fourth: '',
       },
-    });
-  }, [primaryRune]);
+    })
+  }, [primaryRune])
 
   return (
     <View style={styles.container}>
@@ -175,11 +173,11 @@ export default function GuideMainRunesForm({ secondaryRune }: Props) {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
-          t: i18n.t
+          t: i18n.t,
         })}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -189,4 +187,4 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-});
+})

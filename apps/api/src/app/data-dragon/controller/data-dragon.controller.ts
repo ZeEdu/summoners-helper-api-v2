@@ -1,21 +1,21 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import z from 'zod';
+import { Controller, Get, Param, Query } from '@nestjs/common'
+import z from 'zod'
 
-import { SupportedLanguages } from '@org/contracts';
+import { SupportedLanguages } from '@org/contracts'
 
-import { GetLang } from '../../decorators/language.decorator';
-import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
-import { DataDragonService } from '../service/data-dragon.service';
+import { GetLang } from '../../decorators/language.decorator'
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe'
+import { DataDragonService } from '../service/data-dragon.service'
 
 const championAssetsSchema = z.object({
-  patch: z.string().optional()
+  patch: z.string().optional(),
 })
 
 type ChampionAssetsDto = z.infer<typeof championAssetsSchema>
 
 @Controller('data-dragon')
 export class DataDragonController {
-  constructor(private dataDragonService: DataDragonService) { }
+  constructor(private dataDragonService: DataDragonService) {}
   @Get('assets')
   getAssets(@GetLang() language: SupportedLanguages) {
     return this.dataDragonService.getAssets(language)
@@ -24,7 +24,8 @@ export class DataDragonController {
   @Get('champion/:championId')
   getChampion(
     @Query(new ZodValidationPipe(championAssetsSchema)) body: ChampionAssetsDto,
-    @Param('championId') championId: string) {
+    @Param('championId') championId: string,
+  ) {
     return this.dataDragonService.champion(championId, body.patch)
   }
 }

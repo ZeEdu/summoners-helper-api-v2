@@ -1,4 +1,3 @@
-
 export const VALIDATION_ERROR_KEYS = {
   enum: 'validation.enum',
   reportTargetRequired: 'validation.reportTargetRequired',
@@ -15,7 +14,7 @@ export const VALIDATION_ERROR_KEYS = {
   email: 'validation.email',
   regex: 'validation.regex',
   format: 'validation.format',
-  default: 'validation.default'
+  default: 'validation.default',
 } as const
 
 export function isValidCustomError(message: string) {
@@ -24,23 +23,24 @@ export function isValidCustomError(message: string) {
 }
 
 type ValidationMessageDescriptor = {
-  key: string,
+  key: string
   params?: Record<string, unknown>
 }
 
-
 type ZodIssueDescriptorInputType = {
-  code: string,
-  format: string,
-  message: string,
-  origin: string,
-  minimum?: number,
-  maximum?: number,
+  code: string
+  format: string
+  message: string
+  origin: string
+  minimum?: number
+  maximum?: number
   path: PropertyKey[]
   params: Record<string, any>
 }
 
-export function zodIssueDescriptorInputNormalizer(issue: Record<string, any>): ZodIssueDescriptorInputType {
+export function zodIssueDescriptorInputNormalizer(
+  issue: Record<string, any>,
+): ZodIssueDescriptorInputType {
   return {
     code: issue['code'],
     format: issue['format'],
@@ -49,16 +49,19 @@ export function zodIssueDescriptorInputNormalizer(issue: Record<string, any>): Z
     minimum: issue['minimum'],
     maximum: issue['maximum'],
     path: issue['path'],
-    params: issue['params']
+    params: issue['params'],
   }
 }
 
-export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): ValidationMessageDescriptor {
+export function zodIssueDescriptor(
+  issue: ZodIssueDescriptorInputType,
+): ValidationMessageDescriptor {
   let key: string = VALIDATION_ERROR_KEYS.default
   let params = undefined
 
   const isPassword = issue.path.find((p) => p === 'password')
-  const isCustomError = issue.params?.['validation'] && isValidCustomError(issue.params['validation'])
+  const isCustomError =
+    issue.params?.['validation'] && isValidCustomError(issue.params['validation'])
 
   switch (issue.code) {
     case 'invalid_type':
@@ -87,7 +90,7 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           key = VALIDATION_ERROR_KEYS.arrayMin
           if (issue.minimum) {
             params = {
-              minimum: issue.minimum
+              minimum: issue.minimum,
             }
           }
           break
@@ -95,7 +98,7 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           key = VALIDATION_ERROR_KEYS.numberMin
           if (issue.minimum) {
             params = {
-              minimum: issue.minimum
+              minimum: issue.minimum,
             }
           }
           break
@@ -104,7 +107,7 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           key = VALIDATION_ERROR_KEYS.stringMin
           if (issue.minimum) {
             params = {
-              minimum: issue.minimum
+              minimum: issue.minimum,
             }
           }
           break
@@ -116,7 +119,7 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           key = VALIDATION_ERROR_KEYS.arrayMax
           if (issue.maximum) {
             params = {
-              maximum: issue.maximum
+              maximum: issue.maximum,
             }
           }
           break
@@ -124,7 +127,7 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           key = VALIDATION_ERROR_KEYS.numberMax
           if (issue.maximum) {
             params = {
-              maximum: issue.maximum
+              maximum: issue.maximum,
             }
           }
           break
@@ -133,7 +136,7 @@ export function zodIssueDescriptor(issue: ZodIssueDescriptorInputType): Validati
           key = VALIDATION_ERROR_KEYS.stringMax
           if (issue.maximum) {
             params = {
-              maximum: issue.maximum
+              maximum: issue.maximum,
             }
           }
           break

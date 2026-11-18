@@ -1,4 +1,4 @@
-import { LeagueEntry } from "../riot-api/interfaces/league-entry.interface";
+import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface'
 
 export const getRankedStatus = (userPuuid: string) => {
   return [
@@ -29,4 +29,4 @@ export const getRankedStatus = (userPuuid: string) => {
       hotStreak: false,
     },
   ] as unknown as LeagueEntry[]
-};
+}

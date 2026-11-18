@@ -1,20 +1,20 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-import { IRuneSlots } from '@org/contracts';
+import { IRuneSlots } from '@org/contracts'
 
 @Schema()
 export class RuneSlots implements IRuneSlots {
   @Prop({ type: String, required: true })
-  first: string;
+  first: string
 
   @Prop({ type: String, required: true })
-  second: string;
+  second: string
 
   @Prop({ type: String, required: true })
-  third: string;
+  third: string
 
   @Prop({ type: String })
-  fourth?: string;
+  fourth?: string
 }
 
-export const RuneSlotsSchema = SchemaFactory.createForClass(RuneSlots);
+export const RuneSlotsSchema = SchemaFactory.createForClass(RuneSlots)

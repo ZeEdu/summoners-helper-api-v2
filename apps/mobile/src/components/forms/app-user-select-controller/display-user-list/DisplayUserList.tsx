@@ -1,23 +1,23 @@
-import { FlatList, StyleSheet, View } from "react-native"
-import { Divider, List, Text } from "react-native-paper"
+import { FlatList, StyleSheet, View } from 'react-native'
+import { Divider, List, Text } from 'react-native-paper'
 
-import { IUser } from "@org/contracts"
+import { IUser } from '@org/contracts'
 
-import useI18n from "../../../../contexts/i18n/useI18n"
-import Error from "../../../Error"
-import LoadingIndicator from "../../../LoadingIndicator"
+import useI18n from '../../../../contexts/i18n/useI18n'
+import Error from '../../../Error'
+import LoadingIndicator from '../../../LoadingIndicator'
 
 export default function DisplayUserList({
   users,
   loading,
   error,
   isSearchResult,
-  onChange
+  onChange,
 }: {
-  users: IUser[],
-  loading: boolean,
-  error: boolean,
-  isSearchResult: boolean,
+  users: IUser[]
+  loading: boolean
+  error: boolean
+  isSearchResult: boolean
   onChange: (...event: any[]) => void
 }) {
   const i18n = useI18n()
@@ -41,7 +41,9 @@ export default function DisplayUserList({
   return (
     <FlatList
       ListEmptyComponent={() => {
-        const message = isSearchResult ? i18n.t('displayUserList.notFound') : i18n.t('displayUserList.idle')
+        const message = isSearchResult
+          ? i18n.t('displayUserList.notFound')
+          : i18n.t('displayUserList.idle')
         return (
           <View style={style.container}>
             <Text>{message}</Text>
@@ -68,6 +70,6 @@ const style = StyleSheet.create({
   container: {
     height: 240,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 })

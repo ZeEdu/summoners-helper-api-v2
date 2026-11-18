@@ -1,8 +1,8 @@
-import { PropsWithChildren } from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
-import { MD3Theme, Surface, useTheme } from "react-native-paper";
+import { PropsWithChildren } from 'react'
+import { StyleSheet, useWindowDimensions, View } from 'react-native'
+import { MD3Theme, Surface, useTheme } from 'react-native-paper'
 
-import Utils from "../utils/utils";
+import Utils from '../utils/utils'
 
 export default function Viewport({ children }: PropsWithChildren) {
   const theme = useTheme()
@@ -28,8 +28,8 @@ export default function Viewport({ children }: PropsWithChildren) {
 }
 
 type StyleProps = {
-  theme: MD3Theme,
-  padding: number,
+  theme: MD3Theme
+  padding: number
   width: number
 }
 
@@ -43,7 +43,7 @@ const makeStyles = (props: StyleProps) => {
     },
     surface: {
       width: props.width,
-      flex: 1
-    }
+      flex: 1,
+    },
   })
 }

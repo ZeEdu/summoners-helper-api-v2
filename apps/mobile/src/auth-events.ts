@@ -1,9 +1,9 @@
-type Listener = () => void;
-const listeners = new Set<Listener>();
+type Listener = () => void
+const listeners = new Set<Listener>()
 
 export const AuthEvents = {
   onSessionExpired: (listener: Listener) => {
-    listeners.add(listener);
+    listeners.add(listener)
     return () => {
       listeners.delete(listener)
     }
@@ -12,5 +12,5 @@ export const AuthEvents = {
     listeners.forEach((listener) => {
       return listener()
     })
-  }
+  },
 }

@@ -1,25 +1,25 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from 'react-native'
 
-import { CommentPaginationDto, ISerializedComment } from "@org/contracts";
-import { useEffect, useState } from "react";
-import { Button, Text } from "react-native-paper";
-import useI18n from "../../contexts/i18n/useI18n";
-import { ApiService } from "../../services/api/api.service";
-import Comment from "./comment/Comment";
-import PostComment from "./post-comment/PostComment";
-import Replies from "./replies/Replies";
+import { CommentPaginationDto, ISerializedComment } from '@org/contracts'
+import { useEffect, useState } from 'react'
+import { Button, Text } from 'react-native-paper'
+import useI18n from '../../contexts/i18n/useI18n'
+import { ApiService } from '../../services/api/api.service'
+import Comment from './comment/Comment'
+import PostComment from './post-comment/PostComment'
+import Replies from './replies/Replies'
 
 type Props = {
-  guideId: string;
-  reportComment: (comment: ISerializedComment) => void;
+  guideId: string
+  reportComment: (comment: ISerializedComment) => void
 }
 
 export default function CommentSection({ guideId, reportComment }: Props) {
   const i18n = useI18n()
 
-  const [comments, setComments] = useState<ISerializedComment[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown | undefined>(undefined);
+  const [comments, setComments] = useState<ISerializedComment[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<unknown | undefined>(undefined)
 
   const [replyTo, setReplyTo] = useState<ISerializedComment | null>(null)
   const [showRepliesTo, setShowRepliesTo] = useState<ISerializedComment | null>(null)
@@ -54,29 +54,29 @@ export default function CommentSection({ guideId, reportComment }: Props) {
   }
 
   useEffect(() => {
-    setLoading(true);
-    setError(undefined);
-    setComments([]);
+    setLoading(true)
+    setError(undefined)
+    setComments([])
 
     const fetchData = async () => {
       try {
-        const response = await ApiService.Comments.get(query);
+        const response = await ApiService.Comments.get(query)
 
         setComments((previous) => {
-          if (query.offset && (query.offset > 0)) {
+          if (query.offset && query.offset > 0) {
             return previous.concat(response.comments)
           }
           return response.comments
         })
       } catch (error) {
-        setError(error);
+        setError(error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, [query]);
+    fetchData()
+  }, [query])
 
   return (
     <View>
@@ -84,25 +84,24 @@ export default function CommentSection({ guideId, reportComment }: Props) {
         data={comments}
         ListFooterComponent={() => {
           const isEmpty = comments.length === 0
-          if (isEmpty || defaultQuery.limit && (comments.length < defaultQuery.limit)) {
+          if (isEmpty || (defaultQuery.limit && comments.length < defaultQuery.limit)) {
             return null
           }
 
-          return <Button onPress={loadMore}>{i18n.t('commentSection.loadMore')}</Button>;
+          return <Button onPress={loadMore}>{i18n.t('commentSection.loadMore')}</Button>
         }}
         ListEmptyComponent={<EmptyComponent />}
         keyExtractor={(comment) => comment.id}
-        renderItem={
-          ({ item: comment }) => {
-            return (
-              <Comment
-                comment={comment}
-                reportComment={reportComment}
-                setReplyTo={setReplyTo}
-                setShowRepliesTo={setShowRepliesTo}
-              />
-            )
-          }}
+        renderItem={({ item: comment }) => {
+          return (
+            <Comment
+              comment={comment}
+              reportComment={reportComment}
+              setReplyTo={setReplyTo}
+              setShowRepliesTo={setShowRepliesTo}
+            />
+          )
+        }}
       />
       <PostComment
         guideId={guideId}
@@ -134,9 +133,9 @@ function EmptyComponent() {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   text: {
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 })

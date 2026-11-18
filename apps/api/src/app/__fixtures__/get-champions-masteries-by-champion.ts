@@ -1,4 +1,4 @@
-import { ChampionMastery } from "../riot-api/interfaces/champion-mastery.interface";
+import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface'
 
 export const getChampionsMasteriesByChampion = (puuid: string, championId: number) => {
   return {
@@ -22,4 +22,4 @@ export const getChampionsMasteriesByChampion = (puuid: string, championId: numbe
       totalGamesRequires: 2,
     },
   } as unknown as ChampionMastery
-};
+}

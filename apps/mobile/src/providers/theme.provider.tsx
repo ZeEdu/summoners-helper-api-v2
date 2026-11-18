@@ -1,21 +1,27 @@
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
-  Theme
-} from '@react-navigation/native';
-import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from "react";
-import { adaptNavigationTheme, MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+  Theme,
+} from '@react-navigation/native'
+import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  adaptNavigationTheme,
+  MD3DarkTheme,
+  MD3LightTheme,
+  PaperProvider,
+} from 'react-native-paper'
 
-import { ThemeStorageService } from "../services/theme-storage.service";
+import { ThemeStorageService } from '../services/theme-storage.service'
 
-const { LightTheme: NavigationAdaptedLightTheme, DarkTheme: NavigationAdaptedDarkTheme } = adaptNavigationTheme({
-  reactNavigationLight: NavigationDefaultTheme,
-  reactNavigationDark: NavigationDarkTheme,
-});
+const { LightTheme: NavigationAdaptedLightTheme, DarkTheme: NavigationAdaptedDarkTheme } =
+  adaptNavigationTheme({
+    reactNavigationLight: NavigationDefaultTheme,
+    reactNavigationDark: NavigationDarkTheme,
+  })
 
 type ThemeContextType = {
-  toggleTheme: () => void,
-  isThemeDark: boolean,
+  toggleTheme: () => void
+  isThemeDark: boolean
   navigationTheme: Theme
 }
 
@@ -27,30 +33,29 @@ export default function ThemeProvider({ children }: PropsWithChildren) {
   const navigationTheme = isThemeDark ? NavigationAdaptedDarkTheme : NavigationAdaptedLightTheme
 
   const toggleTheme = useCallback(() => {
-    setIsThemeDark(previous => {
-      const next = !previous;
-      ThemeStorageService.setIsDarkTheme(next);
-      return next;
-    });
-  }, []);
+    setIsThemeDark((previous) => {
+      const next = !previous
+      ThemeStorageService.setIsDarkTheme(next)
+      return next
+    })
+  }, [])
 
-  const preferences = useMemo(() => ({ toggleTheme, isThemeDark, navigationTheme }), [toggleTheme, isThemeDark, navigationTheme])
+  const preferences = useMemo(
+    () => ({ toggleTheme, isThemeDark, navigationTheme }),
+    [toggleTheme, isThemeDark, navigationTheme],
+  )
 
   return (
     <ThemeContext.Provider value={preferences}>
-      <PaperProvider theme={paperTheme}>
-        {children}
-      </PaperProvider>
+      <PaperProvider theme={paperTheme}>{children}</PaperProvider>
     </ThemeContext.Provider>
   )
 }
 
 export const useThemeContext = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
+  const context = useContext(ThemeContext)
   if (context === undefined) {
-    throw new Error(
-      'useThemeContext deve ser utilizado dentro de ThemeProvider',
-    );
+    throw new Error('useThemeContext deve ser utilizado dentro de ThemeProvider')
   }
-  return context as ThemeContextType;
-};
+  return context as ThemeContextType
+}

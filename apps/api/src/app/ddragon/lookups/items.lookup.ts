@@ -1,9 +1,9 @@
-import { ItemsDataDragon } from '../dto/item.dto';
+import { ItemsDataDragon } from '../dto/item.dto'
 
-const itemsJSON: ItemsDataDragon = require(`../../../assets/ddragon/item.json`);
+const itemsJSON: ItemsDataDragon = require(`../../../assets/ddragon/item.json`)
 
 function getItemById(itemId: number) {
-  return itemsJSON['data'][itemId];
+  return itemsJSON['data'][itemId]
 }
 
-export const ItemsLookup = { getItemById };
+export const ItemsLookup = { getItemById }

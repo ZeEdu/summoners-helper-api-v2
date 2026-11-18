@@ -2,15 +2,17 @@
   <mat-drawer #drawer class="sidenav" mode="side">
     <mat-nav-list>
       <div mat-subheader>Denuncias</div>
-      @for (route of routes; track route.link) {
-      @if (currentUrl$ | async; as currentUrl) {
-      <a mat-list-item [routerLink]="route.link" (click)="$event.preventDefault(); drawer.close()"
-        [activated]="route.link === currentUrl.replace('/', '')">
+      @for (route of routes; track route.link) { @if (currentUrl$ | async; as currentUrl) {
+      <a
+        mat-list-item
+        [routerLink]="route.link"
+        (click)="$event.preventDefault(); drawer.close()"
+        [activated]="route.link === currentUrl.replace('/', '')"
+      >
         <mat-icon matListItemIcon>{{route.icon}}</mat-icon>
         {{route.title | titlecase}}
       </a>
-      }
-      }
+      } }
     </mat-nav-list>
   </mat-drawer>
   <div class="content">
@@ -21,9 +23,7 @@
       </button>
       <span>Painel Administrativo</span>
       <span class="separator"></span>
-      <button matButton="filled" (click)="confirmUserLogoutIntention()">
-        Sair
-      </button>
+      <button matButton="filled" (click)="confirmUserLogoutIntention()">Sair</button>
     </mat-toolbar>
     }
     <main>

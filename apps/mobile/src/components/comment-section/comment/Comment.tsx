@@ -1,21 +1,27 @@
-import { StyleSheet, View } from "react-native";
-import { Avatar, Button, Card, IconButton, Text, useTheme } from "react-native-paper";
+import { StyleSheet, View } from 'react-native'
+import { Avatar, Button, Card, IconButton, Text, useTheme } from 'react-native-paper'
 
-import { ISerializedComment } from "@org/contracts";
-import { useState } from "react";
-import useI18n from "../../../contexts/i18n/useI18n";
-import { ApiService } from "../../../services/api/api.service";
-import SideMenu from "./side-menu/SideMenu";
+import { ISerializedComment } from '@org/contracts'
+import { useState } from 'react'
+import useI18n from '../../../contexts/i18n/useI18n'
+import { ApiService } from '../../../services/api/api.service'
+import SideMenu from './side-menu/SideMenu'
 
 type Props = {
-  comment: ISerializedComment,
-  useAlternativeColors?: boolean,
-  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
-  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
+  comment: ISerializedComment
+  useAlternativeColors?: boolean
+  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
+  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
   reportComment: (comment: ISerializedComment) => void
 }
 
-export default function Comment({ comment, useAlternativeColors = false, setReplyTo, setShowRepliesTo, reportComment }: Props) {
+export default function Comment({
+  comment,
+  useAlternativeColors = false,
+  setReplyTo,
+  setShowRepliesTo,
+  reportComment,
+}: Props) {
   const i18n = useI18n()
   const theme = useTheme()
 
@@ -32,22 +38,21 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
   const handleLike = (commentId: string) => {
     const request = liked ? ApiService.Comments.unlike : ApiService.Comments.like
 
-    request(commentId)
-      .then(() => {
-        if (liked) {
-          setLikeCount((oldValue) => {
-            if (oldValue > 0) {
-              return oldValue - 1
-            }
-            return 0
-          })
+    request(commentId).then(() => {
+      if (liked) {
+        setLikeCount((oldValue) => {
+          if (oldValue > 0) {
+            return oldValue - 1
+          }
+          return 0
+        })
 
-          setLiked(false)
-        } else {
-          setLikeCount((oldValue) => oldValue + 1)
-          setLiked(true)
-        }
-      })
+        setLiked(false)
+      } else {
+        setLikeCount((oldValue) => oldValue + 1)
+        setLiked(true)
+      }
+    })
   }
 
   const onSideMenuClick = () => {
@@ -60,24 +65,20 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
       style={[
         styles.card,
         {
-          backgroundColor: useAlternativeColors ? theme.colors.surface : theme.colors.surfaceVariant,
+          backgroundColor: useAlternativeColors
+            ? theme.colors.surface
+            : theme.colors.surfaceVariant,
         },
       ]}
     >
       <Card.Content style={{ paddingBottom: 0 }}>
         <View style={styles.header}>
-          <Avatar.Text
-            size={40}
-            label={createdBy.slice(0, 2).toUpperCase()}
-          />
+          <Avatar.Text size={40} label={createdBy.slice(0, 2).toUpperCase()} />
 
           <View style={styles.author}>
             <Text variant="titleSmall">{createdBy}</Text>
 
-            <Text
-              variant="bodySmall"
-              style={{ color: theme.colors.onSurfaceVariant }}
-            >
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
               {createdAt}
             </Text>
           </View>
@@ -86,10 +87,7 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
           </View>
         </View>
 
-        <Text
-          variant="bodyMedium"
-          style={styles.content}
-        >
+        <Text variant="bodyMedium" style={styles.content}>
           {comment.content}
         </Text>
 
@@ -102,17 +100,10 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
               onPress={() => handleLike(comment.id)}
               style={styles.likeButton}
             />
-            <Text variant="labelMedium">
-              {likeCount}
-            </Text>
+            <Text variant="labelMedium">{likeCount}</Text>
           </View>
 
-          <Button
-            icon={'reply'}
-            mode="text"
-            compact
-            onPress={() => setReplyTo(comment)}
-          >
+          <Button icon={'reply'} mode="text" compact onPress={() => setReplyTo(comment)}>
             {i18n.t('comment.reply')}
           </Button>
 
@@ -158,13 +149,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     gap: 8,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   like: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   likeButton: {
-    marginHorizontal: 0
-  }
-});
+    marginHorizontal: 0,
+  },
+})

@@ -1,8 +1,16 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable, signal } from "@angular/core";
-import { ChampionDataDragon, ChampionsDataDragonDetails, ChampionsDataDragonDetailsSolo, ItemDetails, RunesReforgedDataDragon, RunesReforgedSlots, SummonerSpell } from "@org/contracts";
-import { map, Observable, of, tap } from "rxjs";
-import { API_CONSTANTS } from "../endpoint.constants";
+import { HttpClient } from '@angular/common/http'
+import { inject, Injectable, signal } from '@angular/core'
+import {
+  ChampionDataDragon,
+  ChampionsDataDragonDetails,
+  ChampionsDataDragonDetailsSolo,
+  ItemDetails,
+  RunesReforgedDataDragon,
+  RunesReforgedSlots,
+  SummonerSpell,
+} from '@org/contracts'
+import { map, Observable, of, tap } from 'rxjs'
+import { API_CONSTANTS } from '../endpoint.constants'
 
 const DATA_DRAGON_ENDPOINT = 'data-dragon'
 const ENDPOINT = `${API_CONSTANTS.API_URL}/${DATA_DRAGON_ENDPOINT}`
@@ -12,31 +20,31 @@ export interface ItemDetailsWithId extends ItemDetails {
 }
 
 export type DataDragonLists = {
-  champions: ChampionsDataDragonDetails[],
-  spells: SummonerSpell[],
-  runes: RunesReforgedDataDragon[],
-  runesSlots: RunesReforgedSlots[],
+  champions: ChampionsDataDragonDetails[]
+  spells: SummonerSpell[]
+  runes: RunesReforgedDataDragon[]
+  runesSlots: RunesReforgedSlots[]
   items: ItemDetailsWithId[]
 }
 
 export type DataDragonMaps = {
   champions: Record<string, ChampionsDataDragonDetails>
-  spells: Record<string, SummonerSpell>,
-  runes: Record<string, RunesReforgedDataDragon>,
-  runeSlots: Record<string, RunesReforgedSlots>,
-  items: Record<string, ItemDetails>,
+  spells: Record<string, SummonerSpell>
+  runes: Record<string, RunesReforgedDataDragon>
+  runeSlots: Record<string, RunesReforgedSlots>
+  items: Record<string, ItemDetails>
 }
 
 type AssetsResponse = {
   data: {
-    lists: DataDragonLists,
+    lists: DataDragonLists
     maps: DataDragonMaps
-  },
-  version: string;
+  }
+  version: string
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DataDragonService {
   private readonly http = inject(HttpClient)
@@ -45,7 +53,9 @@ export class DataDragonService {
   private _maps = signal<DataDragonMaps | undefined>(undefined)
   private _lists = signal<DataDragonLists | undefined>(undefined)
 
-  private _fullChampions = signal<Record<string, ChampionsDataDragonDetailsSolo> | undefined>(undefined)
+  private _fullChampions = signal<Record<string, ChampionsDataDragonDetailsSolo> | undefined>(
+    undefined,
+  )
 
   readonly patch = this._patch.asReadonly()
   readonly maps = this._maps.asReadonly()
@@ -54,15 +64,13 @@ export class DataDragonService {
   private readonly fullChampions = this._fullChampions.asReadonly()
 
   load() {
-    return this.http
-      .get<AssetsResponse>(`${ENDPOINT}/assets`)
-      .pipe(
-        tap(({ data, version }) => {
-          this._maps.set(data.maps)
-          this._lists.set(data.lists)
-          this._patch.set(version)
-        })
-      )
+    return this.http.get<AssetsResponse>(`${ENDPOINT}/assets`).pipe(
+      tap(({ data, version }) => {
+        this._maps.set(data.maps)
+        this._lists.set(data.lists)
+        this._patch.set(version)
+      }),
+    )
   }
 
   champion(champion: string): Observable<ChampionsDataDragonDetailsSolo | undefined> {
@@ -75,15 +83,12 @@ export class DataDragonService {
       return of(cachedChampion)
     }
 
-    return this.http
-      .get<ChampionDataDragon>(`${ENDPOINT}/champion/${champion}`)
-      .pipe(
-        tap((response) => {
-          this._fullChampions
-            .update((current) => ({ ...current, champion: response.data[champion] }))
-        }),
-        map((response) => response.data[champion])
-      )
+    return this.http.get<ChampionDataDragon>(`${ENDPOINT}/champion/${champion}`).pipe(
+      tap((response) => {
+        this._fullChampions.update((current) => ({ ...current, champion: response.data[champion] }))
+      }),
+      map((response) => response.data[champion]),
+    )
   }
 
   item(item: string): ItemDetails | undefined {

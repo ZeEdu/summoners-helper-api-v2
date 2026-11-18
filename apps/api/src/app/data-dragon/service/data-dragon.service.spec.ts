@@ -1,21 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing'
 
-import { SUPPORTED_LANGUAGES } from '@org/contracts';
+import { SUPPORTED_LANGUAGES } from '@org/contracts'
 
-import { DataDragonService } from './data-dragon.service';
+import { DataDragonService } from './data-dragon.service'
 
 describe('DataDragonService', () => {
-  let service: DataDragonService;
+  let service: DataDragonService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [DataDragonService],
-    }).compile();
+    }).compile()
 
-    service = module.get<DataDragonService>(DataDragonService);
+    service = module.get<DataDragonService>(DataDragonService)
 
     jest.spyOn(service, 'getPatchVersion').mockResolvedValue({ patch: '16.19.1' })
-  });
+  })
 
   it('should be defined', async () => {
     const response = await service.getAssets(SUPPORTED_LANGUAGES.pt)
@@ -34,5 +34,5 @@ describe('DataDragonService', () => {
     expect(response.data.maps).toHaveProperty('runes')
     expect(response.data.maps).toHaveProperty('spells')
     expect(response.data.maps).toHaveProperty('items')
-  });
-});
+  })
+})

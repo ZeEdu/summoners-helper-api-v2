@@ -1,38 +1,38 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-import { IComment } from "@org/contracts";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { IComment } from '@org/contracts'
+import { HydratedDocument, SchemaTypes, Types } from 'mongoose'
 
 @Schema()
 export class Comment implements IComment {
-  _id: Types.ObjectId;
+  _id: Types.ObjectId
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  createdBy?: Types.ObjectId;
+  createdBy?: Types.ObjectId
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Guide', required: true })
-  guide: Types.ObjectId;
+  guide: Types.ObjectId
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Comment' })
-  replyTo?: Types.ObjectId | undefined;
+  replyTo?: Types.ObjectId | undefined
 
   @Prop({ type: String })
-  content?: string;
+  content?: string
 
   @Prop({ type: Date, required: true })
-  createdAt: Date;
+  createdAt: Date
 
   @Prop({ type: Boolean, default: false })
-  removed: boolean;
+  removed: boolean
 
   @Prop({ type: Date })
-  removedAt?: Date;
+  removedAt?: Date
 
   @Prop({ type: Number, default: 0 })
-  likeCount: number;
+  likeCount: number
 
   @Prop({ type: Boolean })
-  blocked?: boolean;
+  blocked?: boolean
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)

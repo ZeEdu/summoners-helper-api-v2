@@ -1,15 +1,15 @@
-import { FlatList, StyleSheet, View } from "react-native";
-import { ActivityIndicator, Text } from "react-native-paper";
-import useI18n from "../../../../../../contexts/i18n/useI18n";
-import useChampionData from "../../../../../../hooks/useChampion";
-import { AbilitiesProgressionDto } from "../../forms/AbilitiesProgressionForm";
-import SpellDescriptionCard from "./spell-description-card/SpellDescriptionCard";
-import AbilitiesProgressionBody from "./table/body/AbilitiesProgressionBody";
-import AbilitiesProgressionHeader from "./table/header/AbilitiesProgressionHeader";
+import { FlatList, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Text } from 'react-native-paper'
+import useI18n from '../../../../../../contexts/i18n/useI18n'
+import useChampionData from '../../../../../../hooks/useChampion'
+import { AbilitiesProgressionDto } from '../../forms/AbilitiesProgressionForm'
+import SpellDescriptionCard from './spell-description-card/SpellDescriptionCard'
+import AbilitiesProgressionBody from './table/body/AbilitiesProgressionBody'
+import AbilitiesProgressionHeader from './table/header/AbilitiesProgressionHeader'
 
 type Props = {
-  abilitiesProgression: AbilitiesProgressionDto;
-  championId: string;
+  abilitiesProgression: AbilitiesProgressionDto
+  championId: string
 }
 
 export default function AbilitiesProgressionContent({ abilitiesProgression, championId }: Props) {
@@ -24,7 +24,6 @@ export default function AbilitiesProgressionContent({ abilitiesProgression, cham
       </View>
     )
   }
-
 
   if (!championData || error) {
     return (
@@ -41,30 +40,28 @@ export default function AbilitiesProgressionContent({ abilitiesProgression, cham
       <FlatList
         data={championData?.spells}
         contentContainerStyle={styles.spellContentContainer}
-        renderItem={(({ item: spell, index }) => (
-          <SpellDescriptionCard
-            spell={spell}
-            index={index}
-            championId={championId}
-          />
-        ))}
+        renderItem={({ item: spell, index }) => (
+          <SpellDescriptionCard spell={spell} index={index} championId={championId} />
+        )}
       />
 
       <View style={styles.abilitiesProgressionContainer}>
         <AbilitiesProgressionHeader spells={championData.spells} championId={championData.id} />
-        <AbilitiesProgressionBody spells={championData.spells} abilitiesProgression={abilitiesProgression} />
-      </View >
+        <AbilitiesProgressionBody
+          spells={championData.spells}
+          abilitiesProgression={abilitiesProgression}
+        />
+      </View>
     </View>
   )
 }
 
-
 const styles = StyleSheet.create({
   container: {
-    gap: 8
+    gap: 8,
   },
   spellContentContainer: { gap: 4 },
   abilitiesProgressionContainer: {
-    gap: 8
-  }
+    gap: 8,
+  },
 })

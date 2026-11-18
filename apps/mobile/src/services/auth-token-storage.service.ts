@@ -1,4 +1,4 @@
-import SecureStoreService from "./secure-store.service"
+import SecureStoreService from './secure-store.service'
 
 const ACCESS_TOKEN = 'access_token'
 const REFRESH_TOKEN = 'refresh_token'
@@ -19,5 +19,5 @@ export const AuthTokenStorageService = {
   delete: async () => {
     await SecureStoreService.delete(ACCESS_TOKEN)
     await SecureStoreService.delete(REFRESH_TOKEN)
-  }
+  },
 }

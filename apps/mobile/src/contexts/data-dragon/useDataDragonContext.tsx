@@ -1,5 +1,5 @@
-import { useContext } from "react"
-import { DataDragonContext } from "./data-dragon.context"
+import { useContext } from 'react'
+import { DataDragonContext } from './data-dragon.context'
 
 export default function useDataDragon() {
   const context = useContext(DataDragonContext)
@@ -9,4 +9,3 @@ export default function useDataDragon() {
 
   return context
 }
-

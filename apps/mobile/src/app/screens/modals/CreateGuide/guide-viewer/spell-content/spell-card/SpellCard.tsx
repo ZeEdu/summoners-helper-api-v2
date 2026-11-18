@@ -1,22 +1,22 @@
-import { Image, StyleSheet } from 'react-native';
-import { Card, MD3Theme, Text, useTheme } from 'react-native-paper';
+import { Image, StyleSheet } from 'react-native'
+import { Card, MD3Theme, Text, useTheme } from 'react-native-paper'
 
-import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext';
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext'
 
 type SpellCardProps = {
-  spell: string;
-};
+  spell: string
+}
 
 export default function SpellCard({ spell }: SpellCardProps) {
-  const theme = useTheme();
-  const dataDragon = useDataDragon();
+  const theme = useTheme()
+  const dataDragon = useDataDragon()
 
-  const { name, description } = dataDragon.getSpell(spell);
+  const { name, description } = dataDragon.getSpell(spell)
 
-  const spellImageEndpoint = dataDragon.getSpell(spell).image.full;
-  const spellURI = `https://ddragon.leagueoflegends.com/cdn/${dataDragon.getPatch()}/img/spell/${spellImageEndpoint}`;
+  const spellImageEndpoint = dataDragon.getSpell(spell).image.full
+  const spellURI = `https://ddragon.leagueoflegends.com/cdn/${dataDragon.getPatch()}/img/spell/${spellImageEndpoint}`
 
-  const styles = makeStyles(theme);
+  const styles = makeStyles(theme)
 
   return (
     <Card style={styles.card}>
@@ -39,13 +39,13 @@ export default function SpellCard({ spell }: SpellCardProps) {
         <Text variant="bodySmall">{description}</Text>
       </Card.Content>
     </Card>
-  );
+  )
 }
 
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     card: {
-      backgroundColor: colors.secondaryContainer
+      backgroundColor: colors.secondaryContainer,
     },
     image: {
       width: 48,
@@ -55,7 +55,7 @@ const makeStyles = ({ colors }: MD3Theme) => {
       borderColor: colors.onSecondaryContainer,
     },
     title: {
-      color: colors.onSecondaryContainer
+      color: colors.onSecondaryContainer,
     },
-  });
-};
+  })
+}

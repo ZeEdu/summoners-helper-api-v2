@@ -1,16 +1,15 @@
+import { ICreateUserDto, ILoginUserDto } from '@org/contracts'
 
-import { ICreateUserDto, ILoginUserDto } from '@org/contracts';
+import { customFetch } from '../../utils/customFetch/customFetch'
+import Utils from '../../utils/utils'
+import { API_CONSTANTS } from './api.constants'
 
-import { customFetch } from '../../utils/customFetch/customFetch';
-import Utils from '../../utils/utils';
-import { API_CONSTANTS } from './api.constants';
-
-const AUTH_ENDPOINT = 'auth';
+const AUTH_ENDPOINT = 'auth'
 const MOBILE_URL = Utils.isWeb ? 'web' : 'mobile'
 
 export const Auth = {
   login: (loginUserDto: ILoginUserDto) => {
-    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/${MOBILE_URL}/login`;
+    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/${MOBILE_URL}/login`
     const init: RequestInit = {
       method: 'POST',
       headers: {
@@ -19,14 +18,11 @@ export const Auth = {
       },
       credentials: 'include',
       body: JSON.stringify(loginUserDto),
-    };
-    return customFetch<{ accessToken: string; refreshToken: string }>(
-      url,
-      init,
-    );
+    }
+    return customFetch<{ accessToken: string; refreshToken: string }>(url, init)
   },
   logout: async (accessToken: string) => {
-    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/logout`;
+    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/logout`
 
     const init: RequestInit = {
       method: 'POST',
@@ -34,12 +30,12 @@ export const Auth = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    };
+    }
 
-    return customFetch(url, init);
+    return customFetch(url, init)
   },
   register: async (createUserDto: ICreateUserDto) => {
-    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/${MOBILE_URL}/register`;
+    const url = `${API_CONSTANTS.API_URL}/${AUTH_ENDPOINT}/${MOBILE_URL}/register`
     const init: RequestInit = {
       method: 'POST',
       headers: {
@@ -48,10 +44,7 @@ export const Auth = {
       },
       credentials: 'include',
       body: JSON.stringify(createUserDto),
-    };
-    return customFetch<{ accessToken: string; refreshToken: string }>(
-      url,
-      init,
-    );
-  }
-};
+    }
+    return customFetch<{ accessToken: string; refreshToken: string }>(url, init)
+  },
+}

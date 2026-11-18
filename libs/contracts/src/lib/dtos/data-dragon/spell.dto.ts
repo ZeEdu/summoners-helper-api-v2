@@ -1,32 +1,32 @@
 export interface SummonerSpellDataDragon {
-  type: string;
-  version: string;
-  data: { [key: string]: SummonerSpell };
+  type: string
+  version: string
+  data: { [key: string]: SummonerSpell }
 }
 
 export interface SummonerSpell {
-  id: string;
-  name: string;
-  description: string;
-  tooltip: string;
-  maxrank: number;
-  cooldown: number[];
-  cooldownBurn: string;
-  cost: number[];
-  costBurn: string;
-  datavalues: any;
-  effect: Array<number[] | null>;
-  effectBurn: Array<null | string>;
-  vars: Var[];
-  key: string;
-  summonerLevel: number;
-  modes: string[];
-  costType: CostType;
-  maxammo: string;
-  range: number[];
-  rangeBurn: string;
-  image: SpellImage;
-  resource: Resource;
+  id: string
+  name: string
+  description: string
+  tooltip: string
+  maxrank: number
+  cooldown: number[]
+  cooldownBurn: string
+  cost: number[]
+  costBurn: string
+  datavalues: any
+  effect: Array<number[] | null>
+  effectBurn: Array<null | string>
+  vars: Var[]
+  key: string
+  summonerLevel: number
+  modes: string[]
+  costType: CostType
+  maxammo: string
+  range: number[]
+  rangeBurn: string
+  image: SpellImage
+  resource: Resource
 }
 
 export enum CostType {
@@ -35,13 +35,13 @@ export enum CostType {
 }
 
 export interface SpellImage {
-  full: string;
-  sprite: SpellSprite;
-  group: SpellGroup;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
+  full: string
+  sprite: SpellSprite
+  group: SpellGroup
+  x: number
+  y: number
+  w: number
+  h: number
 }
 
 export enum SpellGroup {
@@ -58,9 +58,9 @@ export enum Resource {
 }
 
 export interface Var {
-  link: string;
-  coeff: number[] | number;
-  key: string;
+  link: string
+  coeff: number[] | number
+  key: string
 }
 
 // Module './item.dto' has already exported a member named 'Group'. Consider explicitly re-exporting to resolve the ambiguity.

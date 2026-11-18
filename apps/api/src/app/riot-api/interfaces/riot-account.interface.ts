@@ -1,5 +1,5 @@
 export interface RiotAccount {
-  puuid: string;
-  gameName: string;
-  tagLine: string;
+  puuid: string
+  gameName: string
+  tagLine: string
 }

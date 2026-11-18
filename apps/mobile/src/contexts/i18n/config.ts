@@ -1,11 +1,11 @@
-import { I18n } from 'i18n-js';
+import { I18n } from 'i18n-js'
 
-import en from './locales/en';
-import ptBR from './locales/pt-BR';
+import en from './locales/en'
+import ptBR from './locales/pt-BR'
 
 const translations = {
-  'pt': ptBR,
-  en
+  pt: ptBR,
+  en,
 }
 
 const i18n = new I18n(translations)

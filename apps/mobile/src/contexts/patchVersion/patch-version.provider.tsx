@@ -1,31 +1,25 @@
-import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
-import { PatchVersionContext, PatchVersionType } from './patch-version.context';
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { PatchVersionContext, PatchVersionType } from './patch-version.context'
 
 export default function PatchVersionProvider({ children }: PropsWithChildren) {
-  const [version, setVersion] = useState<string>('');
+  const [version, setVersion] = useState<string>('')
 
   useEffect(() => {
     async function getCurrenVersion() {
-      const response = await fetch(
-        'https://ddragon.leagueoflegends.com/api/versions.json',
-      );
-      const json = await response.json();
-      return json[0];
+      const response = await fetch('https://ddragon.leagueoflegends.com/api/versions.json')
+      const json = await response.json()
+      return json[0]
     }
 
     async function loadDataDragon() {
-      const version = await getCurrenVersion();
-      setVersion(version);
+      const version = await getCurrenVersion()
+      setVersion(version)
     }
 
-    loadDataDragon();
-  }, []);
+    loadDataDragon()
+  }, [])
 
-  const value: PatchVersionType = useMemo(() => ({ version }), [version]);
+  const value: PatchVersionType = useMemo(() => ({ version }), [version])
 
-  return (
-    <PatchVersionContext.Provider value={value}>
-      {children}
-    </PatchVersionContext.Provider>
-  );
+  return <PatchVersionContext.Provider value={value}>{children}</PatchVersionContext.Provider>
 }

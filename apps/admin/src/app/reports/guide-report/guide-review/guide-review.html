@@ -38,16 +38,12 @@
     <mat-icon>gavel</mat-icon>
     <span>Aceitar</span>
   </button>
-  }
-
-  @if(report.status !== GUIDE_REPORT_STATUS.ARCHIVED) {
+  } @if(report.status !== GUIDE_REPORT_STATUS.ARCHIVED) {
   <button matButton (click)="archiveReport()">
     <mat-icon>archive</mat-icon>
     <span>Arquivar</span>
   </button>
-  }
-
-  @if(report.actionTaken === GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
+  } @if(report.actionTaken === GUIDE_REPORT_ACTION_TAKEN.BLOCKED) {
   <button matButton (click)="undoReport()">
     <mat-icon>undo</mat-icon>
     <span>Desfazer</span>

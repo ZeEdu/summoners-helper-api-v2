@@ -1,12 +1,12 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import * as qs from 'qs';
+import { HttpClient } from '@angular/common/http'
+import { inject, Injectable } from '@angular/core'
+import * as qs from 'qs'
 
-import { IPopulatedReportDto, ReportPaginationDto } from '@org/contracts';
+import { IPopulatedReportDto, ReportPaginationDto } from '@org/contracts'
 
-import { API_CONSTANTS } from '../../../endpoint.constants';
+import { API_CONSTANTS } from '../../../endpoint.constants'
 
-const REPORT_ENDPOINT = 'report';
+const REPORT_ENDPOINT = 'report'
 
 @Injectable({
   providedIn: 'root',
@@ -19,19 +19,17 @@ export class ReportService {
     const queryString = qs.stringify(query)
     const requestUrl = `${this.endpoint}?${queryString}`
 
-    return this.http
-      .get<{
-        reports: IPopulatedReportDto[];
-        count: number;
-      }>(requestUrl)
+    return this.http.get<{
+      reports: IPopulatedReportDto[]
+      count: number
+    }>(requestUrl)
   }
 
   count(query: Omit<ReportPaginationDto, 'limit' | 'offset' | 'sort'>) {
     const queryString = qs.stringify(query)
     const requestUrl = `${this.endpoint}/count?${queryString}`
 
-    return this.http
-      .get<number>(requestUrl)
+    return this.http.get<number>(requestUrl)
   }
 
   archiveReport(guideId: IPopulatedReportDto['id']) {

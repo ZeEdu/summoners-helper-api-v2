@@ -1,34 +1,34 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
-import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
-import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useFieldArray, useForm, useFormContext } from 'react-hook-form'
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
+import z from 'zod'
 
-import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
-import { StyledButton } from '@org/ui';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts'
+import { StyledButton } from '@org/ui'
 
-import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
-import AppInputController from '../../../../../components/forms/AppInputController';
-import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
-import { StepperFooter } from '../../../../../components/stepper';
-import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
-import { useStepperContext } from '../../../../../components/stepper/context';
-import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
-import useI18n from '../../../../../contexts/i18n/useI18n';
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController'
+import AppInputController from '../../../../../components/forms/AppInputController'
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors'
+import { StepperFooter } from '../../../../../components/stepper'
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props'
+import { useStepperContext } from '../../../../../components/stepper/context'
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext'
+import useI18n from '../../../../../contexts/i18n/useI18n'
 
 const ThreatsSchema = CreateGuideFormSchema.pick({
   threats: true,
   threatsDescription: true,
-});
+})
 
-export type ThreatsDto = z.infer<typeof ThreatsSchema>;
+export type ThreatsDto = z.infer<typeof ThreatsSchema>
 
-const resolver = zodResolver(ThreatsSchema);
+const resolver = zodResolver(ThreatsSchema)
 
 export default function ThreatsForm() {
-  const dataDragon = useDataDragon();
+  const dataDragon = useDataDragon()
   const i18n = useI18n()
-  const mainFormContext = useFormContext<CreateGuideFormDto>();
-  const stepperContext = useStepperContext();
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
+  const stepperContext = useStepperContext()
 
   const defaultValues: ThreatsDto = {
     threatsDescription: mainFormContext.getValues('threatsDescription'),
@@ -39,30 +39,30 @@ export default function ThreatsForm() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<ThreatsDto>({ resolver, defaultValues });
+  } = useForm<ThreatsDto>({ resolver, defaultValues })
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'threats',
-  });
+  })
 
-  const championList = dataDragon.lists.champions || [];
+  const championList = dataDragon.lists.champions || []
 
   const appendThreat = () => {
     append({
       threat: '',
       description: '',
-    });
-  };
+    })
+  }
 
   const onSubmit = (formValues: ThreatsDto) => {
-    mainFormContext.setValues(formValues, { shouldValidate: true });
+    mainFormContext.setValues(formValues, { shouldValidate: true })
     stepperContext.nextStep()
-  };
+  }
 
   const getErrorFromIndex = (index: number) => {
-    return errors.threats?.[index];
-  };
+    return errors.threats?.[index]
+  }
 
   return (
     <View style={styles.container}>
@@ -98,9 +98,7 @@ export default function ThreatsForm() {
                       name={`threats.${index}.threat`}
                     />
 
-                    <FormFieldErrors
-                      fieldError={getErrorFromIndex(index)?.threat}
-                    />
+                    <FormFieldErrors fieldError={getErrorFromIndex(index)?.threat} />
 
                     <AppInputController
                       key={`${index}.description`}
@@ -113,19 +111,17 @@ export default function ThreatsForm() {
                       }}
                     />
 
-                    <FormFieldErrors
-                      fieldError={getErrorFromIndex(index)?.description}
-                    />
+                    <FormFieldErrors fieldError={getErrorFromIndex(index)?.description} />
 
                     <StyledButton
                       onPress={() => {
-                        remove(index);
+                        remove(index)
                       }}
                     >
                       {i18n.t('threatsForm.fields.removeThreatButton')}
                     </StyledButton>
                   </View>
-                );
+                )
               }}
             />
           </ScrollView>
@@ -137,11 +133,11 @@ export default function ThreatsForm() {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
-          t: i18n.t
+          t: i18n.t,
         })}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -152,5 +148,5 @@ const styles = StyleSheet.create({
   fieldContainer: {
     display: 'flex',
     gap: 8,
-  }
-});
+  },
+})

@@ -1,39 +1,32 @@
-import { useState } from 'react';
-import { UseFieldArrayRemove } from 'react-hook-form';
-import { Image, Pressable, StyleSheet } from 'react-native';
-import {
-  Button,
-  Dialog,
-  MD3Theme,
-  Portal,
-  Text,
-  useTheme,
-} from 'react-native-paper';
+import { useState } from 'react'
+import { UseFieldArrayRemove } from 'react-hook-form'
+import { Image, Pressable, StyleSheet } from 'react-native'
+import { Button, Dialog, MD3Theme, Portal, Text, useTheme } from 'react-native-paper'
 
-import useI18n from '../../../../../../contexts/i18n/useI18n';
-import { usePatchVersion } from '../../../../../../contexts/patchVersion/usePatchVersion';
+import useI18n from '../../../../../../contexts/i18n/useI18n'
+import { usePatchVersion } from '../../../../../../contexts/patchVersion/usePatchVersion'
 
 type ItemProps = {
-  index: number;
-  itemId: string;
-  removeItem: UseFieldArrayRemove;
-};
+  index: number
+  itemId: string
+  removeItem: UseFieldArrayRemove
+}
 
 export default function ArrayItem({ itemId, index, removeItem }: ItemProps) {
-  const i18n = useI18n();
-  const theme = useTheme();
-  const styles = makeStyles(theme);
+  const i18n = useI18n()
+  const theme = useTheme()
+  const styles = makeStyles(theme)
 
-  const { version } = usePatchVersion();
+  const { version } = usePatchVersion()
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
 
   return (
     <>
       <Pressable
         style={styles.button}
         onPress={() => {
-          setVisible(true);
+          setVisible(true)
         }}
       >
         <Image
@@ -57,7 +50,7 @@ export default function ArrayItem({ itemId, index, removeItem }: ItemProps) {
         </Dialog>
       </Portal>
     </>
-  );
+  )
 }
 
 const makeStyles = ({ roundness }: MD3Theme) => {
@@ -70,5 +63,5 @@ const makeStyles = ({ roundness }: MD3Theme) => {
       height: 48,
       borderRadius: roundness,
     },
-  });
-};
+  })
+}

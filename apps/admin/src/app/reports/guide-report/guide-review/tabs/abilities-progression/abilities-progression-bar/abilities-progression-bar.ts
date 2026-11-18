@@ -1,10 +1,16 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, Input, OnInit } from "@angular/core";
-import { MatCard, MatCardContent } from "@angular/material/card";
+import { CommonModule } from '@angular/common'
+import { Component, inject, Input, OnInit } from '@angular/core'
+import { MatCard, MatCardContent } from '@angular/material/card'
 
-import { AbilityOption, ChampionDataDragonSpell, ChampionsDataDragonDetailsSolo, getAbilityOption, PopulatedGuideDto } from "@org/contracts";
+import {
+  AbilityOption,
+  ChampionDataDragonSpell,
+  ChampionsDataDragonDetailsSolo,
+  getAbilityOption,
+  PopulatedGuideDto,
+} from '@org/contracts'
 
-import { DataDragonService } from "../../../../../../data-dragon/data-dragon.service";
+import { DataDragonService } from '../../../../../../data-dragon/data-dragon.service'
 
 function getKeyToPressFromAbilityOptions(value: AbilityOption) {
   switch (value) {
@@ -21,7 +27,7 @@ function getKeyToPressFromAbilityOptions(value: AbilityOption) {
 }
 
 type ProgressionType = {
-  key: "q" | "w" | "e" | "r",
+  key: 'q' | 'w' | 'e' | 'r'
   spell: ChampionDataDragonSpell
 }
 
@@ -29,11 +35,7 @@ type ProgressionType = {
   selector: 'app-abilities-progression-bar',
   templateUrl: './abilities-progression-bar.html',
   styleUrl: './abilities-progression-bar.scss',
-  imports: [
-    CommonModule,
-    MatCard,
-    MatCardContent
-  ]
+  imports: [CommonModule, MatCard, MatCardContent],
 })
 export class AbilitiesProgressionBar implements OnInit {
   @Input() guide: PopulatedGuideDto
@@ -44,18 +46,21 @@ export class AbilitiesProgressionBar implements OnInit {
   progressionPerLevel: ProgressionType[]
 
   ngOnInit(): void {
-    const spells: Record<string, ChampionDataDragonSpell> = this.champion.spells
-      .reduce((previous, current) => ({
-        ...previous, [current.id]: current
-      }), {}
-      )
+    const spells: Record<string, ChampionDataDragonSpell> = this.champion.spells.reduce(
+      (previous, current) => ({
+        ...previous,
+        [current.id]: current,
+      }),
+      {},
+    )
 
     this.progressionPerLevel = Object.values(this.guide.abilitiesProgression)
       .map(getAbilityOption)
-      .filter(v => !!v)
-      .map(abilityOption => getKeyToPressFromAbilityOptions(abilityOption))
+      .filter((v) => !!v)
+      .map((abilityOption) => getKeyToPressFromAbilityOptions(abilityOption))
       .map((key) => ({
-        key, spell: spells[`${this.championId}${key.toUpperCase()}`]
+        key,
+        spell: spells[`${this.championId}${key.toUpperCase()}`],
       }))
   }
 

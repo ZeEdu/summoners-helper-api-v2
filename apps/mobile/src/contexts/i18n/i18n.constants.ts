@@ -1,13 +1,13 @@
-import { SupportedLanguages } from "./i18n.context"
+import { SupportedLanguages } from './i18n.context'
 
 const SUPPORTED_LANGUAGES: Record<SupportedLanguages, SupportedLanguages> = {
   pt: 'pt',
-  en: 'en'
+  en: 'en',
 } as const
 
 const SUPPORTED_LANGUAGES_LABELS: Record<SupportedLanguages, string> = {
   pt: 'Português',
-  en: 'English'
+  en: 'English',
 } as const
 
 function isSupportedLanguage(lang: string): lang is SupportedLanguages {
@@ -20,7 +20,7 @@ const I18N_CONSTANTS = {
   isSupportedLanguage,
   SUPPORTED_LANGUAGES,
   SUPPORTED_LANGUAGES_LABELS,
-  STORE_KEY
+  STORE_KEY,
 }
 
 export default I18N_CONSTANTS

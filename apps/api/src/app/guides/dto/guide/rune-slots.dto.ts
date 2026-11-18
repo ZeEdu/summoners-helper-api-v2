@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from 'zod'
 
 export const runeSlotSchema = z.object({
   first: z.string({ error: 'formato do campo é inválido' }),
