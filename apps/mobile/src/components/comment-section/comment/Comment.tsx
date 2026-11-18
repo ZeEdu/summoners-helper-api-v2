@@ -48,7 +48,6 @@ export default function Comment({ comment, useAlternativeColors = false, setRepl
           setLiked(true)
         }
       })
-      .catch(() => { })
   }
 
   const onSideMenuClick = () => {

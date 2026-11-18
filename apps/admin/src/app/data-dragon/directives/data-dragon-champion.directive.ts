@@ -1,11 +1,6 @@
 import { afterNextRender, Directive, ElementRef, inject, Renderer2 } from "@angular/core";
 import { interval, Subject, takeUntil } from "rxjs";
-import { API_CONSTANTS } from "../../endpoint.constants";
 import { DataDragonService } from "../data-dragon.service";
-
-
-const DATA_DRAGON_ENDPOINT = 'data-dragon'
-const ENDPOINT = `${API_CONSTANTS.API_URL}/${DATA_DRAGON_ENDPOINT}`
 
 @Directive({
   selector: '[appChampionName]'

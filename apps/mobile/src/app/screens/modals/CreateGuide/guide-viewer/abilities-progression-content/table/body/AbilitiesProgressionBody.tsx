@@ -1,6 +1,8 @@
 import { FlatList, StyleSheet, View } from "react-native"
 import { Card, MD3Theme, Text, useTheme } from "react-native-paper"
-import { ChampionDataDragonSpell } from "../../../../../../../../../../../libs/contracts/src"
+
+import { ChampionDataDragonSpell } from "@org/contracts"
+
 import { AbilitiesProgressionDto, indexToAbilityOption, KeymapIndexType } from "../../../../forms/AbilitiesProgressionForm"
 import { keyFromLvlsBuilder, LvlKey, lvlsArrayBuilder } from "../../../../forms/utils"
 

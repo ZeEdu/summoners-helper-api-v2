@@ -5,12 +5,12 @@ import { StyledText } from "@org/ui"
 import { MD3Theme, useTheme } from "react-native-paper"
 
 export default function FormFieldErrors({ fieldError }: { fieldError: FieldError | undefined }) {
+  const theme = useTheme()
+  const styles = makeStyles(theme)
+
   if (!fieldError) {
     return
   }
-
-  const theme = useTheme()
-  const styles = makeStyles(theme)
 
   return (
     <View style={styles.container}>

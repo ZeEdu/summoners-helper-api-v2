@@ -110,7 +110,7 @@ export default function ReportGuide({ route }: Props) {
   const handleSnackDismiss = () => {
     closeSnack()
 
-    if (!Boolean(error)) {
+    if (!error) {
       navigation.goBack()
     }
   }

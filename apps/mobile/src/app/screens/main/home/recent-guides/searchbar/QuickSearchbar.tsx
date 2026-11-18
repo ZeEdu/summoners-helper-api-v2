@@ -114,7 +114,7 @@ export default function QuickSearchbar({ navigateToGuide }: QuickSearchbarProps)
                   />
                 </Surface>
               ) : (
-                Boolean(searchQuery) ? (
+                searchQuery ? (
                   <Surface
                     style={styles.noResultsSurface}>
                     <Text style={styles.textAlignCenter}>

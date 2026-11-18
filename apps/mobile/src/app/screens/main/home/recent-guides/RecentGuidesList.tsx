@@ -75,7 +75,7 @@ export default function RecentGuidesList() {
         }
 
         {
-          Boolean(error) ? (
+          error ? (
             <Error>
               <Button onPress={reload}>
                 {i18n.t('recentGuidesList.reload')}

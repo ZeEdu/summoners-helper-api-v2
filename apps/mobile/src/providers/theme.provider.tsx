@@ -19,15 +19,12 @@ type ThemeContextType = {
   navigationTheme: Theme
 }
 
-const ThemeContext = createContext({
-  toggleTheme: () => { },
-  isThemeDark: false
-})
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export default function ThemeProvider({ children }: PropsWithChildren) {
   const [isThemeDark, setIsThemeDark] = useState(false)
-  let paperTheme = isThemeDark ? MD3DarkTheme : MD3LightTheme
-  let navigationTheme = isThemeDark ? NavigationAdaptedDarkTheme : NavigationAdaptedLightTheme
+  const paperTheme = isThemeDark ? MD3DarkTheme : MD3LightTheme
+  const navigationTheme = isThemeDark ? NavigationAdaptedDarkTheme : NavigationAdaptedLightTheme
 
   const toggleTheme = useCallback(() => {
     setIsThemeDark(previous => {
