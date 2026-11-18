@@ -8,7 +8,8 @@
     "test-api": "nx test api --runInBand --detectOpenHandles --skip-nx-cache --verbose",
     "start-android": "nx run mobile:run-android",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "validate": "nx run-many -t lint test typecheck && nx run-many -t build --exclude=mobile"
   },
   "private": true,
   "devDependencies": {
@@ -101,7 +102,8 @@
     "webpack-dev-server": "^5.2.1"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "libs/*"
   ],
   "dependencies": {
     "@angular/cdk": "^21.2.14",
