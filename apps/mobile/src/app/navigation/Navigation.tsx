@@ -117,5 +117,5 @@ export const Navigation = createStaticNavigation(RootStack)
 type RootStackType = typeof RootStack;
 
 declare module '@react-navigation/native' {
-  type RootNavigator = RootStackType
+  interface RootNavigator extends RootStackType { }
 }

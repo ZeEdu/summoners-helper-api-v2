@@ -63,6 +63,24 @@ export type I18nTranslations = {
             "serviceUnavailableException": string;
         };
     };
+    "validation": {
+        "enum": string;
+        "reportTargetRequired": string;
+        "passwordPattern": string;
+        "objectId": string;
+        "type": string;
+        "invalid": string;
+        "string.min": string;
+        "string.max": string;
+        "number.min": string;
+        "number.max": string;
+        "array.min": string;
+        "array.max": string;
+        "email": string;
+        "regex": string;
+        "format": string;
+        "default": string;
+    };
 };
 /* prettier-ignore */
 export type I18nPath = Path<I18nTranslations>;
