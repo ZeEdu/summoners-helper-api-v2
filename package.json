@@ -137,6 +137,7 @@
     "cookie-parser": "^1.4.7",
     "date-fns": "^4.4.0",
     "expo": "~55.0.28",
+    "expo-asset": "~55.0.18",
     "expo-localization": "~55.0.19",
     "expo-secure-store": "~55.0.16",
     "expo-splash-screen": "~55.0.23",

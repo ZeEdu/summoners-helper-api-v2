@@ -121,5 +121,7 @@ export const Navigation = createStaticNavigation(RootStack)
 type RootStackType = typeof RootStack
 
 declare module '@react-navigation/native' {
+  // Necessário para a tipagem global do React Navigation.
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-empty-interface
   interface RootNavigator extends RootStackType {}
 }
