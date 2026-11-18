@@ -2,12 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
     "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "target": "es2021",
-    "moduleResolution": "node"
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["jest.config.ts", "jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
