@@ -11,7 +11,7 @@ const RUNE_SLOTS = flatRunes.reduce(
     ...previousValue,
     [currentValue.id]: currentValue,
   }),
-  {},
+  {} as any,
 )
 
 const MAIN_RUNES = runesJSON.reduce(
@@ -19,7 +19,7 @@ const MAIN_RUNES = runesJSON.reduce(
     ...previousValue,
     [currentValue.id]: currentValue,
   }),
-  {},
+  {} as any,
 )
 
 function getMainRuneById(runeId: number) {

@@ -12,7 +12,7 @@ const SUMMONER_SPELL_MAP = Object.values(summonerSpellsJSON.data).reduce(
       },
     }
   },
-  {},
+  {} as any,
 )
 
 function getSummonerSpellById(spellId: number) {
