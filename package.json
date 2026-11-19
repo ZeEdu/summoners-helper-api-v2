@@ -9,7 +9,8 @@
     "start-android": "nx run mobile:run-android",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "validate": "nx run-many -t lint test typecheck && nx run-many -t build --exclude=mobile"
+    "validate": "nx run-many -t lint test typecheck && nx run-many -t build --exclude=mobile",
+    "prepare:ddragon": "node tools/prepare-ddragon.mjs"
   },
   "private": true,
   "devDependencies": {
