@@ -13,14 +13,13 @@ import {
   UseGuards,
 } from '@nestjs/common'
 
+import type { CreateReportDto, ReportPaginationDto, UserDto } from '@org/contracts'
+
 import {
-  CreateReportDto,
   createReportSchema,
   REPORT_ACTION_TAKEN,
   REPORT_STATUS,
   reportPagination,
-  ReportPaginationDto,
-  UserDto,
 } from '@org/contracts'
 
 import { I18nService } from 'nestjs-i18n'

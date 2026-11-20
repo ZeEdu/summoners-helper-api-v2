@@ -6,8 +6,8 @@ import { CreateUserDto, IUser } from '@org/contracts'
 import { Model } from 'mongoose'
 import { AppModule } from '../app.module'
 import { User, UserDocument } from '../users/schema/user.schema'
-import cookieParser = require('cookie-parser')
-import request = require('supertest')
+import cookieParser from 'cookie-parser'
+import request from 'supertest'
 
 describe('AuthController e2e', () => {
   let app: INestApplication

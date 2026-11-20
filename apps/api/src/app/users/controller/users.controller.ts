@@ -1,13 +1,12 @@
 import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common'
 
-import {
+import type {
   UpdateUserProfileDto,
-  updateUserProfileSchema,
   UserDto,
   UserDtoWithPuuid,
   UsersPaginationDto,
-  usersPaginationSchema,
 } from '@org/contracts'
+import { updateUserProfileSchema, usersPaginationSchema } from '@org/contracts'
 
 import { CurrentUser } from '../../decorators/user.decorator'
 import { JwtGuard } from '../../guards/jwt.guard'

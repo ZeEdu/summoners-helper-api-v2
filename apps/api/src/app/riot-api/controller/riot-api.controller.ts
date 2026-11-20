@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common'
 
-import { UserDtoWithPuuid } from '@org/contracts'
+import type { UserDtoWithPuuid } from '@org/contracts'
 
 import { CurrentUser } from '../../decorators/user.decorator'
 import { JwtGuard } from '../../guards/jwt.guard'

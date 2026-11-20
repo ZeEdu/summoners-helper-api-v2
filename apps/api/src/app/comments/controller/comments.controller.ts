@@ -10,17 +10,21 @@ import {
   UseGuards,
 } from '@nestjs/common'
 
-import {
-  commentPagination,
+import type {
   CommentPaginationDto,
   CreateCommentDto,
-  createCommentFormSchema,
   CreateCommentFormType,
-  createCommentReplyFormSchema,
   CreateCommentReplyFormType,
   CreateCommentReplyType,
   UserDto,
 } from '@org/contracts'
+
+import {
+  commentPagination,
+  createCommentFormSchema,
+  createCommentReplyFormSchema,
+} from '@org/contracts'
+
 import { I18nService } from 'nestjs-i18n'
 import { I18nTranslations } from '../../../generated/i18n.generated'
 import { CurrentUser } from '../../decorators/user.decorator'

@@ -2,13 +2,8 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } f
 import { GuidesPagination } from '../dto/pagination-guides.dto'
 import { GuidesService } from '../service/guides.service'
 
-import {
-  CreateGuideFormDto,
-  CreateGuideFormSchema,
-  GuidePaginationDto,
-  guidesPaginationSchema,
-  UserDtoWithPuuid,
-} from '@org/contracts'
+import type { CreateGuideFormDto, GuidePaginationDto, UserDtoWithPuuid } from '@org/contracts'
+import { guidesPaginationSchema, CreateGuideFormSchema } from '@org/contracts'
 
 import { CurrentUser } from '../../decorators/user.decorator'
 import { JwtGuard } from '../../guards/jwt.guard'

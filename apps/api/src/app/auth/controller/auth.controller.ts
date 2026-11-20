@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 
-import { CreateUserDto, createUserSchema, UserDto } from '@org/contracts'
+import type { CreateUserDto, UserDto } from '@org/contracts'
+import { createUserSchema } from '@org/contracts'
 
 import { I18nService } from 'nestjs-i18n'
 import { I18nTranslations } from '../../../generated/i18n.generated'

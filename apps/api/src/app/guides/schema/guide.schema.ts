@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument, SchemaTypes, Types } from 'mongoose'
 
-import { IGuide, IRuneSlots } from '@org/contracts'
+import type { IGuide, IRuneSlots } from '@org/contracts'
 
 import { AbilitiesProgression, AbilitiesProgressionSchema } from './abilities-progression.schema'
 import { Items, ItemsSchema } from './items.schema'
