@@ -1,0 +1,110 @@
+name: summoners-helper
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: summoners-helper-mongodb
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:27018:27017'
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - 'db.adminCommand({ ping: 1 }).ok'
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: workspace-dev
+      args:
+        DDRAGON_VERSION: ${DDRAGON_VERSION:-}
+    image: summoners-helper-api:dev
+    container_name: summoners-helper-api
+    init: true
+    restart: unless-stopped
+    working_dir: /workspace
+    command:
+      - npx
+      - nx
+      - serve
+      - api
+      - --configuration=development
+    environment:
+      NODE_ENV: development
+      NX_DAEMON: 'false'
+      PORT: '3000'
+      API_PREFIX: ${API_PREFIX:-api}
+      MONGODB_URI: mongodb://mongodb:27017/summoners_helper
+      RIOT_API_KEY: ${RIOT_API_KEY:?Configure RIOT_API_KEY in the root .env file}
+      JWT_SECRET: ${JWT_SECRET:?Configure JWT_SECRET in the root .env file}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Configure JWT_REFRESH_SECRET in the root .env file}
+      ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC: ${ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC:-900}
+      CORS_ORIGIN: '${CORS_ORIGIN:-http://localhost:4200,http://localhost:8081}'
+      DDRAGON_VERSION: ${DDRAGON_VERSION:-}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:${API_PORT:-3000}:3000'
+    volumes:
+      - .:/workspace
+      - workspace_node_modules:/workspace/node_modules
+      # Keep generated Data Dragon assets available despite the workspace bind mount.
+      - ddragon_assets:/workspace/apps/api/src/assets/ddragon
+
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: workspace-dev
+      args:
+        DDRAGON_VERSION: ${DDRAGON_VERSION:-}
+    image: summoners-helper-admin:dev
+    container_name: summoners-helper-admin
+    init: true
+    restart: unless-stopped
+    working_dir: /workspace
+    command:
+      - npx
+      - nx
+      - serve
+      - admin
+      - --configuration=development
+      - --host=0.0.0.0
+    environment:
+      NODE_ENV: development
+      NX_DAEMON: 'false'
+    depends_on:
+      - api
+    ports:
+      - '127.0.0.1:${ADMIN_PORT:-4200}:4200'
+    volumes:
+      - .:/workspace
+      - workspace_node_modules:/workspace/node_modules
+
+  mobile-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: mobile-web
+    image: summoners-helper-mobile-web:dev
+    container_name: summoners-helper-mobile-web
+    init: true
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:${MOBILE_WEB_PORT:-8081}:80'
+
+volumes:
+  mongodb_data:
+  workspace_node_modules:
+  ddragon_assets:

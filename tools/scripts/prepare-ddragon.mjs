@@ -1,83 +1,68 @@
-import { mkdir, writeFile } from 'node:fs/promises'
-import path from 'node:path'
+import { mkdir, rename, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 
-const root = process.cwd()
-const locale = process.env.DDRAGON_LOCALE ?? 'pt_BR'
+const projectRoot = process.cwd()
+const outputDirectory = join(projectRoot, 'apps', 'api', 'src', 'assets', 'ddragon')
+const locale = process.env.DDRAGON_LOCALE || 'pt_BR'
+const files = ['championFull.json', 'item.json', 'runesReforged.json', 'summoner.json']
 
-const assets = [
-  { filename: 'championFull.json', expected: 'object' },
-  { filename: 'item.json', expected: 'object' },
-  { filename: 'runesReforged.json', expected: 'array' },
-  { filename: 'summoner.json', expected: 'object' },
-]
+async function getVersion() {
+  if (process.env.DDRAGON_VERSION?.trim()) {
+    return process.env.DDRAGON_VERSION.trim()
+  }
 
-async function getLatestVersion() {
-  const response = await fetch('https://ddragon.leagueoflegends.com/api/versions.json')
+  const response = await fetch('https://ddragon.leagueoflegends.com/api/versions.json', {
+    signal: AbortSignal.timeout(30_000),
+  })
 
   if (!response.ok) {
-    throw new Error(`Failed to retrieve Data Dragon versions: ${response.status}`)
+    throw new Error(`Unable to retrieve Data Dragon versions: HTTP ${response.status}`)
   }
 
   const versions = await response.json()
+  const latestVersion = versions?.[0]
 
-  if (!Array.isArray(versions) || !versions[0]) {
-    throw new Error('No Data Dragon version was returned.')
+  if (typeof latestVersion !== 'string' || latestVersion.length === 0) {
+    throw new Error('The Data Dragon versions endpoint returned an invalid response.')
   }
 
-  return versions[0]
+  return latestVersion
 }
 
-async function downloadAsset(filename, version) {
-  const url = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${locale}/${filename}`
-
-  console.log(`Downloading ${filename}...`)
-
-  const response = await fetch(url)
+async function downloadJson(version, fileName) {
+  const url = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${locale}/${fileName}`
+  const response = await fetch(url, { signal: AbortSignal.timeout(60_000) })
 
   if (!response.ok) {
-    throw new Error(`Failed to download ${filename}: HTTP ${response.status} (${url})`)
+    throw new Error(`Unable to download ${fileName}: HTTP ${response.status} (${url})`)
   }
 
   const content = await response.text()
-  const json = JSON.parse(content)
 
-  const expected = assets.find((asset) => asset.filename === filename).expected
-
-  if (expected === 'array' && !Array.isArray(json)) {
-    throw new Error(`Invalid JSON structure for ${filename}: expected array.`)
+  try {
+    JSON.parse(content)
+  } catch {
+    throw new Error(`Data Dragon returned invalid JSON for ${fileName}.`)
   }
 
-  if (expected === 'object' && (!json || typeof json !== 'object' || !json.data)) {
-    throw new Error(`Invalid JSON structure for ${filename}: missing data.`)
-  }
+  const destination = join(outputDirectory, fileName)
+  const temporaryDestination = `${destination}.tmp`
 
-  return { filename, content }
+  await writeFile(temporaryDestination, content, 'utf8')
+  await rename(temporaryDestination, destination)
+  process.stdout.write(`Downloaded ${fileName}\n`)
 }
 
 async function main() {
-  const version = process.env.DDRAGON_VERSION ?? (await getLatestVersion())
+  const version = await getVersion()
+  await mkdir(outputDirectory, { recursive: true })
 
-  const destination = path.join(root, 'apps/api/src/assets/ddragon')
-
-  // Download everything before writing files.
-  const downloadedAssets = await Promise.all(
-    assets.map(({ filename }) => downloadAsset(filename, version)),
-  )
-
-  await mkdir(destination, { recursive: true })
-
-  await Promise.all(
-    downloadedAssets.map(({ filename, content }) =>
-      writeFile(path.join(destination, filename), content, 'utf8'),
-    ),
-  )
-
-  console.log(
-    `Successfully prepared ${downloadedAssets.length} Data Dragon assets (${version}, ${locale}).`,
-  )
+  process.stdout.write(`Preparing Data Dragon ${version} (${locale})\n`)
+  await Promise.all(files.map((fileName) => downloadJson(version, fileName)))
+  process.stdout.write(`Data Dragon assets saved to ${outputDirectory}\n`)
 }
 
 main().catch((error) => {
-  console.error(error)
+  process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`)
   process.exitCode = 1
 })
