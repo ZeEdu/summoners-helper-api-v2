@@ -13,7 +13,18 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
+      MONGODB_URI: mongodb://localhost:27017/summoners-helper_test
       RIOT_API_KEY: ${{secrets.RIOT_API_KEY}}
       ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC: ${{secrets.ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC}}
       CORS_ORIGIN: ${{secrets.CORS_ORIGIN}}
