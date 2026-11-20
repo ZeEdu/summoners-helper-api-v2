@@ -13,6 +13,12 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    env:
+      RIOT_API_KEY: ${{secrets.RIOT_API_KEY}}
+      CORS_ORIGIN: ${{secrets.CORS_ORIGIN}}
+      JWT_REFRESH_SECRET: ${{secrets.JWT_REFRESH_SECRET}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      NODE_ENV: ${{secrets.NODE_ENV}}
     steps:
       - uses: actions/checkout@v4
         with:
