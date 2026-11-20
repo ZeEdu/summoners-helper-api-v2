@@ -1,21 +1,15 @@
 <div class="container">
   <mat-card class="introduction">
     <mat-card-header>
-      <mat-card-title>
-        Introdução
-      </mat-card-title>
+      <mat-card-title> Introdução </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p>
-        {{guide.introduction}}
-      </p>
+      <p>{{guide.introduction}}</p>
     </mat-card-content>
   </mat-card>
   <mat-card class="side" appearance="filled">
     <mat-card-header>
-      <mat-card-title>
-        Resumo do guia
-      </mat-card-title>
+      <mat-card-title> Resumo do guia </mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="card-content">
@@ -24,12 +18,8 @@
             <mat-icon class="icon">shield</mat-icon>
           </div>
           <div class="info">
-            <h3 class="title">
-              Campeão
-            </h3>
-            <p class="subtitle">
-              {{guide.champion | entityName : 'champions'}}
-            </p>
+            <h3 class="title">Campeão</h3>
+            <p class="subtitle">{{guide.champion | entityName : 'champions'}}</p>
           </div>
         </div>
 
@@ -38,12 +28,8 @@
             <mat-icon class="icon">alt_route</mat-icon>
           </div>
           <div class="info">
-            <h3 class="title">
-              Role
-            </h3>
-            <p class="subtitle">
-              {{guide.role | roleName }}
-            </p>
+            <h3 class="title">Role</h3>
+            <p class="subtitle">{{guide.role | roleName }}</p>
           </div>
         </div>
 
@@ -52,16 +38,11 @@
             <mat-icon class="icon">update</mat-icon>
           </div>
           <div class="info">
-            <h3 class="title">
-              Patch
-            </h3>
-            <p class="subtitle">
-              {{guide.patchVersion }}
-            </p>
+            <h3 class="title">Patch</h3>
+            <p class="subtitle">{{guide.patchVersion }}</p>
           </div>
         </div>
       </div>
     </mat-card-content>
   </mat-card>
-
 </div>

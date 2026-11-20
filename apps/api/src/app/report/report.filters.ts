@@ -1,12 +1,12 @@
-import { REPORT_PAGINATION_TYPE, ReportPaginationDto } from "@org/contracts";
-import { QueryFilter } from "mongoose";
-import { Report } from "./schema/report.schema";
+import { REPORT_PAGINATION_TYPE, ReportPaginationDto } from '@org/contracts'
+import { QueryFilter } from 'mongoose'
+import { Report } from './schema/report.schema'
 
 function get(query: ReportPaginationDto): QueryFilter<Report> {
   const filter: QueryFilter<Report> = {}
 
   if (query.observation) {
-    filter.observation = { $regex: query.observation, $options: 'i' };
+    filter.observation = { $regex: query.observation, $options: 'i' }
   }
 
   if (query.reason) {
@@ -24,10 +24,8 @@ function get(query: ReportPaginationDto): QueryFilter<Report> {
   return filter
 }
 
-
 const ReportFilters = {
-  get
+  get,
 }
-
 
 export default ReportFilters

@@ -1,23 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, QueryOptions } from 'mongoose';
-import { Report, ReportDocument } from '../schema/report.schema';
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model, QueryFilter, QueryOptions } from 'mongoose'
+import { Report, ReportDocument } from '../schema/report.schema'
 
-import { CreateReportDto, DEFAULT_LIMIT, DEFAULT_OFFSET, IPopulatedReport, IReport, PaginationDto, REPORT_ACTION_TAKEN, REPORT_STATUS, sortBuilder } from '@org/contracts';
-import ResponseMappers from '../../response-mappers';
+import {
+  CreateReportDto,
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
+  IPopulatedReport,
+  IReport,
+  PaginationDto,
+  REPORT_ACTION_TAKEN,
+  REPORT_STATUS,
+  sortBuilder,
+} from '@org/contracts'
+import ResponseMappers from '../../response-mappers'
 
 @Injectable()
 export class ReportService {
-  constructor(@InjectModel(Report.name) private reportModel: Model<ReportDocument>) { }
+  constructor(@InjectModel(Report.name) private reportModel: Model<ReportDocument>) {}
 
   async get(filter?: QueryFilter<Report>, pagination?: PaginationDto) {
-    const limit = pagination?.limit || DEFAULT_LIMIT;
-    const offset = pagination?.offset || DEFAULT_OFFSET;
+    const limit = pagination?.limit || DEFAULT_LIMIT
+    const offset = pagination?.offset || DEFAULT_OFFSET
     const sort = sortBuilder(pagination?.sort)
 
-    filter = filter || {};
+    filter = filter || {}
 
-    const count = await this.reportModel.countDocuments(filter);
+    const count = await this.reportModel.countDocuments(filter)
 
     const skip = offset * limit
 
@@ -27,12 +37,12 @@ export class ReportService {
       .skip(skip)
       .sort(sort)
       .populate('reportedBy guide comment')
-      .lean<IPopulatedReport[]>();
+      .lean<IPopulatedReport[]>()
 
     return {
       reports: reports.map(ResponseMappers.populatedReport),
-      count
-    };
+      count,
+    }
   }
 
   async count(filter?: QueryFilter<Report>) {
@@ -51,20 +61,23 @@ export class ReportService {
   }
 
   // Trocar esse formato
-  create(report: CreateReportDto & {
-    createdAt: Date,
-    reportedBy: string
-  }) {
+  create(
+    report: CreateReportDto & {
+      createdAt: Date
+      reportedBy: string
+    },
+  ) {
     return this.reportModel.create(report)
   }
 
   patch(reportId: string, updatedReport: Partial<IReport>, queryOptions?: QueryOptions<Report>) {
     const { returnDocument = 'after' } = queryOptions || {}
 
-    return this.reportModel.findByIdAndUpdate(reportId, updatedReport, {
-      ...queryOptions,
-      returnDocument
-    })
+    return this.reportModel
+      .findByIdAndUpdate(reportId, updatedReport, {
+        ...queryOptions,
+        returnDocument,
+      })
       .lean<IReport>()
   }
 
@@ -73,18 +86,16 @@ export class ReportService {
   }
 
   async block(reportId: string) {
-    await this.reportModel
-      .findByIdAndUpdate(reportId, {
-        status: REPORT_STATUS.ARCHIVED,
-        actionTaken: REPORT_ACTION_TAKEN.BLOCKED
-      })
+    await this.reportModel.findByIdAndUpdate(reportId, {
+      status: REPORT_STATUS.ARCHIVED,
+      actionTaken: REPORT_ACTION_TAKEN.BLOCKED,
+    })
   }
 
   async unblock(reportId: string) {
-    await this.reportModel
-      .findByIdAndUpdate(reportId, {
-        status: REPORT_STATUS.ARCHIVED,
-        actionTaken: REPORT_ACTION_TAKEN.DISMISS
-      })
+    await this.reportModel.findByIdAndUpdate(reportId, {
+      status: REPORT_STATUS.ARCHIVED,
+      actionTaken: REPORT_ACTION_TAKEN.DISMISS,
+    })
   }
 }

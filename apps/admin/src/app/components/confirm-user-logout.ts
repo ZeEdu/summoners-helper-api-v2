@@ -1,21 +1,21 @@
-import { Component, inject } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
+import { Component, inject } from '@angular/core'
+import { MatButtonModule } from '@angular/material/button'
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog'
 
 export enum CONFIRM_LOGOUT_ACTIONS {
   CONFIRM = 'CONFIRM',
-  CANCEL = 'CANCEL'
+  CANCEL = 'CANCEL',
 }
 
 @Component({
   selector: 'app-confirm-user-logout',
   templateUrl: `./confirm-user-logout.html`,
-  imports: [
-    MatButtonModule,
-    MatDialogActions,
-    MatDialogTitle,
-    MatDialogContent
-  ]
+  imports: [MatButtonModule, MatDialogActions, MatDialogTitle, MatDialogContent],
 })
 export class ConfirmUserLogout {
   dialogRef = inject(MatDialogRef<ConfirmUserLogout>)

@@ -1,27 +1,32 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatIcon } from "@angular/material/icon";
-import { MatListModule } from "@angular/material/list";
-import { MatTabsModule } from '@angular/material/tabs';
+import { CommonModule } from '@angular/common'
+import { Component, inject } from '@angular/core'
+import { MatButtonModule } from '@angular/material/button'
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatIcon } from '@angular/material/icon'
+import { MatListModule } from '@angular/material/list'
+import { MatTabsModule } from '@angular/material/tabs'
 
-import { IPopulatedReportDto, PopulatedGuideDto, REPORT_ACTION_TAKEN, REPORT_STATUS } from '@org/contracts';
+import {
+  IPopulatedReportDto,
+  PopulatedGuideDto,
+  REPORT_ACTION_TAKEN,
+  REPORT_STATUS,
+} from '@org/contracts'
 
-import { DataDragonService } from "../../../data-dragon/data-dragon.service";
-import { Overview } from "./overview/overview";
-import { AbilitiesProgression } from "./tabs/abilities-progression/abilities-progression";
-import { GuideBonus } from "./tabs/guide-bonus/guide-bonus";
-import { Introduction } from "./tabs/introduction/introduction";
-import { Items } from "./tabs/items/items";
-import { Runes } from "./tabs/runes/runes";
-import { Spells } from "./tabs/spells/spells";
-import { Threats } from "./tabs/threats/threats";
+import { DataDragonService } from '../../../data-dragon/data-dragon.service'
+import { Overview } from './overview/overview'
+import { AbilitiesProgression } from './tabs/abilities-progression/abilities-progression'
+import { GuideBonus } from './tabs/guide-bonus/guide-bonus'
+import { Introduction } from './tabs/introduction/introduction'
+import { Items } from './tabs/items/items'
+import { Runes } from './tabs/runes/runes'
+import { Spells } from './tabs/spells/spells'
+import { Threats } from './tabs/threats/threats'
 
 export enum REVIEW_ACTIONS {
   UNDO = 'UNDO',
   ARCHIVE = 'ARCHIVE',
-  ACCEPT = 'ACCEPT'
+  ACCEPT = 'ACCEPT',
 }
 
 @Component({
@@ -40,10 +45,10 @@ export enum REVIEW_ACTIONS {
     Overview,
     Spells,
     Runes,
-    AbilitiesProgression
+    AbilitiesProgression,
   ],
   templateUrl: './guide-review.html',
-  styleUrl: './guide-review.scss'
+  styleUrl: './guide-review.scss',
 })
 export class GuideReview {
   report = inject<IPopulatedReportDto & { guide: PopulatedGuideDto }>(MAT_DIALOG_DATA)
@@ -52,8 +57,8 @@ export class GuideReview {
 
   dialogRef = inject(MatDialogRef)
 
-  GUIDE_REPORT_ACTION_TAKEN = REPORT_ACTION_TAKEN;
-  GUIDE_REPORT_STATUS = REPORT_STATUS;
+  GUIDE_REPORT_ACTION_TAKEN = REPORT_ACTION_TAKEN
+  GUIDE_REPORT_STATUS = REPORT_STATUS
 
   championSpells = Array.from({ length: 4 })
 

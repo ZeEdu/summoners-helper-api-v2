@@ -1,70 +1,77 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { StaticScreenProps, useNavigation } from "@react-navigation/native"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { StyleSheet } from "react-native"
-import { Button, Dialog, MD3Theme, Portal, Snackbar, Text, useTheme } from "react-native-paper"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { StaticScreenProps, useNavigation } from '@react-navigation/native'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { StyleSheet } from 'react-native'
+import { Button, Dialog, MD3Theme, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
 import z from 'zod'
 
-import { enumReportReason, GuideDto, ISerializedComment, REPORT_REASON, VALIDATION_ERROR_KEYS } from "@org/contracts"
-import { StyledButton, StyledView } from "@org/ui"
+import {
+  enumReportReason,
+  GuideDto,
+  ISerializedComment,
+  REPORT_REASON,
+  VALIDATION_ERROR_KEYS,
+} from '@org/contracts'
+import { StyledButton, StyledView } from '@org/ui'
 
-import AppSelectController from "../../../components/forms/app-select-controller/AppSelectController"
-import AppInputController from "../../../components/forms/AppInputController"
-import FormFieldErrors from "../../../components/forms/FormFieldErrors"
-import { ApiService } from "../../../services/api/api.service"
+import AppSelectController from '../../../components/forms/app-select-controller/AppSelectController'
+import AppInputController from '../../../components/forms/AppInputController'
+import FormFieldErrors from '../../../components/forms/FormFieldErrors'
+import { ApiService } from '../../../services/api/api.service'
 
 const reasonsList = [
   {
     value: REPORT_REASON.INAPPROPRIATE_CONTENT,
-    label: 'Conteúdo impróprio ou ofensivo'
+    label: 'Conteúdo impróprio ou ofensivo',
   },
   {
     value: REPORT_REASON.INCORRECT_INFORMATION,
-    label: 'Informações incorretas ou enganosas'
+    label: 'Informações incorretas ou enganosas',
   },
   {
     value: REPORT_REASON.SPAM,
-    label: 'Spam ou conteúdo repetitivo'
+    label: 'Spam ou conteúdo repetitivo',
   },
   {
     value: REPORT_REASON.ADVERTISING,
-    label: 'Publicidade ou autopromoção'
+    label: 'Publicidade ou autopromoção',
   },
   {
     value: REPORT_REASON.HARASSMENT,
-    label: 'Assédio ou discurso de ódio'
+    label: 'Assédio ou discurso de ódio',
   },
   {
     value: REPORT_REASON.COPYRIGHT,
-    label: 'Infração de direitos autorais'
+    label: 'Infração de direitos autorais',
   },
   {
     value: REPORT_REASON.EXPLOIT_OR_CHEATING,
-    label: 'Exploit, trapaça ou comportamento abusivo'
+    label: 'Exploit, trapaça ou comportamento abusivo',
   },
   {
     value: REPORT_REASON.OTHER,
-    label: 'Outro motivo'
-  }
+    label: 'Outro motivo',
+  },
 ]
 
-const formSchema = z.object({
-  comment: z.string().optional(),
-  guide: z.string().optional(),
-  reason: enumReportReason,
-  observation: z.string().min(3),
-}).refine(
-  (value) => !!(value.comment || value.guide),
-  { params: { validation: VALIDATION_ERROR_KEYS.reportTargetRequired } }
-)
+const formSchema = z
+  .object({
+    comment: z.string().optional(),
+    guide: z.string().optional(),
+    reason: enumReportReason,
+    observation: z.string().min(3),
+  })
+  .refine((value) => !!(value.comment || value.guide), {
+    params: { validation: VALIDATION_ERROR_KEYS.reportTargetRequired },
+  })
 
 type FormDto = z.infer<typeof formSchema>
 
 const resolver = zodResolver(formSchema)
 
 type Props = StaticScreenProps<{
-  guide?: GuideDto,
+  guide?: GuideDto
   comment?: ISerializedComment
 }>
 
@@ -81,12 +88,17 @@ export default function ReportGuide({ route }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const { control, handleSubmit, getValues, formState: { errors } } = useForm<FormDto>({
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<FormDto>({
     resolver,
     defaultValues: {
       ...(guide && { guide: guide?.id }),
-      ...(comment && { comment: comment?.id })
-    }
+      ...(comment && { comment: comment?.id }),
+    },
   })
 
   const label = guide ? 'guia' : 'comentário'
@@ -110,7 +122,7 @@ export default function ReportGuide({ route }: Props) {
   const handleSnackDismiss = () => {
     closeSnack()
 
-    if (!Boolean(error)) {
+    if (!error) {
       navigation.goBack()
     }
   }
@@ -131,14 +143,17 @@ export default function ReportGuide({ route }: Props) {
       .finally(() => {
         setLoading(false)
         openSnack()
-      });
+      })
   }
 
   return (
     <>
       <StyledView style={styles.container}>
         <Text variant="headlineSmall">Denunciar {label}</Text>
-        <Text variant="bodyMedium">Ajude-nos a manter a comunidade segura e útil. Selecione o motivo que melhor descreve o problema encontrado neste {label}.</Text>
+        <Text variant="bodyMedium">
+          Ajude-nos a manter a comunidade segura e útil. Selecione o motivo que melhor descreve o
+          problema encontrado neste {label}.
+        </Text>
 
         <Text variant="headlineSmall">Motivo da denúncia</Text>
         <Text variant="bodyMedium">Selecione um motivo para continuar</Text>
@@ -146,37 +161,43 @@ export default function ReportGuide({ route }: Props) {
         <AppSelectController
           control={control}
           name={'reason'}
-          title={"Motivo"}
+          title={'Motivo'}
           options={reasonsList}
-          placeholder={"Escolha o motivo"}
+          placeholder={'Escolha o motivo'}
         />
         <FormFieldErrors fieldError={errors.reason} />
 
-        <Text variant="bodyMedium">Sua denúncia será analisada e as medidas necessárias poderão ser tomadas de acordo com nossas regras.</Text>
+        <Text variant="bodyMedium">
+          Sua denúncia será analisada e as medidas necessárias poderão ser tomadas de acordo com
+          nossas regras.
+        </Text>
 
         <AppInputController
           control={control}
-          name={"observation"}
+          name={'observation'}
           inputOptions={{
             label: 'Descrição',
             placeholder: 'Descreva o seu motivo',
-            multiline: true
+            multiline: true,
           }}
         />
         <FormFieldErrors fieldError={errors.observation} />
 
-        <StyledButton buttonColor={theme.colors.errorContainer} onPress={handleSubmit(openDialog)} disabled={loading}>
-          <Text style={styles.warningText}>
-            {loading ? 'Criando a denuncia' : 'Denunciar'}
-          </Text>
+        <StyledButton
+          buttonColor={theme.colors.errorContainer}
+          onPress={handleSubmit(openDialog)}
+          disabled={loading}
+        >
+          <Text style={styles.warningText}>{loading ? 'Criando a denuncia' : 'Denunciar'}</Text>
         </StyledButton>
-      </StyledView >
+      </StyledView>
       <Portal>
         <Dialog visible={visibleDialog} onDismiss={closeDialog}>
           <Dialog.Title>Denunciar {label}?</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">
-              Tem certeza que deseja denunciar este {label}? Sua denúncia será analisada pela equipe responsável
+              Tem certeza que deseja denunciar este {label}? Sua denúncia será analisada pela equipe
+              responsável
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
@@ -186,11 +207,7 @@ export default function ReportGuide({ route }: Props) {
         </Dialog>
       </Portal>
       <Portal>
-        <Snackbar
-          duration={5_000}
-          visible={showSnack}
-          onDismiss={handleSnackDismiss}
-        >
+        <Snackbar duration={5_000} visible={showSnack} onDismiss={handleSnackDismiss}>
           {error || 'Denuncia feita com sucesso!'}
         </Snackbar>
       </Portal>
@@ -201,6 +218,6 @@ export default function ReportGuide({ route }: Props) {
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     container: { padding: 16, gap: 8 },
-    warningText: { color: colors.error }
+    warningText: { color: colors.error },
   })
 }

@@ -1,43 +1,35 @@
-import { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import {
-  Divider,
-  Icon,
-  IconButton,
-  List,
-  MD3Theme,
-  Text,
-  useTheme,
-} from 'react-native-paper';
-import FadeInView from '../../../../../../../components/animated/FadeInView';
-import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext';
-import utils from '../../../../../../../utils/utils';
+import { useState } from 'react'
+import { StyleSheet } from 'react-native'
+import { Divider, Icon, IconButton, List, MD3Theme, Text, useTheme } from 'react-native-paper'
+import FadeInView from '../../../../../../../components/animated/FadeInView'
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext'
+import utils from '../../../../../../../utils/utils'
 
 type Props = {
-  runeId: string;
-  title: string;
-  divider?: boolean;
-};
+  runeId: string
+  title: string
+  divider?: boolean
+}
 
 export default function RuneListItem({ runeId, title, divider = true }: Props) {
-  const [expanded, setExpanded] = useState(false);
-  const theme = useTheme();
-  const dataDragon = useDataDragon();
+  const [expanded, setExpanded] = useState(false)
+  const theme = useTheme()
+  const dataDragon = useDataDragon()
 
   const getBaseURI = (endpoint: string) => {
-    return `https://ddragon.leagueoflegends.com/cdn/img/${endpoint}`;
-  };
+    return `https://ddragon.leagueoflegends.com/cdn/img/${endpoint}`
+  }
 
   const getRuneSlotURI = (runeId: string) => {
-    return dataDragon.getRuneSlots(runeId);
-  };
+    return dataDragon.getRuneSlots(runeId)
+  }
 
-  const runeSlot = getRuneSlotURI(runeId);
+  const runeSlot = getRuneSlotURI(runeId)
 
-  const uri = getBaseURI(runeSlot.icon);
-  const description = utils.cleanDOMElements(runeSlot.shortDesc);
+  const uri = getBaseURI(runeSlot.icon)
+  const description = utils.cleanDOMElements(runeSlot.shortDesc)
 
-  const styles = makeListStyles(theme);
+  const styles = makeListStyles(theme)
 
   return (
     <>
@@ -59,7 +51,7 @@ export default function RuneListItem({ runeId, title, divider = true }: Props) {
       )}
       {divider && <Divider style={styles.divider} />}
     </>
-  );
+  )
 }
 
 const makeListStyles = ({ colors }: MD3Theme) => {
@@ -70,5 +62,5 @@ const makeListStyles = ({ colors }: MD3Theme) => {
     fadeIn: {
       marginBottom: 16,
     },
-  });
-};
+  })
+}

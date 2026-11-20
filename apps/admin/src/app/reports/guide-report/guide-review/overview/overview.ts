@@ -1,13 +1,13 @@
-import { Component, inject, Input } from "@angular/core";
-import { MatCard, MatCardContent, MatCardModule } from "@angular/material/card";
-import { MatDivider } from "@angular/material/divider";
-import { MatIconModule } from "@angular/material/icon";
+import { Component, inject, Input } from '@angular/core'
+import { MatCard, MatCardContent, MatCardModule } from '@angular/material/card'
+import { MatDivider } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
 
-import { PopulatedGuideDto } from "@org/contracts";
+import { PopulatedGuideDto } from '@org/contracts'
 
-import { DataDragonService } from "../../../../data-dragon/data-dragon.service";
-import { EntityName } from "../../../../data-dragon/pipes/entity-name.pipe";
-import { RoleName } from "../../../../data-dragon/pipes/role-name.pipe";
+import { DataDragonService } from '../../../../data-dragon/data-dragon.service'
+import { EntityName } from '../../../../data-dragon/pipes/entity-name.pipe'
+import { RoleName } from '../../../../data-dragon/pipes/role-name.pipe'
 
 @Component({
   selector: 'app-overview',
@@ -20,12 +20,9 @@ import { RoleName } from "../../../../data-dragon/pipes/role-name.pipe";
     MatIconModule,
     MatCard,
     MatCardContent,
-    MatDivider
-  ]
-
-
+    MatDivider,
+  ],
 })
-
 export class Overview {
   @Input() guide: PopulatedGuideDto
 
@@ -40,6 +37,6 @@ export class Overview {
   }
 
   get championThumbnail() {
-    return `https://ddragon.leagueoflegends.com/cdn/${this.dataDragonService.patch()}/img/champion/${this.guide.champion}.png`;
+    return `https://ddragon.leagueoflegends.com/cdn/${this.dataDragonService.patch()}/img/champion/${this.guide.champion}.png`
   }
 }

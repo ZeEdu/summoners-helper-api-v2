@@ -1,14 +1,14 @@
-import { Component, inject, Input, OnInit, SecurityContext } from "@angular/core";
+import { Component, inject, Input, OnInit, SecurityContext } from '@angular/core'
 
-import { DomSanitizer } from "@angular/platform-browser";
-import { RunesReforgedSlots } from "@org/contracts";
-import { GuideReviewUtils } from "../../../guide-review.utils";
-import { DataDragonService } from "../../../../../../data-dragon/data-dragon.service";
+import { DomSanitizer } from '@angular/platform-browser'
+import { RunesReforgedSlots } from '@org/contracts'
+import { GuideReviewUtils } from '../../../guide-review.utils'
+import { DataDragonService } from '../../../../../../data-dragon/data-dragon.service'
 
 @Component({
   selector: 'app-rune-slot',
   templateUrl: './rune-slot.html',
-  styleUrl: './rune-slot.scss'
+  styleUrl: './rune-slot.scss',
 })
 export class RuneSlot implements OnInit {
   @Input({ required: true }) runeSlotId: string

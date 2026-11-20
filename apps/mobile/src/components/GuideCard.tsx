@@ -1,16 +1,15 @@
-import { Image, StyleSheet, View } from "react-native"
-import { Card, Chip, MD3Theme, Text, useTheme } from "react-native-paper"
+import { Image, StyleSheet, View } from 'react-native'
+import { Card, Chip, MD3Theme, Text, useTheme } from 'react-native-paper'
 
-import { GuideDto } from "@org/contracts"
+import { GuideDto } from '@org/contracts'
 
-import { ReactNode } from "react"
-import { usePatchVersion } from "../contexts/patchVersion/usePatchVersion"
-import DataDragonService from "../services/data-dragon/data-dragon.service"
-
+import { ReactNode } from 'react'
+import { usePatchVersion } from '../contexts/patchVersion/usePatchVersion'
+import DataDragonService from '../services/data-dragon/data-dragon.service'
 
 type GuideCardProps = {
-  onPress: () => void,
-  guide: GuideDto,
+  onPress: () => void
+  guide: GuideDto
   cardTitleRight?: () => ReactNode
 }
 
@@ -28,12 +27,10 @@ export default function GuideCard({ guide, onPress, cardTitleRight }: GuideCardP
         right={cardTitleRight}
       />
       <Card.Content>
-        <Text variant='bodyMedium' numberOfLines={3}>
+        <Text variant="bodyMedium" numberOfLines={3}>
           {guide.introduction}
         </Text>
-        <View
-          style={styles.chipRow}
-        >
+        <View style={styles.chipRow}>
           <Chip>{guide.champion}</Chip>
           <Chip>{guide.patchVersion}</Chip>
         </View>
@@ -49,12 +46,12 @@ const makeStyles = ({ colors }: MD3Theme) => {
       height: 48,
       borderRadius: 16,
       borderWidth: 2,
-      borderColor: colors.primary
+      borderColor: colors.primary,
     },
     chipRow: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: 8,
-      marginTop: 8
+      marginTop: 8,
     },
   })
 }

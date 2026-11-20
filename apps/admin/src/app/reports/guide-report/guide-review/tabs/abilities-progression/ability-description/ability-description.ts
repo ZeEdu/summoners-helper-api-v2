@@ -1,18 +1,18 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input } from '@angular/core'
 
-import { MatCardModule } from "@angular/material/card";
-import { ChampionDataDragonSpell } from "@org/contracts";
+import { MatCardModule } from '@angular/material/card'
+import { ChampionDataDragonSpell } from '@org/contracts'
 
-import { DataDragonService } from "../../../../../../data-dragon/data-dragon.service";
+import { DataDragonService } from '../../../../../../data-dragon/data-dragon.service'
 
 const keymapIndex = {
   0: 'q',
   1: 'w',
   2: 'e',
   3: 'r',
-};
+}
 
-type KeymapIndexType = keyof typeof keymapIndex;
+type KeymapIndexType = keyof typeof keymapIndex
 
 function isValidIndex(index: number): index is KeymapIndexType {
   return [0, 1, 2, 3].includes(index)
@@ -22,7 +22,7 @@ function isValidIndex(index: number): index is KeymapIndexType {
   selector: 'app-ability-description',
   templateUrl: './ability-description.html',
   styleUrl: './ability-description.scss',
-  imports: [MatCardModule]
+  imports: [MatCardModule],
 })
 export class AbilityDescription {
   @Input() spell: ChampionDataDragonSpell

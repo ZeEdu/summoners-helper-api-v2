@@ -1,8 +1,8 @@
-import { PropsWithChildren, useEffect, useRef } from "react";
-import { Animated, ViewStyle } from "react-native";
+import { PropsWithChildren, useEffect, useRef } from 'react'
+import { Animated, ViewStyle } from 'react-native'
 
 type FadeInViewProps = PropsWithChildren<{
-  style?: ViewStyle,
+  style?: ViewStyle
   config?: Animated.TimingAnimationConfig
 }>
 
@@ -14,7 +14,7 @@ export default function FadeInView({ style, config, children }: FadeInViewProps)
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
-      ...config
+      ...config,
     }).start()
   }, [fadeAnimation])
 
@@ -22,7 +22,7 @@ export default function FadeInView({ style, config, children }: FadeInViewProps)
     <Animated.View
       style={{
         ...style,
-        opacity: fadeAnimation
+        opacity: fadeAnimation,
       }}
     >
       {children}

@@ -1,6 +1,6 @@
-import { GuideDto } from "@org/contracts"
-import { useEffect, useState } from "react"
-import { ApiService } from "../services/api/api.service"
+import { GuideDto } from '@org/contracts'
+import { useEffect, useState } from 'react'
+import { ApiService } from '../services/api/api.service'
 
 // TODO: Melhorar a lógica do reset, para algo mais elegante
 // TODO: Criar uma lógica de busca via tokens nos guias
@@ -34,9 +34,7 @@ export default function useGuideQuickSearch(searchTerm: string) {
       setLoading(true)
       setError(false)
 
-      ApiService
-        .Guides
-        .get({ title: debouncedInput })
+      ApiService.Guides.get({ title: debouncedInput })
         .then((json) => {
           setGuides(json.guides)
         })

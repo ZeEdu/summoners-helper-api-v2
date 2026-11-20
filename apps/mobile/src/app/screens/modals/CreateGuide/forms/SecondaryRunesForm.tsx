@@ -1,36 +1,36 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { useForm, useFormContext, useWatch } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
-import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { useForm, useFormContext, useWatch } from 'react-hook-form'
+import { StyleSheet, View } from 'react-native'
+import z from 'zod'
 
-import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema } from '@org/contracts'
 
-import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
-import AppInputController from '../../../../../components/forms/AppInputController';
-import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
-import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
-import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter from '../../../../../components/stepper/StepperFooter';
-import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
-import useI18n from '../../../../../contexts/i18n/useI18n';
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController'
+import AppInputController from '../../../../../components/forms/AppInputController'
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors'
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props'
+import { useStepperContext } from '../../../../../components/stepper/context'
+import StepperFooter from '../../../../../components/stepper/StepperFooter'
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext'
+import useI18n from '../../../../../contexts/i18n/useI18n'
 
 export const secondaryRuneSchema = CreateGuideFormSchema.pick({
   secondaryRune: true,
   secondarySlots: true,
   secondaryRuneDescription: true,
-});
+})
 
-export type SecondaryRuneDto = z.infer<typeof secondaryRuneSchema>;
+export type SecondaryRuneDto = z.infer<typeof secondaryRuneSchema>
 
-const resolver = zodResolver(secondaryRuneSchema);
+const resolver = zodResolver(secondaryRuneSchema)
 
 export default function GuideSecondaryRunesForm() {
-  const dataDragon = useDataDragon();
+  const dataDragon = useDataDragon()
   const i18n = useI18n()
 
-  const mainFormContext = useFormContext<CreateGuideFormDto>();
-  const stepperContext = useStepperContext();
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
+  const stepperContext = useStepperContext()
 
   const defaultValues: SecondaryRuneDto = {
     secondaryRune: mainFormContext.getValues('secondaryRune'),
@@ -44,69 +44,57 @@ export default function GuideSecondaryRunesForm() {
     formState: { errors },
     getValues,
     setValues,
-  } = useForm<SecondaryRuneDto>({ resolver, defaultValues });
+  } = useForm<SecondaryRuneDto>({ resolver, defaultValues })
 
   const secondaryRune = useWatch<SecondaryRuneDto>({
     control,
     name: 'secondaryRune',
-  });
+  })
 
   const runeSlots = useWatch<SecondaryRuneDto>({
     control,
-    name: [
-      'secondarySlots.first',
-      'secondarySlots.second',
-      'secondarySlots.third',
-    ],
-  });
+    name: ['secondarySlots.first', 'secondarySlots.second', 'secondarySlots.third'],
+  })
 
-  const runeList = dataDragon.lists?.runes || [];
-  const runeMap = dataDragon.maps?.runes || {};
+  const runeList = dataDragon.lists?.runes || []
+  const runeMap = dataDragon.maps?.runes || {}
 
   const buildSecondaryRunePathOptions = () => {
     return runeList
-      .filter(
-        (rune) =>
-          rune.id.toString() !== mainFormContext.getValues('primaryRune'),
-      )
-      .map(({ id, name }) => ({ value: id.toString(), label: name }));
-  };
+      .filter((rune) => rune.id.toString() !== mainFormContext.getValues('primaryRune'))
+      .map(({ id, name }) => ({ value: id.toString(), label: name }))
+  }
 
-  const buildSecondaryRuneSlotsOptions = (
-    slot: 'first' | 'second' | 'third',
-  ) => {
-    const currentSecondaryRunes = getValues('secondaryRune');
+  const buildSecondaryRuneSlotsOptions = (slot: 'first' | 'second' | 'third') => {
+    const currentSecondaryRunes = getValues('secondaryRune')
     if (!currentSecondaryRunes) {
-      return [];
+      return []
     }
 
-    const { slots } = runeMap[currentSecondaryRunes];
-    const runes = [...slots[1].runes, ...slots[2].runes, ...slots[3].runes];
+    const { slots } = runeMap[currentSecondaryRunes]
+    const runes = [...slots[1].runes, ...slots[2].runes, ...slots[3].runes]
 
     return runes
       .filter((rune) => {
-        const notFirstSecondarySlot =
-          rune.id.toString() !== getValues('secondarySlots.first');
-        const notSecondSecondarySlot =
-          rune.id.toString() !== getValues('secondarySlots.second');
-        const notThirdSecondarySlot =
-          rune.id.toString() !== getValues('secondarySlots.third');
+        const notFirstSecondarySlot = rune.id.toString() !== getValues('secondarySlots.first')
+        const notSecondSecondarySlot = rune.id.toString() !== getValues('secondarySlots.second')
+        const notThirdSecondarySlot = rune.id.toString() !== getValues('secondarySlots.third')
 
         if (slot === 'first') {
-          return notSecondSecondarySlot && notThirdSecondarySlot;
+          return notSecondSecondarySlot && notThirdSecondarySlot
         } else if (slot === 'second') {
-          return notFirstSecondarySlot && notThirdSecondarySlot;
+          return notFirstSecondarySlot && notThirdSecondarySlot
         } else {
-          return notFirstSecondarySlot && notSecondSecondarySlot;
+          return notFirstSecondarySlot && notSecondSecondarySlot
         }
       })
-      .map(({ id, name }) => ({ value: id.toString(), label: name }));
-  };
+      .map(({ id, name }) => ({ value: id.toString(), label: name }))
+  }
 
   const onSubmit = (formValues: SecondaryRuneDto) => {
-    mainFormContext.setValues(formValues, { shouldValidate: true });
-    stepperContext.nextStep();
-  };
+    mainFormContext.setValues(formValues, { shouldValidate: true })
+    stepperContext.nextStep()
+  }
 
   useEffect(() => {
     if (secondaryRune === defaultValues.secondaryRune) {
@@ -119,8 +107,8 @@ export default function GuideSecondaryRunesForm() {
         second: '',
         third: '',
       },
-    });
-  }, [secondaryRune]);
+    })
+  }, [secondaryRune])
 
   return (
     <View style={styles.container}>
@@ -178,11 +166,11 @@ export default function GuideSecondaryRunesForm() {
       <StepperFooter
         customNextButton={buildCustomButtonProps({
           onPress: handleSubmit(onSubmit),
-          t: i18n.t
+          t: i18n.t,
         })}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -192,4 +180,4 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-});
+})

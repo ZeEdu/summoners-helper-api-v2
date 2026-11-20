@@ -1,29 +1,28 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { HydratedDocument } from 'mongoose'
 
 export interface IRiotApiErrorLogger {
-  statusCode: number;
-  body: string;
-  headers: string;
-  url: string;
+  statusCode: number
+  body: string
+  headers: string
+  url: string
 }
 
 @Schema()
 export class RiotApiErrorLogger implements IRiotApiErrorLogger {
   @Prop({ required: true })
-  statusCode: number;
+  statusCode: number
 
   @Prop({ required: true })
-  body: string;
+  body: string
 
   @Prop({ required: true })
-  headers: string;
+  headers: string
 
   @Prop({ required: true })
-  url: string;
+  url: string
 }
 
-export type RiotApiErrorLoggerDocument = HydratedDocument<RiotApiErrorLogger>;
+export type RiotApiErrorLoggerDocument = HydratedDocument<RiotApiErrorLogger>
 
-export const RiotApiErrorLoggerSchema =
-  SchemaFactory.createForClass(RiotApiErrorLogger);
+export const RiotApiErrorLoggerSchema = SchemaFactory.createForClass(RiotApiErrorLogger)

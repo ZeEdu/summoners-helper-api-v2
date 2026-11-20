@@ -1,18 +1,23 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
-import { Snackbar, Text } from 'react-native-paper';
+import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { StyleSheet, View } from 'react-native'
+import { Snackbar, Text } from 'react-native-paper'
 
-import { RIOT_SERVERS, RIOT_SERVERS_LABEL, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
-import { StyledButton, StyledView } from '@org/ui';
+import {
+  RIOT_SERVERS,
+  RIOT_SERVERS_LABEL,
+  UpdateUserProfileDto,
+  updateUserProfileSchema,
+} from '@org/contracts'
+import { StyledButton, StyledView } from '@org/ui'
 
-import { useNavigation } from '@react-navigation/native';
-import AppSelectController from '../../../components/forms/app-select-controller/AppSelectController';
-import AppInputController from '../../../components/forms/AppInputController';
-import FormFieldErrors from '../../../components/forms/FormFieldErrors';
-import { useAuthContext } from '../../../contexts/auth/useAuth';
-import { ApiService } from '../../../services/api/api.service';
+import { useNavigation } from '@react-navigation/native'
+import AppSelectController from '../../../components/forms/app-select-controller/AppSelectController'
+import AppInputController from '../../../components/forms/AppInputController'
+import FormFieldErrors from '../../../components/forms/FormFieldErrors'
+import { useAuthContext } from '../../../contexts/auth/useAuth'
+import { ApiService } from '../../../services/api/api.service'
 
 const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
   {
@@ -75,9 +80,9 @@ const serverOptions: { value: RIOT_SERVERS; label: RIOT_SERVERS_LABEL }[] = [
     value: RIOT_SERVERS.vn2,
     label: RIOT_SERVERS_LABEL.vn2,
   },
-] as const;
+] as const
 
-const resolver = zodResolver(updateUserProfileSchema);
+const resolver = zodResolver(updateUserProfileSchema)
 
 export default function BindRiotAccount() {
   const authContext = useAuthContext()
@@ -87,22 +92,22 @@ export default function BindRiotAccount() {
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<UpdateUserProfileDto>({
     resolver,
     defaultValues: {
       server: defaultServerValue,
       gameName: 'MunchyPunchyLOL',
-      tagLine: 'TTV1'
+      tagLine: 'TTV1',
     },
-  });
+  })
 
   const [visibleSnackbar, setVisibleSnackbar] = useState(false)
   const [updateSuccess, setUpdateSuccess] = useState(false)
 
   const snackbarFeedback = {
     success: 'Dados atualizados com sucesso',
-    error: 'Um erro ocorreu. Tente novamente'
+    error: 'Um erro ocorreu. Tente novamente',
   }
 
   const hideSnackbar = () => {
@@ -133,11 +138,7 @@ export default function BindRiotAccount() {
       <StyledView style={style.container}>
         <View style={style.items}>
           <View>
-            <Text
-              variant='titleMedium'
-            >
-              Região
-            </Text>
+            <Text variant="titleMedium">Região</Text>
 
             <AppSelectController
               control={control}
@@ -151,17 +152,13 @@ export default function BindRiotAccount() {
           </View>
 
           <View>
-            <Text
-              variant='titleMedium'
-            >
-              Nome de jogo
-            </Text>
+            <Text variant="titleMedium">Nome de jogo</Text>
 
             <AppInputController
               control={control}
               name="gameName"
               inputOptions={{
-                placeholder: "Seu nome no jogo"
+                placeholder: 'Seu nome no jogo',
               }}
             />
 
@@ -169,40 +166,34 @@ export default function BindRiotAccount() {
           </View>
 
           <View>
-            <Text
-              variant='titleMedium'
-            >
-              Tagline
-            </Text>
+            <Text variant="titleMedium">Tagline</Text>
 
             <AppInputController
               control={control}
               name="tagLine"
               inputOptions={{
-                placeholder: "Ex.: TTV"
+                placeholder: 'Ex.: TTV',
               }}
-
             />
 
             <FormFieldErrors fieldError={errors.tagLine} />
           </View>
         </View>
         <StyledButton onPress={handleSubmit(onSubmit)}>Vincular Conta</StyledButton>
-        <Text variant='labelSmall'>
-          Use o Riot ID atual, composto pelo nome de jogo e pela tagline. Não é necessário informar sua senha da Riot.
+        <Text variant="labelSmall">
+          Use o Riot ID atual, composto pelo nome de jogo e pela tagline. Não é necessário informar
+          sua senha da Riot.
         </Text>
-      </StyledView >
+      </StyledView>
       <Snackbar
         visible={visibleSnackbar}
         onDismiss={hideSnackbar}
-        action={
-          {
-            label: 'OK',
-            onPress: () => {
-              hideSnackbar()
-            }
-          }
-        }
+        action={{
+          label: 'OK',
+          onPress: () => {
+            hideSnackbar()
+          },
+        }}
       >
         {updateSuccess ? snackbarFeedback['success'] : snackbarFeedback['error']}
       </Snackbar>
@@ -217,5 +208,5 @@ const style = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 16,
   },
-  items: { gap: 16 }
+  items: { gap: 16 },
 })

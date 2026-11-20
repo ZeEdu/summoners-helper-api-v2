@@ -1,4 +1,4 @@
-import { ChampionMastery } from "../riot-api/interfaces/champion-mastery.interface";
+import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface'
 
 export const getChampionsMasteries = (userPuuid: string) => {
   return [
@@ -3320,4 +3320,4 @@ export const getChampionsMasteries = (userPuuid: string) => {
       },
     },
   ] as unknown as ChampionMastery[]
-};
+}

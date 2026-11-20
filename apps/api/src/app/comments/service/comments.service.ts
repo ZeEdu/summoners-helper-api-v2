@@ -1,19 +1,26 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model, QueryFilter } from 'mongoose'
 
-import { CreateCommentDto, DEFAULT_LIMIT, DEFAULT_OFFSET, IComment, PaginationDto, sortBuilder } from '@org/contracts';
+import {
+  CreateCommentDto,
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
+  IComment,
+  PaginationDto,
+  sortBuilder,
+} from '@org/contracts'
 
-import ResponseMappers from '../../response-mappers';
-import { Comment, CommentDocument } from '../schema/comment.schema';
-import { CommentLike, CommentLikeDocument, ICommentLike } from '../schema/like.schema';
+import ResponseMappers from '../../response-mappers'
+import { Comment, CommentDocument } from '../schema/comment.schema'
+import { CommentLike, CommentLikeDocument, ICommentLike } from '../schema/like.schema'
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
-    @InjectModel(CommentLike.name) private commentLikeModel: Model<CommentLikeDocument>
-  ) { }
+    @InjectModel(CommentLike.name) private commentLikeModel: Model<CommentLikeDocument>,
+  ) {}
 
   async get(filter?: QueryFilter<Comment>, pagination?: PaginationDto, userId?: string) {
     const limit = pagination?.limit || DEFAULT_LIMIT
@@ -36,15 +43,17 @@ export class CommentsService {
 
     let userLikes: ICommentLike[] = []
     if (userId) {
-      userLikes = await this.commentLikeModel.find({
-        comment: { $in: comments.map((c) => c._id) },
-        user: userId
-      }).lean()
+      userLikes = await this.commentLikeModel
+        .find({
+          comment: { $in: comments.map((c) => c._id) },
+          user: userId,
+        })
+        .lean()
     }
 
     if (userLikes.length > 0) {
-      const likedComments = new Set(userLikes.map(l => l.comment._id.toString()))
-      comments.forEach(c => {
+      const likedComments = new Set(userLikes.map((l) => l.comment._id.toString()))
+      comments.forEach((c) => {
         c.liked = likedComments.has(c._id.toString())
       })
     }
@@ -71,71 +80,67 @@ export class CommentsService {
       content: undefined,
       createdBy: undefined,
       removedAt: new Date(),
-      removed: true
+      removed: true,
     }
     await this.commentModel.updateOne(filter, update)
   }
 
   async like(commentId: string, userId: string) {
-    await this.commentLikeModel.insertOne(
-      {
-        comment: commentId,
-        user: userId,
-        createdAt: new Date()
-      }
-    )
+    await this.commentLikeModel.insertOne({
+      comment: commentId,
+      user: userId,
+      createdAt: new Date(),
+    })
 
-    await this.commentModel
-      .updateOne(
-        { _id: commentId },
-        {
-          $inc: { likeCount: 1 }
-        }
-      )
+    await this.commentModel.updateOne(
+      { _id: commentId },
+      {
+        $inc: { likeCount: 1 },
+      },
+    )
   }
 
   async unlike(commentId: string, userId: string) {
-    await this.commentLikeModel.deleteOne(
-      {
-        comment: commentId,
-        user: userId
-      }
-    )
+    await this.commentLikeModel.deleteOne({
+      comment: commentId,
+      user: userId,
+    })
 
-    await this.commentModel
-      .updateOne(
-        { _id: commentId },
-        {
-          $inc: { likeCount: -1 }
-        }
-      )
+    await this.commentModel.updateOne(
+      { _id: commentId },
+      {
+        $inc: { likeCount: -1 },
+      },
+    )
   }
 
   async likedComment(commentId: string, userId: string) {
-    return this.commentLikeModel
-      .exists({ comment: commentId, user: userId })
-      .then((like) => !!like)
+    return this.commentLikeModel.exists({ comment: commentId, user: userId }).then((like) => !!like)
   }
 
   async checkCreatedComment(commentId: string, userId: string) {
-    return this.commentModel
-      .exists({ comment: commentId, user: userId })
-      .then((exists) => !exists)
+    return this.commentModel.exists({ comment: commentId, user: userId }).then((exists) => !exists)
   }
 
   async block(commentId: string) {
-    await this.commentModel.updateOne({
-      _id: commentId,
-    }, {
-      blocked: true
-    })
+    await this.commentModel.updateOne(
+      {
+        _id: commentId,
+      },
+      {
+        blocked: true,
+      },
+    )
   }
 
   async unblock(commentId: string) {
-    await this.commentModel.updateOne({
-      _id: commentId,
-    }, {
-      blocked: false
-    })
+    await this.commentModel.updateOne(
+      {
+        _id: commentId,
+      },
+      {
+        blocked: false,
+      },
+    )
   }
 }

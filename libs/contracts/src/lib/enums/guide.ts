@@ -3,7 +3,7 @@ export enum ROLES {
   TOP_LANE = 'TOP_LANE',
   MID_LANE = 'MID_LANE',
   ADC = 'ADC',
-  SUPPORT = 'SUPPORT'
+  SUPPORT = 'SUPPORT',
 }
 
 export enum ROLES_LABEL {
@@ -11,7 +11,7 @@ export enum ROLES_LABEL {
   TOP_LANE = 'Top Lane',
   MID_LANE = 'Mid Lane',
   ADC = 'ADC',
-  SUPPORT = 'Support'
+  SUPPORT = 'Support',
 }
 
 function isRolesTypeGuard(key: string): key is ROLES {
@@ -73,7 +73,7 @@ export enum SLOT_BONUS {
 }
 
 function isBonus(value: string): value is keyof typeof SLOT_BONUS {
-  return value in SLOT_BONUS;
+  return value in SLOT_BONUS
 }
 
 export function getBonus(key: string): SLOT_BONUS | undefined {
@@ -95,9 +95,9 @@ export const bonusValues: Record<string, number> = {
   HASTE: 8,
   MOVEMENT_SPEED: 2.5,
   TENACITY: 10,
-};
+}
 
 export function getBonusValue(bonus: string): number {
   const bonusSlot = getBonus(bonus)
-  return bonusValues[bonusSlot as string];
+  return bonusValues[bonusSlot as string]
 }

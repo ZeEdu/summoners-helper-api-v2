@@ -1,29 +1,21 @@
-import { FlatList, StyleSheet } from 'react-native';
-import { Card, MD3Theme, Text, useTheme } from 'react-native-paper';
-import ListItem from '../list-item/ListItem';
+import { FlatList, StyleSheet } from 'react-native'
+import { Card, MD3Theme, Text, useTheme } from 'react-native-paper'
+import ListItem from '../list-item/ListItem'
 
 type ItemsSectionProps = {
-  rowName: string;
+  rowName: string
   itemsList: {
-    itemId: string;
-  }[];
-  description: string;
-};
+    itemId: string
+  }[]
+  description: string
+}
 
-export default function ItemSection({
-  rowName,
-  itemsList,
-  description,
-}: ItemsSectionProps) {
+export default function ItemSection({ rowName, itemsList, description }: ItemsSectionProps) {
   const styles = makeStyles(useTheme())
 
   return (
     <Card style={styles.card}>
-      <Card.Title
-        title={rowName}
-        titleVariant={'titleMedium'}
-        titleStyle={styles.title}
-      />
+      <Card.Title title={rowName} titleVariant={'titleMedium'} titleStyle={styles.title} />
       <Card.Content>
         <Text variant={'bodySmall'} style={styles.description}>
           {description}
@@ -35,19 +27,19 @@ export default function ItemSection({
         />
       </Card.Content>
     </Card>
-  );
+  )
 }
 
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     card: {
-      backgroundColor: colors.surfaceVariant
+      backgroundColor: colors.surfaceVariant,
     },
     title: {
-      color: colors.primary
+      color: colors.primary,
     },
     description: {
-      marginBottom: 8
-    }
+      marginBottom: 8,
+    },
   })
 }

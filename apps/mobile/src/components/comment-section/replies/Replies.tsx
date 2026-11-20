@@ -1,25 +1,31 @@
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { useEffect, useRef, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Button, MD3Theme, Text, useTheme } from "react-native-paper";
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
+import React, { useEffect, useRef, useState } from 'react'
+import { FlatList, StyleSheet, View } from 'react-native'
+import { Button, MD3Theme, Text, useTheme } from 'react-native-paper'
 
-import { CommentPaginationDto, ISerializedComment } from "@org/contracts";
+import { CommentPaginationDto, ISerializedComment } from '@org/contracts'
 
-import useI18n from "../../../contexts/i18n/useI18n";
-import { ApiService } from "../../../services/api/api.service";
-import Comment from "../comment/Comment";
+import useI18n from '../../../contexts/i18n/useI18n'
+import { ApiService } from '../../../services/api/api.service'
+import Comment from '../comment/Comment'
 
 type Props = {
-  guideId: string,
-  showRepliesTo: ISerializedComment | null,
-  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
-  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>,
-  reportComment: (comment: ISerializedComment) => void;
+  guideId: string
+  showRepliesTo: ISerializedComment | null
+  setShowRepliesTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
+  setReplyTo: React.Dispatch<React.SetStateAction<ISerializedComment | null>>
+  reportComment: (comment: ISerializedComment) => void
 }
 
-export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setReplyTo, reportComment }: Props) {
+export default function Replies({
+  showRepliesTo,
+  guideId,
+  setShowRepliesTo,
+  setReplyTo,
+  reportComment,
+}: Props) {
   const i18n = useI18n()
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
   const [replies, setReplies] = useState<ISerializedComment[]>([])
 
@@ -28,7 +34,7 @@ export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setR
 
   const defaultQuery: CommentPaginationDto = {
     limit: 10,
-    guide: guideId
+    guide: guideId,
   }
 
   useEffect(() => {
@@ -40,12 +46,12 @@ export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setR
     async function getReplies() {
       ApiService.Comments.get({
         ...defaultQuery,
-        replyTo: showRepliesTo?.id
+        replyTo: showRepliesTo?.id,
       })
         .then(({ comments }) => {
           setReplies(comments)
-          bottomSheetModalRef.current?.present();
-          bottomSheetModalRef.current?.expand();
+          bottomSheetModalRef.current?.present()
+          bottomSheetModalRef.current?.expand()
         })
         .catch()
         .finally()
@@ -53,7 +59,6 @@ export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setR
 
     getReplies()
   }, [showRepliesTo])
-
 
   const handleOnDismiss = () => {
     setShowRepliesTo(null)
@@ -79,30 +84,23 @@ export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setR
             data={replies}
             ListEmptyComponent={() => (
               <View style={styles.emptyComponentWrapper}>
-                <Text
-                  variant="titleMedium"
-                  style={styles.emptyComponentText}
-                >
+                <Text variant="titleMedium" style={styles.emptyComponentText}>
                   {i18n.t('replies.empty.text')}
                 </Text>
-                <Button
-                  mode="contained"
-                  onPress={handleReplyTo}
-                >
+                <Button mode="contained" onPress={handleReplyTo}>
                   {i18n.t('replies.empty.button')}
                 </Button>
               </View>
             )}
-            renderItem={
-              ({ item: comment }) => (
-                <Comment
-                  comment={comment}
-                  reportComment={reportComment}
-                  setReplyTo={setReplyTo}
-                  setShowRepliesTo={setShowRepliesTo}
-                  useAlternativeColors={true}
-                />
-              )}
+            renderItem={({ item: comment }) => (
+              <Comment
+                comment={comment}
+                reportComment={reportComment}
+                setReplyTo={setReplyTo}
+                setShowRepliesTo={setShowRepliesTo}
+                useAlternativeColors={true}
+              />
+            )}
           />
         </BottomSheetView>
       </BottomSheetModal>
@@ -113,10 +111,10 @@ export default function Replies({ showRepliesTo, guideId, setShowRepliesTo, setR
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     background: {
-      backgroundColor: colors.surfaceVariant
+      backgroundColor: colors.surfaceVariant,
     },
     handleIndicator: {
-      backgroundColor: colors.onSurfaceVariant
+      backgroundColor: colors.onSurfaceVariant,
     },
     view: {
       flex: 1,
@@ -124,15 +122,15 @@ const makeStyles = ({ colors }: MD3Theme) => {
       alignItems: 'stretch',
     },
     flatList: {
-      marginHorizontal: 16
+      marginHorizontal: 16,
     },
     emptyComponentWrapper: {
       margin: 16,
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
     emptyComponentText: {
       textAlign: 'center',
-      marginVertical: 8
-    }
+      marginVertical: 8,
+    },
   })
 }

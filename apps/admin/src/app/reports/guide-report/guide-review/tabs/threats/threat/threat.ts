@@ -1,16 +1,16 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input } from '@angular/core'
 
-import { IThreat } from "@org/contracts";
+import { IThreat } from '@org/contracts'
 
-import { MatCard, MatCardContent } from "@angular/material/card";
-import { DataDragonService } from "../../../../../../data-dragon/data-dragon.service";
-import { EntityName } from "../../../../../../data-dragon/pipes/entity-name.pipe";
+import { MatCard, MatCardContent } from '@angular/material/card'
+import { DataDragonService } from '../../../../../../data-dragon/data-dragon.service'
+import { EntityName } from '../../../../../../data-dragon/pipes/entity-name.pipe'
 
 @Component({
   selector: 'app-threat',
   templateUrl: './threat.html',
   styleUrl: './threat.scss',
-  imports: [EntityName, MatCard, MatCardContent]
+  imports: [EntityName, MatCard, MatCardContent],
 })
 export class Threat {
   @Input() threat: IThreat

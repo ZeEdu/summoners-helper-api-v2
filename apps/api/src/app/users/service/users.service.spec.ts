@@ -1,37 +1,45 @@
-import { faker } from '@faker-js/faker';
-import { getModelToken } from '@nestjs/mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Model, QueryFilter, Types } from 'mongoose';
-import { I18nService } from 'nestjs-i18n';
+import { faker } from '@faker-js/faker'
+import { getModelToken } from '@nestjs/mongoose'
+import { Test, TestingModule } from '@nestjs/testing'
+import { Model, QueryFilter, Types } from 'mongoose'
+import { I18nService } from 'nestjs-i18n'
 
-import { CreateUserDto, DEFAULT_LIMIT, DEFAULT_OFFSET, IUser, RIOT_SERVERS, UpdateUserDto, UserDto } from '@org/contracts';
+import {
+  CreateUserDto,
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
+  IUser,
+  RIOT_SERVERS,
+  UpdateUserDto,
+  UserDto,
+} from '@org/contracts'
 
-import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures';
-import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
-import ResponseMappers from '../../response-mappers';
-import { RiotApiService } from '../../riot-api/service/riot-api.service';
-import { TestMockUtils } from '../../test.mock.utils';
-import { IUserWithPassword, IUserWithPuuid, User } from '../schema/user.schema';
-import { UsersService } from './users.service';
+import { RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures'
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service'
+import ResponseMappers from '../../response-mappers'
+import { RiotApiService } from '../../riot-api/service/riot-api.service'
+import { TestMockUtils } from '../../test.mock.utils'
+import { IUserWithPassword, IUserWithPuuid, User } from '../schema/user.schema'
+import { UsersService } from './users.service'
 
 describe('UsersService', () => {
-  let service: UsersService;
-  let model: jest.Mocked<Model<User>>;
-  let riotApiService: jest.Mocked<RiotApiService>;
+  let service: UsersService
+  let model: jest.Mocked<Model<User>>
+  let riotApiService: jest.Mocked<RiotApiService>
 
   const mockedUserFields = {
     _id: new Types.ObjectId(),
     username: faker.internet.userName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
-  };
+  }
 
   const mockSavedDoc = {
-    ...mockedUserFields
-  };
+    ...mockedUserFields,
+  }
   const mockDetailModel = jest.fn().mockImplementation(() => ({
     save: jest.fn().mockReturnValue(mockSavedDoc),
-  }));
+  }))
 
   Object.assign(mockDetailModel, {
     findOne: jest.fn(),
@@ -44,7 +52,7 @@ describe('UsersService', () => {
     limit: jest.fn(),
     skip: jest.fn(),
     lean: jest.fn(),
-  });
+  })
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -65,44 +73,44 @@ describe('UsersService', () => {
           inject: [DataDragonTransformerService],
         },
       ],
-    }).compile();
+    }).compile()
 
-    service = module.get<UsersService>(UsersService);
-    model = module.get<jest.Mocked<Model<User>>>(getModelToken(User.name));
-    riotApiService = module.get<jest.Mocked<RiotApiService>>(RiotApiService);
-  });
+    service = module.get<UsersService>(UsersService)
+    model = module.get<jest.Mocked<Model<User>>>(getModelToken(User.name))
+    riotApiService = module.get<jest.Mocked<RiotApiService>>(RiotApiService)
+  })
 
   describe('findOneByEmail', () => {
     it('should return null if user not found', async () => {
-      const mockLean = jest.fn().mockReturnValue(null);
-      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
-      model.findOne.mockImplementationOnce(mockFindOne);
+      const mockLean = jest.fn().mockReturnValue(null)
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean })
+      model.findOne.mockImplementationOnce(mockFindOne)
 
-      const wrongEmail = faker.internet.email();
-      const result = await service.findOneByEmail(wrongEmail);
+      const wrongEmail = faker.internet.email()
+      const result = await service.findOneByEmail(wrongEmail)
 
-      expect(result).toBeUndefined();
-      expect(model.findOne).toHaveBeenCalledWith({ email: wrongEmail });
-    });
+      expect(result).toBeUndefined()
+      expect(model.findOne).toHaveBeenCalledWith({ email: wrongEmail })
+    })
     it('should return a user', async () => {
       const mockedUser: IUser = {
         _id: new Types.ObjectId(),
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-        isSystemAdmin: false
-      };
+        isSystemAdmin: false,
+      }
 
-      const mockLean = jest.fn().mockReturnValue(mockedUser);
-      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
-      model.findOne.mockImplementationOnce(mockFindOne);
+      const mockLean = jest.fn().mockReturnValue(mockedUser)
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean })
+      model.findOne.mockImplementationOnce(mockFindOne)
 
-      const result = await service.findOneByEmail(mockedUser.email);
+      const result = await service.findOneByEmail(mockedUser.email)
 
-      expect(result).toEqual(ResponseMappers.user(mockedUser));
-      expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
-    });
-  });
+      expect(result).toEqual(ResponseMappers.user(mockedUser))
+      expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email })
+    })
+  })
 
   describe('findOneByEmailWithPassword', () => {
     it('should return a user with password', async () => {
@@ -111,21 +119,21 @@ describe('UsersService', () => {
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-        isSystemAdmin: false
-      };
+        isSystemAdmin: false,
+      }
 
-      const mockLean = jest.fn().mockReturnValue(mockedUser);
-      const mockSelect = jest.fn().mockReturnValue({ lean: mockLean });
-      const mockFindOne = jest.fn().mockReturnValue({ select: mockSelect });
-      model.findOne.mockImplementationOnce(mockFindOne);
+      const mockLean = jest.fn().mockReturnValue(mockedUser)
+      const mockSelect = jest.fn().mockReturnValue({ lean: mockLean })
+      const mockFindOne = jest.fn().mockReturnValue({ select: mockSelect })
+      model.findOne.mockImplementationOnce(mockFindOne)
 
-      const result = await service.findOneByEmailWithPassword(mockedUser.email);
+      const result = await service.findOneByEmailWithPassword(mockedUser.email)
 
-      expect(result).toEqual(ResponseMappers.userWithPassword(mockedUser));
-      expect(result?.password).toBeDefined();
-      expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
-    });
-  });
+      expect(result).toEqual(ResponseMappers.userWithPassword(mockedUser))
+      expect(result?.password).toBeDefined()
+      expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email })
+    })
+  })
 
   describe('findOneByEmailWithPuuid', () => {
     it('should return a user with a puuid', async () => {
@@ -138,86 +146,86 @@ describe('UsersService', () => {
         gameName: faker.internet.userName(),
         tagLine: faker.string.alphanumeric(5),
         server: RIOT_SERVERS.br1,
-        isSystemAdmin: false
-      };
+        isSystemAdmin: false,
+      }
 
-      const mockLean = jest.fn().mockReturnValue(mockedUser);
-      const mockSelect = jest.fn().mockReturnValue({ lean: mockLean });
-      const mockFindOne = jest.fn().mockReturnValue({ select: mockSelect });
-      model.findOne.mockImplementationOnce(mockFindOne);
+      const mockLean = jest.fn().mockReturnValue(mockedUser)
+      const mockSelect = jest.fn().mockReturnValue({ lean: mockLean })
+      const mockFindOne = jest.fn().mockReturnValue({ select: mockSelect })
+      model.findOne.mockImplementationOnce(mockFindOne)
 
-      const result = await service.findOneByEmailWithPuuid(mockedUser.email);
+      const result = await service.findOneByEmailWithPuuid(mockedUser.email)
 
-      expect(result).toEqual(ResponseMappers.userWithPuuid(mockedUser));
-      expect(result?.puuid).toBeDefined();
-      expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email });
-    });
-  });
+      expect(result).toEqual(ResponseMappers.userWithPuuid(mockedUser))
+      expect(result?.puuid).toBeDefined()
+      expect(model.findOne).toHaveBeenCalledWith({ email: mockedUser.email })
+    })
+  })
 
   describe('findOneByUsername', () => {
     it('should return null if user not found', async () => {
-      const mockLean = jest.fn().mockReturnValue(null);
-      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
-      model.findOne.mockImplementationOnce(mockFindOne);
+      const mockLean = jest.fn().mockReturnValue(null)
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean })
+      model.findOne.mockImplementationOnce(mockFindOne)
 
-      const wrongUsername = faker.internet.userName();
-      const result = await service.findOneByUsername(wrongUsername);
+      const wrongUsername = faker.internet.userName()
+      const result = await service.findOneByUsername(wrongUsername)
 
-      expect(result).toBeUndefined();
-      expect(model.findOne).toHaveBeenCalledWith({ username: wrongUsername });
-    });
+      expect(result).toBeUndefined()
+      expect(model.findOne).toHaveBeenCalledWith({ username: wrongUsername })
+    })
     it('should return a user', async () => {
       const mockedUser: IUser = {
         _id: new Types.ObjectId(),
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-      };
+      }
 
-      const mockLean = jest.fn().mockReturnValue(mockedUser);
-      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean });
-      model.findOne.mockImplementationOnce(mockFindOne);
+      const mockLean = jest.fn().mockReturnValue(mockedUser)
+      const mockFindOne = jest.fn().mockReturnValue({ lean: mockLean })
+      model.findOne.mockImplementationOnce(mockFindOne)
 
-      const result = await service.findOneByUsername(mockedUser.username);
+      const result = await service.findOneByUsername(mockedUser.username)
 
-      expect(result).toEqual(ResponseMappers.user(mockedUser));
+      expect(result).toEqual(ResponseMappers.user(mockedUser))
       expect(model.findOne).toHaveBeenCalledWith({
         username: mockedUser.username,
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('findOneById', () => {
     it('should return null if user not found', async () => {
-      const mockLean = jest.fn().mockReturnValue(null);
-      const mockFindById = jest.fn().mockReturnValue({ lean: mockLean });
-      model.findById.mockImplementationOnce(mockFindById);
+      const mockLean = jest.fn().mockReturnValue(null)
+      const mockFindById = jest.fn().mockReturnValue({ lean: mockLean })
+      model.findById.mockImplementationOnce(mockFindById)
 
-      const wrongObjectId = new Types.ObjectId().toString();
-      const result = await service.findOneById(wrongObjectId);
+      const wrongObjectId = new Types.ObjectId().toString()
+      const result = await service.findOneById(wrongObjectId)
 
-      expect(result).toBeUndefined();
-      expect(model.findById).toHaveBeenCalledWith(wrongObjectId);
-    });
+      expect(result).toBeUndefined()
+      expect(model.findById).toHaveBeenCalledWith(wrongObjectId)
+    })
     it('should return a user', async () => {
       const mockedUser: IUser = {
         _id: new Types.ObjectId(),
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-      };
+      }
 
-      const mockLean = jest.fn().mockReturnValue(mockedUser);
-      const mockFindById = jest.fn().mockReturnValue({ lean: mockLean });
-      model.findById.mockImplementationOnce(mockFindById);
+      const mockLean = jest.fn().mockReturnValue(mockedUser)
+      const mockFindById = jest.fn().mockReturnValue({ lean: mockLean })
+      model.findById.mockImplementationOnce(mockFindById)
 
-      const userId = mockedUser._id.toString();
-      const result = await service.findOneById(userId);
+      const userId = mockedUser._id.toString()
+      const result = await service.findOneById(userId)
 
-      expect(result).toEqual(ResponseMappers.user(mockedUser));
-      expect(model.findById).toHaveBeenCalledWith(userId);
-    });
-  });
+      expect(result).toEqual(ResponseMappers.user(mockedUser))
+      expect(model.findById).toHaveBeenCalledWith(userId)
+    })
+  })
 
   describe('create', () => {
     it('should create a user', async () => {
@@ -225,157 +233,147 @@ describe('UsersService', () => {
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-      };
+      }
 
-      const result = await service.create(mockedUser);
+      const result = await service.create(mockedUser)
 
-      expect(model).toHaveBeenCalledWith(mockedUser);
-      expect(result).toEqual(ResponseMappers.user(mockedUserFields));
-    });
-  });
+      expect(model).toHaveBeenCalledWith(mockedUser)
+      expect(result).toEqual(ResponseMappers.user(mockedUserFields))
+    })
+  })
 
   describe('update', () => {
     it('should update user', async () => {
       const userObjectId = new Types.ObjectId()
-      const userId = userObjectId.toString();
+      const userId = userObjectId.toString()
       const updatedUserInfo: UpdateUserDto = {
         username: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-      };
+      }
 
-      const mockLean = jest.fn().mockReturnValue({ ...updatedUserInfo, _id: userObjectId });
-      const mockFindByIdAndUpdate = jest
-        .fn()
-        .mockReturnValue({ lean: mockLean });
-      model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate);
+      const mockLean = jest.fn().mockReturnValue({ ...updatedUserInfo, _id: userObjectId })
+      const mockFindByIdAndUpdate = jest.fn().mockReturnValue({ lean: mockLean })
+      model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate)
 
-      const result = await service.update(userId, updatedUserInfo);
+      const result = await service.update(userId, updatedUserInfo)
 
-      expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId,
-        updatedUserInfo,
-        {
-          returnDocument: 'after',
-        },
-      );
+      expect(model.findByIdAndUpdate).toHaveBeenCalledWith(userId, updatedUserInfo, {
+        returnDocument: 'after',
+      })
 
-      const expectedResult = ResponseMappers.user({ ...updatedUserInfo, _id: userObjectId } as IUser)
+      const expectedResult = ResponseMappers.user({
+        ...updatedUserInfo,
+        _id: userObjectId,
+      } as IUser)
 
-      expect(result).toEqual(expectedResult);
-    });
-  });
+      expect(result).toEqual(expectedResult)
+    })
+  })
 
   describe('getAllUsers', () => {
     describe('filter', () => {
       it('should remove sensible fields from pagination', async () => {
-        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
-        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
-        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
-        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
-        model.find.mockImplementationOnce(mockFind);
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields])
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean })
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip })
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit })
+        model.find.mockImplementationOnce(mockFind)
 
         const filter: QueryFilter<User> = {
           password: faker.internet.password(),
           refreshToken: TestMockUtils.invalidJwt(),
-        };
-        await service.getAllUsers(filter);
-        expect(model.find).toHaveBeenCalledWith({});
-      });
+        }
+        await service.getAllUsers(filter)
+        expect(model.find).toHaveBeenCalledWith({})
+      })
       it('should use passed filter', async () => {
-        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
-        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
-        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
-        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
-        model.find.mockImplementationOnce(mockFind);
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields])
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean })
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip })
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit })
+        model.find.mockImplementationOnce(mockFind)
 
         const filter: QueryFilter<User> = {
           username: faker.internet.userName(),
-        };
-        await service.getAllUsers(filter);
-        expect(model.find).toHaveBeenCalledWith(filter);
-      });
+        }
+        await service.getAllUsers(filter)
+        expect(model.find).toHaveBeenCalledWith(filter)
+      })
       it('should use empty object if filter is not defined', async () => {
-        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
-        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
-        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
-        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
-        model.find.mockImplementationOnce(mockFind);
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields])
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean })
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip })
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit })
+        model.find.mockImplementationOnce(mockFind)
 
-        await service.getAllUsers();
-        expect(model.find).toHaveBeenCalledWith({});
-      });
-    });
+        await service.getAllUsers()
+        expect(model.find).toHaveBeenCalledWith({})
+      })
+    })
 
     describe('query', () => {
       it('should use passed pagination', async () => {
-        const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
-        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
-        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
-        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
-        model.find.mockImplementationOnce(mockFind);
+        const mockLean = jest.fn().mockReturnValue([mockedUserFields])
+        const mockSkip = jest.fn().mockReturnValue({ lean: mockLean })
+        const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip })
+        const mockFind = jest.fn().mockReturnValue({ limit: mockLimit })
+        model.find.mockImplementationOnce(mockFind)
 
-        const expectedCountDocuments = 34;
-        model.countDocuments.mockResolvedValue(expectedCountDocuments);
+        const expectedCountDocuments = 34
+        model.countDocuments.mockResolvedValue(expectedCountDocuments)
 
-        const pagination = { limit: 20, offset: 20 };
-        const result = await service.getAllUsers({}, pagination);
+        const pagination = { limit: 20, offset: 20 }
+        const result = await service.getAllUsers({}, pagination)
 
-        expect(model.countDocuments).toHaveBeenCalled();
-        expect(result.count).toEqual(expectedCountDocuments);
-        expect(mockLimit).toHaveBeenCalledWith(pagination.limit);
-        expect(mockSkip).toHaveBeenCalledWith(pagination.offset * pagination.limit);
-      });
+        expect(model.countDocuments).toHaveBeenCalled()
+        expect(result.count).toEqual(expectedCountDocuments)
+        expect(mockLimit).toHaveBeenCalledWith(pagination.limit)
+        expect(mockSkip).toHaveBeenCalledWith(pagination.offset * pagination.limit)
+      })
 
       describe('should use default values for pagination when used without arguments', () => {
         it('should use passed pagination', async () => {
-          const mockLean = jest.fn().mockReturnValue([mockedUserFields]);
-          const mockSkip = jest.fn().mockReturnValue({ lean: mockLean });
-          const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip });
-          const mockFind = jest.fn().mockReturnValue({ limit: mockLimit });
-          model.find.mockImplementationOnce(mockFind);
+          const mockLean = jest.fn().mockReturnValue([mockedUserFields])
+          const mockSkip = jest.fn().mockReturnValue({ lean: mockLean })
+          const mockLimit = jest.fn().mockReturnValue({ skip: mockSkip })
+          const mockFind = jest.fn().mockReturnValue({ limit: mockLimit })
+          model.find.mockImplementationOnce(mockFind)
 
-          await service.getAllUsers();
+          await service.getAllUsers()
 
-          expect(mockLimit).toHaveBeenCalledWith(DEFAULT_LIMIT);
-          expect(mockSkip).toHaveBeenCalledWith(DEFAULT_OFFSET);
-        });
-      });
-    });
-  });
+          expect(mockLimit).toHaveBeenCalledWith(DEFAULT_LIMIT)
+          expect(mockSkip).toHaveBeenCalledWith(DEFAULT_OFFSET)
+        })
+      })
+    })
+  })
 
   describe('updateRefreshToken', () => {
     it('should update only refreshToken', async () => {
-      const userId = new Types.ObjectId().toString();
-      const mockJwt = TestMockUtils.invalidJwt();
-      await service.updateRefreshToken(userId, mockJwt);
-      expect(model.updateOne).toHaveBeenCalledWith(
-        { _id: userId },
-        { refreshToken: mockJwt },
-      );
-    });
-  });
+      const userId = new Types.ObjectId().toString()
+      const mockJwt = TestMockUtils.invalidJwt()
+      await service.updateRefreshToken(userId, mockJwt)
+      expect(model.updateOne).toHaveBeenCalledWith({ _id: userId }, { refreshToken: mockJwt })
+    })
+  })
 
   describe('removeRefreshToken', () => {
     it('should remove only refreshToken', async () => {
-      const userId = new Types.ObjectId().toString();
-      await service.removeRefreshToken(userId);
-      expect(model.updateOne).toHaveBeenCalledWith(
-        { _id: userId },
-        { refreshToken: null },
-      );
-    });
-  });
+      const userId = new Types.ObjectId().toString()
+      await service.removeRefreshToken(userId)
+      expect(model.updateOne).toHaveBeenCalledWith({ _id: userId }, { refreshToken: null })
+    })
+  })
 
   describe('updateUserWithRiotData', () => {
     it('should update user with riot account data', async () => {
-      const tagLine = faker.string.alphanumeric(5);
-      const gameName = faker.internet.userName();
-      const server = RIOT_SERVERS.br1;
-      const puuid = faker.string.alphanumeric(78);
+      const tagLine = faker.string.alphanumeric(5)
+      const gameName = faker.internet.userName()
+      const server = RIOT_SERVERS.br1
+      const puuid = faker.string.alphanumeric(78)
 
       const userId = new Types.ObjectId()
-
 
       const mockedUser: IUser = {
         _id: userId,
@@ -384,7 +382,7 @@ describe('UsersService', () => {
         password: faker.internet.password(),
         tagLine,
         gameName,
-        puuid
+        puuid,
       }
 
       const userDto: UserDto = {
@@ -394,32 +392,28 @@ describe('UsersService', () => {
         tagLine,
         gameName,
         puuid,
-        id: userId.toString()
-      };
+        id: userId.toString(),
+      }
 
-      const mockLean = jest.fn().mockReturnValue(mockedUser);
+      const mockLean = jest.fn().mockReturnValue(mockedUser)
 
-      const mockFindByIdAndUpdate = jest
-        .fn()
-        .mockReturnValue({ lean: mockLean });
+      const mockFindByIdAndUpdate = jest.fn().mockReturnValue({ lean: mockLean })
 
-      model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate);
+      model.findByIdAndUpdate.mockImplementationOnce(mockFindByIdAndUpdate)
 
       const mockedGetAccountByRiotId = jest.fn().mockResolvedValue({
         tagLine,
         gameName,
         puuid,
-      });
+      })
 
-      riotApiService.getAccountByRiotId.mockImplementationOnce(
-        mockedGetAccountByRiotId,
-      );
+      riotApiService.getAccountByRiotId.mockImplementationOnce(mockedGetAccountByRiotId)
 
       await service.updateUserWithRiotData(userDto, {
         tagLine,
         gameName,
         server,
-      });
+      })
 
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
         userId.toString(),
@@ -432,7 +426,7 @@ describe('UsersService', () => {
         {
           returnDocument: 'after',
         },
-      );
-    });
-  });
-});
+      )
+    })
+  })
+})

@@ -1,13 +1,13 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit } from '@angular/core'
 
-import { SummonerSpell } from "@org/contracts";
+import { SummonerSpell } from '@org/contracts'
 
-import { DataDragonService } from "../../../../../../data-dragon/data-dragon.service";
+import { DataDragonService } from '../../../../../../data-dragon/data-dragon.service'
 
 @Component({
   selector: 'app-spell',
   templateUrl: './spell.html',
-  styleUrl: './spell.scss'
+  styleUrl: './spell.scss',
 })
 export class Spell implements OnInit {
   @Input({ required: true }) spellId: string
@@ -31,4 +31,4 @@ export class Spell implements OnInit {
   get description() {
     return this.spell?.description || ''
   }
-} 
+}

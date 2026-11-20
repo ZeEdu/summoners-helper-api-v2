@@ -1,25 +1,20 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
-import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useFormContext } from 'react-hook-form'
+import { StyleSheet, View } from 'react-native'
+import z from 'zod'
 
-import {
-  CreateGuideFormDto,
-  CreateGuideFormSchema,
-  ROLES,
-  ROLES_LABEL,
-} from '@org/contracts';
+import { CreateGuideFormDto, CreateGuideFormSchema, ROLES, ROLES_LABEL } from '@org/contracts'
 
-import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController';
-import AppInputController from '../../../../../components/forms/AppInputController';
-import FormFieldErrors from '../../../../../components/forms/FormFieldErrors';
+import AppSelectController from '../../../../../components/forms/app-select-controller/AppSelectController'
+import AppInputController from '../../../../../components/forms/AppInputController'
+import FormFieldErrors from '../../../../../components/forms/FormFieldErrors'
 
-import { useEffect } from 'react';
-import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props';
-import { useStepperContext } from '../../../../../components/stepper/context';
-import StepperFooter from '../../../../../components/stepper/StepperFooter';
-import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext';
-import useI18n from '../../../../../contexts/i18n/useI18n';
+import { useEffect } from 'react'
+import { buildCustomButtonProps } from '../../../../../components/stepper/build-custom-button-props'
+import { useStepperContext } from '../../../../../components/stepper/context'
+import StepperFooter from '../../../../../components/stepper/StepperFooter'
+import useDataDragon from '../../../../../contexts/data-dragon/useDataDragonContext'
+import useI18n from '../../../../../contexts/i18n/useI18n'
 
 const ROLE_OPTIONS: { value: string; label: string }[] = [
   {
@@ -42,25 +37,25 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
     value: ROLES.SUPPORT,
     label: ROLES_LABEL.SUPPORT,
   },
-];
+]
 
 const GuideIntroductionSchema = CreateGuideFormSchema.pick({
   introduction: true,
   title: true,
   champion: true,
   role: true,
-});
+})
 
-export type GuideIntroductionDto = z.infer<typeof GuideIntroductionSchema>;
+export type GuideIntroductionDto = z.infer<typeof GuideIntroductionSchema>
 
-const resolver = zodResolver(GuideIntroductionSchema);
+const resolver = zodResolver(GuideIntroductionSchema)
 
 export default function GuideIntroductionForm() {
   const i18n = useI18n()
-  const dataDragon = useDataDragon();
+  const dataDragon = useDataDragon()
 
-  const mainFormContext = useFormContext<CreateGuideFormDto>();
-  const stepperContext = useStepperContext();
+  const mainFormContext = useFormContext<CreateGuideFormDto>()
+  const stepperContext = useStepperContext()
 
   const defaultValues: GuideIntroductionDto = {
     title: mainFormContext.getValues('title'),
@@ -73,17 +68,17 @@ export default function GuideIntroductionForm() {
     control,
     handleSubmit,
     formState: { errors },
-    setValue
-  } = useForm<GuideIntroductionDto>({ resolver, defaultValues });
+    setValue,
+  } = useForm<GuideIntroductionDto>({ resolver, defaultValues })
 
   const onSubmit = (formValues: GuideIntroductionDto) => {
     // Setar o valor no formulário principal
-    mainFormContext.setValues(formValues, { shouldValidate: true });
+    mainFormContext.setValues(formValues, { shouldValidate: true })
     // Ir para o próximo step
-    stepperContext.nextStep();
-  };
+    stepperContext.nextStep()
+  }
 
-  const championList = dataDragon.lists.champions || [];
+  const championList = dataDragon.lists.champions || []
 
   const watchMainForm = mainFormContext.watch(['champion', 'introduction', 'role', 'title'])
 
@@ -146,7 +141,7 @@ export default function GuideIntroductionForm() {
         })}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -156,4 +151,4 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-});
+})

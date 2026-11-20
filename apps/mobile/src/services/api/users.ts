@@ -1,27 +1,25 @@
-import { IUser, UpdateUserProfileDto, UserDto, UsersPaginationDto } from "@org/contracts";
+import { IUser, UpdateUserProfileDto, UserDto, UsersPaginationDto } from '@org/contracts'
 
-import { customFetch } from '../../utils/customFetch/customFetch';
-import { AuthTokenStorageService } from '../auth-token-storage.service';
-import { API_CONSTANTS } from './api.constants';
+import { customFetch } from '../../utils/customFetch/customFetch'
+import { AuthTokenStorageService } from '../auth-token-storage.service'
+import { API_CONSTANTS } from './api.constants'
 
 const buildQueryStringFromDto = (query: Record<string, any | undefined>) => {
   return Object.entries(query)
-    .filter(
-      ([_, value]) => value !== undefined && value !== null && value !== '',
-    )
+    .filter(([_, value]) => value !== undefined && value !== null && value !== '')
     .map(([key, value]) => `${key}=${value}`)
-    .join('&');
-};
+    .join('&')
+}
 
-const ENDPOINT = 'users';
+const ENDPOINT = 'users'
 
 export const Users = {
   me: async () => {
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/me`;
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/me`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -29,17 +27,17 @@ export const Users = {
       headers: {
         Authorization: `Bearer ${tokens.accessToken}`,
       },
-    };
+    }
 
     return customFetch<UserDto>(url, init)
   },
 
   users: async () => {
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`;
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -47,18 +45,18 @@ export const Users = {
       headers: {
         Authorization: `Bearer ${tokens.accessToken}`,
       },
-    };
+    }
     // No momento vai falhar pois precisa do refresh token na requisição
     // É necessário configurar corretamente para que o fetch o utilize
     return customFetch(url, init)
   },
 
   updateProfile: async (updateUserProfileDto: UpdateUserProfileDto) => {
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/update-profile`;
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}/update-profile`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -67,19 +65,19 @@ export const Users = {
         Authorization: `Bearer ${tokens.accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(updateUserProfileDto)
-    };
+      body: JSON.stringify(updateUserProfileDto),
+    }
 
     return customFetch(url, init)
   },
 
   quickSearch: async (guidePagination: UsersPaginationDto) => {
-    const queryParams = buildQueryStringFromDto(guidePagination);
-    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}?${queryParams}`;
+    const queryParams = buildQueryStringFromDto(guidePagination)
+    const url = `${API_CONSTANTS.API_URL}/${ENDPOINT}?${queryParams}`
 
-    const tokens = await AuthTokenStorageService.get();
+    const tokens = await AuthTokenStorageService.get()
     if (!tokens.accessToken) {
-      throw new Error('Tokens not found');
+      throw new Error('Tokens not found')
     }
 
     const init: RequestInit = {
@@ -88,16 +86,14 @@ export const Users = {
         Authorization: `Bearer ${tokens.accessToken}`,
         'Content-Type': 'application/json',
       },
-    };
+    }
 
     return customFetch<{
-      count: number;
-      users: IUser[];
-    }>(url, init);
-  }
-};
-
-
+      count: number
+      users: IUser[]
+    }>(url, init)
+  },
+}
 
 // TODO Criar uma função que deve ser chamada sempre que o fetch falhar e for uma erro de token invalido
 // Nesse cenário devesse atualizar os tokens

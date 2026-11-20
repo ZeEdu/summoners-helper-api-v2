@@ -1,10 +1,10 @@
-import { StyleSheet, View } from "react-native"
-import { Card, MD3Theme, Text, useTheme } from "react-native-paper"
-import useDataDragon from "../../../../../../../contexts/data-dragon/useDataDragonContext"
-import ThreatImage from "./threat-image/ThreatImage"
+import { StyleSheet, View } from 'react-native'
+import { Card, MD3Theme, Text, useTheme } from 'react-native-paper'
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext'
+import ThreatImage from './threat-image/ThreatImage'
 
 type Props = {
-  threat: string,
+  threat: string
   description: string
 }
 
@@ -22,33 +22,36 @@ export default function ThreatCard({ threat, description }: Props) {
           <ThreatImage championId={threat} />
         </View>
         <View style={styles.container}>
-          <Text variant="titleMedium" style={styles.title}>{champion.name}</Text>
-          <Text style={styles.description} variant="bodyMedium">{description}</Text>
+          <Text variant="titleMedium" style={styles.title}>
+            {champion.name}
+          </Text>
+          <Text style={styles.description} variant="bodyMedium">
+            {description}
+          </Text>
         </View>
       </Card.Content>
     </Card>
   )
 }
 
-
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     card: {
-      backgroundColor: colors.surfaceVariant
+      backgroundColor: colors.surfaceVariant,
     },
     cardContent: {
       flexDirection: 'row',
-      gap: 8
+      gap: 8,
     },
     title: {
-      color: colors.primary
+      color: colors.primary,
     },
     container: {
-      flex: 1
+      flex: 1,
     },
     description: {
       flex: 1,
-      color: colors.onSurface
-    }
+      color: colors.onSurface,
+    },
   })
 }

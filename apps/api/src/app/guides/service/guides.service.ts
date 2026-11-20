@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, QueryOptions } from 'mongoose';
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model, QueryFilter, QueryOptions } from 'mongoose'
 
 import {
   CreateGuideDto,
@@ -8,34 +8,35 @@ import {
   DEFAULT_OFFSET,
   GuideDto,
   IGuide,
-  PaginationDto
-} from '@org/contracts';
+  PaginationDto,
+} from '@org/contracts'
 
-import ResponseMappers from '../../response-mappers';
-import { PatchGuideDto } from '../dto/patch-guide.dto';
-import { Guide, GuideDocument } from '../schema/guide.schema';
+import ResponseMappers from '../../response-mappers'
+import { PatchGuideDto } from '../dto/patch-guide.dto'
+import { Guide, GuideDocument } from '../schema/guide.schema'
 
 @Injectable()
 export class GuidesService {
-  constructor(
-    @InjectModel(Guide.name) private guideModel: Model<GuideDocument>,
-  ) { }
+  constructor(@InjectModel(Guide.name) private guideModel: Model<GuideDocument>) {}
 
-  async get(filter?: QueryFilter<Guide>, pagination?: PaginationDto): Promise<{ guides: GuideDto[], count: number }> {
-    const limit = pagination?.limit || DEFAULT_LIMIT;
-    const offset = pagination?.offset || DEFAULT_OFFSET;
+  async get(
+    filter?: QueryFilter<Guide>,
+    pagination?: PaginationDto,
+  ): Promise<{ guides: GuideDto[]; count: number }> {
+    const limit = pagination?.limit || DEFAULT_LIMIT
+    const offset = pagination?.offset || DEFAULT_OFFSET
 
-    filter = filter || {};
+    filter = filter || {}
     filter.blocked = { $ne: true } // TODO: Não gosto dessa solução, é a mesma que alguns plugin do mongoose utilizam, no entanto, não gosto do $ne
 
-    const count = await this.guideModel.countDocuments(filter);
+    const count = await this.guideModel.countDocuments(filter)
     const guides = await this.guideModel
       .find(filter)
       .limit(limit)
       .skip(offset * limit)
-      .lean<IGuide[]>();
+      .lean<IGuide[]>()
 
-    return { guides: guides.map(ResponseMappers.guide), count };
+    return { guides: guides.map(ResponseMappers.guide), count }
   }
 
   async getById(guideId: string): Promise<GuideDto | undefined> {
@@ -47,7 +48,7 @@ export class GuidesService {
   }
 
   create(guide: CreateGuideDto): Promise<GuideDto> {
-    return this.guideModel.create(guide).then(ResponseMappers.guide);
+    return this.guideModel.create(guide).then(ResponseMappers.guide)
   }
 
   async patch(
@@ -55,13 +56,13 @@ export class GuidesService {
     guide: Partial<PatchGuideDto>,
     queryOptions?: QueryOptions<Guide>,
   ): Promise<GuideDto | undefined> {
-    const { returnDocument = 'after' } = queryOptions || {};
+    const { returnDocument = 'after' } = queryOptions || {}
     const updatedGuide = await this.guideModel
       .findByIdAndUpdate(guideId, guide, {
         ...queryOptions,
         returnDocument,
       })
-      .lean<IGuide>();
+      .lean<IGuide>()
 
     if (updatedGuide) {
       return ResponseMappers.guide(updatedGuide)
@@ -69,22 +70,28 @@ export class GuidesService {
   }
 
   deleteGuide(guideId: string) {
-    return this.guideModel.deleteOne({ _id: guideId });
+    return this.guideModel.deleteOne({ _id: guideId })
   }
 
   async block(guideId: string) {
-    await this.guideModel.updateOne({
-      _id: guideId,
-    }, {
-      blocked: true
-    })
+    await this.guideModel.updateOne(
+      {
+        _id: guideId,
+      },
+      {
+        blocked: true,
+      },
+    )
   }
 
   async unblock(guideId: string) {
-    await this.guideModel.updateOne({
-      _id: guideId,
-    }, {
-      blocked: false
-    })
+    await this.guideModel.updateOne(
+      {
+        _id: guideId,
+      },
+      {
+        blocked: false,
+      },
+    )
   }
 }

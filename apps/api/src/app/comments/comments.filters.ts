@@ -1,8 +1,8 @@
-import { QueryFilter } from "mongoose"
+import { QueryFilter } from 'mongoose'
 
-import { CommentPaginationDto } from "@org/contracts"
+import { CommentPaginationDto } from '@org/contracts'
 
-import { Comment } from "./schema/comment.schema"
+import { Comment } from './schema/comment.schema'
 
 function get(query: CommentPaginationDto): QueryFilter<Comment> {
   const filter: QueryFilter<Comment> = {}
@@ -28,9 +28,8 @@ function get(query: CommentPaginationDto): QueryFilter<Comment> {
   return filter
 }
 
-
 const CommentsFilters = {
-  get
+  get,
 }
 
 export default CommentsFilters

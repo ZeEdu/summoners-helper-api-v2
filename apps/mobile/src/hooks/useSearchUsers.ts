@@ -1,6 +1,6 @@
-import { IUser } from "@org/contracts"
-import { useEffect, useState } from "react"
-import { ApiService } from "../services/api/api.service"
+import { IUser } from '@org/contracts'
+import { useEffect, useState } from 'react'
+import { ApiService } from '../services/api/api.service'
 
 // TODO: Melhorar a lógica do reset, para algo mais elegante
 // TODO: Criar uma lógica de busca via tokens nos guias
@@ -40,9 +40,7 @@ export default function useSearchUsers(searchTerm: string) {
       setError(false)
       setIsSearchResult(false)
 
-      ApiService
-        .Users
-        .quickSearch({ username: debouncedInput, limit: 5 })
+      ApiService.Users.quickSearch({ username: debouncedInput, limit: 5 })
         .then(({ users }) => {
           setUsers(users)
           setIsSearchResult(true)

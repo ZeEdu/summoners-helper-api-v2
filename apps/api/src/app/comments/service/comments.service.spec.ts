@@ -1,22 +1,22 @@
-import { MongooseModule } from '@nestjs/mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Comment, CommentSchema } from '../schema/comment.schema';
-import { CommentLike, CommentLikeSchema } from '../schema/like.schema';
-import { CommentsService } from './comments.service';
+import { MongooseModule } from '@nestjs/mongoose'
+import { Test, TestingModule } from '@nestjs/testing'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { Comment, CommentSchema } from '../schema/comment.schema'
+import { CommentLike, CommentLikeSchema } from '../schema/like.schema'
+import { CommentsService } from './comments.service'
 
 describe('CommentsService', () => {
-  let service: CommentsService;
+  let service: CommentsService
 
-  let mongodb: MongoMemoryServer;
+  let mongodb: MongoMemoryServer
 
   beforeAll(async () => {
-    mongodb = await MongoMemoryServer.create();
-  });
+    mongodb = await MongoMemoryServer.create()
+  })
 
   afterAll(async () => {
-    await mongodb.stop();
-  });
+    await mongodb.stop()
+  })
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,16 +27,13 @@ describe('CommentsService', () => {
           { name: Comment.name, schema: CommentSchema },
           { name: CommentLike.name, schema: CommentLikeSchema },
         ]),
-      ]
-    }).compile();
+      ],
+    }).compile()
 
-    service = module.get<CommentsService>(CommentsService);
-  });
+    service = module.get<CommentsService>(CommentsService)
+  })
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
-
-
-
-  });
-});
+    expect(service).toBeDefined()
+  })
+})

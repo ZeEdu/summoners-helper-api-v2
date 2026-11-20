@@ -1,8 +1,13 @@
-import { PropsWithChildren, useEffect, useState } from "react";
-import Loading from "../../app/screens/feedback/Loading";
-import { ApiService } from "../../services/api/api.service";
-import { usePatchVersion } from "../patchVersion/usePatchVersion";
-import { DataDragonContext, DataDragonContextType, DataDragonLists, DataDragonMaps } from "./data-dragon.context";
+import { PropsWithChildren, useEffect, useState } from 'react'
+import Loading from '../../app/screens/feedback/Loading'
+import { ApiService } from '../../services/api/api.service'
+import { usePatchVersion } from '../patchVersion/usePatchVersion'
+import {
+  DataDragonContext,
+  DataDragonContextType,
+  DataDragonLists,
+  DataDragonMaps,
+} from './data-dragon.context'
 
 export default function DataDragonProvider({ children }: PropsWithChildren) {
   const { version } = usePatchVersion()
@@ -10,8 +15,20 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const [lists, setLists] = useState<DataDragonLists>({ champions: [], items: [], runes: [], runeSlots: [], spells: [] })
-  const [maps, setMaps] = useState<DataDragonMaps>({ champions: {}, items: {}, runes: {}, runeSlots: {}, spells: {} })
+  const [lists, setLists] = useState<DataDragonLists>({
+    champions: [],
+    items: [],
+    runes: [],
+    runeSlots: [],
+    spells: [],
+  })
+  const [maps, setMaps] = useState<DataDragonMaps>({
+    champions: {},
+    items: {},
+    runes: {},
+    runeSlots: {},
+    spells: {},
+  })
 
   const [patchVersion, setPatchVersion] = useState<string>('')
 
@@ -36,7 +53,6 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
         setLoading(false)
       })
   }
-
 
   const reload = () => {
     loadData()
@@ -81,7 +97,7 @@ export default function DataDragonProvider({ children }: PropsWithChildren) {
     getRune,
     getRuneSlots,
     getItem,
-    getPatch
+    getPatch,
   }
 
   return (

@@ -1,54 +1,54 @@
 const validation = {
-  enum: "Please select a valid option.",
-  reportTargetRequired: "The report must be associated with either a comment or a guide.",
-  passwordPattern: "The password does not meet the security requirements.",
-  objectId: "Please provide a valid identifier.",
-  type: "Invalid data type.",
+  enum: 'Please select a valid option.',
+  reportTargetRequired: 'The report must be associated with either a comment or a guide.',
+  passwordPattern: 'The password does not meet the security requirements.',
+  objectId: 'Please provide a valid identifier.',
+  type: 'Invalid data type.',
   string: {
-    min: "Please enter at least {minimum} characters.",
-    max: "Please enter no more than {maximum} characters.",
+    min: 'Please enter at least {minimum} characters.',
+    max: 'Please enter no more than {maximum} characters.',
   },
   number: {
-    min: "The value must be greater than or equal to {minimum}.",
-    max: "The value must be less than or equal to {maximum}.",
+    min: 'The value must be greater than or equal to {minimum}.',
+    max: 'The value must be less than or equal to {maximum}.',
   },
   array: {
-    min: "Please select at least {minimum} items.",
-    max: "Please select no more than {maximum} items.",
+    min: 'Please select at least {minimum} items.',
+    max: 'Please select no more than {maximum} items.',
   },
-  email: "Please enter a valid email address.",
-  regex: "The value does not match the required pattern.",
-  format: "The provided format is invalid.",
-  default: "The provided value is invalid."
+  email: 'Please enter a valid email address.',
+  regex: 'The value does not match the required pattern.',
+  format: 'The provided format is invalid.',
+  default: 'The provided value is invalid.',
 }
 
 const profile = {
   header: {
-    text: 'Summoner\'s Helper Profile'
+    text: "Summoner's Helper Profile",
   },
   personalInfo: {
     title: 'Personal Information',
     email: 'Email',
-    username: 'Username'
+    username: 'Username',
   },
   riotAccount: {
     title: 'Riot Account',
     gameName: 'Game Name',
     tagLine: 'Tagline',
-    server: 'Server'
+    server: 'Server',
   },
   bindAccount: {
     title: 'No account linked',
     hint: 'Link your Riot account to connect your game data to your profile.',
-    button: 'Link Riot Account'
+    button: 'Link Riot Account',
   },
   toggleTheme: 'Change theme',
   logout: {
     button: 'Log out',
     title: 'Are you sure?',
-    content: 'Are you sure you want to log out?'
+    content: 'Are you sure you want to log out?',
   },
-  snackbar: 'Could not log out. Please try again.'
+  snackbar: 'Could not log out. Please try again.',
 }
 
 const myGuides = {
@@ -62,23 +62,23 @@ const myGuides = {
     buttons: {
       toggle: 'Filters',
       clear: 'Clear',
-      submit: 'Search'
+      submit: 'Search',
     },
     fields: {
       title: {
         label: 'Title',
-        placeholder: 'Title'
+        placeholder: 'Title',
       },
       champion: {
         title: 'Champion',
-        placeholder: 'Select a champion'
+        placeholder: 'Select a champion',
       },
       role: {
         title: 'Select a role',
-        placeholder: 'Select a role'
-      }
-    }
-  }
+        placeholder: 'Select a role',
+      },
+    },
+  },
 }
 
 const riot = {
@@ -98,23 +98,23 @@ const riot = {
     tr1: 'Turkey',
     tw2: 'Taiwan',
     vn2: 'Vietnam',
-  }
+  },
 }
 
 const recentGuides = {
-  title: 'Recent Guides'
+  title: 'Recent Guides',
 }
 
 const quickSearchbar = {
   searchbarPlaceholder: 'Search for a guide',
   advancedSearchButton: 'Advanced Search',
-  emptyText: 'No results found'
+  emptyText: 'No results found',
 }
 
 const recentGuidesList = {
   reload: 'Oops! An error occurred... Click to try again!',
   loadMore: 'Load more',
-  error: 'Error loading builds'
+  error: 'Error loading builds',
 }
 
 const advancedSearch = {
@@ -122,27 +122,27 @@ const advancedSearch = {
     fields: {
       champion: {
         title: 'Champion',
-        placeholder: 'Select a champion'
+        placeholder: 'Select a champion',
       },
       title: {
         label: 'Search by title',
-        placeholder: 'Search by title'
+        placeholder: 'Search by title',
       },
       role: {
         title: 'Champion role',
-        placeholder: 'Search by champion role'
+        placeholder: 'Search by champion role',
       },
       createdBy: {
         title: 'Guide creator',
-        placeholder: 'Search by guide creator'
+        placeholder: 'Search by guide creator',
       },
       deprecatedPatch: {
-        label: 'Search for outdated guides'
-      }
+        label: 'Search for outdated guides',
+      },
     },
     actions: {
       clear: 'Clear',
-      submit: 'Search'
+      submit: 'Search',
     },
   },
   feedback: {
@@ -151,22 +151,22 @@ const advancedSearch = {
   },
   listEmpty: {
     empty: 'Update the filters to find a guide',
-    fromSearch: 'No guides found'
+    fromSearch: 'No guides found',
   },
   loadMore: 'Load more',
-  error: 'Error loading builds'
+  error: 'Error loading builds',
 }
 
 const guideListItem = {
   view: 'View',
-  edit: 'Edit guide'
+  edit: 'Edit guide',
 }
 
 const createGuide = {
   error: 'Failed to save. Please try again.',
   saveButton: {
     loading: 'Saving...',
-    text: 'Save'
+    text: 'Save',
   },
   steppers: {
     intro: 'Introduction',
@@ -177,44 +177,44 @@ const createGuide = {
     items: 'Items',
     progression: 'Ability Progression',
     threats: 'Threats',
-    review: 'Review'
+    review: 'Review',
   },
   snack: {
     close: 'Close',
-    success: 'Saved successfully!'
-  }
+    success: 'Saved successfully!',
+  },
 }
 
 const stepper = {
   error: 'There must be more than one element',
   footer: {
     next: 'Next step',
-    previous: 'Previous step'
+    previous: 'Previous step',
   },
-  contextError: 'StepperContext must be used within StepperProvider'
+  contextError: 'StepperContext must be used within StepperProvider',
 }
 
 const userPicker = {
   title: 'Select a user',
   searchbar: 'Search for a user here',
-  cancel: 'Cancel'
+  cancel: 'Cancel',
 }
 
 const displayUserList = {
   idle: 'Search for a user',
-  notFound: 'No users found'
+  notFound: 'No users found',
 }
 
 const commentSection = {
   loadMore: 'Load more',
-  empty: 'No comments yet. Be the first!'
+  empty: 'No comments yet. Be the first!',
 }
 
 const replies = {
   empty: {
     text: 'This comment has no replies',
-    button: 'Reply'
-  }
+    button: 'Reply',
+  },
 }
 
 const postComment = {
@@ -222,71 +222,71 @@ const postComment = {
   button: 'Comment',
   replyTo: 'Reply',
   title: 'New Comment',
-  placeholder: 'Write your comment...'
+  placeholder: 'Write your comment...',
 }
 
 const replyCard = {
-  replyTo: 'Replying to'
+  replyTo: 'Replying to',
 }
 
 const comment = {
   reply: 'Reply',
   replies: 'Replies',
-  deletedUser: 'Deleted'
+  deletedUser: 'Deleted',
 }
 
 const sideMenu = {
-  report: 'Report comment'
+  report: 'Report comment',
 }
 
 const error = {
-  text: 'Oops! An error occurred... Please try again later!'
+  text: 'Oops! An error occurred... Please try again later!',
 }
 
 const introForm = {
   title: {
     label: 'Title',
-    placeholder: 'Title'
+    placeholder: 'Title',
   },
   intro: {
     label: 'Introduction',
-    placeholder: 'Introduction'
+    placeholder: 'Introduction',
   },
   champion: {
     title: 'Select a champion',
-    placeholder: 'Select a champion'
+    placeholder: 'Select a champion',
   },
   role: {
     title: 'Select a role',
-    placeholder: 'Select a role'
-  }
+    placeholder: 'Select a role',
+  },
 }
 
 const progressionForm = {
   description: {
     label: 'Ability progression',
-    placeholder: 'Ability progression description'
+    placeholder: 'Ability progression description',
   },
-  noChampionData: 'No champion selected'
+  noChampionData: 'No champion selected',
 }
 
 const bonusForm = {
   description: {
     label: 'Description',
-    placeholder: 'Bonus description'
+    placeholder: 'Bonus description',
   },
   slotOne: {
     title: 'Select a bonus',
-    placeholder: 'Select a bonus'
+    placeholder: 'Select a bonus',
   },
   slotTwo: {
     title: 'Select a second bonus',
-    placeholder: 'Select a second bonus'
+    placeholder: 'Select a second bonus',
   },
   slotThree: {
     title: 'Select a third bonus',
-    placeholder: 'Select a third bonus'
-  }
+    placeholder: 'Select a third bonus',
+  },
 }
 
 const slotBonus = {
@@ -331,165 +331,165 @@ const bonusLabelShards = {
 const spellsForm = {
   firstSpell: {
     title: 'Select a summoner spell',
-    placeholder: 'Select a summoner spell'
+    placeholder: 'Select a summoner spell',
   },
   secondSpell: {
     title: 'Select a second summoner spell',
-    placeholder: 'Select a second summoner spell'
+    placeholder: 'Select a second summoner spell',
   },
   description: {
     label: 'Summoner spell description',
-    placeholder: 'Describe how to use the summoner spells'
-  }
+    placeholder: 'Describe how to use the summoner spells',
+  },
 }
 
 const mainRuneForm = {
   primaryRune: {
     title: 'Primary Path',
-    placeholder: 'Select a path'
+    placeholder: 'Select a path',
   },
   first: {
     title: 'First Rune',
-    placeholder: 'Select the first rune'
+    placeholder: 'Select the first rune',
   },
   second: {
     title: 'Second Rune',
-    placeholder: 'Select the second rune'
+    placeholder: 'Select the second rune',
   },
   third: {
     title: 'Third Rune',
-    placeholder: 'Select the third rune'
+    placeholder: 'Select the third rune',
   },
   fourth: {
     title: 'Fourth Rune',
-    placeholder: 'Select the fourth rune'
+    placeholder: 'Select the fourth rune',
   },
   description: {
     label: 'Rune description',
-    placeholder: 'Rune description'
-  }
+    placeholder: 'Rune description',
+  },
 }
 
 const secondaryRuneForm = {
   secondaryRune: {
     title: 'Secondary Path',
-    placeholder: 'Select a path'
+    placeholder: 'Select a path',
   },
   first: {
     title: 'First Rune',
-    placeholder: 'Select the first rune'
+    placeholder: 'Select the first rune',
   },
   second: {
     title: 'Second Rune',
-    placeholder: 'Select the second rune'
+    placeholder: 'Select the second rune',
   },
   third: {
     title: 'Third Rune',
-    placeholder: 'Select the third rune'
+    placeholder: 'Select the third rune',
   },
   description: {
     label: 'Rune description',
-    placeholder: 'Rune description'
-  }
+    placeholder: 'Rune description',
+  },
 }
 
 const threatsForm = {
   fields: {
     description: {
       label: 'Threats description',
-      placeholder: 'Threats description'
+      placeholder: 'Threats description',
     },
     addThreat: {
       select: {
         title: 'Select a threat',
-        placeholder: 'Select a threat'
+        placeholder: 'Select a threat',
       },
       description: {
         label: 'Threat description',
-        placeholder: 'Threat description'
-      }
+        placeholder: 'Threat description',
+      },
     },
-    removeThreatButton: 'Remove threat'
+    removeThreatButton: 'Remove threat',
   },
-  addThreatButton: 'Add threat'
+  addThreatButton: 'Add threat',
 }
 
 const itemsForm = {
   fields: {
     description: 'Items description',
-    placeholder: 'Describe your item choices'
+    placeholder: 'Describe your item choices',
   },
 
   addNewBlockButton: 'Add a new block',
   removeBlockButton: 'Remove block',
   addItem: 'Add',
-  searchbar: 'Search items'
+  searchbar: 'Search items',
 }
 
 const itemContext = {
-  error: 'ItemSelectionContext must be used within ItemSelectionProvider'
+  error: 'ItemSelectionContext must be used within ItemSelectionProvider',
 }
 
 const itemDialog = {
   title: 'Are you sure?',
   content: 'The item will be removed from the list',
   cancel: 'Cancel',
-  remove: 'Yes, remove it'
+  remove: 'Yes, remove it',
 }
 
 const itemsFields = {
   block: {
     name: 'Item block name',
-    description: 'Item block description'
-  }
+    description: 'Item block description',
+  },
 }
 
 const login = {
   fields: {
     email: {
       label: 'Email',
-      placeholder: 'Your email'
+      placeholder: 'Your email',
     },
     password: {
       label: 'Password',
-      placeholder: 'Your password'
-    }
+      placeholder: 'Your password',
+    },
   },
   submit: 'Log in',
-  goToRegister: 'Go to sign up'
+  goToRegister: 'Go to sign up',
 }
 
 const register = {
   fields: {
     email: {
       label: 'Email',
-      placeholder: 'Your email'
+      placeholder: 'Your email',
     },
     username: {
       label: 'Username',
-      placeholder: 'Your username'
+      placeholder: 'Your username',
     },
     password: {
       label: 'Password',
-      placeholder: 'Your password'
-    }
+      placeholder: 'Your password',
+    },
   },
-  submit: 'Sign up'
+  submit: 'Sign up',
 }
 
 const errorFeedback = {
   text: 'Failed to load Data Dragon data...',
-  button: 'Try again!'
+  button: 'Try again!',
 }
 
 const loadingFeedback = {
   default: 'Loading...',
   i18n: 'Loading language settings...',
-  dataDragon: 'Loading Data Dragon...'
+  dataDragon: 'Loading Data Dragon...',
 }
 
 const abilitiesProgressionSection = {
-  header: 'Ability Progression'
+  header: 'Ability Progression',
 }
 
 const bonusSection = {
@@ -497,18 +497,18 @@ const bonusSection = {
   description: 'Description',
   first: 'First Bonus',
   second: 'Second Bonus',
-  third: 'Third Bonus'
+  third: 'Third Bonus',
 }
 
 const introductionSection = {
   header: 'General Information',
   intro: 'Introduction',
-  champion: 'Champion'
+  champion: 'Champion',
 }
 
 const itemsSection = {
   header: 'Items',
-  description: 'Description'
+  description: 'Description',
 }
 
 const runesSection = {
@@ -526,7 +526,7 @@ const runesSection = {
     first: 'First Rune',
     second: 'Second Rune',
     third: 'Fourth Rune',
-  }
+  },
 }
 
 const spellSection = {
@@ -538,7 +538,7 @@ const spellSection = {
 
 const threatsSection = {
   header: 'Threats',
-  description: 'Threats description'
+  description: 'Threats description',
 }
 
 const changeLanguage = {
@@ -548,15 +548,15 @@ const changeLanguage = {
   action: 'Select language',
   saveLangErrors: {
     change: 'Could not change language preference',
-    persistence: 'Could not save language preference'
+    persistence: 'Could not save language preference',
   },
   snackbar: {
-    error: 'It was not possible to change language'
-  }
+    error: 'It was not possible to change language',
+  },
 }
 
 const reviewGuide = {
-  save: 'Save'
+  save: 'Save',
 }
 
 const viewGuide = {
@@ -569,13 +569,13 @@ const viewGuide = {
     items: 'Items',
     progression: 'Ability Progression',
     threats: 'Threats',
-    comments: 'Comments'
-  }
+    comments: 'Comments',
+  },
 }
 
 const progressionContent = {
   loading: 'Loading...',
-  error: 'An error occurred while loading the data'
+  error: 'An error occurred while loading the data',
 }
 
 const difficulty = {
@@ -583,12 +583,12 @@ const difficulty = {
   '2': 'Easy',
   '3': 'Intermediate',
   '4': 'Difficult',
-  '5': 'Very Difficult'
+  '5': 'Very Difficult',
 }
 
 const heroBanner = {
   title: 'Guide',
-  difficulty: 'Difficulty'
+  difficulty: 'Difficulty',
 }
 
 const runesContent = {
@@ -603,7 +603,7 @@ const runesContent = {
 
 const general = {
   yes: 'yes',
-  no: 'no'
+  no: 'no',
 }
 
 const screens = {
@@ -618,7 +618,7 @@ const screens = {
   Report: 'Report',
 
   Login: 'Login',
-  Register: 'Register'
+  Register: 'Register',
 }
 
 const enUS = {
@@ -675,7 +675,7 @@ const enUS = {
   heroBanner,
   difficulty,
   runesContent,
-  validation
+  validation,
 }
 
 export default enUS

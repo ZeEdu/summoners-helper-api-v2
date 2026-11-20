@@ -1,12 +1,12 @@
-import { getLocales } from 'expo-localization';
-import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import { getLocales } from 'expo-localization'
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 
-import Loading from '../../app/screens/feedback/Loading';
-import SecureStoreService from '../../services/secure-store.service';
-import i18n from './config';
-import LocalePersistenceError from './errors/localePersistenceError';
-import I18N_CONSTANTS from './i18n.constants';
-import { I18nContext, I18nContextType, SupportedLanguages } from './i18n.context';
+import Loading from '../../app/screens/feedback/Loading'
+import SecureStoreService from '../../services/secure-store.service'
+import i18n from './config'
+import LocalePersistenceError from './errors/localePersistenceError'
+import I18N_CONSTANTS from './i18n.constants'
+import { I18nContext, I18nContextType, SupportedLanguages } from './i18n.context'
 
 export const I18nProvider = ({ children }: PropsWithChildren) => {
   const [locale, setLocaleState] = useState<SupportedLanguages | null>(null)
@@ -26,7 +26,7 @@ export const I18nProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const init = async () => {
       const savedLang = await SecureStoreService.get(I18N_CONSTANTS.STORE_KEY).catch((error) => {
-        console.log('[I18nProvider]: Não foi possível carregar o locale salvo:', error);
+        console.log('[I18nProvider]: Não foi possível carregar o locale salvo:', error)
         return undefined
       })
       const deviceLang = getLocales()[0].languageCode
@@ -52,15 +52,13 @@ export const I18nProvider = ({ children }: PropsWithChildren) => {
     () => ({
       locale,
       setLocale,
-      t: i18n.t.bind(i18n)
+      t: i18n.t.bind(i18n),
     }),
-    [locale, setLocale]
+    [locale, setLocale],
   )
 
   return (
-    <I18nContext.Provider
-      value={value}
-    >
+    <I18nContext.Provider value={value}>
       {initialized ? children : <Loading i18nKey={'i18n'} />}
     </I18nContext.Provider>
   )

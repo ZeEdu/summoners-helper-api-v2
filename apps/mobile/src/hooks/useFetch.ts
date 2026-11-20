@@ -1,35 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-import { customFetch } from '../utils/customFetch/customFetch';
+import { customFetch } from '../utils/customFetch/customFetch'
 
-export const useFetch = <T>(
-  url: string,
-  init: RequestInit | undefined = undefined,
-) => {
-  const [data, setData] = useState<T | undefined>(undefined);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown | undefined>(undefined);
+export const useFetch = <T>(url: string, init: RequestInit | undefined = undefined) => {
+  const [data, setData] = useState<T | undefined>(undefined)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<unknown | undefined>(undefined)
 
   useEffect(() => {
-    setLoading(true);
-    setError(undefined);
-    setData(undefined);
+    setLoading(true)
+    setError(undefined)
+    setData(undefined)
 
     const fetchData = async () => {
-      if (!url) return;
+      if (!url) return
 
       try {
-        const response = await customFetch<T>(url, init);
-        setData(response);
+        const response = await customFetch<T>(url, init)
+        setData(response)
       } catch (error) {
-        setError(error);
+        setError(error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, [init, url]);
+    fetchData()
+  }, [init, url])
 
-  return { data, loading, error };
-};
+  return { data, loading, error }
+}

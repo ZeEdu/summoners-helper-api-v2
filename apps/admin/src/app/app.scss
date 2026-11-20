@@ -18,14 +18,12 @@
     display: flex;
     justify-content: center;
   }
-
 }
 
 .sidenav {
   padding: 20px;
   @include mat.elevation(2);
 }
-
 
 mat-list-item:hover {
   @include mat.elevation(2);

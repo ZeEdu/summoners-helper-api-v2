@@ -1,4 +1,4 @@
-import SecureStoreService from "./secure-store.service"
+import SecureStoreService from './secure-store.service'
 
 const THEME_KEY = 'theme_key'
 export const ThemeStorageService = {

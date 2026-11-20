@@ -1,14 +1,10 @@
-import { inject, Pipe, PipeTransform } from "@angular/core";
-import { DataDragonService } from "../data-dragon.service";
+import { inject, Pipe, PipeTransform } from '@angular/core'
+import { DataDragonService } from '../data-dragon.service'
 
-type DataDragonEntity = 'champions' |
-  'spells' |
-  'runes' |
-  'runeSlots' |
-  'items'
+type DataDragonEntity = 'champions' | 'spells' | 'runes' | 'runeSlots' | 'items'
 
 @Pipe({
-  name: 'entityName'
+  name: 'entityName',
 })
 export class EntityName implements PipeTransform {
   private readonly dataDragonService = inject(DataDragonService)

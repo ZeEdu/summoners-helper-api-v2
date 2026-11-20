@@ -1,5 +1,5 @@
-import z from "zod";
-import { createCommentFormSchema, createCommentSchema } from "./create-comment.dto";
+import z from 'zod'
+import { createCommentFormSchema, createCommentSchema } from './create-comment.dto'
 
 export const createCommentReplyFormSchema = createCommentFormSchema.safeExtend({
   replyTo: z.string(),

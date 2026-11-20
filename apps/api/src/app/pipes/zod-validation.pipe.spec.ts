@@ -1,14 +1,23 @@
-import { faker } from "@faker-js/faker";
-import { BadRequestException } from "@nestjs/common";
-import { CreateReportDto, createReportSchema, CreateUserDto, createUserSchema, REPORT_REASON, UpdateUserProfileDto, updateUserProfileSchema, VALIDATION_ERROR_KEYS } from "@org/contracts";
-import { I18nContext } from "nestjs-i18n";
+import { faker } from '@faker-js/faker'
+import { BadRequestException } from '@nestjs/common'
+import {
+  CreateReportDto,
+  createReportSchema,
+  CreateUserDto,
+  createUserSchema,
+  REPORT_REASON,
+  UpdateUserProfileDto,
+  updateUserProfileSchema,
+  VALIDATION_ERROR_KEYS,
+} from '@org/contracts'
+import { I18nContext } from 'nestjs-i18n'
 
-import TestsHelpers from '../../app/helpers/tests.helpers';
-import { ZodValidationPipe } from "./zod-validation.pipe";
+import TestsHelpers from '../../app/helpers/tests.helpers'
+import { ZodValidationPipe } from './zod-validation.pipe'
 
 interface ResponseError {
-  message: any[],
-  error: string,
+  message: any[]
+  error: string
   statusCode: 400
 }
 
@@ -44,23 +53,23 @@ describe('zod validation pipe', () => {
 
   describe('email', () => {
     it('should catch error', () => {
-      const validationPipe = new ZodValidationPipe(createUserSchema);
+      const validationPipe = new ZodValidationPipe(createUserSchema)
 
       const createUser: Partial<CreateUserDto> = {
         email: faker.internet.userName(),
         username: faker.internet.userName(),
         password: TestsHelpers.validPassword,
-      };
+      }
 
       I18nContext.create(i18nContext, () => {
-        let exception: BadRequestException;
+        let exception: BadRequestException
 
         try {
-          validationPipe.transform(createUser);
-          fail('Expected BadRequestException to be thrown');
+          validationPipe.transform(createUser)
+          fail('Expected BadRequestException to be thrown')
         } catch (error) {
-          expect(error).toBeInstanceOf(BadRequestException);
-          exception = error as BadRequestException;
+          expect(error).toBeInstanceOf(BadRequestException)
+          exception = error as BadRequestException
         }
 
         const parsedResponse = parseException(exception)
@@ -75,23 +84,23 @@ describe('zod validation pipe', () => {
   describe('string', () => {
     describe('format', () => {
       it('should catch error', () => {
-        const validationPipe = new ZodValidationPipe(createUserSchema);
+        const validationPipe = new ZodValidationPipe(createUserSchema)
 
         const createUser: Partial<CreateUserDto & { username: any }> = {
           email: faker.internet.email(),
           username: 123123,
           password: TestsHelpers.validPassword,
-        };
+        }
 
         I18nContext.create(i18nContext, () => {
-          let exception: BadRequestException;
+          let exception: BadRequestException
 
           try {
-            validationPipe.transform(createUser);
-            fail('Expected BadRequestException to be thrown');
+            validationPipe.transform(createUser)
+            fail('Expected BadRequestException to be thrown')
           } catch (error) {
-            expect(error).toBeInstanceOf(BadRequestException);
-            exception = error as BadRequestException;
+            expect(error).toBeInstanceOf(BadRequestException)
+            exception = error as BadRequestException
           }
 
           const parsedResponse = parseException(exception)
@@ -105,23 +114,23 @@ describe('zod validation pipe', () => {
 
     describe('min', () => {
       it('should catch error', () => {
-        const validationPipe = new ZodValidationPipe(createUserSchema);
+        const validationPipe = new ZodValidationPipe(createUserSchema)
 
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.string.alpha({ length: { min: 3, max: 5 } }),
           password: TestsHelpers.validPassword,
-        };
+        }
 
         I18nContext.create(i18nContext, () => {
-          let exception: BadRequestException;
+          let exception: BadRequestException
 
           try {
-            validationPipe.transform(createUser);
-            fail('Expected BadRequestException to be thrown');
+            validationPipe.transform(createUser)
+            fail('Expected BadRequestException to be thrown')
           } catch (error) {
-            expect(error).toBeInstanceOf(BadRequestException);
-            exception = error as BadRequestException;
+            expect(error).toBeInstanceOf(BadRequestException)
+            exception = error as BadRequestException
           }
 
           const parsedResponse = parseException(exception)
@@ -135,23 +144,23 @@ describe('zod validation pipe', () => {
 
     describe('max', () => {
       it('should catch error', () => {
-        const validationPipe = new ZodValidationPipe(createUserSchema);
+        const validationPipe = new ZodValidationPipe(createUserSchema)
 
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.string.alpha({ length: { min: 65, max: 65 } }),
           password: TestsHelpers.validPassword,
-        };
+        }
 
         I18nContext.create(i18nContext, () => {
-          let exception: BadRequestException;
+          let exception: BadRequestException
 
           try {
-            validationPipe.transform(createUser);
-            fail('Expected BadRequestException to be thrown');
+            validationPipe.transform(createUser)
+            fail('Expected BadRequestException to be thrown')
           } catch (error) {
-            expect(error).toBeInstanceOf(BadRequestException);
-            exception = error as BadRequestException;
+            expect(error).toBeInstanceOf(BadRequestException)
+            exception = error as BadRequestException
           }
 
           const parsedResponse = parseException(exception)
@@ -167,22 +176,22 @@ describe('zod validation pipe', () => {
   describe('regex', () => {
     describe('password', () => {
       it('should catch error', () => {
-        const validationPipe = new ZodValidationPipe(createUserSchema);
+        const validationPipe = new ZodValidationPipe(createUserSchema)
         const createUser: Partial<CreateUserDto> = {
           email: faker.internet.email(),
           username: faker.internet.userName(),
           password: 'a'.repeat(128),
-        };
+        }
 
         I18nContext.create(i18nContext, () => {
-          let exception: BadRequestException;
+          let exception: BadRequestException
 
           try {
-            validationPipe.transform(createUser);
-            fail('Expected BadRequestException to be thrown');
+            validationPipe.transform(createUser)
+            fail('Expected BadRequestException to be thrown')
           } catch (error) {
-            expect(error).toBeInstanceOf(BadRequestException);
-            exception = error as BadRequestException;
+            expect(error).toBeInstanceOf(BadRequestException)
+            exception = error as BadRequestException
           }
 
           const parsedResponse = parseException(exception)
@@ -199,22 +208,22 @@ describe('zod validation pipe', () => {
   describe('enum', () => {
     describe('server', () => {
       it('should catch error', () => {
-        const validationPipe = new ZodValidationPipe(updateUserProfileSchema);
+        const validationPipe = new ZodValidationPipe(updateUserProfileSchema)
         const createUser: Omit<UpdateUserProfileDto, 'server'> & { server: string } = {
           gameName: faker.internet.userName(),
           tagLine: faker.internet.userName(),
           server: 'invalid-enum',
-        };
+        }
 
         I18nContext.create(i18nContext, () => {
-          let exception: BadRequestException;
+          let exception: BadRequestException
 
           try {
-            validationPipe.transform(createUser);
-            fail('Expected BadRequestException to be thrown');
+            validationPipe.transform(createUser)
+            fail('Expected BadRequestException to be thrown')
           } catch (error) {
-            expect(error).toBeInstanceOf(BadRequestException);
-            exception = error as BadRequestException;
+            expect(error).toBeInstanceOf(BadRequestException)
+            exception = error as BadRequestException
           }
 
           const parsedResponse = parseException(exception)
@@ -231,21 +240,21 @@ describe('zod validation pipe', () => {
   describe('refine', () => {
     describe('report target', () => {
       it('should catch error', () => {
-        const validationPipe = new ZodValidationPipe(createReportSchema);
+        const validationPipe = new ZodValidationPipe(createReportSchema)
         const createReport: Omit<CreateReportDto, 'guide' | 'comment'> = {
           reason: REPORT_REASON.ADVERTISING,
           observation: faker.lorem.sentences(2),
-        };
+        }
 
         I18nContext.create(i18nContext, () => {
-          let exception: BadRequestException;
+          let exception: BadRequestException
 
           try {
-            validationPipe.transform(createReport);
-            fail('Expected BadRequestException to be thrown');
+            validationPipe.transform(createReport)
+            fail('Expected BadRequestException to be thrown')
           } catch (error) {
-            expect(error).toBeInstanceOf(BadRequestException);
-            exception = error as BadRequestException;
+            expect(error).toBeInstanceOf(BadRequestException)
+            exception = error as BadRequestException
           }
 
           const parsedResponse = parseException(exception)
@@ -258,4 +267,4 @@ describe('zod validation pipe', () => {
       })
     })
   })
-});
+})

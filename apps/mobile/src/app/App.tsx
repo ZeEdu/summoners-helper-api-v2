@@ -1,13 +1,14 @@
-import React from 'react';
+import React from 'react'
 
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import AuthProvider from '../contexts/auth/auth.provider';
-import DataDragonProvider from '../contexts/data-dragon/data-dragon.provider';
-import { I18nProvider } from '../contexts/i18n/i18n.provider';
-import PatchVersionProvider from '../contexts/patchVersion/patch-version.provider';
-import ThemeProvider, { useThemeContext } from '../providers/theme.provider';
-import { Navigation } from './navigation/Navigation';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import Viewport from '../components/Viewport'
+import AuthProvider from '../contexts/auth/auth.provider'
+import DataDragonProvider from '../contexts/data-dragon/data-dragon.provider'
+import { I18nProvider } from '../contexts/i18n/i18n.provider'
+import PatchVersionProvider from '../contexts/patchVersion/patch-version.provider'
+import ThemeProvider, { useThemeContext } from '../providers/theme.provider'
+import { Navigation } from './navigation/Navigation'
 
 function AppNavigation() {
   const { navigationTheme } = useThemeContext()
@@ -21,17 +22,19 @@ export const App = () => {
         <DataDragonProvider>
           <ThemeProvider>
             <AuthProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <BottomSheetModalProvider>
-                  <AppNavigation />
-                </BottomSheetModalProvider>
-              </GestureHandlerRootView>
+              <Viewport>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <BottomSheetModalProvider>
+                    <AppNavigation />
+                  </BottomSheetModalProvider>
+                </GestureHandlerRootView>
+              </Viewport>
             </AuthProvider>
           </ThemeProvider>
         </DataDragonProvider>
       </PatchVersionProvider>
     </I18nProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

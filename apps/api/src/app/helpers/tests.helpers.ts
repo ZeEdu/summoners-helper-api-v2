@@ -1,7 +1,7 @@
 const validPassword = '1Ab' + 'x'.repeat(10)
 
 const TestsHelpers = {
-  validPassword
+  validPassword,
 }
 
 export default TestsHelpers

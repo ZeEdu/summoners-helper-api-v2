@@ -1,21 +1,16 @@
-import { StyleSheet } from 'react-native';
-import {
-  Card,
-  List,
-  MD3Theme,
-  useTheme
-} from 'react-native-paper';
+import { StyleSheet } from 'react-native'
+import { Card, List, MD3Theme, useTheme } from 'react-native-paper'
 
-import { BonusDto } from '../../forms/BonusForm';
-import BonusListItem from './bonus-list-item/BonusListItem';
+import { BonusDto } from '../../forms/BonusForm'
+import BonusListItem from './bonus-list-item/BonusListItem'
 
 type Props = {
-  bonus: BonusDto;
-};
+  bonus: BonusDto
+}
 
 export default function BonusContent({ bonus }: Props) {
-  const theme = useTheme();
-  const styles = makeStyles(theme);
+  const theme = useTheme()
+  const styles = makeStyles(theme)
 
   return (
     <Card style={styles.card}>
@@ -27,7 +22,7 @@ export default function BonusContent({ bonus }: Props) {
         </List.Section>
       </Card.Content>
     </Card>
-  );
+  )
 }
 
 const makeStyles = ({ colors }: MD3Theme) => {
@@ -50,5 +45,5 @@ const makeStyles = ({ colors }: MD3Theme) => {
     divider: {
       backgroundColor: colors.outline,
     },
-  });
-};
+  })
+}

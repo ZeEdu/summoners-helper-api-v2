@@ -1,13 +1,13 @@
-import { StyleSheet, View } from "react-native";
-import { Chip, Divider, Icon, List, MD3Theme, Text, useTheme } from "react-native-paper";
+import { StyleSheet, View } from 'react-native'
+import { Chip, Divider, Icon, List, MD3Theme, Text, useTheme } from 'react-native-paper'
 
-import { getBonusValue } from "@org/contracts";
+import { getBonusValue } from '@org/contracts'
 
-import useI18n from "../../../../../../../contexts/i18n/useI18n";
+import useI18n from '../../../../../../../contexts/i18n/useI18n'
 
 type Props = {
-  bonus: string;
-};
+  bonus: string
+}
 
 export default function BonusListItem({ bonus }: Props) {
   const i18n = useI18n()
@@ -17,9 +17,9 @@ export default function BonusListItem({ bonus }: Props) {
   const label = i18n.t(`slotBonus.${bonus}`)
   const description = i18n.t(`slotBonusDescription.${bonus}`)
   const shard = i18n.t(`bonusLabelShards.${bonus}`)
-  const value = getBonusValue(bonus);
+  const value = getBonusValue(bonus)
 
-  const uri = `https://ddragon.leagueoflegends.com/cdn/img/perk-images/StatMods/StatMods${bonus}Icon.png`;
+  const uri = `https://ddragon.leagueoflegends.com/cdn/img/perk-images/StatMods/StatMods${bonus}Icon.png`
 
   return (
     <>
@@ -30,21 +30,11 @@ export default function BonusListItem({ bonus }: Props) {
         descriptionNumberOfLines={5}
         left={() => <Icon size={32} source={{ uri }} />}
         right={() => (
-          <View
-            style={styles.rightContainer}
-          >
-            <Chip
-              mode="flat"
-              style={styles.chip}
-              textStyle={styles.chipText}
-            >
+          <View style={styles.rightContainer}>
+            <Chip mode="flat" style={styles.chip} textStyle={styles.chipText}>
               +{value}
             </Chip>
-            <Text
-              variant="labelSmall"
-              numberOfLines={2}
-              style={styles.label}
-            >
+            <Text variant="labelSmall" numberOfLines={2} style={styles.label}>
               {shard}
             </Text>
           </View>
@@ -52,13 +42,13 @@ export default function BonusListItem({ bonus }: Props) {
       />
       <Divider />
     </>
-  );
+  )
 }
 
 const makeStyles = ({ colors }: MD3Theme) => {
   return StyleSheet.create({
     container: {
-      paddingRight: 0
+      paddingRight: 0,
     },
     rightContainer: {
       alignItems: 'center',
@@ -75,7 +65,7 @@ const makeStyles = ({ colors }: MD3Theme) => {
     },
     label: {
       textAlign: 'center',
-      marginTop: 4
-    }
+      marginTop: 4,
+    },
   })
 }

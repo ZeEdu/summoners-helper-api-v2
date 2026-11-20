@@ -1,46 +1,34 @@
-import { useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
-import {
-  Divider,
-  IconButton,
-  List,
-  MD3Theme,
-  Text,
-  useTheme,
-} from 'react-native-paper';
-import FadeInView from '../../../../../../../components/animated/FadeInView';
-import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext';
+import { useState } from 'react'
+import { Image, StyleSheet } from 'react-native'
+import { Divider, IconButton, List, MD3Theme, Text, useTheme } from 'react-native-paper'
+import FadeInView from '../../../../../../../components/animated/FadeInView'
+import useDataDragon from '../../../../../../../contexts/data-dragon/useDataDragonContext'
 
 type Props = {
-  title: string;
-  runeId: string;
-  description: string;
-  divider?: boolean;
-};
+  title: string
+  runeId: string
+  description: string
+  divider?: boolean
+}
 
-export default function RunePathListItem({
-  title,
-  runeId,
-  description,
-  divider = true,
-}: Props) {
-  const dataDragon = useDataDragon();
-  const theme = useTheme();
+export default function RunePathListItem({ title, runeId, description, divider = true }: Props) {
+  const dataDragon = useDataDragon()
+  const theme = useTheme()
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false)
 
   const getBaseURI = (endpoint: string) => {
-    return `https://ddragon.leagueoflegends.com/cdn/img/${endpoint}`;
-  };
+    return `https://ddragon.leagueoflegends.com/cdn/img/${endpoint}`
+  }
 
   const getRune = (runeId: string) => {
-    return dataDragon.getRune(runeId);
-  };
+    return dataDragon.getRune(runeId)
+  }
 
-  const rune = getRune(runeId);
-  const uri = getBaseURI(rune.icon);
+  const rune = getRune(runeId)
+  const uri = getBaseURI(rune.icon)
 
-  const styles = makeStyles(theme);
+  const styles = makeStyles(theme)
 
   return (
     <>
@@ -62,7 +50,7 @@ export default function RunePathListItem({
       )}
       {divider && <Divider style={styles.divider} />}
     </>
-  );
+  )
 }
 
 const makeStyles = ({ colors }: MD3Theme) => {
@@ -78,5 +66,5 @@ const makeStyles = ({ colors }: MD3Theme) => {
     divider: {
       backgroundColor: colors.outline,
     },
-  });
-};
+  })
+}

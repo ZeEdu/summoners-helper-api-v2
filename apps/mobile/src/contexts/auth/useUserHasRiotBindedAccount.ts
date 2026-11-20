@@ -1,4 +1,4 @@
-import { useAuthContext } from "./useAuth"
+import { useAuthContext } from './useAuth'
 
 export default function useUserHasRiotBindedAccount() {
   const { user } = useAuthContext()

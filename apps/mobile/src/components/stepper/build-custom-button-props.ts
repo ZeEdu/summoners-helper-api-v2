@@ -1,15 +1,18 @@
-import { StyleSheet } from "react-native";
-import { ButtonProps } from "react-native-paper";
+import { StyleSheet } from 'react-native'
+import { ButtonProps } from 'react-native-paper'
 
 type ButtonPropsWithOptionalChildren = Omit<ButtonProps, 'children'> & {
-  children?: React.ReactNode,
-  t: (key: string) => string,
+  children?: React.ReactNode
+  t: (key: string) => string
 }
 
-export const buildCustomButtonProps = ({ t, ...buttonProps }: ButtonPropsWithOptionalChildren): ButtonProps => {
+export const buildCustomButtonProps = ({
+  t,
+  ...buttonProps
+}: ButtonPropsWithOptionalChildren): ButtonProps => {
   return {
     children: t('stepper.footer.next'),
-    mode: "contained",
+    mode: 'contained',
     style: styles.footerButton,
     ...buttonProps,
   }
@@ -17,6 +20,6 @@ export const buildCustomButtonProps = ({ t, ...buttonProps }: ButtonPropsWithOpt
 
 const styles = StyleSheet.create({
   footerButton: {
-    flex: 1
-  }
+    flex: 1,
+  },
 })

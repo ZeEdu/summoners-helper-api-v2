@@ -1,19 +1,19 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-import { IItems } from '@org/contracts';
+import { IItems } from '@org/contracts'
 
-import { ItemList } from './item-list.schema';
+import { ItemList } from './item-list.schema'
 
 @Schema()
 export class Items implements IItems {
   @Prop({ type: String, required: true })
-  rowName: string;
+  rowName: string
 
   @Prop([{ type: ItemList, required: true }])
-  itemsList: ItemList[];
+  itemsList: ItemList[]
 
   @Prop({ type: String, required: true })
-  description: string;
+  description: string
 }
 
-export const ItemsSchema = SchemaFactory.createForClass(Items);
+export const ItemsSchema = SchemaFactory.createForClass(Items)
