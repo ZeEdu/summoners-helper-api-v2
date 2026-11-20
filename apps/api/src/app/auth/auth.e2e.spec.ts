@@ -95,9 +95,13 @@ describe('AuthController e2e', () => {
   }
 
   beforeAll(async () => {
+    let start = Date.now()
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile()
+
+    console.log(`[Auth E2E] Module compilation: ${Date.now() - start}ms`)
 
     userModel = module.get<Model<UserDocument>>(getModelToken(User.name))
 
@@ -106,7 +110,10 @@ describe('AuthController e2e', () => {
     app.use(cookieParser())
     app.useGlobalPipes(new ValidationPipe())
 
+    start = Date.now()
+
     await app.init()
+    console.log(`[Auth E2E] Application initialization: ${Date.now() - start}ms`)
   })
 
   afterAll(async () => {
@@ -114,7 +121,11 @@ describe('AuthController e2e', () => {
   })
 
   beforeEach(async () => {
+    const start = Date.now()
+
     await userModel.deleteMany()
+
+    console.log(`[Auth E2E] Database cleanup: ${Date.now() - start}ms`)
   })
 
   describe('register', () => {
