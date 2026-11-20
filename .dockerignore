@@ -1,0 +1,26 @@
+.git
+.gitignore
+.nx
+**/.expo
+node_modules
+**/node_modules
+dist
+**/dist
+apps/mobile/dist
+coverage
+**/coverage
+.tmp
+.cache
+
+# Native Android/iOS build artifacts are not needed by the API/Admin containers.
+apps/mobile/android
+apps/mobile/ios
+apps/mobile/package-lock.json
+
+# Do not bake local secrets into the image.
+.env
+.env.*
+!.env.example
+
+# Generated Data Dragon files are prepared inside the image and stored in a volume.
+apps/api/src/assets/ddragon
