@@ -46,7 +46,7 @@ export interface Section {
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App implements OnInit, OnDestroy, AfterViewInit {
+export class App implements OnInit, OnDestroy {
   @ViewChild(MatDrawer) drawer!: MatDrawer
 
   readonly dialog = inject(MatDialog)
@@ -94,12 +94,6 @@ export class App implements OnInit, OnDestroy, AfterViewInit {
     this.eventBusSub = this.eventBusService.on('logout', () => {
       this.handleLogout()
     })
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.drawer.toggle()
-    }, 500)
   }
 
   ngOnDestroy() {
