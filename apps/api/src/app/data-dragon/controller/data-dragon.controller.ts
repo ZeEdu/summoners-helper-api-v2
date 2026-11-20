@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import z from 'zod'
 
-import { SupportedLanguages } from '@org/contracts'
+import type { SupportedLanguages } from '@org/contracts'
 
 import { GetLang } from '../../decorators/language.decorator'
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe'
