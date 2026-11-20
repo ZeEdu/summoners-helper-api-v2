@@ -6,12 +6,12 @@ Esta configuração é voltada ao **ambiente local de desenvolvimento** do monor
 
 ## Serviços
 
-| Serviço | Container | Endereço no host |
-|---|---|---|
-| MongoDB 7 | `mongodb` | `127.0.0.1:27017` |
-| NestJS API | `api` | `http://localhost:3000/api` |
-| Angular Admin | `admin` | `http://localhost:4200` |
-| Expo Mobile Web | `mobile-web` (Nginx) | `http://localhost:8081` |
+| Serviço         | Container            | Endereço no host            |
+| --------------- | -------------------- | --------------------------- |
+| MongoDB 7       | `mongodb`            | `127.0.0.1:27017`           |
+| NestJS API      | `api`                | `http://localhost:3000/api` |
+| Angular Admin   | `admin`              | `http://localhost:4200`     |
+| Expo Mobile Web | `mobile-web` (Nginx) | `http://localhost:8081`     |
 
 Dentro da rede Docker, a API acessa o MongoDB pelo hostname `mongodb`, e não por `localhost`. O navegador acessa a API pela porta publicada no host (`localhost:3000`).
 
