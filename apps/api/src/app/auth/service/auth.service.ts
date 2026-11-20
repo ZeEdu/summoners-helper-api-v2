@@ -3,15 +3,16 @@ import {
   ForbiddenException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { I18nService } from 'nestjs-i18n';
-import { CreateUserDto, IUser } from '@org/contracts';
-import { randomUUID } from 'crypto';
-import * as argon2 from 'argon2';
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtService, JwtSignOptions } from '@nestjs/jwt'
+import { CreateUserDto, UserDto } from '@org/contracts'
+import * as argon2 from 'argon2'
+import { randomUUID } from 'crypto'
+import { I18nService } from 'nestjs-i18n'
 
-import { UsersService } from '../../users/service/users.service';
+import { I18nTranslations } from '../../../generated/i18n.generated'
+import { UsersService } from '../../users/service/users.service'
 
 @Injectable()
 export class AuthService {
@@ -19,99 +20,85 @@ export class AuthService {
     private readonly usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    private i18n: I18nService,
-  ) { }
+    private i18n: I18nService<I18nTranslations>,
+  ) {}
 
-  async validateUser(email: string, password: string): Promise<IUser> {
-    const user = await this.usersService.findOneByEmailWithPassword(email);
+  async validateUser(email: string, password: string): Promise<UserDto> {
+    const user = await this.usersService.findOneByEmailWithPassword(email)
     if (!user) {
-      throw new UnauthorizedException(
-        this.i18n.t('auth.errors.validate.unauthorized'),
-      );
+      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.unauthorized'))
     }
 
-    const isMatch = await argon2.verify(user.password, password);
+    const isMatch = await argon2.verify(user.password, password)
     if (!isMatch) {
-      throw new UnauthorizedException(
-        this.i18n.t('auth.errors.validate.unauthorized'),
-      );
+      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.unauthorized'))
     }
 
-    const { password: _pass, ...result } = user;
-    return result;
+    const { password: _pass, ...result } = user
+    return result
   }
 
-  async login(
-    user: IUser,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
-    const tokens = await this.getTokens(user._id.toString(), user.email);
-    await this.updateRefreshToken(user._id.toString(), tokens.refreshToken);
-    return tokens;
+  async validateSystemAdmin(email: string) {
+    const user = await this.usersService.findOneByEmail(email)
+    if (!user) {
+      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.unauthorized'))
+    }
+
+    if (!user.isSystemAdmin) {
+      throw new UnauthorizedException(this.i18n.t('auth.errors.validate.systemAdmin'))
+    }
+
+    return user
   }
 
-  async register(
-    user: CreateUserDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
-    const userByEmail = await this.usersService.findOneByEmail(user.email);
+  async login(user: UserDto): Promise<{ accessToken: string; refreshToken: string }> {
+    const tokens = await this.getTokens(user.id, user.email)
+    await this.updateRefreshToken(user.id, tokens.refreshToken)
+    return tokens
+  }
+
+  async register(user: CreateUserDto): Promise<{ accessToken: string; refreshToken: string }> {
+    const userByEmail = await this.usersService.findOneByEmail(user.email)
     if (userByEmail) {
-      throw new ConflictException(
-        this.i18n.t('auth.errors.register.emailInUse'),
-      );
+      throw new ConflictException(this.i18n.t('auth.errors.register.emailInUse'))
     }
 
-    const userByUsername = await this.usersService.findOneByUsername(
-      user.username,
-    );
+    const userByUsername = await this.usersService.findOneByUsername(user.username)
     if (userByUsername) {
-      throw new ConflictException(
-        this.i18n.t('auth.errors.register.usernameInUse'),
-      );
+      throw new ConflictException(this.i18n.t('auth.errors.register.usernameInUse'))
     }
 
-    const hashedPassword = await argon2.hash(user.password);
+    const hashedPassword = await argon2.hash(user.password)
     const createdUser = await this.usersService.create({
       ...user,
       password: hashedPassword,
-    });
+    })
 
-    const tokens = await this.getTokens(
-      createdUser._id.toString(),
-      createdUser.email,
-    );
-    await this.updateRefreshToken(
-      createdUser._id.toString(),
-      tokens.refreshToken,
-    );
+    const tokens = await this.getTokens(createdUser.id, createdUser.email)
+    await this.updateRefreshToken(createdUser.id, tokens.refreshToken)
 
-    return tokens;
+    return tokens
   }
 
   async refreshToken(userId: string, refreshToken: string) {
-    const user = await this.usersService.findOneById(userId);
+    const user = await this.usersService.findOneByIdWithRefreshToken(userId)
     if (!user || !user.refreshToken) {
-      throw new ForbiddenException(
-        this.i18n.t('auth.errors.refresh.forbidden'),
-      );
+      throw new ForbiddenException(this.i18n.t('auth.errors.refresh.forbidden'))
     }
 
-    const refreshTokenMatches = await argon2.verify(
-      user.refreshToken,
-      refreshToken,
-    );
+    const refreshTokenMatches = await argon2.verify(user.refreshToken, refreshToken)
     if (!refreshTokenMatches) {
-      throw new ForbiddenException(
-        this.i18n.t('auth.errors.refresh.forbidden'),
-      );
+      throw new ForbiddenException(this.i18n.t('auth.errors.refresh.forbidden'))
     }
 
-    const tokens = await this.getTokens(user._id.toString(), user.email);
-    await this.updateRefreshToken(user._id.toString(), tokens.refreshToken);
+    const tokens = await this.getTokens(user.id, user.email)
+    await this.updateRefreshToken(user.id, tokens.refreshToken)
 
-    return tokens;
+    return tokens
   }
 
   async logout(userId: string) {
-    await this.usersService.removeRefreshToken(userId);
+    await this.usersService.removeRefreshToken(userId)
   }
 
   private async getTokens(
@@ -121,34 +108,26 @@ export class AuthService {
     const accessTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
       expiresIn: parseInt(
-        this.configService.getOrThrow<string>(
-          'ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC',
-        ),
+        this.configService.getOrThrow<string>('ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC'),
       ),
-    };
+    }
 
     const refreshTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
       expiresIn: '7d',
-    };
+    }
 
-    const payload = { sub: userId, email };
+    const payload = { sub: userId, email }
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(
-        { ...payload, jti: randomUUID() },
-        accessTokenOptions,
-      ),
-      this.jwtService.signAsync(
-        { ...payload, jti: randomUUID() },
-        refreshTokenOptions,
-      ),
-    ]);
+      this.jwtService.signAsync({ ...payload, jti: randomUUID() }, accessTokenOptions),
+      this.jwtService.signAsync({ ...payload, jti: randomUUID() }, refreshTokenOptions),
+    ])
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken }
   }
 
   private async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashedRefreshPassword = await argon2.hash(refreshToken);
-    await this.usersService.updateRefreshToken(userId, hashedRefreshPassword);
+    const hashedRefreshPassword = await argon2.hash(refreshToken)
+    await this.usersService.updateRefreshToken(userId, hashedRefreshPassword)
   }
 }

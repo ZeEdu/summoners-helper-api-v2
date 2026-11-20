@@ -1,14 +1,23 @@
-import { Types } from 'mongoose';
-import { RIOT_SERVERS } from '../constants';
+import { Types } from 'mongoose'
+import { RIOT_SERVERS } from '../constants'
 
 export interface IUser {
-  _id: Types.ObjectId;
-  username: string;
-  email: string;
-  password?: string;
-  refreshToken?: string;
-  gameName?: string;
-  tagLine?: string;
-  server?: RIOT_SERVERS;
-  puuid?: string;
+  _id: Types.ObjectId
+  username: string
+  email: string
+  password?: string
+  refreshToken?: string
+  gameName?: string
+  tagLine?: string
+  server?: RIOT_SERVERS
+  puuid?: string
+  isSystemAdmin?: boolean
 }
+
+export interface UserDto extends Omit<IUser, '_id'> {
+  id: string
+}
+
+export type UserDtoWithPuuid = UserDto & { puuid: string }
+export type UserDtoWithPassword = UserDto & { password: string }
+export type UserDtoWithRefreshToken = UserDto & { refreshToken: string }

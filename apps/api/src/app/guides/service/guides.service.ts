@@ -1,58 +1,97 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model, QueryFilter, QueryOptions } from 'mongoose'
+
 import {
+  CreateGuideDto,
   DEFAULT_LIMIT,
   DEFAULT_OFFSET,
+  GuideDto,
+  IGuide,
   PaginationDto,
-} from '../../pagination/pagination.dto';
-import { Model, QueryFilter, QueryOptions } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { Guide, GuideDocument, IGuide } from '../schema/guide.schema';
-import { CreateGuideDto } from '../dto/guide/create-guide.dto';
-import { PatchGuideDto } from '../dto/patch-guide.dto';
-import { IUser } from '@org/contracts';
+} from '@org/contracts'
+
+import ResponseMappers from '../../response-mappers'
+import { PatchGuideDto } from '../dto/patch-guide.dto'
+import { Guide, GuideDocument } from '../schema/guide.schema'
 
 @Injectable()
 export class GuidesService {
-  constructor(@InjectModel(Guide.name) private guideModel: Model<GuideDocument>) { }
+  constructor(@InjectModel(Guide.name) private guideModel: Model<GuideDocument>) {}
 
-  async getGuides(filter?: QueryFilter<Guide>, pagination?: PaginationDto) {
-    const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = pagination || {};
-    filter = filter || {};
+  async get(
+    filter?: QueryFilter<Guide>,
+    pagination?: PaginationDto,
+  ): Promise<{ guides: GuideDto[]; count: number }> {
+    const limit = pagination?.limit || DEFAULT_LIMIT
+    const offset = pagination?.offset || DEFAULT_OFFSET
 
-    const count = await this.guideModel.countDocuments(filter);
+    filter = filter || {}
+    filter.blocked = { $ne: true } // TODO: Não gosto dessa solução, é a mesma que alguns plugin do mongoose utilizam, no entanto, não gosto do $ne
+
+    const count = await this.guideModel.countDocuments(filter)
     const guides = await this.guideModel
       .find(filter)
       .limit(limit)
-      .skip(offset)
-      .lean<IUser[]>();
+      .skip(offset * limit)
+      .lean<IGuide[]>()
 
-    return { guides, count };
+    return { guides: guides.map(ResponseMappers.guide), count }
   }
 
-  getGuideById(guideId: string) {
-    return this.guideModel.findById(guideId).lean<IUser[]>();
+  async getById(guideId: string): Promise<GuideDto | undefined> {
+    const guide = await this.guideModel.findById(guideId).lean<IGuide>()
+
+    if (guide) {
+      return ResponseMappers.guide(guide)
+    }
   }
 
-  createGuide(guide: CreateGuideDto) {
-    return this.guideModel.create(guide);
+  create(guide: CreateGuideDto): Promise<GuideDto> {
+    return this.guideModel.create(guide).then(ResponseMappers.guide)
   }
 
-  patchGuide(
+  async patch(
     guideId: string,
     guide: Partial<PatchGuideDto>,
     queryOptions?: QueryOptions<Guide>,
-  ) {
-    const { returnDocument = 'after' } = queryOptions || {};
-    // Impedir o update de certos campos
-    return this.guideModel
+  ): Promise<GuideDto | undefined> {
+    const { returnDocument = 'after' } = queryOptions || {}
+    const updatedGuide = await this.guideModel
       .findByIdAndUpdate(guideId, guide, {
         ...queryOptions,
         returnDocument,
       })
-      .lean<IGuide>();
+      .lean<IGuide>()
+
+    if (updatedGuide) {
+      return ResponseMappers.guide(updatedGuide)
+    }
   }
 
   deleteGuide(guideId: string) {
-    return this.guideModel.deleteOne({ _id: guideId });
+    return this.guideModel.deleteOne({ _id: guideId })
+  }
+
+  async block(guideId: string) {
+    await this.guideModel.updateOne(
+      {
+        _id: guideId,
+      },
+      {
+        blocked: true,
+      },
+    )
+  }
+
+  async unblock(guideId: string) {
+    await this.guideModel.updateOne(
+      {
+        _id: guideId,
+      },
+      {
+        blocked: false,
+      },
+    )
   }
 }

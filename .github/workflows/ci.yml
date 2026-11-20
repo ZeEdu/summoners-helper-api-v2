@@ -13,6 +13,24 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/summoners-helper_test
+      RIOT_API_KEY: ${{secrets.RIOT_API_KEY}}
+      ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC: ${{secrets.ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC}}
+      CORS_ORIGIN: ${{secrets.CORS_ORIGIN}}
+      JWT_REFRESH_SECRET: ${{secrets.JWT_REFRESH_SECRET}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      NODE_ENV: ${{secrets.NODE_ENV}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,14 +45,16 @@ jobs:
       # Cache node_modules
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: "npm"
+          node-version: 22
+          cache: 'npm'
 
       - run: npm ci
 
       # Prepend any command with "nx record --" to record its logs to Nx Cloud
+      - run: npm run prepare:ddragon
       - run: npx nx record -- npx nx format:check  --base="remotes/origin/main"
-      - run: npx nx run-many -t lint test build typecheck e2e
+      - run: npm run validate
+      # - run: npx nx run-many -t lint test build typecheck e2e
       # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/ci/features/self-healing-ci
       - run: npx nx fix-ci
         if: always()

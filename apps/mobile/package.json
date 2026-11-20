@@ -47,7 +47,15 @@
     "react-native-paper": "*",
     "@react-navigation/bottom-tabs": "*",
     "@expo/vector-icons": "*",
-    "@gorhom/bottom-sheet": "*"
+    "@gorhom/bottom-sheet": "*",
+    "zod": "*",
+    "@react-native-clipboard/clipboard": "*",
+    "react-native-reanimated": "*",
+    "react-native-gesture-handler": "*",
+    "react-native-reanimated-skeleton": "*",
+    "react-native-paper-dates": "*",
+    "expo-localization": "*",
+    "i18n-js": "*"
   },
   "devDependencies": {}
 }

@@ -1,9 +1,11 @@
-import z from 'zod';
-import { createGuideSchema } from './guide/create-guide.dto';
+import { GuideSchemaShape } from '@org/contracts'
+import z from 'zod'
 
-export const patchGuideSchema = createGuideSchema.omit({
+export const PatchGuideSchema = GuideSchemaShape.omit({
   createdBy: true,
-  createdAt: true
+  createdAt: true,
+}).extend({
+  updatedAt: z.string({ error: 'formato do campo é inválido' }),
 })
 
-export type PatchGuideDto = z.infer<typeof patchGuideSchema>
+export type PatchGuideDto = z.infer<typeof PatchGuideSchema>

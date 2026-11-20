@@ -1,121 +1,107 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types, HydratedDocument } from 'mongoose';
-import { IItems, Items, ItemSchema } from './item.schema';
-import { AbilitiesProgression, AbilitiesProgressionSchema } from './abilities-progression.schema';
-import { IThreat, Threat, ThreatSchema } from './threat.schema';
-import { IRunes, Runes, RunesSchema } from './rune.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { HydratedDocument, SchemaTypes, Types } from 'mongoose'
 
-export interface IGuide {
-  _id: Types.ObjectId;
-  title: string;
-  createdBy: Types.ObjectId;
-  introduction: string;
-  patchVersion: string;
-  createdAt: Date;
-  updatedAt?: Date;
-  champion: string;
-  role: string;
+import type { IGuide, IRuneSlots } from '@org/contracts'
 
-  // Runes
-  runes: IRunes;
-  runesDescription: string;
-
-  // Bonus
-  bonusSlotOne: string;
-  bonusSlotTwo: string;
-  bonusSlotThree: string;
-  bonusDescription: string;
-
-  // Spells
-  firstSpell: string;
-  secondSpell: string;
-
-  spellsDescription: string;
-
-  // Items
-  itemsBlock: IItems[];
-  itemsDescription: string;
-
-  // Abilities Progression
-  abilitiesProgression: AbilitiesProgression;
-  abilitiesProgressionDescription: string;
-
-  threatsDescription: string;
-  threats: IThreat[];
-}
+import { AbilitiesProgression, AbilitiesProgressionSchema } from './abilities-progression.schema'
+import { Items, ItemsSchema } from './items.schema'
+import { RuneSlots } from './rune-slot.schema'
+import { Threat, ThreatSchema } from './threat.schema'
 
 @Schema()
 export class Guide implements IGuide {
-  @Prop({ type: String, required: true })
-  introduction: string;
+  _id: Types.ObjectId
 
   @Prop({ type: String, required: true })
-  patchVersion: string;
+  title: string
+
+  @Prop({ type: String, required: true })
+  introduction: string
+
+  @Prop({ type: String, required: true })
+  champion: string
+
+  @Prop({ type: String, required: true })
+  role: string
+
+  @Prop({ type: String, required: true })
+  patchVersion: string
+
+  @Prop({ type: Date, required: true })
+  createdAt: Date
 
   @Prop({ type: Date })
-  createdAt: Date;
-  @Prop({ type: Date })
-  updatedAt?: Date;
+  updatedAt?: Date
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
+  createdBy: Types.ObjectId
 
   @Prop({ type: String, required: true })
-  champion: string;
+  primaryRune: string
 
   @Prop({ type: String, required: true })
-  role: string;
+  primaryRuneDescription: string
+
+  @Prop({ type: RuneSlots, required: true })
+  primarySlots: IRuneSlots
 
   @Prop({ type: String, required: true })
-  bonusSlotOne: string;
+  secondaryRune: string
 
   @Prop({ type: String, required: true })
-  bonusSlotTwo: string;
+  secondaryRuneDescription: string
+
+  @Prop({ type: RuneSlots, required: true })
+  secondarySlots: IRuneSlots
 
   @Prop({ type: String, required: true })
-  bonusSlotThree: string;
+  bonusSlotOne: string
 
   @Prop({ type: String, required: true })
-  bonusDescription: string;
+  bonusSlotTwo: string
 
   @Prop({ type: String, required: true })
-  firstSpell: string;
-  @Prop({ type: String, required: true })
-  secondSpell: string;
-  @Prop({ type: String, required: true })
-  spellsDescription: string;
+  bonusSlotThree: string
 
   @Prop({ type: String, required: true })
-  title: string;
+  bonusDescription: string
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  createdBy: Types.ObjectId;
+  // Spells
+  @Prop({ type: String, required: true })
+  firstSpell: string
 
   @Prop({ type: String, required: true })
-  abilitiesProgressionDescription: string;
-
-  @Prop({ type: AbilitiesProgressionSchema }) // TODO Garantir que isso funciona
-  abilitiesProgression: AbilitiesProgression;
+  secondSpell: string
 
   @Prop({ type: String, required: true })
-  itemsDescription: string;
+  spellsDescription: string
 
-  @Prop([{ type: ItemSchema }])
-  itemsBlock: Items[];
-
+  // Abilities Progression
   @Prop({ type: String, required: true })
-  threatsDescription: string;
+  abilitiesProgressionDescription: string
 
-  @Prop([{ type: ThreatSchema }])
-  threats: Threat[]; // TODO Garantir que isso funciona
+  @Prop({ type: AbilitiesProgressionSchema, required: true }) // TODO Garantir que isso funciona
+  abilitiesProgression: AbilitiesProgression
 
+  // Items
   @Prop({ type: String, required: true })
-  runesDescription: string;
+  itemsDescription: string
 
-  @Prop({ type: RunesSchema })
-  runes: Runes;
+  @Prop([{ type: ItemsSchema, required: true }])
+  items: Items[]
 
-  _id: Types.ObjectId;
+  // Threats
+  @Prop({ type: String, required: true })
+  threatsDescription: string
+
+  @Prop([{ type: ThreatSchema, required: true }])
+  threats: Threat[]
+
+  @Prop({ type: Boolean })
+  blocked?: boolean
 }
 
-export const GuideSchema = SchemaFactory.createForClass(Guide);
+export const GuideSchema = SchemaFactory.createForClass(Guide)
 
 export type GuideDocument = HydratedDocument<Guide>
 
@@ -132,24 +118,24 @@ export const CAN_UPDATE_FIELDS = [
   'firstSpell',
   'secondSpell',
   'spellsDescription',
-  'itemsBlock',
+  'items',
   'itemsDescription',
   'abilitiesProgressionDescription',
   'title',
-];
+]
 
 export interface Bonus {
-  slotOne: BonusItem;
-  slotTwo: BonusItem;
-  slotThree: BonusItem;
+  slotOne: BonusItem
+  slotTwo: BonusItem
+  slotThree: BonusItem
 }
 
 export interface BonusItem {
-  id: string;
-  description: string;
+  id: string
+  description: string
 }
 
 export interface Spells {
-  first: string;
-  second: string;
+  first: string
+  second: string
 }

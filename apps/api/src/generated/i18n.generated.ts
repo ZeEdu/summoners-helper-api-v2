@@ -7,8 +7,12 @@ import type { Path } from "nestjs-i18n";
 export type I18nTranslations = {
     "auth": {
         "errors": {
+            "notFound": {
+                "token": string;
+            };
             "validate": {
                 "unauthorized": string;
+                "systemAdmin": string;
             };
             "register": {
                 "emailInUse": string;
@@ -16,6 +20,17 @@ export type I18nTranslations = {
             };
             "refresh": {
                 "forbidden": string;
+            };
+        };
+    };
+    "comments": {
+        "errors": {
+            "post": {
+                "guideDoNotExists": string;
+            };
+            "reply": {
+                "opRemoved": string;
+                "guideDoNotExists": string;
             };
         };
     };
@@ -33,11 +48,38 @@ export type I18nTranslations = {
             };
         };
     };
+    "report": {
+        "errors": {
+            "notFound": string;
+            "already": {
+                "archived": string;
+                "dismissed": string;
+            };
+        };
+    };
     "riot-api": {
         "errors": {
             "gameNameOrTagLineIsRequired": string;
             "serviceUnavailableException": string;
         };
+    };
+    "validation": {
+        "enum": string;
+        "reportTargetRequired": string;
+        "passwordPattern": string;
+        "objectId": string;
+        "type": string;
+        "invalid": string;
+        "string.min": string;
+        "string.max": string;
+        "number.min": string;
+        "number.max": string;
+        "array.min": string;
+        "array.max": string;
+        "email": string;
+        "regex": string;
+        "format": string;
+        "default": string;
     };
 };
 /* prettier-ignore */

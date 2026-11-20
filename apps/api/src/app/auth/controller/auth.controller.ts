@@ -7,24 +7,32 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
-} from '@nestjs/common';
-import { Response } from 'express';
+} from '@nestjs/common'
+import type { Response } from 'express'
 
-import { AuthService } from '../service/auth.service';
-import { Public } from '../../decorators/public.decorator';
-import { LocalGuard } from '../../guards/local.guard';
-import { CurrentUser } from '../../decorators/user.decorator';
-import { JwtGuard } from '../../guards/jwt.guard';
-import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
-import { isProduction } from '../../utils';
-import { CreateUserDto, createUserSchema, IUser } from '@org/contracts';
-import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
+import type { CreateUserDto, UserDto } from '@org/contracts'
+import { createUserSchema } from '@org/contracts'
 
-const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000;
+import { I18nService } from 'nestjs-i18n'
+import { I18nTranslations } from '../../../generated/i18n.generated'
+import { Public } from '../../decorators/public.decorator'
+import { CurrentUser } from '../../decorators/user.decorator'
+import { IsAdminGuard } from '../../guards/is-admin/is-admin.guard'
+import { JwtGuard } from '../../guards/jwt.guard'
+import { LocalGuard } from '../../guards/local.guard'
+import { RefreshTokenGuard } from '../../guards/refresh-token.guard'
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe'
+import { Utils } from '../../utils'
+import { AuthService } from '../service/auth.service'
+
+const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1_000
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private i18nService: I18nService<I18nTranslations>,
+  ) {}
 
   @Post('web/register')
   @Public()
@@ -32,10 +40,10 @@ export class AuthController {
     @Body(new ZodValidationPipe(createUserSchema)) body: CreateUserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    const tokens = await this.authService.register(body);
-    this.setRefreshToken(response, tokens.refreshToken);
+    const tokens = await this.authService.register(body)
+    this.setRefreshToken(response, tokens.refreshToken)
 
-    return { accessToken: tokens.accessToken };
+    return { accessToken: tokens.accessToken }
   }
 
   @Post('mobile/register')
@@ -43,90 +51,98 @@ export class AuthController {
   async mobileRegister(
     @Body(new ZodValidationPipe(createUserSchema)) body: CreateUserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const tokens = await this.authService.register(body);
+    const tokens = await this.authService.register(body)
 
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
-    };
+    }
+  }
+
+  @Post('admin/login')
+  @UseGuards(LocalGuard, IsAdminGuard)
+  async adminLogin(
+    @CurrentUser() user: UserDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{ accessToken: string }> {
+    const tokens = await this.authService.login(user)
+    this.setRefreshToken(response, tokens.refreshToken)
+
+    return { accessToken: tokens.accessToken }
   }
 
   @Post('web/login')
   @UseGuards(LocalGuard)
   async webLogin(
-    @CurrentUser() user: IUser,
+    @CurrentUser() user: UserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    const tokens = await this.authService.login(user);
-    this.setRefreshToken(response, tokens.refreshToken);
+    const tokens = await this.authService.login(user)
+    this.setRefreshToken(response, tokens.refreshToken)
 
-    return { accessToken: tokens.accessToken };
+    return { accessToken: tokens.accessToken }
   }
 
   @Post('mobile/login')
   @UseGuards(LocalGuard)
-  async mobileLogin(
-    @CurrentUser() user: IUser,
-  ): Promise<{ accessToken: string }> {
-    const tokens = await this.authService.login(user);
-    return { ...tokens };
+  async mobileLogin(@CurrentUser() user: UserDto): Promise<{ accessToken: string }> {
+    const tokens = await this.authService.login(user)
+    return { ...tokens }
   }
 
   @UseGuards(JwtGuard)
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async logout(
-    @CurrentUser() user: IUser,
-    @Res({ passthrough: true }) response: Response,
-  ) {
+  async logout(@CurrentUser() user: UserDto, @Res({ passthrough: true }) response: Response) {
     response.clearCookie('refresh_token', {
-      path: isProduction ? '/auth/refresh' : '/',
-    });
-    await this.authService.logout(user._id.toString());
+      path: Utils.isProduction ? '/api/auth/web/refresh' : '/',
+    })
+    await this.authService.logout(user.id)
   }
 
   @UseGuards(RefreshTokenGuard)
   @Post('web/refresh')
   async webRefreshToken(
-    @CurrentUser() user: IUser,
+    @CurrentUser() user: UserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{
-    accessToken: string;
+    accessToken: string
   }> {
-    const userId = user._id.toString();
-    const refreshToken = user.refreshToken;
+    const userId = user.id
+    const refreshToken = user.refreshToken
+
     if (!refreshToken) {
-      throw new UnauthorizedException('Token necessário não informado');
+      throw new UnauthorizedException(this.i18nService.t('auth.errors.notFound.token'))
     }
-    const tokens = await this.authService.refreshToken(userId, refreshToken);
+    const tokens = await this.authService.refreshToken(userId, refreshToken)
 
-    this.setRefreshToken(response, tokens.refreshToken);
+    this.setRefreshToken(response, tokens.refreshToken)
 
-    return { accessToken: tokens.accessToken };
+    return { accessToken: tokens.accessToken }
   }
 
   @UseGuards(RefreshTokenGuard)
   @Post('mobile/refresh')
-  async mobileRefreshToken(@CurrentUser() user: IUser): Promise<{
-    accessToken: string;
+  async mobileRefreshToken(@CurrentUser() user: UserDto): Promise<{
+    accessToken: string
   }> {
-    const userId = user._id.toString();
-    const refreshToken = user.refreshToken;
+    const userId = user.id
+    const refreshToken = user.refreshToken
     if (!refreshToken) {
-      throw new UnauthorizedException('Token necessário não informado');
+      throw new UnauthorizedException(this.i18nService.t('auth.errors.notFound.token'))
     }
 
-    const tokens = await this.authService.refreshToken(userId, refreshToken);
-    return { ...tokens };
+    const tokens = await this.authService.refreshToken(userId, refreshToken)
+    return { ...tokens }
   }
 
   private setRefreshToken(response: Response, token: string) {
     response.cookie('refresh_token', token, {
       httpOnly: true,
-      secure: isProduction,
+      secure: Utils.isProduction,
       sameSite: 'strict',
       maxAge: SEVEN_DAYS,
-      path: isProduction ? '/auth/refresh' : '/',
-    });
+      path: Utils.isProduction ? '/api/auth/web/refresh' : '/',
+    })
   }
 }

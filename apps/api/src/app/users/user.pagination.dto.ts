@@ -1,23 +1,35 @@
-import { QueryFilter } from 'mongoose';
-import z from 'zod';
+import { UsersPaginationDto } from '@org/contracts'
+import { QueryFilter } from 'mongoose'
 
-import { paginationSchema } from '../pagination/pagination.dto';
-import { User } from './schema/user.schema';
+import { User } from './schema/user.schema'
 
-export const userPaginationSchema = paginationSchema.safeExtend({
-  username: z.string({ error: '' })
-})
+export const quickSearch = (query: UsersPaginationDto): QueryFilter<User> => {
+  const filter: QueryFilter<User> = {}
 
-export type UserPaginationDto = z.infer<typeof userPaginationSchema>
-
-export const createUserPaginationFilter = (
-  query: UserPaginationDto,
-): QueryFilter<User> => {
-  const filter: QueryFilter<User> = {};
+  filter.$or = []
 
   if (query.username) {
-    filter.username = { $regex: query.username, $options: 'i' };
+    filter.$or.push({
+      username: { $regex: query.username, $options: 'i' },
+    })
   }
 
-  return filter;
-};
+  return filter
+}
+
+const filter = (query: UsersPaginationDto): QueryFilter<User> => {
+  const filter: QueryFilter<User> = {}
+
+  if (query.username) {
+    filter.username = { $regex: query.username, $options: 'i' }
+  }
+
+  return filter
+}
+
+const UserPagination = {
+  filter,
+  quickSearch,
+}
+
+export default UserPagination

@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './controller/auth.controller';
-import { AuthService } from './service/auth.service';
-import { JwtStrategy } from './strategy/jwt.strategy';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from '../users/users.module';
-import { LocalStrategy } from './strategy/local.strategy';
-import { RefreshTokenStrategy } from './strategy/refresh-token-strategy';
+import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { JwtModule } from '@nestjs/jwt'
+import { UsersModule } from '../users/users.module'
+import { AuthController } from './controller/auth.controller'
+import { AuthService } from './service/auth.service'
+import { JwtStrategy } from './strategy/jwt.strategy'
+import { LocalStrategy } from './strategy/local.strategy'
+import { RefreshTokenStrategy } from './strategy/refresh-token-strategy'
 
 @Module({
   imports: [
@@ -16,12 +16,16 @@ import { RefreshTokenStrategy } from './strategy/refresh-token-strategy';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: parseInt(configService.getOrThrow<string>('ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC'))
-        }
+          expiresIn: parseInt(
+            configService.getOrThrow<string>('ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC'),
+          ),
+        },
       }),
-      inject: [ConfigService]
-    })],
+      inject: [ConfigService],
+    }),
+  ],
   providers: [AuthService, JwtStrategy, LocalStrategy, RefreshTokenStrategy],
-  controllers: [AuthController]
+  controllers: [AuthController],
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

@@ -1,58 +1,52 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { RiotApiController } from './riot-api.controller';
-import {
-  IUserWithPuuid,
-  User,
-  UserSchema,
-} from '../../users/schema/user.schema';
-import { Model } from 'mongoose';
-import { faker } from '@faker-js/faker';
-import { UsersService } from '../../users/service/users.service';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { faker } from '@faker-js/faker'
+import { getModelToken, MongooseModule } from '@nestjs/mongoose'
+import { Test, TestingModule } from '@nestjs/testing'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { Model } from 'mongoose'
+import { User, UserSchema } from '../../users/schema/user.schema'
+import { UsersService } from '../../users/service/users.service'
+import { RiotApiService } from '../service/riot-api.service'
+import { RiotApiController } from './riot-api.controller'
 
-jest.mock('../service/riot-api.service');
-import { RiotApiService } from '../service/riot-api.service';
+jest.mock('../service/riot-api.service')
 
-import {
-  IExpectedRiotApiService,
-  RiotApiFixtures,
-} from '../../__fixtures__/riot-api.fixtures';
-import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service';
-import { I18nModule } from 'nestjs-i18n';
-import { I18N } from '../../i18n.config';
-import { CreateUserDto, RIOT_SERVERS } from '@org/contracts';
+import { CreateUserDto, RIOT_SERVERS, UserDtoWithPuuid } from '@org/contracts'
+import { I18nModule } from 'nestjs-i18n'
+import { IExpectedRiotApiService, RiotApiFixtures } from '../../__fixtures__/riot-api.fixtures'
+import { DataDragonTransformerService } from '../../ddragon/data-dragon-transformer.service'
+import { I18N } from '../../i18n.config'
+import ResponseMappers from '../../response-mappers'
 
-let mongodb: MongoMemoryServer;
+let mongodb: MongoMemoryServer
 
 describe('RiotApiController', () => {
-  let controller: RiotApiController;
-  let userModel: Model<User>;
+  let controller: RiotApiController
+  let userModel: Model<User>
 
-  let user: IUserWithPuuid;
-  let buildExpectedRiotApiService: IExpectedRiotApiService;
+  let user: UserDtoWithPuuid
+  let buildExpectedRiotApiService: IExpectedRiotApiService
 
   const userDto: CreateUserDto = {
     username: faker.internet.userName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
-  };
-  const userPuuid = faker.string.alphanumeric(78);
-  const tagLine = faker.string.alphanumeric(5);
-  const gameName = faker.internet.userName();
-  const server = RIOT_SERVERS.BR1;
+  }
+  const userPuuid = faker.string.alphanumeric(78)
+  const tagLine = faker.string.alphanumeric(5)
+  const gameName = faker.internet.userName()
+  const server = RIOT_SERVERS.br1
 
-  const championId = 107;
+  const championId = 107
 
-  let mockedRiotService: jest.Mocked<RiotApiService>;
+  let mockedRiotService: jest.Mocked<RiotApiService>
 
   beforeAll(async () => {
-    mongodb = await MongoMemoryServer.create();
-  });
+    mongodb = await MongoMemoryServer.create()
+  })
 
   afterAll(async () => {
-    await mongodb.stop();
-  });
+    await mongodb.stop()
+  })
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -72,20 +66,19 @@ describe('RiotApiController', () => {
         I18nModule.forRoot(I18N.config),
       ],
       controllers: [RiotApiController],
-    }).compile();
+    }).compile()
 
-    controller = module.get<RiotApiController>(RiotApiController);
-    mockedRiotService = module.get<jest.Mocked<RiotApiService>>(RiotApiService);
-    userModel = module.get<Model<User>>(getModelToken(User.name));
+    controller = module.get<RiotApiController>(RiotApiController)
+    mockedRiotService = module.get<jest.Mocked<RiotApiService>>(RiotApiService)
+    userModel = module.get<Model<User>>(getModelToken(User.name))
     const dDragonTransformService = module.get<DataDragonTransformerService>(
       DataDragonTransformerService,
-    );
+    )
 
-    buildExpectedRiotApiService = RiotApiFixtures.buildExpectedRiotApiService(
-      dDragonTransformService,
-    );
+    buildExpectedRiotApiService =
+      RiotApiFixtures.buildExpectedRiotApiService(dDragonTransformService)
 
-    await userModel.deleteMany();
+    await userModel.deleteMany()
 
     const savedUser = await new userModel({
       ...userDto,
@@ -93,66 +86,53 @@ describe('RiotApiController', () => {
       tagLine,
       server,
       puuid: userPuuid,
-    }).save();
+    }).save()
 
-    user = savedUser.toJSON();
-  });
+    user = ResponseMappers.userWithPuuid(savedUser)
+  })
 
   describe('getChampionsMastery', () => {
     it('should get champions masteries', async () => {
-      const result = await controller.getChampionsMasteries(user);
-      expect(result).toEqual(buildExpectedRiotApiService.getChampionsMasteries);
-      expect(mockedRiotService.getChampionsMasteries).toHaveBeenCalledWith(
-        user.puuid,
-        user.server,
-      );
-    });
-  });
+      const result = await controller.getChampionsMasteries(user)
+      expect(result).toEqual(buildExpectedRiotApiService.getChampionsMasteries)
+      expect(mockedRiotService.getChampionsMasteries).toHaveBeenCalledWith(user.puuid, user.server)
+    })
+  })
   describe('getChampionsMasteriesByChampion', () => {
     it('should get champion mastery by champion', async () => {
-      const result = await controller.getChampionsMasteriesByChampion(
-        user,
+      const result = await controller.getChampionsMasteriesByChampion(user, championId)
+      expect(result).toEqual(buildExpectedRiotApiService.getChampionsMasteriesByChampion)
+      expect(mockedRiotService.getChampionsMasteriesByChampion).toHaveBeenCalledWith(
+        user.puuid,
         championId,
-      );
-      expect(result).toEqual(
-        buildExpectedRiotApiService.getChampionsMasteriesByChampion,
-      );
-      expect(
-        mockedRiotService.getChampionsMasteriesByChampion,
-      ).toHaveBeenCalledWith(user.puuid, championId, user.server);
-    });
-  });
+        user.server,
+      )
+    })
+  })
   describe('getChampionsMasteriesByTop', () => {
     it('should get champion mastery by top usage', async () => {
-      const count = 5;
-      const result = await controller.getChampionsMasteriesByTop(user, count);
-      expect(result).toEqual(
-        buildExpectedRiotApiService.getChampionsMasteriesByTop,
-      );
+      const count = 5
+      const result = await controller.getChampionsMasteriesByTop(user, count)
+      expect(result).toEqual(buildExpectedRiotApiService.getChampionsMasteriesByTop)
       expect(mockedRiotService.getChampionsMasteriesByTop).toHaveBeenCalledWith(
         user.puuid,
         count,
         user.server,
-      );
-    });
-  });
+      )
+    })
+  })
   describe('getRankedStatus', () => {
     it('should get ranked status', async () => {
-      const result = await controller.getRankedStatus(user);
-      expect(result).toEqual(buildExpectedRiotApiService.getRankedStatus);
-      expect(mockedRiotService.getRankedStatus).toHaveBeenCalledWith(
-        user.puuid,
-        user.server,
-      );
-    });
-  });
+      const result = await controller.getRankedStatus(user)
+      expect(result).toEqual(buildExpectedRiotApiService.getRankedStatus)
+      expect(mockedRiotService.getRankedStatus).toHaveBeenCalledWith(user.puuid, user.server)
+    })
+  })
   describe('getLastFiveMatches', () => {
     it('should get user ranked status', async () => {
-      const result = await controller.getLastFiveMatches(user);
-      expect(result).toEqual(buildExpectedRiotApiService.getLastFiveMatches);
-      expect(mockedRiotService.getLastFiveMatches).toHaveBeenCalledWith(
-        user.puuid,
-      );
-    });
-  });
-});
+      const result = await controller.getLastFiveMatches(user)
+      expect(result).toEqual(buildExpectedRiotApiService.getLastFiveMatches)
+      expect(mockedRiotService.getLastFiveMatches).toHaveBeenCalledWith(user.puuid)
+    })
+  })
+})

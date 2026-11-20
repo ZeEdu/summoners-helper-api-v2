@@ -1,59 +1,79 @@
-import { IUserWithPuuid } from '../schema/user.schema';
-import { UsersService } from '../service/users.service';
-import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
-import {
-  createUserPaginationFilter,
-  UserPaginationDto,
-  userPaginationSchema,
-} from '../user.pagination.dto';
-import { JwtGuard } from '../../guards/jwt.guard';
-import { CurrentUser } from '../../decorators/user.decorator';
-import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard';
-import { IUser, UpdateUserProfileDto, updateUserProfileSchema } from '@org/contracts';
-import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
+import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common'
+
+import type {
+  UpdateUserProfileDto,
+  UserDto,
+  UserDtoWithPuuid,
+  UsersPaginationDto,
+} from '@org/contracts'
+import { updateUserProfileSchema, usersPaginationSchema } from '@org/contracts'
+
+import { CurrentUser } from '../../decorators/user.decorator'
+import { JwtGuard } from '../../guards/jwt.guard'
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe'
+import { HasRiotInfoGuard } from '../../riot-api/guards/has-riot-info.guard'
+import { UsersService } from '../service/users.service'
+import UserPagination from '../user.pagination.dto'
 
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) { }
+  constructor(private usersService: UsersService) {}
 
   @Get()
   async getAllUsers(
-    @Query(new ZodValidationPipe(userPaginationSchema))
-    pagination: UserPaginationDto,
+    @Query(new ZodValidationPipe(usersPaginationSchema))
+    pagination: UsersPaginationDto,
   ): Promise<{
-    count: number;
-    users: IUser[];
+    count: number
+    users: UserDto[]
   }> {
-    const filter = createUserPaginationFilter(pagination);
-    const { offset, limit } = pagination;
-    return this.usersService.getAllUsers(filter, { offset, limit });
+    const filter = UserPagination.filter(pagination)
+
+    const { offset, limit } = pagination
+    return this.usersService.getAllUsers(filter, { offset, limit })
   }
 
   @Get('me')
-  async getMe(@CurrentUser() user: IUser): Promise<IUser | null> {
-    return this.usersService.findOneById(user._id.toString());
+  async getMe(@CurrentUser() user: UserDtoWithPuuid) {
+    return this.usersService.findOneByIdWithPuuid(user.id)
   }
 
   @Patch('update-profile')
   async updateProfile(
     @CurrentUser()
-    user: IUser,
+    user: UserDto,
     @Body(new ZodValidationPipe(updateUserProfileSchema))
     updateProfileDto: UpdateUserProfileDto,
   ) {
-    await this.usersService.updateUserWithRiotData(user, updateProfileDto);
+    await this.usersService.updateUserWithRiotData(user, updateProfileDto)
+    return {}
   }
 
+  // TODO: Corrigir o uso do IUserWithPuuid. Sempre que deixar o service, vai estar como IUserDto
   @Get('top-masteries')
   @UseGuards(HasRiotInfoGuard)
-  async getTopMasteries(@CurrentUser() user: IUserWithPuuid) {
-    return this.usersService.getTopMasteries(user, 5);
+  async getTopMasteries(@CurrentUser() user: UserDtoWithPuuid) {
+    return this.usersService.getTopMasteries(user, 5)
   }
 
   @Get('last-five-matches')
   @UseGuards(HasRiotInfoGuard)
-  async getLastFiveMatches(@CurrentUser() user: IUserWithPuuid) {
-    return this.usersService.getLastFiveMatches(user);
+  async getLastFiveMatches(@CurrentUser() user: UserDtoWithPuuid) {
+    return this.usersService.getLastFiveMatches(user)
+  }
+
+  @Get()
+  async getUserQuickSearch(
+    @Query(new ZodValidationPipe(usersPaginationSchema))
+    pagination: UsersPaginationDto,
+  ): Promise<{
+    count: number
+    users: UserDto[]
+  }> {
+    const filter = UserPagination.quickSearch(pagination)
+
+    const { offset, limit } = pagination
+    return this.usersService.getAllUsers(filter, { offset, limit })
   }
 }

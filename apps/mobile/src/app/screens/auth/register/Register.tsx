@@ -1,26 +1,26 @@
-import { faker } from '@faker-js/faker';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Alert, StyleSheet, View } from 'react-native';
+import { faker } from '@faker-js/faker'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Alert, StyleSheet, View } from 'react-native'
 
-import { CreateUserDto, createUserSchema } from '@org/contracts';
-import { StyledButton } from '@org/ui';
+import { CreateUserDto, createUserSchema } from '@org/contracts'
+import { StyledButton } from '@org/ui'
 
-import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors';
-import AppController from '../../../../components/forms/AppController';
-import FormFieldErrors from '../../../../components/forms/FormFieldErrors';
-import { useAuthContext } from '../../../../contexts/auth/useAuth';
-import { AuthStackParamList } from '../../../navigation/types';
+import { useNavigation } from '@react-navigation/native'
+import ApiFieldErrors from '../../../../components/forms/ApiFieldErrors'
+import AppInputController from '../../../../components/forms/AppInputController'
+import FormFieldErrors from '../../../../components/forms/FormFieldErrors'
+import { useAuthContext } from '../../../../contexts/auth/useAuth'
+import useI18n from '../../../../contexts/i18n/useI18n'
+import useZodResolver from '../../../../hooks/useZodResolver'
+import ChangeLanguageButton from '../../main/profile/change-language-button/ChangeLanguageButton'
 
-const resolver = zodResolver(createUserSchema);
+export default function Register() {
+  const i18n = useI18n()
+  const authContext = useAuthContext()
+  const navigation = useNavigation()
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>
-
-export default function Register(props: Props) {
-  const authContext = useAuthContext();
-
+  const resolver = useZodResolver(createUserSchema)
   const {
     control,
     handleSubmit,
@@ -30,67 +30,81 @@ export default function Register(props: Props) {
     defaultValues: {
       email: faker.internet.email(),
       username: faker.string.alpha(16),
-      password: faker.internet.password({ prefix: '1!Ab' }),
+      password: '1Ab' + 'x'.repeat(5),
     },
-  });
+  })
 
-  type ApiErrorsType = Partial<{ [K in keyof CreateUserDto]: string[] }>;
-  const [apiErrors, setApiErrors] = useState<ApiErrorsType | undefined>(
-    undefined,
-  );
+  type ApiErrorsType = Partial<{ [K in keyof CreateUserDto]: string[] }>
+  const [apiErrors, setApiErrors] = useState<ApiErrorsType | undefined>(undefined)
+
+  navigation.setOptions({
+    headerRight: () => (
+      <View style={{ padding: 16 }}>
+        <ChangeLanguageButton showCurrentLanguageAsButtonText={true} />
+      </View>
+    ),
+  })
 
   const onSubmit = async (formData: CreateUserDto) => {
+    console.log({ formData })
+
     const register = await authContext.register({
       email: formData.email,
       username: formData.username,
       password: formData.password,
-    });
+    })
 
     if (!register.success) {
       if (register.errors) {
         if (typeof register.errors === 'string') {
-          Alert.alert('Um erro ocorreu', register.errors);
+          Alert.alert('Um erro ocorreu', register.errors)
         } else {
-          setApiErrors(register.errors);
+          setApiErrors(register.errors)
         }
       }
     }
-  };
+  }
 
   return (
     <View style={style.block}>
-      <AppController
+      <AppInputController
         name="email"
-        label="Email:"
+        inputOptions={{
+          label: i18n.t('register.fields.email.label'),
+          placeholder: i18n.t('register.fields.email.placeholder'),
+        }}
         control={control}
-        placeholder="Seu Email"
       />
       <FormFieldErrors fieldError={errors.email} />
       <ApiFieldErrors apiErrors={apiErrors?.email} />
 
-      <AppController
-        name="username"
-        label="Username:"
+      <AppInputController
         control={control}
-        placeholder="Seu nome de usuário"
+        name="username"
+        inputOptions={{
+          label: i18n.t('register.fields.username.label'),
+          placeholder: i18n.t('register.fields.username.placeholder'),
+        }}
       />
       <FormFieldErrors fieldError={errors.username} />
       <ApiFieldErrors apiErrors={apiErrors?.username} />
 
-      <AppController
+      <AppInputController
         name="password"
-        label="Password:"
         control={control}
-        placeholder="Sua senha"
+        inputOptions={{
+          label: i18n.t('register.fields.password.label'),
+          placeholder: i18n.t('register.fields.password.placeholder'),
+        }}
       />
       <FormFieldErrors fieldError={errors.password} />
       <ApiFieldErrors apiErrors={apiErrors?.password} />
 
       <View>
-        <StyledButton onPress={handleSubmit(onSubmit)}>Submit</StyledButton>
+        <StyledButton onPress={handleSubmit(onSubmit)}>{i18n.t('register.submit')}</StyledButton>
       </View>
     </View>
-  );
+  )
 }
 
 const style = StyleSheet.create({
@@ -98,7 +112,7 @@ const style = StyleSheet.create({
     marginTop: 16,
     flex: 1,
     paddingHorizontal: 16,
-    gap: 16
+    gap: 16,
   },
   textInput: {
     borderWidth: 1,
@@ -106,4 +120,4 @@ const style = StyleSheet.create({
     borderRadius: 3,
     padding: 12,
   },
-});
+})

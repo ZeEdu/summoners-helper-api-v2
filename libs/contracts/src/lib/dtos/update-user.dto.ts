@@ -1,55 +1,22 @@
-import { z } from 'zod';
-import { RIOT_SERVERS } from '../constants';
+import { z } from 'zod'
+import { RIOT_SERVERS } from '../constants'
 
-const passwordPattern =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/;
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%?&]/
 
 export const updateUserSchema = z.object({
-  email: z
-    .email({ error: 'Email deve ser válido' })
-    .optional(),
+  email: z.email().optional(),
 
-  username: z
-    .string({ error: 'Formato inválido' })
-    .min(5, {
-      error: 'O nome de usuário deve ter pelo menos 5 caracteres',
-    })
-    .max(16, {
-      error: 'O nome de usuário deve ter no máximo 16 caracteres',
-    })
-    .optional(),
+  username: z.string().min(5).max(16).optional(),
 
-  password: z
-    .string({ error: 'Formato inválido' })
-    .min(8, {
-      error: 'A senha deve ter no mínimo 8 caracteres',
-    })
-    .max(64, {
-      error: 'A senha deve ter no máximo 64 caracteres',
-    })
-    .regex(passwordPattern, {
-      error:
-        'A senha deve ter ao menos uma letra maiúscula, minúscula, número e caracter especial (@, $, !, %, ? ou &)',
-    })
-    .optional(),
+  password: z.string().min(8).max(64).regex(passwordPattern).optional(),
 
-  puuid: z
-    .string({ error: 'Formato inválido' })
-    .optional(),
+  puuid: z.string().optional(),
 
-  tagLine: z
-    .string({ error: 'Formato inválido' })
-    .optional(),
+  tagLine: z.string().optional(),
 
-  gameName: z
-    .string({ error: 'Formato inválido' })
-    .optional(),
+  gameName: z.string().optional(),
 
-  server: z
-    .enum(RIOT_SERVERS, {
-      error: 'Servidor inválido',
-    })
-    .optional(),
-});
+  server: z.enum(RIOT_SERVERS).optional(),
+})
 
-export type UpdateUserDto = z.infer<typeof updateUserSchema>;
+export type UpdateUserDto = z.infer<typeof updateUserSchema>

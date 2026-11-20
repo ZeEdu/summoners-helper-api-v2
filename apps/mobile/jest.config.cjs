@@ -1,0 +1,27 @@
+/// <reference types="jest" />
+/// <reference types="node" />
+module.exports = {
+  displayName: 'mobile',
+  preset: 'jest-expo',
+  resolver: '@nx/jest/plugins/resolver',
+  moduleFileExtensions: ['ts', 'js', 'html', 'tsx', 'jsx'],
+  setupFiles: ['react-native-gesture-handler/jestSetup.js'],
+  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+  moduleNameMapper: {
+    '[.]svg$': '@nx/expo/plugins/jest/svg-mock',
+    '^expo-modules-core(|/.*)$':
+      '<rootDir>/../../node_modules/expo/node_modules/expo-modules-core$1',
+    '[.]svg$': '@nx/expo/plugins/jest/svg-mock',
+  },
+  transform: {
+    '[.][jt]sx?$': [
+      'babel-jest',
+      {
+        configFile: __dirname + '/.babelrc.js',
+      },
+    ],
+    '^.+[.](bmp|gif|jpg|jpeg|mp4|png|psd|svg|webp|ttf|otf|m4v|mov|mp4|mpeg|mpg|webm|aac|aiff|caf|m4a|mp3|wav|html|pdf|obj)$':
+      require.resolve('jest-expo/src/preset/assetFileTransformer.js'),
+  },
+  coverageDirectory: '../../coverage/apps/mobile',
+}

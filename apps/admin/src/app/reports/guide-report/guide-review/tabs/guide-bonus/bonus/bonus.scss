@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  gap: 0.5rem;
+
+  .thumbnail-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

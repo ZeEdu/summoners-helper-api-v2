@@ -1,0 +1,9 @@
+{
+  "errors": {
+    "notFound": "Report not found",
+    "already": {
+      "archived": "Report already archived",
+      "dismissed": "Report already dismissed"
+    }
+  }
+}

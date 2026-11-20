@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-content class="card-content">
+    <div>
+      <img
+        [alt]="(threat.threat | entityName : 'champions') + ' thumbnail'"
+        class="thumbnail"
+        [src]="thumbnail"
+      />
+    </div>
+    <div class="description-wrapper" style="margin: 0">
+      <h3 class="title">{{threat.threat | entityName : 'champions'}}</h3>
+      <p class="description">{{threat.description}}</p>
+    </div>
+  </mat-card-content>
+</mat-card>

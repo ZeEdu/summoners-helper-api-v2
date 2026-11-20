@@ -1,17 +1,13 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-
-export interface IThreat {
-  threat: string;
-  description: string;
-}
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { IThreat } from '@org/contracts'
 
 @Schema()
 export class Threat implements IThreat {
   @Prop({ type: String, required: true })
-  threat: string;
+  threat: string
 
   @Prop({ type: String, required: true })
-  description: string;
+  description: string
 }
 
-export const ThreatSchema = SchemaFactory.createForClass(Threat);
+export const ThreatSchema = SchemaFactory.createForClass(Threat)

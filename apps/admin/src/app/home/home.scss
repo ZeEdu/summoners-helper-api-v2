@@ -1,0 +1,27 @@
+@use '@angular/material' as mat;
+
+.dashboard {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  .dashboard-card {
+    flex: 1;
+  }
+}
+
+.quick-access {
+  display: flex;
+  flex-direction: column;
+
+  .quick-access-header {
+    font: var(--mat-sys-title-medium);
+  }
+
+  .quick-access-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

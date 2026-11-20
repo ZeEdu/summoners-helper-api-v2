@@ -1,39 +1,37 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from '../service/users.service';
-import { User, UserSchema } from '../schema/user.schema';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import {
-  createUserPaginationFilter,
-  UserPaginationDto,
-} from '../user.pagination.dto';
-import { faker } from '@faker-js/faker';
-import { ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-import nock from 'nock';
-import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose'
+import { Test, TestingModule } from '@nestjs/testing'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { Model } from 'mongoose'
+import { User, UserSchema } from '../schema/user.schema'
+import { UsersService } from '../service/users.service'
+import { UsersController } from './users.controller'
+
+import { faker } from '@faker-js/faker'
+import { ConfigModule } from '@nestjs/config'
+import { JwtModule } from '@nestjs/jwt'
+import { RIOT_SERVERS, UsersPaginationDto } from '@org/contracts'
+import { I18nModule } from 'nestjs-i18n'
+import nock from 'nock'
+import { I18N } from '../../i18n.config'
+import { RiotApiModule } from '../../riot-api/riot-api.module'
 import {
   RiotApiErrorLogger,
   RiotApiErrorLoggerSchema,
-} from '../../riot-api/schema/riot-api-error-logger.schema';
-import { RiotApiModule } from '../../riot-api/riot-api.module';
-import { I18nModule } from 'nestjs-i18n';
-import { I18N } from '../../i18n.config';
-import { RIOT_SERVERS } from '@org/contracts';
+} from '../../riot-api/schema/riot-api-error-logger.schema'
+import { RiotApiUtilsService } from '../../riot-api/service/riot-api.utils.service'
+import UserPagination from '../user.pagination.dto'
 
-let mongodb: MongoMemoryServer;
+let mongodb: MongoMemoryServer
 
 describe('UsersController', () => {
-  let controller: UsersController;
-  let usersService: UsersService;
-  let riotApiUtilsService: RiotApiUtilsService;
-  let userModel: Model<User>;
+  let controller: UsersController
+  let usersService: UsersService
+  let riotApiUtilsService: RiotApiUtilsService
+  let userModel: Model<User>
 
   beforeAll(async () => {
-    mongodb = await MongoMemoryServer.create();
-  });
+    mongodb = await MongoMemoryServer.create()
+  })
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,39 +50,39 @@ describe('UsersController', () => {
         I18nModule.forRoot(I18N.config),
       ],
       controllers: [UsersController],
-    }).compile();
+    }).compile()
 
-    controller = module.get<UsersController>(UsersController);
-    usersService = module.get<UsersService>(UsersService);
-    riotApiUtilsService = module.get<RiotApiUtilsService>(RiotApiUtilsService);
-    userModel = module.get<Model<User>>(getModelToken(User.name));
-  });
+    controller = module.get<UsersController>(UsersController)
+    usersService = module.get<UsersService>(UsersService)
+    riotApiUtilsService = module.get<RiotApiUtilsService>(RiotApiUtilsService)
+    userModel = module.get<Model<User>>(getModelToken(User.name))
+  })
 
   afterAll(async () => {
-    await mongodb.stop();
-  });
+    await mongodb.stop()
+  })
 
   describe('get all', () => {
     it('should be get users', async () => {
-      const pagination: UserPaginationDto = {
+      const pagination: UsersPaginationDto = {
         offset: 3,
         limit: 15,
         username: faker.internet.displayName(),
-      };
+      }
 
-      const spy = jest.spyOn(usersService, 'getAllUsers');
+      const spy = jest.spyOn(usersService, 'getAllUsers')
 
-      await controller.getAllUsers(pagination);
+      await controller.getAllUsers(pagination)
 
-      const expectedFilter = createUserPaginationFilter(pagination);
+      const expectedFilter = UserPagination.filter(pagination)
 
       const expectedPagination = {
         offset: pagination.offset,
         limit: pagination.limit,
-      };
-      expect(spy).toHaveBeenCalledWith(expectedFilter, expectedPagination);
-    });
-  });
+      }
+      expect(spy).toHaveBeenCalledWith(expectedFilter, expectedPagination)
+    })
+  })
 
   describe('update-profile', () => {
     it('should update with riot info', async () => {
@@ -92,35 +90,32 @@ describe('UsersController', () => {
         email: faker.internet.email(),
         password: faker.internet.password(),
         username: faker.internet.userName(),
-      }).save();
+      }).save()
 
-      const tagLine = faker.string.alphanumeric(5);
-      const gameName = faker.internet.userName();
-      const server = RIOT_SERVERS.BR1;
-      const puuid = faker.string.alphanumeric(78);
+      const tagLine = faker.string.alphanumeric(5)
+      const gameName = faker.internet.userName()
+      const server = RIOT_SERVERS.br1
+      const puuid = faker.string.alphanumeric(78)
 
-      const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
-        gameName,
-        tagLine,
-      );
+      const url = riotApiUtilsService.buildGetAccountByRiotIdURL(gameName, tagLine)
       const scope = nock(url)
         .get(() => true)
         .reply(200, {
           tagLine,
           gameName,
           puuid,
-        });
+        })
 
-      await controller.updateProfile(user, { tagLine, gameName, server });
+      await controller.updateProfile(user, { tagLine, gameName, server })
 
-      const updatedUser = await userModel.findById(user._id).select('+puuid');
-      expect(updatedUser).toBeDefined();
-      expect(updatedUser?.tagLine).toBe(tagLine);
-      expect(updatedUser?.gameName).toBe(gameName);
-      expect(updatedUser?.puuid).toBe(puuid);
+      const updatedUser = await userModel.findById(user._id).select('+puuid')
+      expect(updatedUser).toBeDefined()
+      expect(updatedUser?.tagLine).toBe(tagLine)
+      expect(updatedUser?.gameName).toBe(gameName)
+      expect(updatedUser?.puuid).toBe(puuid)
 
-      scope.done();
-    });
+      scope.done()
+    })
 
     describe('with error', () => {
       describe('with invalid value', () => {
@@ -129,17 +124,17 @@ describe('UsersController', () => {
             email: faker.internet.email(),
             password: faker.internet.password(),
             username: faker.internet.userName(),
-          }).save();
+          }).save()
 
           await expect(
             controller.updateProfile(user, {
               tagLine: '',
               gameName: '',
-              server: RIOT_SERVERS.BR1,
+              server: RIOT_SERVERS.br1,
             }),
-          ).rejects.toThrow('gameName e tagLine são obrigatórios');
-        });
-      });
+          ).rejects.toThrow('gameName e tagLine são obrigatórios')
+        })
+      })
 
       describe('with unknown values', () => {
         it('should not find a riot account', async () => {
@@ -147,16 +142,13 @@ describe('UsersController', () => {
             email: faker.internet.email(),
             password: faker.internet.password(),
             username: faker.internet.userName(),
-          }).save();
+          }).save()
 
-          const tagLine = faker.string.alphanumeric(5);
-          const gameName = faker.internet.userName();
-          const server = RIOT_SERVERS.BR1;
+          const tagLine = faker.string.alphanumeric(5)
+          const gameName = faker.internet.userName()
+          const server = RIOT_SERVERS.br1
 
-          const url = riotApiUtilsService.buildGetAccountByRiotIdURL(
-            gameName,
-            tagLine,
-          );
+          const url = riotApiUtilsService.buildGetAccountByRiotIdURL(gameName, tagLine)
 
           const scope = nock(url)
             .get(() => true)
@@ -165,7 +157,7 @@ describe('UsersController', () => {
                 message: `Data not found - No results found for player with riot id ${gameName}#${tagLine}`,
                 status_code: 404,
               },
-            });
+            })
 
           await expect(
             controller.updateProfile(user, {
@@ -173,13 +165,11 @@ describe('UsersController', () => {
               gameName,
               server,
             }),
-          ).rejects.toThrow(
-            'Não foi possível buscar os dados do jogador em um provedor externo',
-          );
+          ).rejects.toThrow('Não foi possível buscar os dados do jogador em um provedor externo')
 
-          scope.done();
-        });
-      });
-    });
-  });
-});
+          scope.done()
+        })
+      })
+    })
+  })
+})

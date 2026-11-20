@@ -1,18 +1,20 @@
-import { createContext } from "react";
+import { createContext } from 'react'
 
-import { CreateUserDto, ICreateUserDto, ILoginUserDto, IUser } from "@org/contracts";
+import { CreateUserDto, ICreateUserDto, ILoginUserDto, UserDto } from '@org/contracts'
 
-type Login = (user: ILoginUserDto) => Promise<{ success: boolean }>;
-type Logout = () => Promise<void>;
-type Register = (user: ICreateUserDto) => Promise<{ success: boolean, errors?: Partial<{ [K in keyof CreateUserDto]: string[] }> }>;
-type Me = () => Promise<IUser | undefined>;
+type Login = (user: ILoginUserDto) => Promise<{ success: boolean }>
+type Logout = () => Promise<void>
+type Register = (
+  user: ICreateUserDto,
+) => Promise<{ success: boolean; errors?: Partial<{ [K in keyof CreateUserDto]: string[] }> }>
+type Me = () => Promise<UserDto | undefined>
 
 export type AuthContextType = {
-  user: IUser | undefined;
-  login: Login;
-  logout: Logout;
-  register: Register;
-  me: Me;
-};
+  user: UserDto | undefined
+  login: Login
+  logout: Logout
+  register: Register
+  me: Me
+}
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)

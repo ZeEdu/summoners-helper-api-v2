@@ -1,5 +1,5 @@
-import * as jwt from 'jsonwebtoken';
-import { faker } from '@faker-js/faker';
+import * as jwt from 'jsonwebtoken'
+import { faker } from '@faker-js/faker'
 
 export class TestMockUtils {
   static invalidJwt() {
@@ -9,6 +9,6 @@ export class TestMockUtils {
         email: faker.internet.email(),
       },
       faker.string.alpha(16),
-    );
+    )
   }
 }

@@ -1,13 +1,16 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { ICreateUserDto, ILoginUserDto, IUser } from "@org/contracts";
+import { ICreateUserDto, ILoginUserDto, UserDto } from '@org/contracts'
 
-import { AuthEvents } from "../../auth-events";
-import { useThemeContext } from "../../providers/theme.provider";
-import { ApiService } from "../../services/api/api.service";
-import { AuthTokenStorageService } from "../../services/auth-token-storage.service";
-import { ThemeStorageService } from "../../services/theme-storage.service";
-import { AuthContext, AuthContextType } from "./auth.context";
+import { AuthEvents } from '../../auth-events'
+import { useThemeContext } from '../../providers/theme.provider'
+import { ApiService } from '../../services/api/api.service'
+import { AuthTokenStorageService } from '../../services/auth-token-storage.service'
+import { ThemeStorageService } from '../../services/theme-storage.service'
+import { AuthContext, AuthContextType } from './auth.context'
+import LogoutError from './errors/logout-error'
+import TokenDeletionError from './errors/token-deletion-error'
+import TokenNotFoundError from './errors/token-not-found-error'
 
 type AuthProviderProps = {
   children: ReactNode
@@ -15,71 +18,90 @@ type AuthProviderProps = {
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const themeContext = useThemeContext()
-  const [user, setUser] = useState<IUser | undefined>(undefined);
+  const [user, setUser] = useState<UserDto | undefined>(undefined)
 
   const login = async (loginUserDto: ILoginUserDto) => {
     try {
       await AuthTokenStorageService.delete()
 
       const response = await ApiService.Auth.login(loginUserDto)
-      const {
-        accessToken,
-        refreshToken,
-      }: { accessToken: string; refreshToken: string } = response;
+      const { accessToken, refreshToken }: { accessToken: string; refreshToken: string } = response
 
       await AuthTokenStorageService.set(accessToken, refreshToken)
       await me()
       return { success: true }
     } catch (error) {
-      return { success: false, errors: {} };
+      return { success: false, errors: {} }
     }
-  };
+  }
 
-  const logout = async () => {
-    await ApiService.Auth.logout()
-    await AuthTokenStorageService.delete()
-    setUser(undefined);
-  };
+  const logout = useCallback(async () => {
+    setUser(undefined)
+
+    let accessToken
+    try {
+      const tokens = await AuthTokenStorageService.get()
+      accessToken = tokens.accessToken
+    } catch (err) {
+      throw new TokenNotFoundError()
+    }
+
+    try {
+      await AuthTokenStorageService.delete()
+    } catch (error) {
+      throw new TokenDeletionError()
+    }
+
+    if (accessToken) {
+      try {
+        await ApiService.Auth.logout(accessToken)
+      } catch (error) {
+        throw new LogoutError()
+      }
+    }
+  }, [])
 
   const register = useCallback(async (createUserDto: ICreateUserDto) => {
     let accessToken: string
     let refreshToken: string
 
     try {
-      const response = await ApiService.Auth.register(createUserDto);
-      const tokens: { accessToken: string; refreshToken: string } = response;
+      const response = await ApiService.Auth.register(createUserDto)
+      const tokens: { accessToken: string; refreshToken: string } = response
       accessToken = tokens.accessToken
       refreshToken = tokens.refreshToken
 
-      await AuthTokenStorageService.set(accessToken, refreshToken);
+      await AuthTokenStorageService.set(accessToken, refreshToken)
     } catch (error: any) {
       if (error?.body['username'] || error?.body['email'] || error?.body['password']) {
-        return { success: false, errors: error.body };
+        return { success: false, errors: error.body }
       }
 
-      return { success: false, errors: 'Não foi possível registrar o usuário' };
+      return { success: false, errors: 'Não foi possível registrar o usuário' }
     }
 
     try {
       await me()
-      return { success: true };
+      return { success: true }
     } catch (error) {
-      return { success: false, errors: 'Não foi possivel recuperar os dados do usuário' };
+      return {
+        success: false,
+        errors: 'Não foi possivel recuperar os dados do usuário',
+      }
     }
-  }, []);
+  }, [])
 
   const me = useCallback(async () => {
     try {
-      const response = await ApiService.Users.me();
+      const response = await ApiService.Users.me()
 
-      const userFromRequest = response as IUser;
+      const userFromRequest = response
       setUser(userFromRequest)
       return userFromRequest
     } catch (error) {
       return undefined
     }
-  }, []);
-
+  }, [])
 
   useEffect(() => {
     async function checkStoredTokens() {
@@ -113,9 +135,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const value: AuthContextType = useMemo(
     () => ({ user, login, logout, register, me }),
     [user, login, logout, register, me],
-  );
-
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   )
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

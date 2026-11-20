@@ -1,0 +1,11 @@
+{
+  "errors": {
+    "post": {
+      "guideDoNotExists": "Guide do not exists"
+    },
+    "reply": {
+      "opRemoved": "Original comment was removed",
+      "guideDoNotExists": "Guide do not exists"
+    }
+  }
+}

@@ -1,23 +1,23 @@
-import { faker } from "@faker-js/faker";
-import { Match } from "../riot-api/interfaces/match.interface";
+import { faker } from '@faker-js/faker'
+import { Match } from '../riot-api/interfaces/match.interface'
 
-const secondOtherParticipant = faker.string.alphanumeric(78);
-const thirdOtherParticipant = faker.string.alphanumeric(78);
-const forthOtherParticipant = faker.string.alphanumeric(78);
-const fifthOtherParticipant = faker.string.alphanumeric(78);
-const sixthOtherParticipant = faker.string.alphanumeric(78);
-const seventhOtherParticipant = faker.string.alphanumeric(78);
-const eighthOtherParticipant = faker.string.alphanumeric(78);
-const ninthOtherParticipant = faker.string.alphanumeric(78);
-const tenthOtherParticipant = faker.string.alphanumeric(78);
-const eleventhOtherParticipant = faker.string.alphanumeric(78);
-const twelfthOtherParticipant = faker.string.alphanumeric(78);
-const thirteenthOtherParticipant = faker.string.alphanumeric(78);
-const fourteenthOtherParticipant = faker.string.alphanumeric(78);
-const fifteenthOtherParticipant = faker.string.alphanumeric(78);
-const sixteenthOtherParticipant = faker.string.alphanumeric(78);
-const seventeenthOtherParticipant = faker.string.alphanumeric(78);
-const eighteenthOtherParticipant = faker.string.alphanumeric(78);
+const secondOtherParticipant = faker.string.alphanumeric(78)
+const thirdOtherParticipant = faker.string.alphanumeric(78)
+const forthOtherParticipant = faker.string.alphanumeric(78)
+const fifthOtherParticipant = faker.string.alphanumeric(78)
+const sixthOtherParticipant = faker.string.alphanumeric(78)
+const seventhOtherParticipant = faker.string.alphanumeric(78)
+const eighthOtherParticipant = faker.string.alphanumeric(78)
+const ninthOtherParticipant = faker.string.alphanumeric(78)
+const tenthOtherParticipant = faker.string.alphanumeric(78)
+const eleventhOtherParticipant = faker.string.alphanumeric(78)
+const twelfthOtherParticipant = faker.string.alphanumeric(78)
+const thirteenthOtherParticipant = faker.string.alphanumeric(78)
+const fourteenthOtherParticipant = faker.string.alphanumeric(78)
+const fifteenthOtherParticipant = faker.string.alphanumeric(78)
+const sixteenthOtherParticipant = faker.string.alphanumeric(78)
+const seventeenthOtherParticipant = faker.string.alphanumeric(78)
+const eighteenthOtherParticipant = faker.string.alphanumeric(78)
 
 export const getLastFiveMatches = (userPuuid: string) => {
   return [
@@ -2111,8 +2111,7 @@ export const getLastFiveMatches = (userPuuid: string) => {
             summoner1Id: 2201,
             summoner2Casts: 5,
             summoner2Id: 2202,
-            summonerId:
-              'RBUEbGO7NSSEQcbIzEKSPa35jIJ_a3kNWf3n_XEANKdzSa2D7VH8iObGjQ',
+            summonerId: 'RBUEbGO7NSSEQcbIzEKSPa35jIJ_a3kNWf3n_XEANKdzSa2D7VH8iObGjQ',
             summonerLevel: 19,
             summonerName: '',
             teamEarlySurrendered: false,
@@ -3637,11 +3636,10 @@ export const getLastFiveMatches = (userPuuid: string) => {
               laneMinionsFirst10Minutes: 0,
               legendaryCount: 0,
               legendaryItemUsed: [
-                226676, 222523, 226672, 226697, 223031, 223036, 226672, 3430,
-                223504, 223165, 226672, 223146, 226672, 226657, 222530, 226672,
-                223146, 4017, 226609, 226672, 223036, 226333, 223124, 223153,
-                4011, 223091, 226672, 223036, 223075, 3430, 226672, 223036,
-                226665, 223084, 223068, 223075, 226672, 223036,
+                226676, 222523, 226672, 226697, 223031, 223036, 226672, 3430, 223504, 223165,
+                226672, 223146, 226672, 226657, 222530, 226672, 223146, 4017, 226609, 226672,
+                223036, 226333, 223124, 223153, 4011, 223091, 226672, 223036, 223075, 3430, 226672,
+                223036, 226665, 223084, 223068, 223075, 226672, 223036,
               ],
               lostAnInhibitor: 0,
               maxKillDeficit: 13,
@@ -4210,8 +4208,7 @@ export const getLastFiveMatches = (userPuuid: string) => {
             summoner1Id: 2201,
             summoner2Casts: 1,
             summoner2Id: 2202,
-            summonerId:
-              'n2E0s-c4lQCEjkYke-JrkGzZMjIWs0hLKtqzOHcZncSA6_HBJyCp3fw0AQ',
+            summonerId: 'n2E0s-c4lQCEjkYke-JrkGzZMjIWs0hLKtqzOHcZncSA6_HBJyCp3fw0AQ',
             summonerLevel: 403,
             summonerName: '',
             teamEarlySurrendered: false,
@@ -4339,9 +4336,7 @@ export const getLastFiveMatches = (userPuuid: string) => {
               landSkillShotsEarlyGame: 0,
               laneMinionsFirst10Minutes: 0,
               legendaryCount: 0,
-              legendaryItemUsed: [
-                226676, 223036, 223031, 223142, 226697, 223142, 226695, 226696,
-              ],
+              legendaryItemUsed: [226676, 223036, 223031, 223142, 226697, 223142, 226695, 226696],
               lostAnInhibitor: 0,
               maxKillDeficit: 0,
               mejaisFullStackInTime: 0,
@@ -6504,4 +6499,4 @@ export const getLastFiveMatches = (userPuuid: string) => {
       },
     },
   ] as unknown as Match[]
-};
+}

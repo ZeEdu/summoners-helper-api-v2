@@ -1,0 +1,18 @@
+<div class="container">
+  <mat-card class="description">
+    <mat-card-header>
+      <mat-card-title>Bonus</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{guide.bonusDescription}}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="bonus">
+    <mat-card-content>
+      <app-bonus [bonus]="guide.bonusSlotOne" />
+      <app-bonus [bonus]="guide.bonusSlotTwo" />
+      <app-bonus [bonus]="guide.bonusSlotThree" />
+    </mat-card-content>
+  </mat-card>
+</div>

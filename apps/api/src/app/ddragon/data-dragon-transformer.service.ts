@@ -1,37 +1,34 @@
-import { IUserWithPuuid } from '../users/schema/user.schema';
-import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface';
-import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface';
-import { Match } from '../riot-api/interfaces/match.interface';
-import { Summoner } from '../riot-api/interfaces/summoner.interface';
-import { ChampionsLookup } from './lookups/champions.lookup';
-import { SummonersSpellLookup } from './lookups/summoner-spell.lookup';
-import { RunesLookup } from './lookups/runes-reforged.lookup';
-import { ItemsLookup } from './lookups/items.lookup';
-import { Injectable } from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
-import { IChampionMasteryResponse } from '../riot-api/service/riot-api.service';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common'
+import { I18nService } from 'nestjs-i18n'
+
+import { UserDtoWithPuuid } from '@org/contracts'
+
+import { I18nTranslations } from '../../generated/i18n.generated'
+import { ChampionMastery } from '../riot-api/interfaces/champion-mastery.interface'
+import { LeagueEntry } from '../riot-api/interfaces/league-entry.interface'
+import { Match } from '../riot-api/interfaces/match.interface'
+import { Summoner } from '../riot-api/interfaces/summoner.interface'
+import { IChampionMasteryResponse } from '../riot-api/service/riot-api.service'
+import { ChampionsLookup } from './lookups/champions.lookup'
+import { ItemsLookup } from './lookups/items.lookup'
+import { RunesLookup } from './lookups/runes-reforged.lookup'
+import { SummonersSpellLookup } from './lookups/summoner-spell.lookup'
 
 @Injectable()
 export class DataDragonTransformerService {
-  constructor(private i18n: I18nService) {}
+  constructor(private i18n: I18nService<I18nTranslations>) {}
 
-  transformChampionsMastery(
-    championMastery: ChampionMastery,
-  ): IChampionMasteryResponse {
-    const champion = ChampionsLookup.getChampionById(
-      championMastery.championId,
-    );
+  transformChampionsMastery(championMastery: ChampionMastery): IChampionMasteryResponse {
+    const champion = ChampionsLookup.getChampionById(championMastery.championId)
     return {
       championId: championMastery.championId,
       championLevel: championMastery.championLevel,
       championPoints: championMastery.championPoints,
       lastPlayTime: championMastery.lastPlayTime,
-      championPointsSinceLastLevel:
-        championMastery.championPointsSinceLastLevel,
-      championPointsUntilNextLevel:
-        championMastery.championPointsUntilNextLevel,
+      championPointsSinceLastLevel: championMastery.championPointsSinceLastLevel,
+      championPointsUntilNextLevel: championMastery.championPointsUntilNextLevel,
       champion: champion.name,
-    };
+    }
   }
   transformRankedStatus(entry: LeagueEntry) {
     return {
@@ -42,88 +39,81 @@ export class DataDragonTransformerService {
       wins: entry.wins,
       losses: entry.losses,
       hotStreak: entry.hotStreak,
-    };
+    }
   }
   transformMatchInfo(
     match: Match,
-    puuid: IUserWithPuuid['puuid'],
+    puuid: UserDtoWithPuuid['puuid'],
   ): {
-    gameDuration: number;
-    gameMode;
-    gameType;
-    kills;
-    deaths;
-    assists;
-    win;
-    championId;
-    championName;
-    teamPosition;
-    lane;
-    role;
-    items;
-    spells;
-    mainPerks;
-    secondaryPerks;
+    gameDuration: number
+    gameMode
+    gameType
+    kills
+    deaths
+    assists
+    win
+    championId
+    championName
+    teamPosition
+    lane
+    role
+    items
+    spells
+    mainPerks
+    secondaryPerks
   } {
-    const gameDuration = match.info.gameDuration;
-    const gameMode = match.info.gameMode;
-    const gameType = match.info.gameType;
+    const gameDuration = match.info.gameDuration
+    const gameMode = match.info.gameMode
+    const gameType = match.info.gameType
 
     const userFromParticipants = match.info.participants.find(
       (participants) => participants.puuid === puuid,
-    );
+    )
 
     if (!userFromParticipants) {
-      throw new Error(
+      throw new ServiceUnavailableException(
         this.i18n.t('ddragon.errors.matchInfo.participantNotFound', {
           args: { puuid },
         }),
-      );
+      )
     }
 
-    const win = userFromParticipants.win;
-    const championId = userFromParticipants.championId;
-    const champion = ChampionsLookup.getChampionById(championId);
-    const championName = champion.name;
+    const win = userFromParticipants.win
+    const championId = userFromParticipants.championId
+    const champion = ChampionsLookup.getChampionById(championId)
+    const championName = champion.name
 
-    const lane = userFromParticipants.lane;
-    const teamPosition = userFromParticipants.teamPosition;
-    const role = userFromParticipants.role;
+    const lane = userFromParticipants.lane
+    const teamPosition = userFromParticipants.teamPosition
+    const role = userFromParticipants.role
 
-    const kills = userFromParticipants.kills;
-    const deaths = userFromParticipants.deaths;
-    const assists = userFromParticipants.assists;
+    const kills = userFromParticipants.kills
+    const deaths = userFromParticipants.deaths
+    const assists = userFromParticipants.assists
 
-    const spellsIds = [
-      userFromParticipants.summoner1Id,
-      userFromParticipants.summoner2Id,
-    ];
+    const spellsIds = [userFromParticipants.summoner1Id, userFromParticipants.summoner2Id]
 
-    const spells = spellsIds.map(SummonersSpellLookup.getSummonerSpellById);
+    const spells = spellsIds.map(SummonersSpellLookup.getSummonerSpellById)
 
     const mainPerksIds = {
       style: userFromParticipants.perks.styles[0].style,
-      slots: userFromParticipants.perks.styles[0].selections.map(
-        (selection) => selection.perk,
-      ),
-    };
+      slots: userFromParticipants.perks.styles[0].selections.map((selection) => selection.perk),
+    }
 
     const mainPerks = {
       style: RunesLookup.getMainRuneById(mainPerksIds.style),
       slots: mainPerksIds.slots.map(RunesLookup.getRuneSlotById),
-    };
+    }
 
     const secondaryPerksIds = {
       style: userFromParticipants.perks.styles[1].style,
-      slots: userFromParticipants.perks.styles[1].selections.map(
-        (selection) => selection.perk,
-      ),
-    };
+      slots: userFromParticipants.perks.styles[1].selections.map((selection) => selection.perk),
+    }
 
     const secondaryPerks = {
       style: RunesLookup.getMainRuneById(secondaryPerksIds.style),
       slots: secondaryPerksIds.slots.map(RunesLookup.getRuneSlotById),
-    };
+    }
 
     const itemsId = [
       userFromParticipants.item0,
@@ -133,11 +123,9 @@ export class DataDragonTransformerService {
       userFromParticipants.item4,
       userFromParticipants.item5,
       userFromParticipants.item6,
-    ];
+    ]
 
-    const items = itemsId
-      .filter((item) => item > 0)
-      .map(ItemsLookup.getItemById);
+    const items = itemsId.filter((item) => item > 0).map(ItemsLookup.getItemById)
 
     return {
       gameDuration,
@@ -156,17 +144,17 @@ export class DataDragonTransformerService {
       spells,
       mainPerks,
       secondaryPerks,
-    };
+    }
   }
   transformSummoner(summoner: Summoner): {
-    profileIconId: Summoner['profileIconId'];
-    revisionDate: Summoner['revisionDate'];
-    summonerLevel: Summoner['summonerLevel'];
+    profileIconId: Summoner['profileIconId']
+    revisionDate: Summoner['revisionDate']
+    summonerLevel: Summoner['summonerLevel']
   } {
     return {
       profileIconId: summoner.profileIconId,
       revisionDate: summoner.revisionDate,
       summonerLevel: summoner.summonerLevel,
-    };
+    }
   }
 }
