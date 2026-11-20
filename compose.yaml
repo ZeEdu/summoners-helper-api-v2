@@ -41,6 +41,8 @@ services:
       - --configuration=development
     environment:
       NODE_ENV: development
+      NX_WORKSPACE_DATA_DIRECTORY: /tmp/nx-workspace-data
+      NX_VERBOSE_LOGGING: 'true'
       NX_DAEMON: 'false'
       PORT: '3000'
       API_PREFIX: ${API_PREFIX:-api}
@@ -84,6 +86,8 @@ services:
     environment:
       NODE_ENV: development
       NX_DAEMON: 'false'
+      NX_WORKSPACE_DATA_DIRECTORY: /tmp/nx-workspace-data
+      NX_VERBOSE_LOGGING: 'true'
     depends_on:
       - api
     ports:
