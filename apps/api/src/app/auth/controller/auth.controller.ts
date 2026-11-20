@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
-import { Response } from 'express'
+import type { Response } from 'express'
 
 import type { CreateUserDto, UserDto } from '@org/contracts'
 import { createUserSchema } from '@org/contracts'
