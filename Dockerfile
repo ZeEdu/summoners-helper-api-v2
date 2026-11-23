@@ -112,6 +112,15 @@ COPY --from=admin-build \
 
 EXPOSE 80
 
+# ==========================================================
+# Combined API + Admin production runtime
+# ==========================================================
+FROM api-production AS api-admin-production
+
+# Copy Angular production build into the NestJS static directory.
+COPY --from=admin-build \
+    /workspace/dist/apps/admin/browser/ \
+    ./admin/
 
 # ==========================================================
 # Mobile Web: Production build
