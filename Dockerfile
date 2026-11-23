@@ -129,6 +129,9 @@ FROM workspace-base AS mobile-web-build
 
 WORKDIR /workspace/apps/mobile
 
+ARG EXPO_PUBLIC_API_URL
+ENV EXPO_PUBLIC_API_URL=${EXPO_PUBLIC_API_URL}
+
 # EXPO_PUBLIC_* variables must be available during this build.
 RUN npx expo export --platform web --output-dir dist
 
