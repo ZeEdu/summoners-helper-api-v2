@@ -27,6 +27,12 @@ export default [
     },
   },
   {
+    files: ['apps/api/webpack.config.js'],
+    rules: {
+      '@nx/enforce-module-boundaries': 'off',
+    },
+  },
+  {
     files: [
       '**/*.ts',
       '**/*.tsx',

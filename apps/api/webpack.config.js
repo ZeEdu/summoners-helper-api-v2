@@ -1,6 +1,7 @@
 const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin')
 const { join } = require('path')
 
+// eslint-disable-next-line @nx/enforce-module-boundaries -- Webpack config reads root package metadata.
 const rootPackageJson = require('../../package.json')
 
 // Keep third-party runtime dependencies external.
