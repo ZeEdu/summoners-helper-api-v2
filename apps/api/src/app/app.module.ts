@@ -15,9 +15,19 @@ import { ReportModule } from './report/report.module'
 import { RiotApiModule } from './riot-api/riot-api.module'
 import { UsersModule } from './users/users.module'
 import { join } from 'path'
+import { existsSync } from 'fs'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const apiPrefix = process.env.API_PREFIX ?? 'api'
+
+const adminPath = join(process.cwd(), 'admin')
+
+console.log('[Static Admin]', {
+  cwd: process.cwd(),
+  dirname: __dirname,
+  adminPath,
+  indexExists: existsSync(join(adminPath, 'index.html')),
+})
 
 @Module({
   imports: [
@@ -34,7 +44,7 @@ const apiPrefix = process.env.API_PREFIX ?? 'api'
     ...(isProduction
       ? [
           ServeStaticModule.forRoot({
-            rootPath: join(__dirname, 'admin'),
+            rootPath: adminPath,
             exclude: [`/${apiPrefix}`, `/${apiPrefix}/{*splat}`],
           }),
         ]
