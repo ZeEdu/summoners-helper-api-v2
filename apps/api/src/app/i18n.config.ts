@@ -1,22 +1,25 @@
 import { AcceptLanguageResolver, HeaderResolver, I18nOptions, QueryResolver } from 'nestjs-i18n'
 import * as path from 'path'
 
-import { Utils } from './utils'
+const isProduction = process.env.NODE_ENV === 'production'
 
 const config: I18nOptions = {
   fallbackLanguage: 'pt',
+
   loaderOptions: {
     path: path.join(__dirname, 'i18n'),
-    watch: !Utils.isProduction,
+    watch: !isProduction,
   },
+
   resolvers: [
     { use: QueryResolver, options: ['lang'] },
     new HeaderResolver(['x-lang']),
     AcceptLanguageResolver,
   ],
-  typesOutputPath: Utils.isTest
-    ? undefined
-    : path.join(process.cwd(), 'apps/api/src/generated/i18n.generated.ts'),
+
+  ...(!isProduction && {
+    typesOutputPath: path.join(process.cwd(), 'apps/api/src/generated/i18n.generated.ts'),
+  }),
 }
 
 export const I18N = { config }

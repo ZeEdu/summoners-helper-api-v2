@@ -1,11 +1,19 @@
 const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin')
 const { join } = require('path')
 
+const rootPackageJson = require('../../package.json')
+
+// Keep third-party runtime dependencies external.
+// Workspace libraries such as @org/contracts will be bundled.
+const externalDependencies = Object.keys(rootPackageJson.dependencies ?? {})
+
+const isProduction = process.env.NODE_ENV === 'production'
+
 module.exports = {
   output: {
     path: join(__dirname, '../../dist/apps/api'),
     clean: true,
-    ...(process.env.NODE_ENV !== 'production' && {
+    ...(!isProduction && {
       devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     }),
   },
@@ -15,6 +23,10 @@ module.exports = {
       compiler: 'tsc',
       main: './src/main.ts',
       tsConfig: './tsconfig.app.json',
+
+      buildLibsFromSource: true,
+      externalDependencies,
+
       assets: [
         './src/assets',
         {
@@ -23,10 +35,11 @@ module.exports = {
           output: 'i18n',
         },
       ],
-      optimization: false,
+
+      optimization: isProduction,
       outputHashing: 'none',
       generatePackageJson: true,
-      sourceMap: true,
+      sourceMap: !isProduction,
     }),
   ],
 }
