@@ -1,42 +1,138 @@
-# Shared Nx workspace image for local API/Admin development and Expo Web export.
+
+# syntax=docker/dockerfile:1
+
+# ==========================================================
+# Workspace base
+# ==========================================================
 FROM node:22-bookworm-slim AS workspace-base
 
 WORKDIR /workspace
+
 ENV NX_DAEMON=false
 
-# Install workspace dependencies before copying source to improve layer caching.
-# A root package-lock.json is preferred; npm install is a fallback for the
-# provided repository snapshot, which did not contain a root lockfile.
+# Install workspace dependencies before copying the application source.
 COPY package*.json ./
 COPY libs ./libs
 
-RUN if [ -f package-lock.json ]; then \
-      npm ci --include=dev --no-audit --no-fund; \
-    else \
-      npm install --include=dev --no-audit --no-fund; \
-    fi
+RUN npm ci --include=dev --no-audit --no-fund
 
 COPY . .
 
-# API/Admin development image. Data Dragon files are not needed by the web bundle.
+
+# ==========================================================
+# Development: API and Admin
+# ==========================================================
 FROM workspace-base AS workspace-dev
+
 ARG DDRAGON_VERSION
 ARG DDRAGON_LOCALE=pt_BR
+
 ENV DDRAGON_VERSION=${DDRAGON_VERSION} \
     DDRAGON_LOCALE=${DDRAGON_LOCALE} \
     NODE_ENV=development
+
 RUN npm run prepare:ddragon
+
 EXPOSE 3000 4200
+
 CMD ["npx", "nx", "run-many", "--target=serve", "--projects=api,admin", "--parallel=2"]
 
-# Export Expo/React Native for Web as a static site. EXPO_PUBLIC_* variables,
-# when used by the app, must be provided at build time because they are bundled.
+
+# ==========================================================
+# API: Production build
+# ==========================================================
+FROM workspace-base AS api-build
+
+ARG DDRAGON_VERSION
+ARG DDRAGON_LOCALE=pt_BR
+
+ENV NODE_ENV=production \
+    DDRAGON_VERSION=${DDRAGON_VERSION} \
+    DDRAGON_LOCALE=${DDRAGON_LOCALE}
+
+# Download Data Dragon assets before compiling the API.
+RUN npm run prepare:ddragon
+
+# Webpack generates main.js, package.json and package-lock.json.
+RUN npx nx run api:build --skip-nx-cache
+
+
+# ==========================================================
+# API: Production runtime
+# ==========================================================
+FROM node:22-bookworm-slim AS api-production
+
+WORKDIR /app
+
+ENV NODE_ENV=production \
+    PORT=3000
+
+# Copy only the compiled application and its generated manifest.
+COPY --from=api-build /workspace/dist/apps/api/ ./
+
+# Install only runtime dependencies.
+RUN npm ci --omit=dev --no-audit --no-fund
+
+EXPOSE 3000
+
+CMD ["node", "main.js"]
+
+
+# ==========================================================
+# Admin: Production build
+# ==========================================================
+FROM workspace-base AS admin-build
+
+ENV NODE_ENV=production
+
+RUN npx nx build admin --configuration=production --skip-nx-cache
+
+
+# ==========================================================
+# Admin: Production runtime
+# ==========================================================
+FROM nginx:alpine AS admin-production
+
+# Angular SPA configuration.
+RUN printf '%s\n' \
+    'server {' \
+    '    listen 80;' \
+    '    server_name _;' \
+    '    root /usr/share/nginx/html;' \
+    '    index index.html;' \
+    '    location / {' \
+    '        try_files $uri $uri/ /index.html;' \
+    '    }' \
+    '}' \
+    > /etc/nginx/conf.d/default.conf
+
+COPY --from=admin-build \
+    /workspace/dist/apps/admin/browser/ \
+    /usr/share/nginx/html/
+
+EXPOSE 80
+
+
+# ==========================================================
+# Mobile Web: Production build
+# ==========================================================
 FROM workspace-base AS mobile-web-build
+
 WORKDIR /workspace/apps/mobile
+
+# EXPO_PUBLIC_* variables must be available during this build.
 RUN npx expo export --platform web --output-dir dist
 
-# Serve the static Expo export with Nginx (no Node/Metro server at runtime).
+
+# ==========================================================
+# Mobile Web: Production runtime
+# ==========================================================
 FROM nginx:alpine AS mobile-web
+
 COPY docker/nginx/mobile-web.conf /etc/nginx/conf.d/default.conf
-COPY --from=mobile-web-build /workspace/apps/mobile/dist/ /usr/share/nginx/html/
+
+COPY --from=mobile-web-build \
+    /workspace/apps/mobile/dist/ \
+    /usr/share/nginx/html/
+
 EXPOSE 80

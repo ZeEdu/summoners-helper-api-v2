@@ -1,7 +1,5 @@
-const PORT = '3000'
-const PROTOCOL = 'http'
-const ADDRESS = 'localhost'
+import { environment } from '../environments/environment'
 
-const API_URL = `${PROTOCOL}://${ADDRESS}:${PORT}/api`
-
-export const API_CONSTANTS = { API_URL }
+export const API_CONSTANTS = {
+  API_URL: environment.apiUrl,
+}

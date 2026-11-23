@@ -10,7 +10,9 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "validate": "nx run-many -t lint test typecheck && nx run-many -t build --exclude=mobile",
-    "prepare:ddragon": "node tools/scripts/prepare-ddragon.mjs"
+    "prepare:ddragon": "node tools/scripts/prepare-ddragon.mjs",
+    "serve:api": "nx run api:serve:development",
+    "serve:admin": "nx run admin:serve:development"
   },
   "private": true,
   "devDependencies": {
